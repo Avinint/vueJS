@@ -1,8 +1,7 @@
 <template>
-  <NavBar v-if="router.currentRoute._value.name !== 'Login'"></NavBar>
+  <NavBar v-if="route.name !== 'Login'"></NavBar>
   <div class="flex">
-
-    <SideNav v-if="router.currentRoute._value.name !== 'Login'"></SideNav>
+    <SideNav v-if="route.name !== 'Login'"></SideNav>
     <div class="w-full pt-2 px-4">
       <router-view></router-view>
     </div>
@@ -12,8 +11,8 @@
 <script setup>
   import SideNav from './components/SideNav.vue'
   import NavBar from "./components/NavBar.vue";
-  import {useRouter} from "vue-router";
+  import {useRoute} from "vue-router";
 
-  const router = useRouter()
-  console.log(router)
+  const route = useRoute()
+  console.log(route)
 </script>
