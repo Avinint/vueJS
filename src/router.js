@@ -15,8 +15,8 @@ const routes = [
         component: Admin,
     },
     {
-        path: "/user",
-        name: "User",
+        path: "/users",
+        name: "Users",
         component: User,
     },
 ];

@@ -12,23 +12,26 @@
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
       <tr>
-        <th scope="col" class="p-4">
+        <th scope="col" class="p-4" v-if="false">
           <div class="flex items-center">
             <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
             <label for="checkbox-all-search" class="sr-only">checkbox</label>
           </div>
         </th>
         <th scope="col" class="px-6 py-3">
-          Product name
+          Nom
         </th>
         <th scope="col" class="px-6 py-3">
-          Color
+          Prenom
         </th>
         <th scope="col" class="px-6 py-3">
-          Category
+          Email
         </th>
         <th scope="col" class="px-6 py-3">
-          Price
+          Mineur
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Actif
         </th>
         <th scope="col" class="px-6 py-3">
           Action
@@ -36,153 +39,75 @@
       </tr>
       </thead>
       <tbody>
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="w-4 p-4">
+      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" v-for="user in users" :key="user.id">
+        <td class="w-4 p-4" v-if="false">
           <div class="flex items-center">
             <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
             <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
           </div>
         </td>
         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-          Apple MacBook Pro 17"
+          {{ user.nom }}
         </th>
         <td class="px-6 py-4">
-          Sliver
+          {{ user.prenom }}
         </td>
         <td class="px-6 py-4">
-          Laptop
+          {{ user.email }}
         </td>
         <td class="px-6 py-4">
-          $2999
-        </td>
-        <td class="px-6 py-4">
-          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-        </td>
-      </tr>
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="w-4 p-4">
           <div class="flex items-center">
-            <input id="checkbox-table-search-2" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label for="checkbox-table-search-2" class="sr-only">checkbox</label>
+            <input disabled :checked="user.mineur" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
           </div>
         </td>
-        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-          Microsoft Surface Pro
-        </th>
         <td class="px-6 py-4">
-          White
-        </td>
-        <td class="px-6 py-4">
-          Laptop PC
-        </td>
-        <td class="px-6 py-4">
-          $1999
-        </td>
-        <td class="px-6 py-4">
-          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-        </td>
-      </tr>
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="w-4 p-4">
           <div class="flex items-center">
-            <input id="checkbox-table-search-3" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label for="checkbox-table-search-3" class="sr-only">checkbox</label>
+            <input disabled :checked="user.actif" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
           </div>
         </td>
-        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-          Magic Mouse 2
-        </th>
         <td class="px-6 py-4">
-          Black
-        </td>
-        <td class="px-6 py-4">
-          Accessories
-        </td>
-        <td class="px-6 py-4">
-          $99
-        </td>
-        <td class="px-6 py-4">
-          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-        </td>
-      </tr>
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="w-4 p-4">
-          <div class="flex items-center">
-            <input id="checkbox-table-3" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label for="checkbox-table-3" class="sr-only">checkbox</label>
+          <div class="inline-flex rounded-md shadow-sm" role="group">
+            <button type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+              Editer
+            </button>
+            <button @click="consulter(user)" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+              Consulter
+            </button>
+            <button type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-red-600 border-t border-b border-gray-200 hover:bg-red-400 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+              Supprimer
+            </button>
           </div>
-        </td>
-        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-          Apple Watch
-        </th>
-        <td class="px-6 py-4">
-          Silver
-        </td>
-        <td class="px-6 py-4">
-          Accessories
-        </td>
-        <td class="px-6 py-4">
-          $179
-        </td>
-        <td class="px-6 py-4">
-          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-        </td>
-      </tr>
-      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="w-4 p-4">
-          <div class="flex items-center">
-            <input id="checkbox-table-3" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label for="checkbox-table-3" class="sr-only">checkbox</label>
-          </div>
-        </td>
-        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-          iPad
-        </th>
-        <td class="px-6 py-4">
-          Gold
-        </td>
-        <td class="px-6 py-4">
-          Tablet
-        </td>
-        <td class="px-6 py-4">
-          $699
-        </td>
-        <td class="px-6 py-4">
-          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-        </td>
-      </tr>
-      <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-        <td class="w-4 p-4">
-          <div class="flex items-center">
-            <input id="checkbox-table-3" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label for="checkbox-table-3" class="sr-only">checkbox</label>
-          </div>
-        </td>
-        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-          Apple iMac 27"
-        </th>
-        <td class="px-6 py-4">
-          Silver
-        </td>
-        <td class="px-6 py-4">
-          PC Desktop
-        </td>
-        <td class="px-6 py-4">
-          $3999
-        </td>
-        <td class="px-6 py-4">
-          <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
         </td>
       </tr>
       </tbody>
     </table>
   </div>
+  <Modal :title="'Consultation ' + user.nom"  @cancel="" @confirm="confirm" v-if="is_open_modal_consult">
+    <h2 class="text-4xl font-extrabold dark:text-white">Payments tool for companies</h2>
+    <p class="my-4 text-lg text-gray-500">Start developing with an open-source library of over 450+ UI components, sections, and pages built with the utility classes from Tailwind CSS and designed in Figma.</p>
+    <p class="mb-4 text-lg font-normal text-gray-500 dark:text-gray-400">Deliver great service experiences fast - without the complexity of traditional ITSM solutions. Accelerate critical development work, eliminate toil, and deploy changes with ease.</p>
+    <a href="#" class="inline-flex items-center text-lg text-blue-600 dark:text-blue-500 hover:underline">
+      Read more
+      <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+    </a>
+  </Modal>
+  <Modal title="Edition" @confirm="confirm" v-if="false">
+    <input type="text" v-model="user.nom">
+  </Modal>
+  <Modal title="TOTO" @confirm="confirm" v-if="false">TEST</Modal>
 </template>
 
 <script setup>
+
+  import Modal from './Modal.vue'
+
   import {ref} from "vue";
 
   const users = ref([])
+
+  const user = ref({})
+
+  const is_open_modal_consult = ref(false)
 
   const getUsers = async () => {
     const response = await fetch(import.meta.env.VITE_API_URL +'/api/users', {
@@ -191,7 +116,22 @@
     })
     users.value = await response.json()
   }
+
+  const consulter = (user_selected) => {
+    user.value = user_selected
+    is_open_modal_consult.value = true
+  }
+
+  const cancel = () => {
+    user.value = {}
+  }
+
+  const confirm = (event) => {
+    console.log("CONFIRM", event)
+  }
+
   getUsers()
+
 </script>
 
 <style scoped>

@@ -1,12 +1,5 @@
 <template>
-  <div class="flex">
-    <div class="w-1/6">
-      <SideNav v-if="router.name !== 'Login'"></SideNav>
-    </div>
-    <div class="w-5/6">
-      <UserList v-if="router.name !== 'Login'"></UserList>
-    </div>
-  </div>
+  <UserList v-if="router.name !== 'Login'"></UserList>
 </template>
 
 <script setup>
