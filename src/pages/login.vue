@@ -10,7 +10,7 @@
           <!--<h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Connecter vous à votre compte
           </h1>-->
-          <form class="space-y-4 md:space-y-6" @submit.prevent="login">
+          <form class="space-y-4 md:space-y-6" @submit.prevent="user.login(mail, password)">
             <div>
               <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Votre E-mail</label>
               <input v-model="mail" type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
@@ -41,30 +41,13 @@
 
   import {ref} from "vue";
   import {useRouter} from "vue-router";
+  import {useUserStore} from "../stores/user.js";
 
   const router = useRouter()
 
   const mail = ref('')
   const password = ref('')
 
-  const login = async () => {
-    const response = await fetch(import.meta.env.VITE_API_URL +'/auth', {
-      method:'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"email": mail.value ,"password": password.value})
-    })
-    if (response.status !== 200) {
-      alert('ERREUR DE CONNEXION')
-    } else {
-      const {token} = await response.json()
-      localStorage.setItem('token', token)
-      router.push('/')
-    }
-
-  }
+  const user = useUserStore()
 
 </script>
-
-<style scoped>
-
-</style>
