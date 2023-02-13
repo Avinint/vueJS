@@ -23,6 +23,7 @@
 <script setup lang="ts">
 
   import SideNavItem from "./SideNavItem.vue";
+  import {reactive} from "vue";
 
   interface Link {
     label: string
@@ -32,8 +33,6 @@
     sub_links?: Link[]
     sub_links_open?: boolean
   }
-
-  import {reactive} from "vue";
 
   let links: Link[] = reactive([
     {
@@ -61,7 +60,9 @@
       ]
     },
     {
-      label: 'FitArena', link: 'fitarena', tag: "0"
+      label: 'FitArena',
+      link: 'fitarena',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M4 21V9l8-6l8 6v12h-2V10l-6-4.5L6 10v11Zm5-2h6v-2H9Zm0-4h6v-2H9Zm-2 6V11h10v10Z"/></svg>'
     },
     {
       label: 'Client', link: 'client', tag: "0"
