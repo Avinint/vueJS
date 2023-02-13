@@ -64,7 +64,7 @@
       label: 'FitArena', link: 'fitarena', tag: "0"
     },
     {
-      label: 'Collectivité', link: 'collectivite', tag: "0"
+      label: 'Client', link: 'client', tag: "0"
     }
   ])
 

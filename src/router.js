@@ -3,7 +3,7 @@ import Login from "./pages/login.vue";
 import Admin from "./pages/admin.vue"
 import User from "./pages/user.vue"
 import FitArena from "./pages/fitArena.vue"
-import Collectivite from "./pages/collectivite.vue"
+import Client from "./pages/client.vue"
 
 const routes = [
     {
@@ -27,9 +27,9 @@ const routes = [
         component: FitArena,
     },
     {
-        path: "/collectivite",
-        name: "Collectivité",
-        component: Collectivite,
+        path: "/client",
+        name: "Client",
+        component: Client,
     },
 ];
 
