@@ -1,5 +1,8 @@
 <template>
   <breadcrumbs :items="[{label: 'Utilisateurs'}]" />
+
+  <Button label="Supprimer"></Button>
+
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div class="sm:flex">
       <div class="items-center hidden mb-3 sm:flex sm:divide-x sm:divide-gray-100 sm:mb-0 dark:divide-gray-700">
@@ -207,7 +210,8 @@
   import Modal from './Modal.vue'
 
   import {reactive, ref} from "vue";
-  import Breadcrumbs from "./Breadcrumbs.vue";
+  import Breadcrumbs from "./common/Breadcrumbs.vue";
+  import Button from './common/Button.vue'
 
   const users = ref([])
 
