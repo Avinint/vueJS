@@ -12,9 +12,9 @@
 import {defineProps} from "vue";
 
   interface Props {
-      label: string
-      icon: 'reload' | 'edit' | 'add' | 'export' | '',
-      type: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | ''
+      label?: string
+      icon?: 'reload' | 'edit' | 'add' | 'export' | '',
+      type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | ''
   }
 
   const ICON = {
