@@ -21,11 +21,19 @@
   </aside>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
+interface Link {
+  label: string
+  link: string
+  tag?: string
+  sub_links?: Link[]
+  sub_links_open?: boolean
+}
 
   import {reactive} from "vue";
 
-  let LINKS = reactive([
+  let LINKS: Link[] = reactive([
     {
       label: 'Utilisateurs',
       link: 'users',
