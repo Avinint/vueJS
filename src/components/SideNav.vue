@@ -29,7 +29,7 @@
     link: string
     icon?: string
     tag?: string
-    sub_links?: Omit<Link[], 'sub_links_open' | 'sub_links_open'>
+    sub_links?: Array<Omit<Link, 'sub_links_open' | 'sub_links_open'>>
     sub_links_open?: boolean
   }
 
