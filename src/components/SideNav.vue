@@ -25,6 +25,12 @@
   const LINKS = [
     {
       label: 'Utilisateurs', link: 'users', tag: "0"
+    },
+    {
+      label: 'FitArena', link: 'fitarena', tag: "0"
+    },
+    {
+      label: 'Collectivité', link: 'collectivite', tag: "0"
     }
   ]
 

@@ -2,6 +2,8 @@ import { createWebHistory, createRouter } from "vue-router";
 import Login from "./pages/login.vue";
 import Admin from "./pages/admin.vue"
 import User from "./pages/user.vue"
+import FitArena from "./pages/fitArena.vue"
+import Collectivite from "./pages/collectivite.vue"
 
 const routes = [
     {
@@ -18,6 +20,16 @@ const routes = [
         path: "/users",
         name: "Users",
         component: User,
+    },
+    {
+        path: "/fitarena",
+        name: "FitArena",
+        component: FitArena,
+    },
+    {
+        path: "/collectivite",
+        name: "Collectivité",
+        component: Collectivite,
     },
 ];
 
