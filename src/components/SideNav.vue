@@ -1,17 +1,17 @@
 <template>
-  <aside id="logo-sidebar" class="w-64 h-screen pt-2 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
-    <div class="h-full overflow-y-auto bg-white px-2">
-      <div v-for="(link, i) in links" class="flex flex-col items-center text-base font-normal text-gray-900">
+  <aside id="logo-sidebar" class="w-80 h-screen pt-2 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+    <div class="h-full overflow-y-auto bg-white px-1">
+      <div v-for="(link, i) in links" class="flex flex-col items-center text-base font-normal text-gray-900 ">
         <div class="flex items-center hover:bg-gray-100 rounded-lg px-1 py-2 w-full">
-          <svg @click="openSubLinks(i)" class="cursor-pointer" :class="link.sub_links_open ? 'rotate-180' : ''" v-if="link.sub_links" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m8.71 11.71l2.59 2.59c.39.39 1.02.39 1.41 0l2.59-2.59c.63-.63.18-1.71-.71-1.71H9.41c-.89 0-1.33 1.08-.7 1.71z"/></svg>
+          <svg @click="openSubLinks(i)" class="cursor-pointer" :class="link.sub_links_open ? '' : '-rotate-90'" v-if="link.sub_links" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m8.71 11.71l2.59 2.59c.39.39 1.02.39 1.41 0l2.59-2.59c.63-.63.18-1.71-.71-1.71H9.41c-.89 0-1.33 1.08-.7 1.71z"/></svg>
           <side-nav-item :icon="link.icon" :label="link.label" :link="link.link" :tag="link.tag"/>
         </div>
         <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.sub_links_open && link.sub_links.length" class="w-full flex flex-col bg-gray-200 rounded-lg">
-          <div class="flex w-full hover:bg-gray-100 rounded-lg pl-2 pr-3 py-2">
-            <svg @click="openSubSubLinks(i, sub_i)" class="cursor-pointer" :class="sub_link.sub_links_open ? 'rotate-180' : ''" v-if="sub_link.sub_links" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m8.71 11.71l2.59 2.59c.39.39 1.02.39 1.41 0l2.59-2.59c.63-.63.18-1.71-.71-1.71H9.41c-.89 0-1.33 1.08-.7 1.71z"/></svg>
+          <div class="flex w-full hover:bg-gray-100 rounded-lg pl-3 pr-3 py-2">
+            <svg @click="openSubSubLinks(i, sub_i)" class="cursor-pointer" :class="sub_link.sub_links_open ? '' : '-rotate-90'" v-if="sub_link.sub_links" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m8.71 11.71l2.59 2.59c.39.39 1.02.39 1.41 0l2.59-2.59c.63-.63.18-1.71-.71-1.71H9.41c-.89 0-1.33 1.08-.7 1.71z"/></svg>
             <side-nav-item :icon="sub_link.icon" :label="sub_link.label" :link="sub_link.link" :tag="sub_link.tag"/>
           </div>
-          <div v-for="sub_sub_link in sub_link.sub_links" v-if="sub_link.sub_links_open && sub_link.sub_links.length" class="w-full flex bg-gray-300 hover:bg-gray-100 rounded-lg items-center pl-5 pr-3 py-2">
+          <div v-for="sub_sub_link in sub_link.sub_links" v-if="sub_link.sub_links_open && sub_link.sub_links.length" class="w-full flex bg-gray-300 hover:bg-gray-100 rounded-lg items-center pl-12 pr-3 py-2">
             <side-nav-item :icon="sub_sub_link.icon" :label="sub_sub_link.label" :link="sub_sub_link.link" :tag="sub_sub_link.tag"/>
           </div>
         </div>
