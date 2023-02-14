@@ -27,8 +27,8 @@ const routes = [
         component: FitArena,
     },
     {
-        path: "/client",
-        name: "Client",
+        path: "/clients",
+        name: "Clients",
         component: Client,
     },
 ];
