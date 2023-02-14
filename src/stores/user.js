@@ -16,9 +16,10 @@ export const useUserStore = defineStore('user', () => {
 
   let _token_decoded = reactive({})
 
-  const iat = computed(() => _token_decoded.iat)
-  const exp = computed(() => _token_decoded.exp)
-  const token_decoded = computed(() => _token_decoded.roles)
+  const iat = computed(() => _token_decoded.iat ?? 0)
+  const exp = computed(() => _token_decoded.exp ?? 0)
+  const token_decoded = computed(() => _token_decoded.roles ?? [])
+  const username = computed(() => _token_decoded.username ?? '')
 
   async function login(login, pass) {
     const response = await fetch(import.meta.env.VITE_API_URL +'/auth', {
@@ -26,13 +27,11 @@ export const useUserStore = defineStore('user', () => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({"email":login ,"password": pass})
     })
-    if (response.status !== 200) {
+    if (response.status !== 200)
       throw response
-    } else {
-      const {token} = await response.json()
-      localStorage.setItem('token', token)
-      _token_decoded = parseJwt(token)
-    }
+    const {token} = await response.json()
+    localStorage.setItem('token', token)
+    _token_decoded = parseJwt(token)
   }
 
   // AT MOUNT
@@ -41,5 +40,5 @@ export const useUserStore = defineStore('user', () => {
     _token_decoded = parseJwt(token_in_storage)
   }
 
-  return { user, login, iat, token_decoded, exp }
+  return { user, login, iat, exp, username }
 })
