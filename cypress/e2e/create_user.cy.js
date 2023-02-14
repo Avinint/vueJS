@@ -8,7 +8,7 @@ describe('template spec', () => {
     cy.wait(1000);
     cy.get('.text-white').click();
     cy.get(':nth-child(1) > .rounded-lg > .flex > .flex-1').click();
-    cy.get('#t-add-user').click();
+    cy.get('#TaddUser').click();
     cy.get('#first-name-new').type('roro'+salt);
     cy.get('#last-name-new').type('toto'+salt);
     cy.get('#email-new').type('roro'+salt+'@toto.fr');

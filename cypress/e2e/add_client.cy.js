@@ -23,6 +23,16 @@ describe('template spec', () => {
     cy.get('#TcomNom').type('6');
     cy.get('#TcomPrenom').type('7');
     cy.get('#TcomMail').type('8');
-    cy.get('.text-white').click();
+    cy.get("[test='TconfirmModal']").click();
+    cy.get('#TsearchClientName').type('T'+salt);
+    cy.get("[test='TeditClient']").last().click()
+    cy.get('#TclientName').clear();
+    cy.get('#TclientName').type('T'+(salt+1));
+    cy.get('#TclientAdresse').clear().type('15 rue camille rochetaille');
+    cy.wait(2000)
+    cy.get('#TclientSelectAdresse').select(0)
+    cy.get("[test='TconfirmModal']").click();
+    cy.get('#TsearchClientName').clear().type('T'+(salt+1));
+    cy.get("[test='TdeleteClient']").first().click();
   })
 })
