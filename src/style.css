@@ -6,3 +6,9 @@
 html {
     font-family: 'Roboto', sans-serif;
 }
+
+@layer components {
+    h1 {
+        @apply text-red-500 text-3xl uppercase;
+    }
+}
