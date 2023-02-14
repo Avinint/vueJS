@@ -20,6 +20,7 @@ export const useUserStore = defineStore('user', () => {
   const exp = computed(() => _token_decoded.exp ?? 0)
   const token_decoded = computed(() => _token_decoded.roles ?? [])
   const username = computed(() => _token_decoded.username ?? '')
+  const connected = computed(() => Math.floor(Date.now() / 1000) > exp )
 
   async function login(login, pass) {
     const response = await fetch(import.meta.env.VITE_API_URL +'/auth', {
@@ -30,6 +31,7 @@ export const useUserStore = defineStore('user', () => {
     if (response.status !== 200)
       throw response
     const {token} = await response.json()
+    localStorage.removeItem('token')
     localStorage.setItem('token', token)
     _token_decoded = parseJwt(token)
   }
@@ -40,5 +42,5 @@ export const useUserStore = defineStore('user', () => {
     _token_decoded = parseJwt(token_in_storage)
   }
 
-  return { user, login, iat, exp, username }
+  return { user, login, iat, exp, username, connected }
 })
