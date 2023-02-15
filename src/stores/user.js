@@ -31,5 +31,9 @@ export const useUserStore = defineStore('user', () => {
     token_in_storage.value = token
   }
 
-  return { login, iat, exp, username, connected }
+  function logout() {
+    token_in_storage.value = ''
+  }
+
+  return { login, logout, iat, exp, username, connected }
 })

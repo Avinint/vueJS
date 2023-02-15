@@ -31,19 +31,22 @@
   import {useUserStore} from "../stores/user.js";
 
   const router = useRouter()
-
   const mail = ref('')
   const password = ref('')
 
   const user = useUserStore()
 
-  const login = () => {
+  const login = async () => {
     try {
-      user.login(mail.value, password.value)
-      router.push('/')
+
+      console.log(await user.login(mail.value, password.value))
+      await router.push('/')
     } catch (e) {
       alert(JSON.stringify(e))
     }
   }
+
+  if (user.connected)
+    router.push('/')
 
 </script>

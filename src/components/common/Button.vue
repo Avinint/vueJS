@@ -1,5 +1,5 @@
 <template>
-  <button :class="[type, icon_placement]" type="button" data-modal-toggle="add-user-modal" class="flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
+  <button :class="[type, icon_placement, borderless]" type="button" data-modal-toggle="add-user-modal" class="flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
     <div v-if="icon" v-html="icon"></div>
     <div v-if="props.label">
       {{props.label}}
@@ -9,12 +9,13 @@
 
 <script setup lang="ts">
 
-import {defineProps} from "vue";
+  import {defineProps} from "vue";
 
   interface Props {
-      label?: string
-      icon?: 'reload' | 'edit' | 'add' | 'export' | '',
-      type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | ''
+    label?: string
+    icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | '',
+    type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | '',
+    borderless?: boolean
   }
 
   const ICON = {
@@ -23,6 +24,7 @@ import {defineProps} from "vue";
     edit: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M5 19h1.4l8.625-8.625l-1.4-1.4L5 17.6ZM19.3 8.925l-4.25-4.2l1.4-1.4q.575-.575 1.413-.575q.837 0 1.412.575l1.4 1.4q.575.575.6 1.388q.025.812-.55 1.387ZM17.85 10.4L7.25 21H3v-4.25l10.6-10.6Zm-3.525-.725l-.7-.7l1.4 1.4Z"/></svg>',
     delete: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="m9.4 16.5l2.6-2.6l2.6 2.6l1.4-1.4l-2.6-2.6L16 9.9l-1.4-1.4l-2.6 2.6l-2.6-2.6L8 9.9l2.6 2.6L8 15.1ZM7 21q-.825 0-1.412-.587Q5 19.825 5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413Q17.825 21 17 21ZM17 6H7v13h10ZM7 6v13Z"/></svg>',
     export: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="m16.2 20.5l2.8-2.8V20h1v-4h-4v1h2.3l-2.8 2.8ZM5 21q-.825 0-1.413-.587Q3 19.825 3 19V5q0-.825.587-1.413Q4.175 3 5 3h14q.825 0 1.413.587Q21 4.175 21 5v6.7q-.475-.225-.975-.388q-.5-.162-1.025-.237V5H5v14h6.05q.075.55.238 1.05q.162.5.387.95Zm0-3v1V5v6.075V11v7Zm2-1h4.075q.075-.525.237-1.025q.163-.5.363-.975H7Zm0-4h6.1q.8-.75 1.787-1.25q.988-.5 2.113-.675V11H7Zm0-4h10V7H7Zm11 14q-2.075 0-3.537-1.462Q13 20.075 13 18q0-2.075 1.463-3.538Q15.925 13 18 13t3.538 1.462Q23 15.925 23 18q0 2.075-1.462 3.538Q20.075 23 18 23Z"/></svg>',
+    logout: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="transform -rotate-90"><path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2a9.985 9.985 0 0 1 8 4h-2.71a8 8 0 1 0 .001 12h2.71A9.985 9.985 0 0 1 12 22zm7-6v-3h-8v-2h8V8l5 4l-5 4z"/></svg>',
     '': ''
   }
 
@@ -31,7 +33,7 @@ import {defineProps} from "vue";
     danger: 'bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 text-white',
     warning: 'bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 text-white',
     success: 'bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 text-white',
-    secondary: ' focus:ring-blue-300 border',
+    secondary: ' focus:ring-blue-300 bg-white',
     '': 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white'
   }
 
@@ -39,11 +41,13 @@ import {defineProps} from "vue";
     label: '',
     icon: '',
     icon_placement: 'right',
-    type: ''
+    type: '',
+    borderless: false
   })
 
   const icon = ICON[props.icon]
   const type = TYPE[props.type]
+  const borderless = props.borderless ? '' : 'border'
   const icon_placement = props.icon_placement === 'left' ? 'flex-row-reverse' : ''
 
 </script>
