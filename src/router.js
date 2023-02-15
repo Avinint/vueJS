@@ -4,6 +4,13 @@ import Admin from "./pages/admin.vue"
 import User from "./pages/user.vue"
 import FitArena from "./pages/fitArena.vue"
 import Client from "./pages/client.vue"
+import FaParams from  "./pages/fitarena/FaParams.vue"
+import FaSpaces from  "./pages/fitarena/FaSpaces.vue"
+import FaWeb from  "./pages/fitarena/FaWeb.vue"
+import FaSubSpaces from  "./pages/fitarena/FaSubSpaces.vue"
+import FaActualities from "./pages/fitarena/FaActualities.vue"
+import FaZones from "./pages/fitarena/FaZones.vue"
+import FaActivitiesByZone from './pages/fitarena/FaActivitiesByZone.vue'
 import { useUserStore } from "./stores/user.js";
 
 const routes = [
@@ -16,21 +23,132 @@ const routes = [
         path: "/",
         name: "Admin",
         component: Admin,
+        meta: {
+            breadcrumbs: []
+        }
     },
     {
         path: "/users",
         name: "Users",
         component: User,
+        meta: {
+            breadcrumbs: [{
+                link: 'users',
+                label: 'Utilisaterus'
+            }]
+        }
     },
     {
-        path: "/fitarena",
+        path: "/fitarena/:id",
         name: "FitArena",
         component: FitArena,
+        meta: {
+            breadcrumbs: []
+        },
+        children: [
+            {
+                path: 'params',
+                component: FaParams,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'spaces',
+                component: FaSpaces,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'actualities',
+                component: FaActualities,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'web',
+                component: FaWeb,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'zones',
+                component: FaZones,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'sub_spaces',
+                component: FaSubSpaces,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'activities_by_zone',
+                component: FaActivitiesByZone,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+        ],
     },
     {
         path: "/clients",
         name: "Clients",
         component: Client,
+        meta: {
+            breadcrumbs: [{
+                link: 'clients',
+                label: 'Clients'
+            }]
+        }
     },
 ];
 
