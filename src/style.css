@@ -9,6 +9,6 @@ html {
 
 @layer components {
     h1 {
-        @apply text-red-500 text-3xl uppercase;
+        @apply text-red-600 text-2xl uppercase;
     }
 }

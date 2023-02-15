@@ -1,5 +1,6 @@
 describe('template spec', () => {
   it('passes', () => {
+    cy.viewport(1920, 1080)
     let salt = Date.now()
     cy.login('test@test.com', 'test');
     cy.get('#Tclients').click();

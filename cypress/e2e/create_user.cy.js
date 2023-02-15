@@ -1,13 +1,8 @@
 describe('template spec', () => {
   it('passes', () => {
     let salt = + Date.now()
-    cy.visit('http://localhost:5173')
-    cy.get('#email').type('test@test.com');
-    cy.get('#password').type('test');
-    cy.get('.text-white').click();
-    cy.wait(1000);
-    cy.get('.text-white').click();
-    cy.get(':nth-child(1) > .rounded-lg > .flex > .flex-1').click();
+    cy.login('test@test.com', 'test');
+    cy.get('#Tusers').click();
     cy.get('#TaddUser').click();
     cy.get('#first-name-new').type('roro'+salt);
     cy.get('#last-name-new').type('toto'+salt);
