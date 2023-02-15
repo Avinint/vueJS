@@ -60,5 +60,5 @@ export const deleteClient = async (id) => {
   })
   if (response.status !== 204)
     throw response
-  return response.json()
+  return {}
 }

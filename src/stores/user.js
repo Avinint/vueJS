@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import {computed, reactive, ref} from "vue";
+import { useStorage } from '@vueuse/core'
 
 const parseJwt = (token) => {
   try {
@@ -10,17 +11,13 @@ const parseJwt = (token) => {
 };
 
 export const useUserStore = defineStore('user', () => {
-  let user = reactive({
 
-  })
+  const token_in_storage = useStorage('token', '')
 
-  let _token_decoded = reactive({})
-
-  const iat = computed(() => _token_decoded.iat ?? 0)
-  const exp = computed(() => _token_decoded.exp ?? 0)
-  const token_decoded = computed(() => _token_decoded.roles ?? [])
-  const username = computed(() => _token_decoded.username ?? '')
-  const connected = computed(() => Math.floor(Date.now() / 1000) > exp )
+  const iat = computed(() => parseJwt(token_in_storage.value)?.iat ?? 0)
+  const exp = computed(() => parseJwt(token_in_storage.value)?.exp ?? 0)
+  const username = computed(() => parseJwt(token_in_storage.value)?.username ?? '')
+  const connected = computed(() => (Math.floor(Date.now() / 1000) < exp?.value) ?? false)
 
   async function login(login, pass) {
     const response = await fetch(import.meta.env.VITE_API_URL +'/auth', {
@@ -31,16 +28,8 @@ export const useUserStore = defineStore('user', () => {
     if (response.status !== 200)
       throw response
     const {token} = await response.json()
-    localStorage.removeItem('token')
-    localStorage.setItem('token', token)
-    _token_decoded = parseJwt(token)
+    token_in_storage.value = token
   }
 
-  // AT MOUNT
-  if (localStorage.getItem('token')) {
-    const token_in_storage = localStorage.getItem('token')
-    _token_decoded = parseJwt(token_in_storage)
-  }
-
-  return { user, login, iat, exp, username, connected }
+  return { login, iat, exp, username, connected }
 })

@@ -4,6 +4,7 @@ import Admin from "./pages/admin.vue"
 import User from "./pages/user.vue"
 import FitArena from "./pages/fitArena.vue"
 import Client from "./pages/client.vue"
+import { useUserStore } from "./stores/user.js";
 
 const routes = [
     {
@@ -39,9 +40,9 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from ) => {
-    if (!localStorage.getItem('token') && to.name !== 'Login') {
+    const user = useUserStore()
+    if (!user.connected && to.name !== 'Login')
         await router.push('/login')
-    }
 })
 
 export default router;
