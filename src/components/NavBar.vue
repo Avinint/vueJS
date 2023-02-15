@@ -4,7 +4,7 @@
       <div class="h-14 flex items-center">
         <div class="flex justify-between w-full px-4">
           <breadcrumbs :items="route.meta.breadcrumbs" />
-          <Button @click="logout" icon="logout" type="secondary" label="Deconnexion" class="text-red-600 hover:bg-red-100"/>
+          <Button @click="logout" test="Tlogout" icon="logout" type="secondary" label="Deconnexion" class="text-red-600 hover:bg-red-100"/>
         </div>
       </div>
     </nav>
