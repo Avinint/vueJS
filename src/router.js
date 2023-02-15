@@ -3,6 +3,7 @@ import Login from "./pages/login.vue";
 import Admin from "./pages/admin.vue"
 import User from "./pages/user.vue"
 import FitArena from "./pages/fitArena.vue"
+import FitArenas from "./pages/fitArenas.vue"
 import Client from "./pages/client.vue"
 import FaParams from  "./pages/fitarena/FaParams.vue"
 import FaSpaces from  "./pages/fitarena/FaSpaces.vue"
@@ -11,6 +12,7 @@ import FaSubSpaces from  "./pages/fitarena/FaSubSpaces.vue"
 import FaActualities from "./pages/fitarena/FaActualities.vue"
 import FaZones from "./pages/fitarena/FaZones.vue"
 import FaActivitiesByZone from './pages/fitarena/FaActivitiesByZone.vue'
+import FaActivities from './pages/fitarena/FaActivities.vue'
 import { useUserStore } from "./stores/user.js";
 
 const routes = [
@@ -35,6 +37,17 @@ const routes = [
             breadcrumbs: [{
                 link: 'users',
                 label: 'Utilisaterus'
+            }]
+        }
+    },
+    {
+        path: "/fitarena",
+        name: "FitArenas",
+        component: FitArenas,
+        meta: {
+            breadcrumbs: [{
+                link: '',
+                label: 'Fit Arena'
             }]
         }
     },
@@ -127,6 +140,19 @@ const routes = [
             {
                 path: 'activities_by_zone',
                 component: FaActivitiesByZone,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'activities',
+                component: FaActivities,
                 meta: {
                     breadcrumbs: [{
                         label:"Fit Arena",

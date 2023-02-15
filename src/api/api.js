@@ -62,3 +62,19 @@ export const deleteClient = async (id) => {
     throw response
   return {}
 }
+
+
+export const getGestionnaireCollectivites = async (page = 1, query = '') => {
+  console.log(localStorage.getItem('token'))
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/gestionnaire_collectivites?page=${page}${query}`, {
+    method:'get',
+    headers: {
+      ...defaultHeaders,
+      'Content-Type': 'application/ld+json',
+      'Authorization': 'Bearer '+ localStorage.getItem('token')
+    }
+  })
+  if (response.status !== 200)
+    throw response
+  return response.json()
+}

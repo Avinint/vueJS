@@ -1,13 +1,13 @@
 <template>
-  <aside test="Thome" class="h-screen transition-transform -translate-x-full bg-white border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+  <aside class="h-screen transition-transform -translate-x-full bg-white border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
     <div class="bg-red-600 h-14 flex items-center">
-      <router-link to="/" class="ml-2">
+      <router-link test="Thome" to="/" class="ml-2">
         <img src="../assets/logo.png" class="h-5" alt="logo">
       </router-link>
     </div>
     <div class="h-full overflow-y-auto bg-white">
       <div v-for="(link, i) in links" class="flex flex-col items-center text-base font-normal text-gray-900 ">
-        <div class="flex items-center rounded-lg px-1 py-2 w-full" :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 text-sm'">
+        <div class="flex items-center px-1 py-2 w-full" :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 text-sm'">
           <svg @click="openSubLinks(i)" class="cursor-pointer h-8 w-8" :class="link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
           <side-nav-item :icon="link.icon" :label="link.label" :link="link.link" :tag="link.tag" :id="'T'+link.link"/>
         </div>

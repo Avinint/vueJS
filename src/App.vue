@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <SideNav v-if="route.name !== 'Login'" class="w-1/4"></SideNav>
+    <SideNav v-if="route.name !== 'Login'" class="min-w-1/4"></SideNav>
     <div class="flex flex-col w-full">
       <NavBar v-if="route.name !== 'Login'"></NavBar>
       <div class="w-full pt-2 px-4 bg-gray-100 h-screen">
