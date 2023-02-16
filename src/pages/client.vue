@@ -124,7 +124,7 @@
   import Button from '../components/common/Button.vue'
   import Modal from '../components/common/Modal.vue'
   import Card from '../components/common/Card.vue'
-  import {deleteClient, getClients, postClient, updateClient} from '../api/api.js'
+  import {deleteClient, getClients, postClient, updateClient} from '../api/client.js'
   import {onMounted, ref} from "vue";
   import {getAdresses} from "../api/address.js";
   import {watchDebounced} from "@vueuse/core";
@@ -183,6 +183,7 @@
     community_managers.value = community_managers.value.filter((_, i) => i !== referent_index)
   }
   const addClient = () => {
+    name.value = ''
     readonly.value = false
     client_modal.value = true
   }
