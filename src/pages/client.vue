@@ -114,7 +114,7 @@
             <input :readonly="readonly" id="TcomMail" v-model="community_manager.email" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
           </div>
         </Card>
-        <Button v-if="!readonly" id="TaddComManager" label="Ajouter un compte supplementaire" icon="add" type="secondary" @click="community_managers.push({})"/>
+        <Button v-tooltips="'COUCOC'" v-if="!readonly" id="TaddComManager" label="Ajouter un compte supplementaire" icon="add" type="secondary" @click="community_managers.push({})"/>
       </Card>
     </Modal>
   </Card>
@@ -179,14 +179,20 @@
   const removeExploitReferent = (referent_index) => {
     exploit_referents.value = exploit_referents.value.filter((_, i) => i !== referent_index)
   }
+
   const removeCommunityManager = (referent_index) => {
     community_managers.value = community_managers.value.filter((_, i) => i !== referent_index)
   }
+
   const addClient = () => {
     name.value = ''
+    exploit_referents.value = []
+    community_managers.value = []
+    address_selected.value = {}
     readonly.value = false
     client_modal.value = true
   }
+
   const showClient = (i) => {
     const client = clients.value[i]
     mapApiToData(client)
