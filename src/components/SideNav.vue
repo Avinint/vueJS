@@ -28,15 +28,17 @@
 <script setup lang="ts">
 
   import SideNavItem from "./SideNavItem.vue";
-  import {reactive} from "vue";
-  import SideNavDivider from "./SideNavDivider.vue";
+  import {onMounted, reactive, Ref, ref} from "vue";
+  import {getFitArenas} from '../api/fit-arena'
+
+  const fas = ref([])
 
   interface Link {
     label: string
     link: string
     icon?: string
     tag?: string
-    sub_links?: Link[]
+    sub_links?: Link[] | Ref
     sub_links_open?: boolean
     divider?: boolean
   }
@@ -56,51 +58,7 @@
       label: 'FitArena',
       link: '/fitarena',
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M4 21V9l8-6l8 6v12h-2V10l-6-4.5L6 10v11Zm5-2h6v-2H9Zm0-4h6v-2H9Zm-2 6V11h10v10Z"/></svg>',
-      sub_links: [
-        {
-          label: 'Dijon',
-          link: '/fitarena/1',
-          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M11.99 2c-5.52 0-10 4.48-10 10s4.48 10 10 10s10-4.48 10-10s-4.48-10-10-10zm3.61 6.34c1.07 0 1.93.86 1.93 1.93c0 1.07-.86 1.93-1.93 1.93c-1.07 0-1.93-.86-1.93-1.93c-.01-1.07.86-1.93 1.93-1.93zm-6-1.58c1.3 0 2.36 1.06 2.36 2.36c0 1.3-1.06 2.36-2.36 2.36s-2.36-1.06-2.36-2.36c0-1.31 1.05-2.36 2.36-2.36zm0 9.13v3.75c-2.4-.75-4.3-2.6-5.14-4.96c1.05-1.12 3.67-1.69 5.14-1.69c.53 0 1.2.08 1.9.22c-1.64.87-1.9 2.02-1.9 2.68zM11.99 20c-.27 0-.53-.01-.79-.04v-4.07c0-1.42 2.94-2.13 4.4-2.13c1.07 0 2.92.39 3.84 1.15c-1.17 2.97-4.06 5.09-7.45 5.09z"/></svg>',
-          sub_links: [
-            {
-              label: 'Activités',
-              link: '/fitarena/1/activities'
-            },
-            {
-              label: 'Equipements motorisés',
-              link: '/fitarena/1/params'
-            },
-            {
-              label: 'Equipements numériques',
-              link: '/fitarena/1/params'
-            },
-            {
-              label: 'Espaces',
-              link: '/fitarena/1/spaces'
-            },
-            {
-              label: 'Sous-espaces',
-              link: '/fitarena/1/sub_spaces'
-            },
-            {
-              label: 'Zones',
-              link: '/fitarena/1/zones'
-            },
-            {
-              label: 'Activités par zone',
-              link: '/fitarena/1/activities_by_zone'
-            },
-            {
-              label: 'Paramètres de la Fit Arena',
-              link: '/fitarena/1/params'
-            },
-            {
-              label: 'Affichage web',
-              link: '/fitarena/1/web'
-            }
-          ]
-        },
-      ],
+      sub_links: fas
     },
     {
       label: 'Utilisateurs',
@@ -154,5 +112,54 @@
     let sub_links = links[i].sub_links
     sub_links[sub_i].sub_links_open = !sub_links[sub_i].sub_links_open
   }
+
+  onMounted(async () => {
+    const fit_arenas = await getFitArenas()
+    fas.value = fit_arenas.map((fa) => {
+      return {
+        label: fa.libelle,
+        link: '/fitarena/'+fa.id,
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M11.99 2c-5.52 0-10 4.48-10 10s4.48 10 10 10s10-4.48 10-10s-4.48-10-10-10zm3.61 6.34c1.07 0 1.93.86 1.93 1.93c0 1.07-.86 1.93-1.93 1.93c-1.07 0-1.93-.86-1.93-1.93c-.01-1.07.86-1.93 1.93-1.93zm-6-1.58c1.3 0 2.36 1.06 2.36 2.36c0 1.3-1.06 2.36-2.36 2.36s-2.36-1.06-2.36-2.36c0-1.31 1.05-2.36 2.36-2.36zm0 9.13v3.75c-2.4-.75-4.3-2.6-5.14-4.96c1.05-1.12 3.67-1.69 5.14-1.69c.53 0 1.2.08 1.9.22c-1.64.87-1.9 2.02-1.9 2.68zM11.99 20c-.27 0-.53-.01-.79-.04v-4.07c0-1.42 2.94-2.13 4.4-2.13c1.07 0 2.92.39 3.84 1.15c-1.17 2.97-4.06 5.09-7.45 5.09z"/></svg>',
+        sub_links: [
+          {
+            label: 'Activités',
+            link: `/fitarena/${fa.id}/activities`
+          },
+          {
+            label: 'Equipements motorisés',
+            link: `/fitarena/${fa.id}/params`
+          },
+          {
+            label: 'Equipements numériques',
+            link: `/fitarena/${fa.id}/activities`
+          },
+          {
+            label: 'Espaces',
+            link: `/fitarena/${fa.id}/spaces`
+          },
+          {
+            label: 'Sous-espaces',
+            link: `/fitarena/${fa.id}/sub_spaces`
+          },
+          {
+            label: 'Zones',
+            link: `/fitarena/${fa.id}/zones`
+          },
+          {
+            label: 'Activités par zone',
+            link: `/fitarena/${fa.id}/activities_by_zone`
+          },
+          {
+            label: 'Paramètres de la Fit Arena',
+            link: `/fitarena/${fa.id}/params`
+          },
+          {
+            label: 'Affichage web',
+            link: `/fitarena/${fa.id}/web`
+          }
+        ]
+      }
+    })
+  })
 
 </script>
