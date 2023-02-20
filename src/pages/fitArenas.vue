@@ -18,14 +18,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="bg-white" v-for="(client, i) in fas">
+        <tr class="bg-white" v-for="(fit_arena, i) in fit_arenas">
           <td class="flex justify-center items-center p-3">
-            <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeFa(i)"/>
+            <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeFa(fit_arena.id)"/>
             <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editFa(i)"/>
           </td>
-          <td class="px-6 py-4">{{ client.nom }}</td>
-          <td class="px-6 py-4">{{ client.adresse.codePostal }}</td>
-          <td class="px-6 py-4">{{ client.adresse.ville }}</td>
+          <td class="px-6 py-4">{{ fit_arena.libelle }}</td>
+          <td class="px-6 py-4">{{ fit_arena.adresse.codePostal }}</td>
+          <td class="px-6 py-4">{{ fit_arena.adresse.ville }}</td>
           <td class="px-6 py-4">
             <Button label="Détails" type="secondary" @click="showFa(i)"/>
           </td>
@@ -35,7 +35,7 @@
     </div>
     <Button label="Ajouter une Fit Arena" icon="add" type="secondary" @click="addFa" id="TaddFitArena"/>
   </Card>
-  <Modal title="Ajout d'une Fit Arena" v-if="fa_modal" @cancel="fa_modal = false">
+  <Modal title="Ajout d'une Fit Arena" v-if="fa_modal" @cancel="fa_modal = false" @confirm="saveFA">
 
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
@@ -98,15 +98,19 @@
   import {getAdresses} from "../api/address.js";
   import {onMounted, ref} from "vue";
   import {getClients} from "../api/client.js";
+  import {deleteFitArenas, getFitArenas, postFitArenas} from "../api/fit-arena.js";
 
   const fa_modal = ref(false)
   const readonly = ref(false)
 
   const fas = ref([])
-
   const clients = ref([])
 
+  const fit_arenas = ref([])
+
   const client_selected = ref({})
+
+  const name = ref("")
 
   const addresses = ref([])
   const address = ref("")
@@ -114,6 +118,34 @@
 
   const addFa = () => {
     fa_modal.value = true
+  }
+
+  const removeFa = async (id) => {
+    await deleteFitArenas(id)
+    fit_arenas.value = await getFitArenas()
+  }
+
+  const saveFA = async () => {
+    const fa = {
+      code: "test",
+      ordre: 0,
+      libelle: name.value,
+      actif: true,
+      adresse: {
+        adresse: address_selected.value.label,
+        codePostal: address_selected.value.postcode,
+        ville: address_selected.value.city,
+        pays: 'france',
+        codeInsee: ""+address_selected.value.citycode,
+        latitude: ""+address_selected.value.latitude,
+        longitude: ""+address_selected.value.longitude,
+        numeroDepartement: ""+address_selected.value.context.split(',')[0],
+        nomDepartement: ""+address_selected.value.context.split(',')[1]
+      },
+    }
+    const {data} = await postFitArenas(fa)
+    fa_modal.value = false
+    fit_arenas.value = await getFitArenas()
   }
 
   watchDebounced(
@@ -127,9 +159,8 @@
   )
 
   onMounted(async () => {
+    fit_arenas.value = await getFitArenas()
     clients.value = await getClients()
   })
-
-
 
 </script>
