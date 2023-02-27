@@ -1,11 +1,6 @@
 <template>
   <Card class="space-y-3">
     <h1>Clients</h1>
-    <div class="items-center mb-3">
-      <div class="relative mt-1 lg:w-64 xl:w-96 mb-5">
-        <input id="TsearchClientName" v-model="search_name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Recherche par nom">
-      </div>
-    </div>
     <div class="relative overflow-x-auto">
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -33,8 +28,8 @@
         </tbody>
       </table>
     </div>
-    <Button label="Ajouter un client" icon="add" type="secondary" @click="addClient" id="TaddClient"/>
-    <Modal v-if="client_modal" :title="readonly ? 'Edition d\'un client' : 'Ajout d\'un client'"  @cancel="client_modal = false" @confirm="saveClient">
+    <Button  label="Ajouter un client" icon="add"  icon_placement="right" type="secondary" @click="addClient" id="TaddClient"/>
+    <Modal v-if="client_modal" :title="readonly ? 'Consultation d\'un client' : 'Ajouter ou modifier un client'"  @cancel="client_modal = false" @confirm="saveClient">
       <Card class="w-full">
         <span>Contact administratif</span>
         <div class="space-y-2">
@@ -212,6 +207,7 @@
       latitude: client.adresse.latitude,
       longitude: client.adresse.longitude
     }
+    console.log(address_selected)
     name.value = client.nom
     id_selected.value = client.id
   }

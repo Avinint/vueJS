@@ -1,11 +1,7 @@
 <template>
   <Card class="space-y-3">
     <h1>Fit Arena</h1>
-    <div class="items-center mb-3">
-      <div class="relative mt-1 lg:w-64 xl:w-96 mb-5">
-        <input id="TsearchClientName" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Recherche par nom">
-      </div>
-    </div>
+
     <div class="relative overflow-x-auto">
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -20,7 +16,7 @@
         <tbody>
         <tr class="bg-white" v-for="(fit_arena, i) in fit_arenas">
           <td class="flex justify-center items-center p-3">
-            <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeFa(fit_arena.id)"/>
+            <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeFa(i)"/>
             <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editFa(i)"/>
           </td>
           <td class="px-6 py-4">{{ fit_arena.libelle }}</td>
@@ -35,12 +31,13 @@
     </div>
     <Button label="Ajouter une Fit Arena" icon="add" type="secondary" @click="addFa" id="TaddFitArena"/>
   </Card>
-  <Modal title="Ajout d'une Fit Arena" v-if="fa_modal" @cancel="fa_modal = false" @confirm="saveFA">
+  <Modal v-if="fa_modal" :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une fitArena'" @cancel="fa_modal = false" @confirm="saveFA">
 
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
       <select v-if="clients.length" v-model="client_selected" id="TfaSelectCollectivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        <option v-for="client in clients" :value="client">{{client.nom}}</option>
+        <option selected value="toto">toto</option>
+        <option v-for="client in clients" :value="client.id">{{client.nom}}</option>
       </select>
     </div>
     <div class="flex items-center">
@@ -57,17 +54,17 @@
       </div>
     </div>
     <div>
-      <select v-if="address.length" @change="addressSelect" v-model="address_selected" id="TfaSelectAdresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      <select v-if="address.length" @change="addressSelect" v-model="address_selected" id="TclientSelectAdresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
         <option v-for="address in addresses" :value="address">{{address.label}}</option>
       </select>
     </div>
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Code postal</label>
-      <input :readonly="readonly" id="TfaPostalCode" v-model="address_selected.postcode" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+      <input :readonly="readonly" id="TadressePostcode" v-model="address_selected.postcode" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
     </div>
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Ville</label>
-      <input :readonly="readonly" id="TfaCity" v-model="address_selected.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+      <input :readonly="readonly" v-model="address_selected.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
     </div>
     <div class="flex items-center">
       <div class="flex justify-between items-center pr-3 w-1/2">
@@ -85,7 +82,7 @@
     </div>
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Commentaire</label>
-      <input :readonly="readonly" v-model="address_selected.longitude" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+      <input :readonly="readonly" v-model="commentaire" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
     </div>
   </Modal>
 </template>
@@ -97,7 +94,7 @@
   import {watchDebounced} from "@vueuse/core";
   import {getAdresses} from "../api/address.js";
   import {onMounted, ref} from "vue";
-  import {getClients} from "../api/client.js";
+  import {deleteClient, getClients} from "../api/client.js";
   import {deleteFitArenas, getFitArenas, postFitArenas} from "../api/fit-arena.js";
 
   const fa_modal = ref(false)
@@ -111,6 +108,7 @@
   const client_selected = ref({})
 
   const name = ref("")
+  const commentaire = ref("")
 
   const addresses = ref([])
   const address = ref("")
@@ -120,15 +118,50 @@
     fa_modal.value = true
   }
 
-  const removeFa = async (id) => {
-    await deleteFitArenas(id)
+  const removeFa = async (i) => {
+    const fitArena = fit_arenas.value[i]
+    await deleteFitArenas(fitArena.id)
     fit_arenas.value = await getFitArenas()
+  }
+
+  const editFa = (i) => {
+    const fitArena = fit_arenas.value[i]
+    mapApiToData(fitArena)
+    fa_modal.value = true
+    readonly.value = false
+  }
+
+  const showFa = async (i) => {
+    const fitArena = fit_arenas.value[i]
+    mapApiToData(fitArena)
+    fa_modal.value = true
+    readonly.value = true
+  }
+
+  const mapApiToData = (fitArena) => {
+    name.value = fitArena.libelle
+    actif: fitArena.actif
+    address_selected.value = {
+      address: fitArena.adresse.adresse,
+      postcode: fitArena.adresse.codePostal,
+      pays: 'france',
+      city: fitArena.adresse.ville,
+      citycode: fitArena.adresse.codeInsee,
+      latitude: fitArena.adresse.latitude,
+      longitude: fitArena.adresse.longitude
+    }
+    address.value = address_selected.value.address
+    console.error(fitArena.client.id)
+    client_selected.value = fitArena.client.id
+    commentaire: fitArena.commentaire
   }
 
   const saveFA = async () => {
     const fa = {
+      client: 'api/clients/' + client_selected.value.id,
       code: "test",
       ordre: 0,
+      commentaire: commentaire,
       libelle: name.value,
       actif: true,
       adresse: {
