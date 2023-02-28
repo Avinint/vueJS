@@ -128,7 +128,7 @@ const saveEspace = async () => {
     fitArena: '/api/fit_arenas/' + props.id,
     ordre: subEspace.value.ordre,
     libelle: subEspace.value.libelle,
-    actif: subEspace.value.actif,
+    actif: subEspace.value.actif == true ? subEspace.value.actif : false ,
     idZoneParent: espace_selected.value
   }
   if (id_selected.value) {

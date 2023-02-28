@@ -119,7 +119,7 @@ const saveEspace = async () => {
     fitArena: '/api/fit_arenas/' + props.id,
     ordre: espace.value.ordre,
     libelle: espace.value.libelle,
-    actif: espace.value.actif
+    actif: espace.value.actif == true ? espace.value.actif : false ,
   }
   if (id_selected.value) {
     const {data} = await updateZones(espTemp, id_selected.value)

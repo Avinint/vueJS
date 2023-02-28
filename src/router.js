@@ -13,6 +13,10 @@ import FaActualities from "./pages/fitarena/FaActualities.vue"
 import FaZones from "./pages/fitarena/FaZones.vue"
 import FaActivitiesByZone from './pages/fitarena/FaActivitiesByZone.vue'
 import FaActivities from './pages/fitarena/FaActivities.vue'
+import FaNumericEquipements from './pages/fitarena/FaNumericEquipements.vue'
+import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
+
+
 import { useUserStore } from "./stores/user.js";
 
 const routes = [
@@ -73,6 +77,7 @@ const routes = [
                     }]
                 }
             },
+
             {
                 path: 'spaces',
                 component: FaSpaces,
@@ -154,6 +159,32 @@ const routes = [
             {
                 path: 'activities',
                 component: FaActivities,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'equipements-numeriques',
+                component: FaNumericEquipements,
+                meta: {
+                    breadcrumbs: [{
+                        label:"Fit Arena",
+                        link: 'fitarena',
+                    },{
+                        label:"Fit Arena - Dijon",
+                        link: 'fitarena/',
+                    }]
+                }
+            },
+            {
+                path: 'equipements-motorises',
+                component: FaMotorEquipements,
                 meta: {
                     breadcrumbs: [{
                         label:"Fit Arena",

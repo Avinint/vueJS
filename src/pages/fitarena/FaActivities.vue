@@ -53,20 +53,28 @@
       <input class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="small_size" type="file">
     </div>
     <div class="flex items-center">
-      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation de groupe</span>
+      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation individuelle</span>
       <label  class="relative inline-flex items-center cursor-pointer">
         <input v-model="activite.reservationDeGroupe" type="checkbox" value="" class="sr-only peer">
         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
       </label>
-      <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation individuelle</span>
+      <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation de groupe</span>
     </div>
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Description</label>
-      <textarea :readonly="readonly" v-model="activite.description" id="TActiviteDescription" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Description de mon activite" required></textarea>
+      <textarea :readonly="readonly" v-model="activite.description" id="TActiviteDescription" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required></textarea>
     </div>
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Ordre</label>
-      <input :readonly="readonly" v-model="activite.ordre" id="TActiviteOrdre" type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Description de mon activite" required>
+      <input :readonly="readonly" v-model="activite.ordre" id="TActiviteOrdre" type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
+    </div>
+    <div class="flex items-center">
+      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" value="true" class="sr-only peer" v-model="activite.actif" >
+        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+      </label>
     </div>
   </Modal>
 </template>
@@ -78,7 +86,7 @@ import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
 import {onMounted, ref} from "vue";
 import {getTypeActivites} from "../../api/typeActivite.js";
-import {deleteActivites, getActivites, postActivites, updateActivites} from "../../api/activite.js";
+import {deleteActivites, getActivites, postActivites, updateActivites, postActiviteWithIcone} from "../../api/activite.js";
 import {useRouter} from "vue-router";
 import {getClients, postClient, updateClient} from "../../api/client";
 
@@ -133,16 +141,20 @@ const saveActivite = async () => {
 
     typeActivite: '/api/type_activites/' + activite_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
+    //typeActivite: activite_selected.value,
+    //fitArena: props.id,
     ordre: activite.value.ordre,
     libelle: activite.value.libelle,
     description: activite.value.description,
     actif: activite.value.actif,
-    icone: activite.value.icone
+    icone: activite.value.icone,
+    reservationDeGroupe: activite.value.reservationDeGroupe == true ? activite.value.reservationDeGroupe : false
   }
   if (id_selected.value) {
     const {data} = await updateActivites(actTemp, id_selected.value)
   } else {
     const {data} = await postActivites(actTemp)
+    //const {data} = await postActiviteWithIcone(actTemp)
   }
 
   activite_modal.value = false

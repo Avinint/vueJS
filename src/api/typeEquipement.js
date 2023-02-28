@@ -1,7 +1,8 @@
 import {defaultHeaders} from "./api.js";
 
-export const getActivites = async (fitArenaId, page = 1, query = '') => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/fit_arena/${fitArenaId}/activites?page=${page}${query}`, {
+export const getTypeEquipements = async (page = 1, query = '') => {
+    console.log(localStorage.getItem('token'))
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -14,39 +15,23 @@ export const getActivites = async (fitArenaId, page = 1, query = '') => {
     return response.json()
 }
 
-export const postActivites = async (fa) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/activites`, {
+export const postTypeEquipements = async (typeEquipement) => {
+    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/type_equipements`, {
         method:'post',
         headers: {
             ...defaultHeaders,
             'Content-Type': 'application/ld+json',
             'Authorization': 'Bearer '+ localStorage.getItem('token')
         },
-        body: JSON.stringify(fa)
+        body: JSON.stringify(typeActivite)
     })
     if (response.status !== 201)
         throw response
     return response.json()
 }
 
-
-export const postActiviteWithIcone = async (fa) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/activite/creer`, {
-        method:'post',
-        headers: {
-            ...defaultHeaders,
-            'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer '+ localStorage.getItem('token')
-        },
-        body: JSON.stringify(fa)
-    })
-    if (response.status !== 201)
-        throw response
-    return response.json()
-}
-
-export const updateActivites = async (activite, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
+export const updateTypeEquipements = async (typeEquipement, id) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -54,15 +39,15 @@ export const updateActivites = async (activite, id) => {
             'Content-Type': 'application/ld+json',
             'Authorization': 'Bearer '+ localStorage.getItem('token')
         },
-        body: JSON.stringify(activite)
+        body: JSON.stringify(typeEquipement)
     })
     if (response.status !== 200)
         throw response
     return response.json()
 }
 
-export const deleteActivites = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
+export const deleteTypeEquipements = async (id) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements/${id}`, {
         method:'delete',
         headers: {
             ...defaultHeaders,
@@ -74,5 +59,3 @@ export const deleteActivites = async (id) => {
         throw response
     return {}
 }
-
-
