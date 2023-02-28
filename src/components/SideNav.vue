@@ -123,11 +123,11 @@
           },
           {
             label: 'Equipements motorisés',
-            link: `/fitarena/${fa.id}/params`
+            link: `/fitarena/${fa.id}/equipements-motorises`
           },
           {
             label: 'Equipements numériques',
-            link: `/fitarena/${fa.id}/activities`
+            link: `/fitarena/${fa.id}/equipements-numeriques`
           },
           {
             label: 'Espaces',
