@@ -31,12 +31,11 @@
     </div>
     <Button label="Ajouter une Fit Arena" icon="add" type="secondary" @click="addFa" id="TaddFitArena"/>
   </Card>
-  <Modal v-if="fa_modal" :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une fitArena'" @cancel="fa_modal = false" @confirm="saveFA">
+  <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une fitArena'" @cancel="fa_modal = false" @confirm="saveFA">
 
     <div class="flex items-center">
       <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
       <select v-if="clients.length" v-model="client_selected" id="TfaSelectCollectivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        <option selected value="toto">toto</option>
         <option v-for="client in clients" :value="client.id">{{client.nom}}</option>
       </select>
     </div>
@@ -95,7 +94,8 @@
   import {getAdresses} from "../api/address.js";
   import {onMounted, ref} from "vue";
   import {deleteClient, getClients} from "../api/client.js";
-  import {deleteFitArenas, getFitArenas, postFitArenas} from "../api/fit-arena.js";
+  import {deleteFitArenas, getFitArenas, postFitArenas, updateFitarenas} from "../api/fit-arena.js";
+  import {postActivites, updateActivites} from "../api/activite";
 
   const fa_modal = ref(false)
   const readonly = ref(false)
@@ -106,7 +106,7 @@
   const fit_arenas = ref([])
 
   const client_selected = ref({})
-
+  const id_selected = ref(0)
   const name = ref("")
   const commentaire = ref("")
 
@@ -151,14 +151,14 @@
       longitude: fitArena.adresse.longitude
     }
     address.value = address_selected.value.address
-    console.error(fitArena.client.id)
     client_selected.value = fitArena.client.id
     commentaire: fitArena.commentaire
+    id_selected.value = fitArena.id
   }
 
   const saveFA = async () => {
     const fa = {
-      client: 'api/clients/' + client_selected.value.id,
+      client: 'api/clients/' + client_selected.value,
       code: "test",
       ordre: 0,
       commentaire: commentaire,
@@ -176,7 +176,11 @@
         nomDepartement: ""+address_selected.value.context.split(',')[1]
       },
     }
-    const {data} = await postFitArenas(fa)
+    if (id_selected.value) {
+      const {data} = await updateFitarenas(fa, id_selected.value)
+    } else {
+      const {data} = await postFitArenas(fa)
+    }
     fa_modal.value = false
     fit_arenas.value = await getFitArenas()
   }

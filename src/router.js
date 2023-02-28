@@ -53,6 +53,7 @@ const routes = [
     },
     {
         path: "/fitarena/:id",
+        props: true,
         name: "FitArena",
         component: FitArena,
         meta: {

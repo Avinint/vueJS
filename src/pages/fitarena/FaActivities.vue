@@ -1,9 +1,164 @@
 <template>
-  <Card>
-    <h1>Activités</h1>
+  <Card class="space-y-3">
+    <h1>Activités pratiquables dans la fit arena</h1>
+
+    <div class="relative overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3"></th>
+          <th scope="col" class="px-6 py-3">Actif</th>
+          <th scope="col" class="px-6 py-3">Libellé</th>
+          <th scope="col" class="px-6 py-3">Ordre</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="bg-white" v-for="(act, i) in activites">
+          <td class="flex justify-center items-center p-3">
+            <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeActivite(i)"/>
+            <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editActivite(i)"/>
+          </td>
+          <td class="px-6 py-4">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" value="true" class="sr-only peer" v-if="act.actif" checked >
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+            </label>
+          </td>
+          <td class="px-6 py-4">{{ act.libelle }}</td>
+
+          <td class="px-6 py-4">{{ act.ordre }}</td>
+          <td class="px-6 py-4">
+            <Button label="Détails" type="secondary" @click="showActivite(i)"/>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <Button label="Ajouter une Activite" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
   </Card>
+  <Modal v-if="activite_modal" :type="readonly ? 'visualiser' : 'classic' " :title="readonly ? 'Information d\'une activité' : 'Ajouter ou modifier une activité'" @cancel="activite_modal = false" @confirm="saveActivite">
+    <div class="flex items-center">
+      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Type d'activité</label>
+      <select v-if="typeActivites.length" v-model="activite_selected" id="TTypeActivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option v-for="typeActivite in typeActivites" :value="typeActivite.id">{{typeActivite.libelle}}</option>
+      </select>
+    </div>
+    <div class="flex items-center">
+      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Nom</label>
+      <input :readonly="readonly" v-model="activite.libelle" id="TActiviteLibelle" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Ajouter un nom" required>
+    </div>
+    <div class="flex items-center">
+      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white pr-3" for="small_size">Icône</label>
+      <input class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="small_size" type="file">
+    </div>
+    <div class="flex items-center">
+      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation de groupe</span>
+      <label  class="relative inline-flex items-center cursor-pointer">
+        <input v-model="activite.reservationDeGroupe" type="checkbox" value="" class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+      </label>
+      <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation individuelle</span>
+    </div>
+    <div class="flex items-center">
+      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Description</label>
+      <textarea :readonly="readonly" v-model="activite.description" id="TActiviteDescription" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Description de mon activite" required></textarea>
+    </div>
+    <div class="flex items-center">
+      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Ordre</label>
+      <input :readonly="readonly" v-model="activite.ordre" id="TActiviteOrdre" type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Description de mon activite" required>
+    </div>
+  </Modal>
 </template>
 
 <script setup>
-  import Card from "../../components/common/Card.vue"
+
+import Card from '../../components/common/Card.vue'
+import Modal from '../../components/common/Modal.vue'
+import Button from '../../components/common/Button.vue'
+import {onMounted, ref} from "vue";
+import {getTypeActivites} from "../../api/typeActivite.js";
+import {deleteActivites, getActivites, postActivites, updateActivites} from "../../api/activite.js";
+import {useRouter} from "vue-router";
+import {getClients, postClient, updateClient} from "../../api/client";
+
+const props = defineProps(['id'])
+
+const activite_modal = ref(false)
+const readonly = ref(false)
+
+
+const id_selected = ref(0)
+const activites = ref([])
+const typeActivites = ref([])
+const typeActivite = ref({})
+const activite = ref({})
+const activite_selected = ref({})
+const addActivite = () => {
+  activite_modal.value = true
+}
+
+const removeActivite = async (i) => {
+  const activiteTemp = activites.value[i]
+  await deleteActivites(activiteTemp.id)
+  cancel()
+  activites.value = await getActivites(props.id)
+  typeActivites.value = await getTypeActivites()
+  activite_modal.value = false
+}
+
+const editActivite = (i) => {
+  const activite = activites.value[i]
+  mapApiToData(activite)
+  activite_modal.value = true
+  readonly.value = false
+}
+
+const showActivite = async (i) => {
+  const activiteTemp = activites.value[i]
+  mapApiToData(activiteTemp)
+  activite_modal.value = true
+  readonly.value = true
+}
+
+const mapApiToData = (activiteTemp) => {
+  activite.value = activiteTemp
+  id_selected.value = activiteTemp.id
+  activite_selected.value = activiteTemp.typeActivite.id
+}
+
+const saveActivite = async () => {
+  console.error(activite_selected.value)
+  const actTemp = {
+
+    typeActivite: '/api/type_activites/' + activite_selected.value,
+    fitArena: '/api/fit_arenas/' + props.id,
+    ordre: activite.value.ordre,
+    libelle: activite.value.libelle,
+    description: activite.value.description,
+    actif: activite.value.actif,
+    icone: activite.value.icone
+  }
+  if (id_selected.value) {
+    const {data} = await updateActivites(actTemp, id_selected.value)
+  } else {
+    const {data} = await postActivites(actTemp)
+  }
+
+  activite_modal.value = false
+  cancel()
+  activites.value = await getActivites(props.id)
+  typeActivites.value = await getTypeActivites()
+}
+onMounted(async () => {
+  activites.value = await getActivites(props.id)
+  typeActivites.value = await getTypeActivites()
+})
+
+const cancel = () => {
+  activite.value = {}
+
+}
+
 </script>
+

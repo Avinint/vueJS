@@ -18,6 +18,10 @@
           <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>
         </div>
 
+        <div v-if="props.type === 'visualiser'" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+          <Button class="ml-auto mr-0" test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>
+        </div>
+
         <div v-if="props.type === 'alert'" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer" type="danger"/>
           <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>

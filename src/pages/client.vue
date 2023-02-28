@@ -29,7 +29,7 @@
       </table>
     </div>
     <Button  label="Ajouter un client" icon="add"  icon_placement="right" type="secondary" @click="addClient" id="TaddClient"/>
-    <Modal v-if="client_modal" :title="readonly ? 'Consultation d\'un client' : 'Ajouter ou modifier un client'"  @cancel="client_modal = false" @confirm="saveClient">
+    <Modal v-if="client_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Consultation d\'un client' : 'Ajouter ou modifier un client'"  @cancel="client_modal = false" @confirm="saveClient">
       <Card class="w-full">
         <span>Contact administratif</span>
         <div class="space-y-2">
@@ -207,9 +207,9 @@
       latitude: client.adresse.latitude,
       longitude: client.adresse.longitude
     }
-    console.log(address_selected)
     name.value = client.nom
     id_selected.value = client.id
+    address.value = address_selected.value.address
   }
 
   const removeClient = async (i) => {
