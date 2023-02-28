@@ -1,8 +1,8 @@
 <template>
   <Card>
-    <h1>équipements numériques de la fit arena</h1>
+    <h1>équipements motorisés de la fit arena</h1>
     <div v-for="typeEquip of typeEquipements">
-      <h2 className="pt-10 pb-10">{{ ty peEquip.libelle }}</h2>
+      <h2 className="pt-10 pb-10">{{ typeEquip.libelle }}</h2>
       <div className="relative overflow-x-auto">
         <table v-if="typeEquip.equipements.length"
                className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -39,7 +39,7 @@
       </div>
     </div>
     <Button label="Ajouter un équipement numerique" icon="add" type="secondary" @click="addEquipement"
-            id="TaddEquipementNumerique"/>
+            id="TaddEquipementMotor"/>
   </Card>
 
 </template>
@@ -121,8 +121,8 @@ const saveEquipement = async () => {
 
 }
 onMounted(async () => {
-  equipements.value = await getEquipements(props.id, 1, '&typeEquipement.categoryTypeEquipement.code=numerique')
-  typeEquipements.value = await getTypeEquipements(1, '&categoryTypeEquipement.code=numerique')
+  equipements.value = await getEquipements(props.id, 1, '&typeEquipement.categoryTypeEquipement.code=motorise')
+  typeEquipements.value = await getTypeEquipements(1, '&categoryTypeEquipement.code=motorise')
 })
 
 const cancel = () => {
