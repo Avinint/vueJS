@@ -11,4 +11,7 @@ html {
     h1 {
         @apply text-red-600 text-2xl uppercase;
     }
+    h2 {
+        @apply text-gray-900 text-xl;
+    }
 }

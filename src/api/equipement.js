@@ -14,6 +14,20 @@ export const getEquipements = async (fitArenaId, page = 1, query = '') => {
     return response.json()
 }
 
+export const getEquipement = async (id = 1) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/equipements/${id}`, {
+        method:'get',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type': 'application/ld+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        }
+    })
+    if (response.status !== 200)
+        throw response
+    return response.json()
+}
+
 export const postEquipements = async (equipement) => {
     const response = await fetch( `${import.meta.env.VITE_API_URL}/api/equipements`, {
         method:'post',
