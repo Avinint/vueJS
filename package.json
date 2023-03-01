@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+
     "preview": "vite preview",
     "cypress:open": "cypress open --env api_host=http://127.0.0.1:5173 --env host=http://localhost:5173",
     "cypress:cloud": "npx cypress run --record --key d9f11231-eb18-418a-91cf-3e9d581ea48d --browser chrome --env host=http://localhost:5173",

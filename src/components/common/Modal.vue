@@ -10,13 +10,11 @@
               </h3>
               <Button test='TcloseModal'  @click="emit('cancel', $event)" type="secondary" icon="cross" borderless/>
             </div>
-            <form action="#" @submit="checkForm" >
               <div class="p-6 space-y-6">
                 <slot></slot>
               </div>
-            </form>
             <div v-if="props.type === 'classic'" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-              <Button type="submit" test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"/>
+              <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"/>
               <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>
             </div>
 
@@ -25,7 +23,7 @@
             </div>
 
             <div v-if="props.type === 'alert'" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-              <Button test='TconfirmModal' label="Confirmer" type="submit"/>
+              <Button test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer" type="submit"/>
               <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>
             </div>
           </div>

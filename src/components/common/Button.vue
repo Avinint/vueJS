@@ -1,5 +1,5 @@
 <template>
-  <button :class="[type, icon_placement, borderless]" type="button" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
+  <button :class="[type, icon_placement, borderless]" :type="submit" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
     <div v-if="icon" v-html="icon"></div>
     <div v-if="props.label">
       {{props.label}}
@@ -17,6 +17,7 @@
     type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | '',
     icon_placement?: 'right' | 'left'| '',
     borderless?: boolean
+    submit: boolean
   }
 
 
@@ -45,11 +46,13 @@
     icon: '',
     icon_placement: 'right',
     type: '',
-    borderless: false
+    borderless: false,
+    submit: false
   })
 
   const icon = ICON[props.icon]
   const type = TYPE[props.type]
+  const submit = props.submit ? 'submit' : 'button'
   const borderless = props.borderless ? '' : 'border'
   const icon_placement = props.icon_placement === 'left' ? 'row-reverse' : ''
 

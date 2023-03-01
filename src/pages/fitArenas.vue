@@ -190,7 +190,12 @@
     if (id_selected.value) {
       const {data} = await updateFitarenas(fa, id_selected.value)
     } else {
-      const {data} = await postFitArenas(fa)
+      try {
+        const {data} = await postFitArenas(fa)
+      }catch (e) {
+        console.error(e)
+      }
+
     }
     fa_modal.value = false
     fit_arenas.value = await getFitArenas()
