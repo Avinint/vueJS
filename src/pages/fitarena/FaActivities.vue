@@ -91,8 +91,15 @@ import {getTypeActivites} from "../../api/typeActivite.js";
 import {deleteActivites, getActivites, postActivites, updateActivites, postActiviteWithIcone} from "../../api/activite.js";
 import {useRouter} from "vue-router";
 import {getClients, postClient, updateClient} from "../../api/client";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 const props = defineProps(['id'])
+const notify = () => {
+  toast("Wow so easy !", {
+    autoClose: 1000,
+  }); // ToastOptions
+}
 
 const activite_modal = ref(false)
 const readonly = ref(false)
@@ -110,7 +117,13 @@ const addActivite = () => {
 
 const removeActivite = async (i) => {
   const activiteTemp = activites.value[i]
-  await deleteActivites(activiteTemp.id)
+  try {
+    await deleteActivites(activiteTemp.id)
+    toast.success('Suppréssion de l activité avec succes');
+  } catch (e) {
+    toast.error('Erreur de la suppression de l\' activité');
+  }
+
   cancel()
   activites.value = await getActivites(props.id)
   typeActivites.value = await getTypeActivites()
@@ -138,7 +151,6 @@ const mapApiToData = (activiteTemp) => {
 }
 
 const saveActivite = async () => {
-  console.error(activite_selected.value)
   const actTemp = {
 
     typeActivite: '/api/type_activites/' + activite_selected.value,
@@ -153,9 +165,21 @@ const saveActivite = async () => {
     reservationDeGroupe: activite.value.reservationDeGroupe == true ? activite.value.reservationDeGroupe : false
   }
   if (id_selected.value) {
-    const {data} = await updateActivites(actTemp, id_selected.value)
+    try {
+      const {data} = await updateActivites(actTemp, id_selected.value)
+      toast.success('Enregistrement de l activité avec succes');
+    } catch (e) {
+      toast.error('Vérifier les données envoyées');
+    }
+
   } else {
-    const {data} = await postActivites(actTemp)
+    try {
+      const {data} = await postActivites(actTemp)
+      toast.success('Enregistrement de l activité avec succes');
+    } catch (e) {
+      toast.error('Vérifier les données envoyées');
+    }
+
     //const {data} = await postActiviteWithIcone(actTemp)
   }
 

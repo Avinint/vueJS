@@ -31,67 +31,68 @@
     </div>
     <Button label="Ajouter une Fit Arena" icon="add" type="secondary" @click="addFa" id="TaddFitArena"/>
   </Card>
-
-  <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une fitArena'" @cancel="fa_modal = false, cancel" @confirm="saveFA">
-    <div class="flex items-center">
-      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
-      <select v-if="clients.length" v-model="client_selected" id="TfaSelectCollectivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        <option v-for="client in clients" :value="client.id">{{client.nom}}</option>
-      </select>
-    </div>
-    <div class="flex items-center">
-      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Nom</label>
-      <input :readonly="readonly" v-model="name" id="TfaNom" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
-    </div>
-    <div class="flex items-center">
-      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Adresse</label>
-      <div class="relative w-full">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+  <form @submit.prevent="saveFa">
+    <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une fitArena'" @cancel="fa_modal = false, cancel">
+      <div class="flex items-center">
+        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
+        <select v-if="clients.length" v-model="client_selected" id="TfaSelectCollectivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <option v-for="client in clients" :value="client.id">{{client.nom}}</option>
+        </select>
+      </div>
+      <div class="flex items-center">
+        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Nom</label>
+        <input :readonly="readonly" v-model="name" id="TfaNom" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+      </div>
+      <div class="flex items-center">
+        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Adresse</label>
+        <div class="relative w-full">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input :readonly="readonly" v-model="address" id="TfaAdresse" type="search" class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" data-dropdown-toggle="dropdown" placeholder="Rue, ville, ..." required>
         </div>
-        <input :readonly="readonly" v-model="address" id="TfaAdresse" type="search" class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" data-dropdown-toggle="dropdown" placeholder="Rue, ville, ..." required>
       </div>
-    </div>
-    <div>
-      <select v-if="address.length" @change="addressSelect" v-model="address_selected" id="TclientSelectAdresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        <option v-for="address in addresses" :value="address">{{address.label}}</option>
-      </select>
-    </div>
-    <div class="flex items-center">
-      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Code postal</label>
-      <input :readonly="readonly" id="TadressePostcode" v-model="address_selected.postcode" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
-    </div>
-    <div class="flex items-center">
-      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Ville</label>
-      <input :readonly="readonly" v-model="address_selected.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
-    </div>
-    <div class="flex items-center">
-      <div class="flex justify-between items-center pr-3 w-1/2">
-        <label class="block text-sm font-medium text-gray-900 w-1/2">Latitude</label>
-        <p class="text-blue-400 text-sm">Format : 46.7897</p>
+      <div>
+        <select v-if="address.length" @change="addressSelect" v-model="address_selected" id="TclientSelectAdresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <option v-for="address in addresses" :value="address">{{address.label}}</option>
+        </select>
       </div>
-      <input :readonly="readonly" id="TfaLatitude" v-model="address_selected.latitude" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
-    </div>
-    <div class="flex items-center">
-      <div class="flex justify-between items-center pr-3 w-1/2">
-        <label class="block text-sm font-medium text-gray-900 w-1/2">Longitude</label>
-        <p class="text-blue-400 text-sm">Format : 46.7897</p>
+      <div class="flex items-center">
+        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Code postal</label>
+        <input :readonly="readonly" id="TadressePostcode" v-model="address_selected.postcode" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
       </div>
-      <input :readonly="readonly" id="TfaLongitude" v-model="address_selected.longitude" type="text" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" placeholder="John" required>
-    </div>
-    <div class="flex items-center">
-      <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Commentaire</label>
-      <input :readonly="readonly" v-model="commentaire" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
-    </div>
-    <div class="flex items-center">
-      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
-      <label class="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" value="true" class="sr-only peer" v-model="actif" >
-        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
-      </label>
-    </div>
-  </Modal>
+      <div class="flex items-center">
+        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Ville</label>
+        <input :readonly="readonly" v-model="address_selected.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+      </div>
+      <div class="flex items-center">
+        <div class="flex justify-between items-center pr-3 w-1/2">
+          <label class="block text-sm font-medium text-gray-900 w-1/2">Latitude</label>
+          <p class="text-blue-400 text-sm">Format : 46.7897</p>
+        </div>
+        <input :readonly="readonly" id="TfaLatitude" v-model="address_selected.latitude" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+      </div>
+      <div class="flex items-center">
+        <div class="flex justify-between items-center pr-3 w-1/2">
+          <label class="block text-sm font-medium text-gray-900 w-1/2">Longitude</label>
+          <p class="text-blue-400 text-sm">Format : 46.7897</p>
+        </div>
+        <input :readonly="readonly" id="TfaLongitude" v-model="address_selected.longitude" type="text" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" placeholder="John" required>
+      </div>
+      <div class="flex items-center">
+        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Commentaire</label>
+        <input :readonly="readonly" v-model="commentaire" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+      </div>
+      <div class="flex items-center">
+        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" value="true" class="sr-only peer" v-model="actif" >
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+        </label>
+      </div>
+    </Modal>
+  </form>
 </template>
 
 <script setup>
@@ -104,6 +105,7 @@
   import {deleteClient, getClients} from "../api/client.js";
   import {deleteFitArenas, getFitArenas, postFitArenas, updateFitarenas} from "../api/fit-arena.js";
   import {postActivites, updateActivites} from "../api/activite";
+  import {toast} from "vue3-toastify";
 
   const fa_modal = ref(false)
   const readonly = ref(false)
@@ -192,8 +194,9 @@
     } else {
       try {
         const {data} = await postFitArenas(fa)
+        toast.success('Enregistrement de la fitArena avec succes');
       }catch (e) {
-        console.error(e)
+        toast.error('Erreur, Veuillez contacter votre administrateur');
       }
 
     }
