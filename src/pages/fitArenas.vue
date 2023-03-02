@@ -173,7 +173,6 @@
   const saveFA = async () => {
     const fa = {
       client: 'api/clients/' + client_selected.value,
-      ordre: ordre,
       commentaire: commentaire,
       libelle: name.value,
       actif: actif.value == true ? actif.value  : false ,
