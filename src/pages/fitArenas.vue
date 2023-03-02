@@ -174,6 +174,7 @@
     const fa = {
       client: 'api/clients/' + client_selected.value,
       commentaire: commentaire,
+      ordre: 1,
       libelle: name.value,
       actif: actif.value == true ? actif.value  : false ,
       adresse: {
