@@ -7,10 +7,18 @@
         <table v-if="typeEquip.equipements.length" v-for="(equipementTemp, i) in typeEquip.equipements" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead v-if="i == 0" class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">Actif</th>
-            <th scope="col" class="px-6 py-3">Libellé</th>
-            <th scope="col" class="px-6 py-3">Adresse IP</th>
+            <th scope="col" class="w-1/5 px-6 py-3"></th>
+            <th scope="col" class="w-1/5 px-6 py-3">Actif</th>
+            <th scope="col" class="w-1/5 px-6 py-3">Libellé</th>
+            <th scope="col" class="w-1/5 px-6 py-3">Adresse IP</th>
+          </tr>
+          </thead>
+          <thead v-if="i > 0" class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="w-1/5 px-6 py-3"></th>
+            <th scope="col" class="w-1/5 px-6 py-3"></th>
+            <th scope="col" class="w-1/5 px-6 py-3"></th>
+            <th scope="col" class="w-1/5 px-6 py-3"></th>
           </tr>
           </thead>
           <tbody>
@@ -34,10 +42,8 @@
           </tr>
           <tr v-if="equipementTemp.equipementModes.length">
             <td></td>
-            <td></td>
-            <td>
+            <td colspan="3">
               <CardConfiguration>
-
                 <table v-if="equipementTemp.equipementModes.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                   <h2 class="pt-4 pl-10">Configuration</h2>
                   <tbody>
@@ -45,7 +51,7 @@
                     <td class="px-6 py-4">
                       <span class="pl-4 mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
                       <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="true" class="sr-only peer" v-if="equipementTemp.statut" checked >
+                        <input type="checkbox" value="true" class="sr-only peer" v-model="equipementMode.actif"  >
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
                       </label>
@@ -63,6 +69,7 @@
                 </table>
               </CardConfiguration>
             </td>
+            <td></td>
           </tr>
           </tbody>
         </table>
@@ -94,6 +101,32 @@
           <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
         </label>
       </div>
+      <CardConfiguration>
+        <table v-if="equipement.equipementModes.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <h2 class="pt-4 pl-10">Configuration</h2>
+          <tbody>
+          <tr class="bg-white" v-for="(equipementMode, i) in equipement.equipementModes">
+            <td class="px-6 py-4">
+              <span class="pl-4 mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" value="true" class="sr-only peer" v-model="equipementMode.actif"  >
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+              </label>
+            </td>
+            <td class="px-6 py-4">
+              <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Libellé : </span>
+              {{ equipementMode.mode.libelle }}
+            </td>
+            <td class="px-6 py-4">
+              <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Nom Appel : </span>
+              {{ equipementMode.nomAppel }}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <Button label="Ajouter une configuration" icon="add" type="secondary" @click="addConfiguration" id="TaddConfiguration"/>
+      </CardConfiguration>
     </Modal>
   </form>
 
@@ -157,6 +190,10 @@ const mapApiToData = (equipementTemp) => {
   equipement_selected.value = equipementTemp.typeEquipement.id
 }
 
+const addConfiguration = () => {
+
+}
+
 const saveEquipement = async () => {
   const equipementTemp = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
@@ -166,13 +203,18 @@ const saveEquipement = async () => {
     ip: equipement.value.ip,
   }
   if (id_selected.value) {
-    const {data} = await updateEquipements(equipementTemp, id_selected.value)
+    try {
+      const {data} = await updateEquipements(equipementTemp, id_selected.value)
+      toast.success('Enregistrement de l\' élément motorisé avec succes');
+    } catch (e) {
+      toast.error('Erreur, Veuillez contacter votre administrateur');
+    }
   } else {
     try {
       const {data} = await postEquipements(equipementTemp)
-      toast.success('Enregistrement de l activité avec succes');
+      toast.success('Enregistrement de l\' élément motorisé avec succes');
     } catch (e) {
-      toast.error('Enregistrement de l activité avec succes');
+      toast.error('Erreur, Veuillez contacter votre administrateur');
     }
 
     //const {data} = await postActiviteWithIcone(actTemp)
