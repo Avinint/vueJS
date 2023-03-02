@@ -16,12 +16,7 @@ html {
     }
 }
 
-input:read-only {
-    border:none;
-    background-color: white;
-}
-
-select:read-only {
+input:read-only, textarea:read-only, select:read-only {
     border:none;
     background-color: white;
 }
