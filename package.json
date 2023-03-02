@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-
     "preview": "vite preview",
     "cypress:open": "cypress open --env api_host=http://127.0.0.1:5173 --env host=http://localhost:5173",
     "cypress:cloud": "npx cypress run --record --key d9f11231-eb18-418a-91cf-3e9d581ea48d --browser chrome --env host=http://localhost:5173",
@@ -18,7 +17,8 @@
     "flowbite": "^1.6.3",
     "pinia": "^2.0.30",
     "vue": "^3.2.45",
-    "vue-router": "^4.0.13"
+    "vue-router": "^4.0.13",
+    "vue3-toastify": "^0.1.1"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^7.0.0-beta.48",
