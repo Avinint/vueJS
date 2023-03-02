@@ -20,3 +20,8 @@ input:read-only {
     border:none;
     background-color: white;
 }
+
+select:read-only {
+    border:none;
+    background-color: white;
+}
