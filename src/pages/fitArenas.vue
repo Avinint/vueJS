@@ -31,7 +31,7 @@
     </div>
     <Button label="Ajouter une Fit Arena" icon="add" type="secondary" @click="addFa" id="TaddFitArena"/>
   </Card>
-  <form @submit.prevent="saveFa">
+  <form @submit.prevent="saveFA">
     <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une fitArena'" @cancel="fa_modal = false, cancel">
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
