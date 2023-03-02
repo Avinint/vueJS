@@ -15,3 +15,8 @@ html {
         @apply text-gray-900 text-xl;
     }
 }
+
+input:read-only {
+    border:none;
+    background-color: white;
+}
