@@ -125,7 +125,6 @@
           </tr>
           </tbody>
         </table>
-        <Button label="Ajouter une configuration" icon="add" type="secondary" @click="addConfiguration" id="TaddConfiguration"/>
       </CardConfiguration>
     </Modal>
   </form>
