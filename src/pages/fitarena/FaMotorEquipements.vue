@@ -1,8 +1,8 @@
 <template>
   <Card>
     <h1>équipements motorisés de la fit arena</h1>
-    <div v-for="typeEquip of typeEquipements">
-      <h2 class="pt-10 pb-10">{{typeEquip.libelle}}</h2>
+    <div class="m-5 p-4 border border-gray-200" v-for="typeEquip of typeEquipements">
+      <h2 class="pt-2 pb-5">{{typeEquip.libelle}}</h2>
       <div class="relative overflow-x-auto">
         <table v-if="typeEquip.equipements.length" v-for="(equipementTemp, i) in typeEquip.equipements" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead v-if="i == 0" class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
@@ -46,7 +46,6 @@
               <CardConfiguration>
                 <h3 class="pt-2 pl-10">Configuration</h3>
                 <table v-if="equipementTemp.equipementModes.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-
                   <thead>
                   <tr>
                     <th scope="col" class="w-1/5 px-6 py-3">Actif</th>
