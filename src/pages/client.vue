@@ -34,12 +34,13 @@
     <form @submit.prevent="saveClient">
       <Modal v-if="client_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Consultation d\'un client' : 'Ajouter ou modifier un client'"  @cancel="client_modal = false">
         <Card class="w-full">
-          <span>Contact administratif</span>
+          <h3>Ajouter un client</h3>
           <div class="space-y-2">
             <div class="flex items-center">
               <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Nom</label>
               <input :readonly="readonly" v-model="name" id="TclientName" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
+
             <div class="flex items-center">
               <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Adresse</label>
               <div class="relative w-full">
@@ -55,6 +56,10 @@
               </select>
             </div>
             <div class="flex items-center">
+              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Complement</label>
+              <input :readonly="readonly" v-model="address_selected.complement" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
+            </div>
+            <div class="flex items-center">
               <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Code postal</label>
               <input :readonly="readonly" id="TadressePostcode" v-model="address_selected.postcode" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
@@ -62,22 +67,18 @@
               <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Ville</label>
               <input :readonly="readonly" v-model="address_selected.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
-            <div class="flex items-center">
-              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Complement</label>
-              <input :readonly="readonly" v-model="address_selected.complement" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
-            </div>
           </div>
         </Card>
         <Card class="space-y-2">
-          <span>Référent d'exploitation</span>
+          <h3>Référents d’exploitation</h3>
           <Card v-for="(exploit_referent, i) in exploit_referents" class="space-y-2">
-            <Button v-if="!readonly" class="flex w-full w-12 justify-end" icon="delete" type="secondary" size="s" @click="removeExploitReferent(i)"/>
+            <Button v-if="!readonly" class="flex w-full w-12 flex-direction: row-reverse " icon="delete" type="secondary" size="s" @click="removeExploitReferent(i)"/>
             <div class="flex items-center">
               <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Nom</label>
               <input :readonly="readonly" id="TrefNom" v-model="exploit_referent.nom" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
             <div class="flex items-center">
-              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Prenom</label>
+              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Prénom</label>
               <input :readonly="readonly" id="TrefPrenom" v-model="exploit_referent.prenom" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
             <div class="flex items-center">
@@ -85,7 +86,7 @@
               <input :readonly="readonly" id="TrefFonction" v-model="exploit_referent.fonction" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
             <div class="flex items-center">
-              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Numero de téléphone</label>
+              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Numéro de téléphone</label>
               <input :readonly="readonly" id="TrefTelephone" v-model="exploit_referent.telephone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
             <div class="flex items-center">
@@ -96,7 +97,7 @@
           <Button v-if="!readonly" id="TaddRefExploit" label="Ajouter un référent d'exploitation supplémentaire" icon="add" type="secondary" @click="exploit_referents.push({})"/>
         </Card>
         <Card class="space-y-2">
-          <span>Comptes Fit Arena avec le rôle de gestionnaire de collectivité</span>
+          <h3>Comptes gestionnaires</h3>
           <Card v-for="(community_manager, i) in community_managers" class="space-y-2">
             <Button v-if="!readonly" class="flex w-full justify-end" icon="delete" type="secondary" size="s" @click="removeCommunityManager(i)"/>
             <div class="flex items-center">
@@ -104,7 +105,7 @@
               <input :readonly="readonly" id="TcomNom" v-model="community_manager.nom" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
             <div class="flex items-center">
-              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Prenom</label>
+              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Prénom</label>
               <input :readonly="readonly" id="TcomPrenom" v-model="community_manager.prenom" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
             <div class="flex items-center">
@@ -112,7 +113,7 @@
               <input :readonly="readonly" id="TcomMail" v-model="community_manager.email" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
           </Card>
-          <Button v-tooltips="'COUCOC'" v-if="!readonly" id="TaddComManager" label="Ajouter un compte supplementaire" icon="add" type="secondary" @click="community_managers.push({})"/>
+          <Button v-tooltips="'COUCOC'" v-if="!readonly" id="TaddComManager" label="Ajouter un compte supplémentaire" icon="add" type="secondary" @click="community_managers.push({})"/>
         </Card>
       </Modal>
     </form>
@@ -127,6 +128,7 @@
   import {onMounted, ref} from "vue";
   import {getAdresses} from "../api/address.js";
   import {watchDebounced} from "@vueuse/core";
+  import {getFitArenas} from "../api/fit-arena";
 
   const client_modal = ref(false)
 
@@ -168,7 +170,14 @@
       await postClient(client)
     }
     client_modal.value = false
+    cancel()
     clients.value = await getClients()
+
+  }
+
+  const cancel = async () => {
+    address.value = []
+
   }
 
   const addressSelect = () => {
@@ -188,6 +197,8 @@
     exploit_referents.value = []
     community_managers.value = []
     address_selected.value = {}
+    id_selected.value = ''
+    cancel()
     readonly.value = false
     client_modal.value = true
   }

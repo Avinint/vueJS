@@ -32,7 +32,7 @@
     <Button label="Ajouter une Fit Arena" icon="add" type="secondary" @click="addFa" id="TaddFitArena"/>
   </Card>
   <form @submit.prevent="saveFA">
-    <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une fitArena'" @cancel="fa_modal = false, cancel">
+    <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une Fit Arena'" @cancel="fa_modal = false, cancel()">
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
         <select :readonly="readonly" v-if="clients.length" v-model="client_selected" id="TfaSelectCollectivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -77,14 +77,14 @@
           <label class="block text-sm font-medium text-gray-900 w-1/2">Longitude</label>
           <p class="text-blue-400 text-sm">Format : 46.7897</p>
         </div>
-        <input :readonly="readonly" id="TfaLongitude" v-model="address_selected.longitude" type="text" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" placeholder="John" required>
+        <input :readonly="readonly" id="TfaLongitude" v-model="address_selected.longitude" type="text" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" placeholder="" required>
       </div>
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Commentaire</label>
         <textarea :readonly="readonly" v-model="commentaire" type="" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""></textarea>
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
+        <span class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Actif : </span>
         <label class="relative inline-flex items-center cursor-pointer">
           <input :readonly="readonly" type="checkbox" value="true" class="sr-only peer" v-model="actif" >
           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
@@ -125,11 +125,18 @@
   const address_selected = ref({})
 
   const addFa = () => {
+    cancel()
     fa_modal.value = true
   }
 
   const cancel = async () => {
-    fit_arenas.value = await getFitArenas()
+    name.value = []
+    commentaire.value = []
+    actif.value = []
+    address.value = []
+    id_selected.value = ''
+    address_selected.value = {}
+    client_selected.value = {}
   }
 
   const removeFa = async (i) => {

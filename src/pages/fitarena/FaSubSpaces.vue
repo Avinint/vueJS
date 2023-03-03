@@ -89,7 +89,9 @@ const espaceParents = ref([])
 let espace_selected = ref({})
 
 const addEspace = () => {
+  cancel()
   subEspace_modal.value = true
+
 }
 
 const removeEspace = async (i) => {
@@ -116,7 +118,7 @@ const showEspace = async (i) => {
 
 const mapApiToData = async (espaceTemp) => {
   const espaceParent = await getZone(espaceTemp.idZoneParent)
-  espace_selected = espaceParent.id
+  espace_selected.value = espaceParent.id
   subEspace.value = espaceTemp
   id_selected.value = espaceTemp.id
   //Je cherche l'espace parent si il existe
@@ -151,8 +153,8 @@ onMounted(async () => {
 })
 
 const cancel = () => {
+  espace_selected.value = {}
   subEspace.value = {}
-
 }
 
 </script>

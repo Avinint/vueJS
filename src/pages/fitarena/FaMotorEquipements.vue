@@ -44,12 +44,19 @@
             <td></td>
             <td colspan="3">
               <CardConfiguration>
+                <h3 class="pt-2 pl-10">Configuration</h3>
                 <table v-if="equipementTemp.equipementModes.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                  <h2 class="pt-4 pl-10">Configuration</h2>
+
+                  <thead>
+                  <tr>
+                    <th scope="col" class="w-1/5 px-6 py-3">Actif</th>
+                    <th scope="col" class="w-1/5 px-6 py-3">Libellé</th>
+                    <th scope="col" class="w-1/5 px-6 py-3">Adresse IP</th>
+                  </tr>
+                  </thead>
                   <tbody>
                   <tr class="bg-white" v-for="(equipementMode, i) in equipementTemp.equipementModes">
                     <td class="px-6 py-4">
-                      <span class="pl-4 mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
                       <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" value="true" class="sr-only peer" v-model="equipementMode.actif"  >
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
@@ -57,11 +64,9 @@
                       </label>
                     </td>
                     <td class="px-6 py-4">
-                      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Libellé : </span>
                       {{ equipementMode.mode.libelle }}
                     </td>
                     <td class="px-6 py-4">
-                      <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Nom Appel : </span>
                       {{ equipementMode.nomAppel }}
                     </td>
                   </tr>
@@ -102,12 +107,18 @@
         </label>
       </div>
       <CardConfiguration>
-        <table v-if="equipement.equipementModes.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <h2 class="pt-4 pl-10">Configuration</h2>
+        <h3 class="pt-2 pl-10">Configuration</h3>
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead>
+          <tr>
+            <th scope="col" class="w-1/5 px-6 py-3">Actif</th>
+            <th scope="col" class="w-1/5 px-6 py-3">Libellé</th>
+            <th scope="col" class="w-1/5 px-6 py-3">Adresse IP</th>
+          </tr>
+          </thead>
           <tbody>
           <tr class="bg-white" v-for="(equipementMode, i) in equipement.equipementModes">
             <td class="px-6 py-4">
-              <span class="pl-4 mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" value="true" class="sr-only peer" v-model="equipementMode.actif"  >
                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
@@ -115,11 +126,9 @@
               </label>
             </td>
             <td class="px-6 py-4">
-              <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Libellé : </span>
               {{ equipementMode.mode.libelle }}
             </td>
             <td class="px-6 py-4">
-              <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Nom Appel : </span>
               {{ equipementMode.nomAppel }}
             </td>
           </tr>
@@ -157,7 +166,9 @@ const typeEquipements = ref([])
 const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
+
 const addEquipement = () => {
+  cancel()
   equipement_modal.value = true
 }
 
@@ -204,14 +215,14 @@ const saveEquipement = async () => {
   if (id_selected.value) {
     try {
       const {data} = await updateEquipements(equipementTemp, id_selected.value)
-      toast.success('Enregistrement de l\' élément motorisé avec succes');
+      toast.success('Enregistrement de l\'élément motorisé avec succès');
     } catch (e) {
       toast.error('Erreur, Veuillez contacter votre administrateur');
     }
   } else {
     try {
       const {data} = await postEquipements(equipementTemp)
-      toast.success('Enregistrement de l\' élément motorisé avec succes');
+      toast.success('Enregistrement de l\'élément motorisé avec succès');
     } catch (e) {
       toast.error('Erreur, Veuillez contacter votre administrateur');
     }
@@ -232,5 +243,9 @@ onMounted(async () => {
 
 const cancel = () => {
   equipement.value = {}
+  //id_selected.value = {}
+  equipement_selected.value = {}
+
+
 }
 </script>

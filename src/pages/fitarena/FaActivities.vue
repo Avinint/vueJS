@@ -35,7 +35,7 @@
         </tbody>
       </table>
     </div>
-    <Button label="Ajouter une Activite" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
+    <Button label="Ajouter une activité" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
   </Card>
   <form @submit.prevent="saveActivite">
     <Modal v-if="activite_modal" :type="readonly ? 'visualiser' : 'classic' " :title="readonly ? 'Information d\'une activité' : 'Ajouter ou modifier une activité'" @cancel="activite_modal = false" >
@@ -111,7 +111,10 @@ const typeActivites = ref([])
 const typeActivite = ref({})
 const activite = ref({})
 const activite_selected = ref({})
+
 const addActivite = () => {
+  activite.value = {}
+  activite_selected.value = {}
   activite_modal.value = true
 }
 
@@ -121,9 +124,8 @@ const removeActivite = async (i) => {
     await deleteActivites(activiteTemp.id)
     toast.success('Suppréssion de l activité avec succes');
   } catch (e) {
-    toast.error('Erreur de la suppression de l\' activité');
+    toast.error('Suppression de l\'activité avec succès');
   }
-
   cancel()
   activites.value = await getActivites(props.id)
   typeActivites.value = await getTypeActivites()
@@ -152,7 +154,6 @@ const mapApiToData = (activiteTemp) => {
 
 const saveActivite = async () => {
   const actTemp = {
-
     typeActivite: '/api/type_activites/' + activite_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
     //typeActivite: activite_selected.value,
@@ -167,7 +168,7 @@ const saveActivite = async () => {
   if (id_selected.value) {
     try {
       const {data} = await updateActivites(actTemp, id_selected.value)
-      toast.success('Enregistrement de l activité avec succes');
+      toast.success('Enregistrement de l\'activité avec succès');
     } catch (e) {
       toast.error('Vérifier les données envoyées');
     }
@@ -175,7 +176,7 @@ const saveActivite = async () => {
   } else {
     try {
       const {data} = await postActivites(actTemp)
-      toast.success('Enregistrement de l activité avec succes');
+      toast.success('Enregistrement de l\'activité avec succès');
     } catch (e) {
       toast.error('Vérifier les données envoyées');
     }
@@ -184,7 +185,7 @@ const saveActivite = async () => {
   }
 
   activite_modal.value = false
-  cancel()
+
   activites.value = await getActivites(props.id)
   typeActivites.value = await getTypeActivites()
 }
