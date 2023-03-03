@@ -56,7 +56,7 @@
               </select>
             </div>
             <div class="flex items-center">
-              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Complement</label>
+              <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Complément</label>
               <input :readonly="readonly" v-model="address_selected.complement" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
             </div>
             <div class="flex items-center">
@@ -161,7 +161,8 @@
         latitude: ""+address_selected.value.latitude,
         longitude: ""+address_selected.value.longitude,
         numeroDepartement: ""+address_selected.value.context.split(',')[0],
-        nomDepartement: ""+address_selected.value.context.split(',')[1]
+        nomDepartement: ""+address_selected.value.context.split(',')[1],
+        complement:  address_selected.value.complement
       },
     }
     if (id_selected.value) {
@@ -220,7 +221,8 @@
       city: client.adresse.ville,
       citycode: client.adresse.codeInsee,
       latitude: client.adresse.latitude,
-      longitude: client.adresse.longitude
+      longitude: client.adresse.longitude,
+      complement: client.adresse.complement
     }
     name.value = client.nom
     id_selected.value = client.id
