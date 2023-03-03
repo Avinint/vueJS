@@ -149,6 +149,7 @@
   const community_managers = ref([])
 
   const saveClient = async () => {
+    refreshToken
     let client = {
       nom: name.value,
       referentExploitations: exploit_referents.value,
