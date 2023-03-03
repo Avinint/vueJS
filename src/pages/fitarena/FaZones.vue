@@ -99,7 +99,7 @@ const removeEspace = async (i) => {
   const espaceTemp = subEspaces.value[i]
   await deleteZones(espaceTemp.id)
   cancel()
-  subEspaces.value = await getZones(1, '&typeZone.code=sous-espace&fitArena=' + props.id)
+  subEspaces.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   subEspace_modal.value = false
 }
 
@@ -142,7 +142,7 @@ const saveEspace = async () => {
   }
   subEspace_modal.value = false
   cancel()
-  subEspaces.value = await getZones(1, '&typeZone.code=sous-espace&fitArena=' + props.id)
+  subEspaces.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   espaceParents.value = await getZones(1, '&typeZone.code=espace&fitArena=' + props.id)
   typeZones.value = await getTypeZone()
 }

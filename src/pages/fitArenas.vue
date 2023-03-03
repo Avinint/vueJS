@@ -59,7 +59,7 @@
       </div>
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Complement</label>
-        <input :readonly="readonly" v-model="address_selected.complement" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
+        <input :readonly="readonly" id="TadresseComplement" v-model="complement" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
       </div>
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Code postal</label>
@@ -123,6 +123,7 @@
   const id_selected = ref(0)
   const name = ref("")
   const commentaire = ref("")
+  const complement = ref("")
   const actif = ref("")
   const addresses = ref([])
   const address = ref("")
@@ -136,6 +137,7 @@
   const cancel = async () => {
     name.value = []
     commentaire.value = []
+    complement.value = []
     actif.value = []
     address.value = []
     id_selected.value = ''
@@ -164,34 +166,37 @@
   }
 
   const mapApiToData = (fitArena) => {
-    console.error(fitArena)
     name.value = fitArena.libelle
-    actif: fitArena.actif
+    actif.value =  fitArena.actif
     address_selected.value = {
       address: fitArena.adresse.adresse,
       postcode: fitArena.adresse.codePostal,
+      complement:  fitArena.adresse.complement,
       pays: 'france',
       city: fitArena.adresse.ville,
       citycode: fitArena.adresse.codeInsee,
       latitude: fitArena.adresse.latitude,
-      longitude: fitArena.adresse.longitude,
-      complement:  fitArena.adresse.complement
+      longitude: fitArena.adresse.longitude
     }
     address.value = address_selected.value.address
+    complement.value = address_selected.value.complement
     client_selected.value = fitArena.client.id
-    commentaire: fitArena.commentaire
+    commentaire.value =  fitArena.commentaire
     id_selected.value = fitArena.id
   }
 
   const saveFA = async () => {
+    console.error(address_selected)
     const fa = {
       client: 'api/clients/' + client_selected.value,
-      commentaire: commentaire,
+      commentaire: commentaire.value,
       ordre: 1,
       libelle: name.value,
       actif: actif.value == true ? actif.value  : false ,
+
       adresse: {
         adresse: address_selected.value.label,
+        complement: complement.value,
         codePostal: address_selected.value.postcode,
         ville: address_selected.value.city,
         pays: 'france',
@@ -199,8 +204,7 @@
         latitude: ""+address_selected.value.latitude,
         longitude: ""+address_selected.value.longitude,
         numeroDepartement: ""+address_selected.value.context.split(',')[0],
-        nomDepartement: ""+address_selected.value.context.split(',')[1],
-        complement:  address_selected.value.complement
+        nomDepartement: ""+address_selected.value.context.split(',')[1]
       },
     }
     if (id_selected.value) {
