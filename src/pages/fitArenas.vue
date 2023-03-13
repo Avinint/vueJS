@@ -14,7 +14,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="bg-white" v-for="(fit_arena, i) in fit_arenas">
+        <tr class="bg-white" v-for="(fit_arena, i) in fit_arenas" :key="i">
           <td class="flex justify-center items-center p-3">
             <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeFa(i)"/>
             <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editFa(i)"/>
@@ -32,11 +32,11 @@
     <Button label="Ajouter une Fit Arena" icon="add" type="secondary" @click="addFa" id="TaddFitArena"/>
   </Card>
   <form @submit.prevent="saveFA">
-    <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic' "  :title="readonly ? 'Information Fit Arena' : 'Ajouter ou modifier une Fit Arena'" @cancel="fa_modal = false, cancel()">
+    <Modal v-if="fa_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="fa_modal = false, cancel()">
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Client</label>
         <select :readonly="readonly" v-if="clients.length" v-model="client_selected" id="TfaSelectCollectivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option v-for="client in clients" :value="client.id">{{client.nom}}</option>
+          <option v-for="client in clients" :value="client.id" :key="client.id">{{client.nom}}</option>
         </select>
       </div>
       <div class="flex items-center">
@@ -52,13 +52,14 @@
           <input :readonly="readonly" v-model="address" id="TfaAdresse" type="search" class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" data-dropdown-toggle="dropdown" placeholder="Rue, ville, ..." required>
         </div>
       </div>
-      <div>
+      <div class="flex items-center">
+        <div class="block w-1/2 mr-1.5"></div>
         <select v-if="address.length" @change="addressSelect" v-model="address_selected" id="TclientSelectAdresse" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option v-for="address in addresses" :value="address">{{address.label}}</option>
+          <option v-for="(address, i) in addresses" :value="address" :key="i">{{address.label}}</option>
         </select>
       </div>
       <div class="flex items-center">
-        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Complement</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Complément</label>
         <input :readonly="readonly" id="TadresseComplement" v-model="complement" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
       </div>
       <div class="flex items-center">
@@ -70,14 +71,14 @@
         <input :readonly="readonly" v-model="address_selected.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
       </div>
       <div class="flex items-center">
-        <div class="flex justify-between items-center pr-3 w-1/2">
+        <div class="flex justify-between items-center w-1/2">
           <label class="block text-sm font-medium text-gray-900 w-1/2">Latitude</label>
           <p class="text-blue-400 text-sm">Format : 46.7897</p>
         </div>
         <input :readonly="readonly" id="TfaLatitude" v-model="address_selected.latitude" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
       </div>
       <div class="flex items-center">
-        <div class="flex justify-between items-center pr-3 w-1/2">
+        <div class="flex justify-between items-center w-1/2">
           <label class="block text-sm font-medium text-gray-900 w-1/2">Longitude</label>
           <p class="text-blue-400 text-sm">Format : 46.7897</p>
         </div>
@@ -88,11 +89,11 @@
         <textarea :readonly="readonly" v-model="commentaire" type="" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""></textarea>
       </div>
       <div class="flex items-center">
-        <span class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Actif : </span>
+        <span class="block mb-2 text-sm font-medium text-gray-900 w-4/12">Actif :</span>
         <label class="relative inline-flex items-center cursor-pointer">
-          <input :readonly="readonly" type="checkbox" value="true" class="sr-only peer" v-model="actif" >
+          <input :readonly="readonly" type="checkbox" value="true" class="sr-only peer" v-model="actif">
           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
-          <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+          <!-- <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span> -->
         </label>
       </div>
     </Modal>
@@ -128,10 +129,12 @@
   const addresses = ref([])
   const address = ref("")
   const address_selected = ref({})
+  const modal_title = ref('')
 
   const addFa = () => {
     cancel()
     fa_modal.value = true
+    modal_title.value = 'Ajouter une Fit Arena'
   }
 
   const cancel = async () => {
@@ -156,6 +159,7 @@
     mapApiToData(fitArena)
     fa_modal.value = true
     readonly.value = false
+    modal_title.value = 'Modifier une Fit Arena'
   }
 
   const showFa = async (i) => {
@@ -163,6 +167,7 @@
     mapApiToData(fitArena)
     fa_modal.value = true
     readonly.value = true
+    modal_title.value = 'Informations de la Fit Arena'
   }
 
   const mapApiToData = (fitArena) => {

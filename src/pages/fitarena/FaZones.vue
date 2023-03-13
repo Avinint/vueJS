@@ -14,7 +14,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="bg-white" v-for="(esp, i) in subEspaces">
+        <tr class="bg-white" v-for="(esp, i) in subEspaces" :key="i">
           <td class="flex justify-center items-center p-3">
             <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeEspace(i)"/>
             <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editEspace(i)"/>
@@ -39,7 +39,7 @@
   </Card>
 
   <form @submit.prevent="saveEspace">
-    <Modal v-if="subEspace_modal" :type="readonly ? 'visualiser' : 'classic' " :title="readonly ? 'Information d\'une zone' : 'Ajouter ou modifier une zone'" @cancel="subEspace_modal = false, cancel()">
+    <Modal v-if="subEspace_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="subEspace_modal = false, cancel()">
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Nom</label>
         <input :readonly="readonly" v-model="subEspace.libelle" id="TEspaceLibelle" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
@@ -47,7 +47,7 @@
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Sous Espace</label>
         <select :readonly="readonly" v-if="espaceParents.length" v-model="espace_selected" id="TfaSelectEspace" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option v-for="espaceParent in espaceParents" :value="espaceParent.id">{{espaceParent.libelle}}</option>
+          <option v-for="(espaceParent, i) in espaceParents" :key="i" :value="espaceParent.id">{{espaceParent.libelle}}</option>
         </select>
       </div>
       <div class="flex items-center">
@@ -73,7 +73,7 @@ import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
 import {onMounted, ref} from "vue";
-import {deleteZones, getZones, getZone,  postZones, updateZones} from "../../api/zone.js";
+import {deleteZones, getZones, getZone, postZones, updateZones} from "../../api/zone.js";
 import {useRouter} from "vue-router";
 import {getTypeZone} from "../../api/typeZone";
 
@@ -88,11 +88,12 @@ const typeZones = ref([])
 const subEspace = ref({})
 const espaceParents = ref([])
 let espace_selected = ref({})
+const modal_title = ref('')
 
 const addEspace = () => {
   cancel()
   subEspace_modal.value = true
-
+  modal_title.value = "Ajouter une zone"
 }
 
 const removeEspace = async (i) => {
@@ -108,6 +109,7 @@ const editEspace = async (i) => {
   mapApiToData(espaceTemp)
   subEspace_modal.value = true
   readonly.value = false
+  modal_title.value = "Modifier une zone"
 }
 
 const showEspace = async (i) => {
@@ -115,6 +117,7 @@ const showEspace = async (i) => {
   mapApiToData(espaceTemp)
   subEspace_modal.value = true
   readonly.value = true
+  modal_title.value = "Informations d'une zone"
 }
 
 const mapApiToData = async (espaceTemp) => {
@@ -156,6 +159,7 @@ onMounted(async () => {
 const cancel = () => {
   espace_selected.value = {}
   subEspace.value = {}
+  readonly.value = false
 }
 
 </script>

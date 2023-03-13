@@ -1,7 +1,7 @@
 <template>
   <Card>
     <h1>équipements numériques de la fit arena</h1>
-    <div class="m-5 p-4 border border-gray-200" v-for="typeEquip of typeEquipements">
+    <div class="m-5 p-4 border border-gray-200" v-for="(typeEquip, i) of typeEquipements" :key="i">
       <h2 class="pt-2 pb-5">{{typeEquip.libelle}}</h2>
       <div class="relative overflow-x-auto">
         <table v-if="typeEquip.equipements.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -14,14 +14,14 @@
             </tr>
           </thead>
           <tbody>
-          <tr class="bg-white" v-for="(equipementTemp, i) in typeEquip.equipements">
-            <td v-if="equipementTemp.fitArena.id == props.id" class="flex justify-center items-center p-3">
+          <tr class="bg-white" v-for="(equipementTemp, i) in typeEquip.equipements" :key="i">
+            <td class="flex justify-center items-center p-3">
               <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeEquipement(equipementTemp.id)"/>
               <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editEquipement(equipementTemp.id)"/>
             </td>
             <td class="px-6 py-4">
               <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" value="true" class="sr-only peer" v-if="equipementTemp.statut" checked >
+                <input type="checkbox" value="true" class="sr-only peer" v-if="equipementTemp.statut" checked>
                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
                 <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
               </label>
@@ -36,15 +36,15 @@
         </table>
       </div>
     </div>
-    <Button label="Ajouter un équipement numerique" icon="add" type="secondary" @click="addEquipement" id="TaddEquipementNumerique"/>
+    <Button label="Ajouter un équipement numérique" icon="add" type="secondary" @click="addEquipement" id="TaddEquipementNumerique"/>
   </Card>
 
   <form @submit.prevent="saveEquipement">
-    <Modal v-if="equipement_modal" :type="readonly ? 'visualiser' : 'classic' " :title="readonly ? 'Information d\'un équipement' : 'Ajouter ou modifier un équipement'" @cancel="equipement_modal = false">
+    <Modal v-if="equipement_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="equipement_modal = false">
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Type d'équipement</label>
         <select v-if="typeEquipements.length" v-model="equipement_selected" id="TTypeActivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option v-for="typeEquipement in typeEquipements" :value="typeEquipement.id">{{typeEquipement.libelle}}</option>
+          <option v-for="(typeEquipement, i) in typeEquipements" :key="i" :value="typeEquipement.id">{{typeEquipement.libelle}}</option>
         </select>
       </div>
       <div class="flex items-center">
@@ -56,9 +56,9 @@
         <input :readonly="readonly" v-model="equipement.ip" id="TEquipementIp" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" value="true" class="sr-only peer" v-model="equipement.statut" >
+        <span class="text-sm font-medium text-gray-900 dark:text-gray-300 w-1/2">Actif : </span>
+        <label class="relative inline-flex items-center cursor-pointer w-full">
+          <input type="checkbox" value="true" class="sr-only peer" v-model="equipement.statut">
           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
           <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
         </label>
@@ -92,8 +92,11 @@ const typeEquipements = ref([])
 const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
+const modal_title = ref('')
+
 const addEquipement = () => {
   equipement_modal.value = true
+  modal_title.value = 'Ajouter un équipement'
 }
 
 const removeEquipement = async (i) => {
@@ -109,6 +112,7 @@ const editEquipement = async (i) => {
   mapApiToData(equipementTemp)
   equipement_modal.value = true
   readonly.value = false
+  modal_title.value = 'Modifier un équipement'
 }
 
 const showEquipement = async (i) => {
@@ -116,6 +120,7 @@ const showEquipement = async (i) => {
   mapApiToData(equipementTemp)
   equipement_modal.value = true
   readonly.value = true
+  modal_title.value = "Informations d'un équipement"
 }
 
 const mapApiToData = (equipementTemp) => {
