@@ -104,7 +104,7 @@
       </tbody>
     </table>
   </div>
-  <Modal :title="'Consultation de ' + user.nom + ' ' +user.prenom "  @cancel="cancel" @confirm="cancel" v-if="is_open_modal.consult">
+  <Modal :title="'Consultation de ' + user.nom + ' ' + user.prenom" @cancel="cancel" @confirm="cancel" v-if="is_open_modal.consult">
     <div class="grid grid-cols-6 gap-6">
       <div class="col-span-6 sm:col-span-3">
         <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom</label>
@@ -125,7 +125,7 @@
     </div>
   </Modal>
 
-  <Modal :title="'Edition de ' + user.nom + ' ' +user.prenom " @confirm="confirm" @cancel="cancel" v-if="is_open_modal.edit">
+  <Modal :title="'Edition de ' + user.nom + ' ' + user.prenom" @confirm="confirm" @cancel="cancel" v-if="is_open_modal.edit">
     <div class="grid grid-cols-6 gap-6">
       <div class="col-span-6 sm:col-span-3">
         <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
@@ -146,10 +146,10 @@
     </div>
   </Modal>
 
-  <Modal :title="'Suppréssion de ' + user.nom + ' ' +user.prenom " @confirm="deleted" @cancel="cancel" v-if="is_open_modal.deleted">
+  <Modal :title="'Suppression de ' + user.nom + ' ' + user.prenom" @confirm="deleted" @cancel="cancel" v-if="is_open_modal.deleted">
     <div class="grid grid-cols-1 gap-1">
       <p>
-        Attention vous allez supprimer un utilisateur, êtes-vous sur de votre choix?
+        Attention vous allez supprimer un utilisateur, êtes-vous sûr de votre choix ?
       </p>
     </div>
   </Modal>
@@ -183,7 +183,7 @@
         </div>
         <div class="col-span-6 sm:col-span-3">
           <label class="relative inline-flex items-center mr-5 cursor-pointer">
-            <input type="checkbox" v-model="user.mineur" value="false" class="sr-only peer" >
+            <input type="checkbox" v-model="user.mineur" value="false" class="sr-only peer">
             <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
             <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Mineur</span>
           </label>

@@ -13,7 +13,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="bg-white" v-for="(act, i) in activites">
+        <tr class="bg-white" v-for="(act, i) in activites" :key="i">
           <td class="flex justify-center items-center p-3">
             <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeActivite(i)"/>
             <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editActivite(i)"/>
@@ -38,11 +38,11 @@
     <Button label="Ajouter une activité" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
   </Card>
   <form @submit.prevent="saveActivite">
-    <Modal v-if="activite_modal" :type="readonly ? 'visualiser' : 'classic' " :title="readonly ? 'Information d\'une activité' : 'Ajouter ou modifier une activité'" @cancel="activite_modal = false" >
+    <Modal v-if="activite_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activite_modal = false">
       <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Type d'activité</label>
         <select v-if="typeActivites.length" v-model="activite_selected" id="TTypeActivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option v-for="typeActivite in typeActivites" :value="typeActivite.id">{{typeActivite.libelle}}</option>
+          <option v-for="(typeActivite, i) in typeActivites" :key="i" :value="typeActivite.id">{{typeActivite.libelle}}</option>
         </select>
       </div>
       <div class="flex items-center">
@@ -54,14 +54,6 @@
         <input class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="small_size" type="file">
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation individuelle</span>
-        <label  class="relative inline-flex items-center cursor-pointer">
-          <input v-model="activite.reservationDeGroupe" type="checkbox" value="" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
-        </label>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation de groupe</span>
-      </div>
-      <div class="flex items-center">
         <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Description</label>
         <textarea :readonly="readonly" v-model="activite.description" id="TActiviteDescription" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required></textarea>
       </div>
@@ -70,12 +62,20 @@
         <input :readonly="readonly" v-model="activite.ordre" id="TActiviteOrdre" type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif : </span>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" value="true" class="sr-only peer" v-model="activite.actif" >
+        <span class="text-sm font-medium text-gray-900 dark:text-gray-300 w-1/2">Actif : </span>
+        <label class="relative inline-flex items-center cursor-pointer w-full">
+          <input type="checkbox" value="true" class="sr-only peer" v-model="activite.actif">
           <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
           <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
         </label>
+      </div>
+      <div class="flex items-center">
+        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation individuelle</span>
+        <label  class="relative inline-flex items-center cursor-pointer">
+          <input v-model="activite.reservationDeGroupe" type="checkbox" value="" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+        </label>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation de groupe</span>
       </div>
   </Modal>
   </form>
@@ -104,25 +104,26 @@ const notify = () => {
 const activite_modal = ref(false)
 const readonly = ref(false)
 
-
 const id_selected = ref(0)
 const activites = ref([])
 const typeActivites = ref([])
 const typeActivite = ref({})
 const activite = ref({})
 const activite_selected = ref({})
+const modal_title = ref('')
 
 const addActivite = () => {
   activite.value = {}
   activite_selected.value = {}
   activite_modal.value = true
+  modal_title.value = 'Ajouter une activité'
 }
 
 const removeActivite = async (i) => {
   const activiteTemp = activites.value[i]
   try {
     await deleteActivites(activiteTemp.id)
-    toast.success('Suppréssion de l activité avec succes');
+    toast.success('Suppression de l\'activité avec succès');
   } catch (e) {
     toast.error('Suppression de l\'activité avec succès');
   }
@@ -137,6 +138,7 @@ const editActivite = (i) => {
   mapApiToData(activite)
   activite_modal.value = true
   readonly.value = false
+  modal_title.value = 'Modifier une activité'
 }
 
 const showActivite = async (i) => {
@@ -144,6 +146,7 @@ const showActivite = async (i) => {
   mapApiToData(activiteTemp)
   activite_modal.value = true
   readonly.value = true
+  modal_title.value = 'Consulter une activité'
 }
 
 const mapApiToData = (activiteTemp) => {

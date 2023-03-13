@@ -8,22 +8,22 @@
               <h3 class="text-xl font-semibold text-gray-900">
                 {{ props.title }}
               </h3>
-              <Button test='TcloseModal'  @click="emit('cancel', $event)" type="secondary" icon="cross" borderless/>
+              <Button test='TcloseModal' @click="emit('cancel', $event)" type="secondary" icon="cross" borderless/>
             </div>
               <div class="p-6 space-y-6">
                 <slot></slot>
               </div>
-            <div v-if="props.type === 'classic'" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-              <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"/>
+            <div v-if="props.type === 'classic'" class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+              <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer" class="bg-red-600 hover:bg-red-800" />
               <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>
             </div>
 
-            <div v-if="props.type === 'visualiser'" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+            <div v-if="props.type === 'visualiser'" class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
               <Button class="ml-auto mr-0" test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>
             </div>
 
-            <div v-if="props.type === 'alert'" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-              <Button test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer" type="submit"/>
+            <div v-if="props.type === 'alert'" class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+              <Button test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer" type="submit" class="bg-red-600 hover:bg-red-800" />
               <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary"/>
             </div>
           </div>
@@ -34,8 +34,8 @@
 </template>
 
 <script setup lang="ts">
-  import {withDefaults} from "vue";
-  import Button from './Button.vue';
+  import {withDefaults} from "vue"
+  import Button from './Button.vue'
 
   interface Props {
     title: string
