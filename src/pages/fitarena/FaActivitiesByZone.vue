@@ -40,6 +40,13 @@
         </div>
         <Button label="Ajouter une Activite" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
       </Card>
+      <form @submit.prevent="saveActiviteZone">
+        <Modal v-if="true" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false">
+          <Select :options="[{label:'toto', id:1}, {label:'titi', id:2}]" v-model="id_selected">
+
+          </Select>
+        </Modal>
+      </form>
     </div>
   </Card>
 </template>
@@ -60,7 +67,7 @@ import {
   getZones
 } from "../../api/zone";
 import {getActivites} from "../../api/activite";
-
+import Select from "../../components/common/Select.vue";
 const props = defineProps(['id'])
 const activiteZone_modal = ref(false)
 const readonly = ref(false)
