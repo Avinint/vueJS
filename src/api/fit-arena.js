@@ -1,8 +1,8 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from './refreshToken.js'
 
 export const getFitArenas = async (page = 1, query = '') => {
-  console.log(localStorage.getItem('token'))
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/fit_arenas?page=${page}${query}`, {
+  const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/fit_arenas?page=${page}${query}`, {
     method:'get',
     headers: {
       ...defaultHeaders,
@@ -16,7 +16,7 @@ export const getFitArenas = async (page = 1, query = '') => {
 }
 
 export const postFitArenas = async (fa) => {
-  const response = await fetch( `${import.meta.env.VITE_API_URL}/api/fit_arenas`, {
+  const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/fit_arenas`, {
     method:'post',
     headers: {
       ...defaultHeaders,
@@ -31,7 +31,7 @@ export const postFitArenas = async (fa) => {
 }
 
 export const updateFitarenas = async (client, id) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`, {
+  const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`, {
     method:'put',
     headers: {
       ...defaultHeaders,
@@ -47,7 +47,7 @@ export const updateFitarenas = async (client, id) => {
 }
 
 export const deleteFitArenas = async (id) => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`, {
+  const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`, {
     method:'delete',
     headers: {
       ...defaultHeaders,

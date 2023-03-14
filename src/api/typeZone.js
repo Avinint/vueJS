@@ -1,8 +1,8 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from "./refreshToken.js";
 
 export const getTypeZone = async (page = 1, query = '') => {
-    console.log(localStorage.getItem('token'))
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_zones?page=${page}${query}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_zones?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -16,7 +16,7 @@ export const getTypeZone = async (page = 1, query = '') => {
 }
 
 export const postTypeZone = async (typeZone) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/type_zones`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/type_zones`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -31,7 +31,7 @@ export const postTypeZone = async (typeZone) => {
 }
 
 export const updateTypeZone = async (typeZone, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_zones/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_zones/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -47,7 +47,7 @@ export const updateTypeZone = async (typeZone, id) => {
 }
 
 export const deleteTypeZone = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_zones/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_zones/${id}`, {
         method:'delete',
         headers: {
             ...defaultHeaders,

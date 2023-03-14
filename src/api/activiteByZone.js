@@ -1,7 +1,8 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from "./refreshToken.js";
 
 export const getActivitesByZones = async (page = 1, query = '') => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites?page=${page}${query}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -15,7 +16,7 @@ export const getActivitesByZones = async (page = 1, query = '') => {
 }
 
 export const postActivitesByZones = async (activite) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/zone_activites`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/zone_activites`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -31,7 +32,7 @@ export const postActivitesByZones = async (activite) => {
 
 
 export const updateActivitesByZones = async (activite, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -47,7 +48,7 @@ export const updateActivitesByZones = async (activite, id) => {
 }
 
 export const deleteActivitesByZones = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
         method:'delete',
         headers: {
             ...defaultHeaders,
@@ -61,7 +62,7 @@ export const deleteActivitesByZones = async (id) => {
 }
 
 export const getActiviteByZone = async (id = 1) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
         method:'get',
         headers: {
             ...defaultHeaders,

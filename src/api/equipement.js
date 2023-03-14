@@ -1,7 +1,8 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from "./refreshToken.js";
 
 export const getEquipements = async (fitArenaId, page = 1, query = '') => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/fit_arena/${fitArenaId}/equipements?page=${page}${query}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/fit_arena/${fitArenaId}/equipements?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -15,7 +16,7 @@ export const getEquipements = async (fitArenaId, page = 1, query = '') => {
 }
 
 export const getEquipement = async (id = 1) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/equipements/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/equipements/${id}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -29,7 +30,7 @@ export const getEquipement = async (id = 1) => {
 }
 
 export const postEquipements = async (equipement) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/equipements`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/equipements`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -44,7 +45,7 @@ export const postEquipements = async (equipement) => {
 }
 
 export const updateEquipements = async (equipement, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/equipements/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/equipements/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,

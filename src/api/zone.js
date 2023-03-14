@@ -1,7 +1,8 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from "./refreshToken.js";
 
 export const getZones = async (page = 1, query = '') => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zones?page=${page}${query}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zones?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -15,7 +16,7 @@ export const getZones = async (page = 1, query = '') => {
 }
 
 export const getZone = async (id = 1) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -29,7 +30,7 @@ export const getZone = async (id = 1) => {
 }
 
 export const postZones = async (fa) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/zones`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/zones`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -44,7 +45,7 @@ export const postZones = async (fa) => {
 }
 
 export const updateZones = async (zone, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -60,7 +61,7 @@ export const updateZones = async (zone, id) => {
 }
 
 export const deleteZones = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
         method:'delete',
         headers: {
             ...defaultHeaders,
