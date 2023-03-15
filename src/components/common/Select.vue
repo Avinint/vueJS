@@ -1,8 +1,8 @@
 <template>
   <div class="flex items-center">
     <InputLabel>{{ label }}</InputLabel>
-    <select :value="props.selected" @change="emits('update:modelValue', parseInt($event.target.value))" class="form-select">
-      <option v-for="option in options" :value="option.id">
+    <select :value="props.modelValue" @input="emits('update:modelValue', parseInt($event.target.value))" class="form-select">
+      <option v-for="option in options" :value="option.id" :selected="props.selected === option.id">
         {{ option.label }}
       </option>
     </select>
@@ -10,13 +10,12 @@
 </template>
 
 <script setup lang="ts">
-
   import InputLabel from './InputLabel.vue'
-  import {computed, ref, withDefaults} from "vue";
+  import {computed, withDefaults} from "vue";
 
   interface Props {
     readonly: boolean
-    modelValue: string
+    modelValue: number
     label: string
     options: object[]
     selected: number
@@ -34,16 +33,4 @@
   }>()
 
   const label = computed(() => props.label)
-
-  /**const selected = computed({get(){
-      return props.selected
-    }, set(val){
-      emits('update:modelValue', val)
-    }
-  })**/
-
 </script>
-
-<style scoped>
-
-</style>
