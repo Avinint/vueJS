@@ -1,7 +1,7 @@
 <template>
   <div class="flex" :class="props.inline ? 'items-center' : 'flex-col'">
     <InputLabel>{{ label }}</InputLabel>
-    <input  :readonly="props.readonly" :id="props.id" @input="emits('update:modelValue', $event.target.value)" :value="props.modelValue" :type="props.type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder" required>
+    <input :readonly="props.readonly" :id="props.id" @input="emits('update:modelValue', $event.target.value)" :value="props.modelValue" :type="props.type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder" required>
   </div>
 </template>
 

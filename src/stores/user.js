@@ -39,6 +39,7 @@ export const useUserStore = defineStore('user', () => {
 
   function logout() {
     token_in_storage.value = ''
+    refresh_token_in_storage.value = ''
   }
 
   return { login, logout, iat, exp, username, connected, setCredential }

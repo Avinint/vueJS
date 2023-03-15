@@ -33,8 +33,7 @@
 
   const login = async () => {
     try {
-
-      console.log(await user.login(mail.value, password.value))
+      await user.login(mail.value, password.value)
       await router.push('/')
     } catch (e) {
       alert(JSON.stringify(e))

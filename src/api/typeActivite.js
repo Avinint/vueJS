@@ -35,7 +35,6 @@ export const updateTypeActivite = async (typeActivite, id) => {
         method:'put',
         headers: {
             ...defaultHeaders,
-            // 'Content-Type': 'application/merge-patch+json',
             'Content-Type': 'application/ld+json',
             'Authorization': 'Bearer '+ localStorage.getItem('token')
         },

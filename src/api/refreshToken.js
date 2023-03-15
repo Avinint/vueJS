@@ -1,5 +1,5 @@
-import {defaultHeaders} from "./api.js";
-import {useUserStore} from "../stores/user.js";
+import { defaultHeaders } from "./api.js";
+import { useUserStore } from "../stores/user.js";
 
 export default async (...args) => {
   if (!useUserStore().connected) {
@@ -7,7 +7,9 @@ export default async (...args) => {
       const {token, refresh_token} = await refreshToken()
       useUserStore().setCredential(token, refresh_token)
     } catch (e) {
-      window.location.href = "/login"
+      const path = window.location.href.replace(window.location.origin, '')
+      if (path !== '/login')
+        window.location.href = "/login"
     }
   }
   return fetch(...args)
@@ -23,7 +25,6 @@ const refreshToken = async () => {
       'Content-Type': 'application/json'
     }
   })
-  console.log(response)
   if (response.status !== 200)
     throw response
   return response.json()
