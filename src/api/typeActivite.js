@@ -1,8 +1,8 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from "./refreshToken.js";
 
 export const getTypeActivites = async (page = 1, query = '') => {
-    console.log(localStorage.getItem('token'))
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_activites?page=${page}${query}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_activites?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -16,7 +16,7 @@ export const getTypeActivites = async (page = 1, query = '') => {
 }
 
 export const postTypeActivites = async (typeActivite) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/type_activites`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/type_activites`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -31,7 +31,7 @@ export const postTypeActivites = async (typeActivite) => {
 }
 
 export const updateTypeActivite = async (typeActivite, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_activites/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_activites/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -47,7 +47,7 @@ export const updateTypeActivite = async (typeActivite, id) => {
 }
 
 export const deleteTypeActivite = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_activites/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_activites/${id}`, {
         method:'delete',
         headers: {
             ...defaultHeaders,

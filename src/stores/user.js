@@ -13,6 +13,7 @@ const parseJwt = (token) => {
 export const useUserStore = defineStore('user', () => {
 
   const token_in_storage = useStorage('token', '')
+  const refresh_token_in_storage = useStorage('refresh_token', '')
 
   const iat = computed(() => parseJwt(token_in_storage.value)?.iat ?? 0)
   const exp = computed(() => parseJwt(token_in_storage.value)?.exp ?? 0)
@@ -27,13 +28,18 @@ export const useUserStore = defineStore('user', () => {
     })
     if (response.status !== 200)
       throw response
-    const {token} = await response.json()
+    const {token, refresh_token} = await response.json()
+    setCredential(token, refresh_token)
+  }
+
+  function setCredential(token, refresh_token) {
     token_in_storage.value = token
+    refresh_token_in_storage.value = refresh_token
   }
 
   function logout() {
     token_in_storage.value = ''
   }
 
-  return { login, logout, iat, exp, username, connected }
+  return { login, logout, iat, exp, username, connected, setCredential }
 })

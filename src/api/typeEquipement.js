@@ -1,8 +1,8 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from "./refreshToken.js";
 
 export const getTypeEquipements = async (page = 1, query = '') => {
-    console.log(localStorage.getItem('token'))
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements?page=${page}${query}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -16,7 +16,7 @@ export const getTypeEquipements = async (page = 1, query = '') => {
 }
 
 export const postTypeEquipements = async (typeEquipement) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/type_equipements`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/type_equipements`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -31,7 +31,7 @@ export const postTypeEquipements = async (typeEquipement) => {
 }
 
 export const updateTypeEquipements = async (typeEquipement, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -47,7 +47,7 @@ export const updateTypeEquipements = async (typeEquipement, id) => {
 }
 
 export const deleteTypeEquipements = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/type_equipements/${id}`, {
         method:'delete',
         headers: {
             ...defaultHeaders,

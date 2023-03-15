@@ -1,7 +1,9 @@
 import {defaultHeaders} from "./api.js";
+import $fetch from "./refreshToken.js";
 
 export const getActivites = async (fitArenaId, page = 1, query = '') => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/fit_arena/${fitArenaId}/activites?page=${page}${query}`, {
+
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/fit_arena/${fitArenaId}/activites?page=${page}${query}`, {
         method:'get',
         headers: {
             ...defaultHeaders,
@@ -15,7 +17,7 @@ export const getActivites = async (fitArenaId, page = 1, query = '') => {
 }
 
 export const postActivites = async (fa) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/activites`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/activites`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -31,7 +33,7 @@ export const postActivites = async (fa) => {
 
 
 export const postActiviteWithIcone = async (fa) => {
-    const response = await fetch( `${import.meta.env.VITE_API_URL}/api/activite/creer`, {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/activite/creer`, {
         method:'post',
         headers: {
             ...defaultHeaders,
@@ -46,7 +48,7 @@ export const postActiviteWithIcone = async (fa) => {
 }
 
 export const updateActivites = async (activite, id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -62,7 +64,7 @@ export const updateActivites = async (activite, id) => {
 }
 
 export const deleteActivites = async (id) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
         method:'delete',
         headers: {
             ...defaultHeaders,
