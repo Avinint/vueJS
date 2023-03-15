@@ -20,7 +20,7 @@
           </td>
           <td class="px-6 py-4">
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" value="true" class="sr-only peer" v-if="act.actif" checked >
+              <input type="checkbox" value="true" class="sr-only peer"  v-model="act.actif" @change="modifieActivite(act)" >
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
               <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
             </label>
@@ -88,7 +88,14 @@ import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
 import {onMounted, ref} from "vue";
 import {getTypeActivites} from "../../api/typeActivite.js";
-import {deleteActivites, getActivites, postActivites, updateActivites, postActiviteWithIcone} from "../../api/activite.js";
+import {
+  deleteActivites,
+  getActivites,
+  postActivites,
+  updateActivites,
+  postActiviteWithIcone,
+  patchActivites
+} from "../../api/activite.js";
 import {useRouter} from "vue-router";
 import {getClients, postClient, updateClient} from "../../api/client";
 import { toast } from 'vue3-toastify';
@@ -119,13 +126,22 @@ const addActivite = () => {
   modal_title.value = 'Ajouter une activité'
 }
 
+const modifieActivite = async({actif,id}) => {
+  try {
+    await patchActivites({actif}, id)
+    toast.success('Modification de l\'activité avec succès');
+  } catch (e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur');
+  }
+}
+
 const removeActivite = async (i) => {
   const activiteTemp = activites.value[i]
   try {
     await deleteActivites(activiteTemp.id)
     toast.success('Suppression de l\'activité avec succès');
   } catch (e) {
-    toast.error('Suppression de l\'activité avec succès');
+    toast.error('Erreur, Veuillez contacter votre administrateur');
   }
   cancel()
   activites.value = await getActivites(props.id)
@@ -173,7 +189,7 @@ const saveActivite = async () => {
       const {data} = await updateActivites(actTemp, id_selected.value)
       toast.success('Enregistrement de l\'activité avec succès');
     } catch (e) {
-      toast.error('Vérifier les données envoyées');
+      toast.error('Erreur, Veuillez contacter votre administrateur');
     }
 
   } else {
@@ -181,7 +197,7 @@ const saveActivite = async () => {
       const {data} = await postActivites(actTemp)
       toast.success('Enregistrement de l\'activité avec succès');
     } catch (e) {
-      toast.error('Vérifier les données envoyées');
+      toast.error('Erreur, Veuillez contacter votre administrateur');
     }
 
     //const {data} = await postActiviteWithIcone(actTemp)

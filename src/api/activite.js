@@ -63,6 +63,21 @@ export const updateActivites = async (activite, id) => {
     return response.json()
 }
 
+export const patchActivites = async (activite, id) => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
+        method:'patch',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type':'application/merge-patch+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        },
+        body: JSON.stringify(activite)
+    })
+    if (response.status !== 200)
+        throw response
+    return response.json()
+}
+
 export const deleteActivites = async (id) => {
     const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/activites/${id}`, {
         method:'delete',

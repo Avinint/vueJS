@@ -23,7 +23,7 @@
               </td>
               <td class="px-6 py-4">
                 <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" value="true" class="sr-only peer" v-if="act.actif" checked >
+                  <input type="checkbox" value="true" class="sr-only peer" v-model="act.actif" @change="modifieActivite(act)" >
                   <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
                   <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
                 </label>
@@ -41,7 +41,7 @@
         <Button label="Ajouter une Activite" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
       </Card>
       <form @submit.prevent="saveActiviteZone">
-        <Modal v-if="true" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false">
+        <Modal v-if="activiteZone_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false">
           <Select :options="[{label:'toto', id:1}, {label:'titi', id:2}]" v-model="id_selected">
 
           </Select>
@@ -61,13 +61,15 @@ import {
   getActiviteByZone,
   getActivitesByZones,
   postActivitesByZones,
-  updateActivitesByZones
+  updateActivitesByZones,
+  patchActivitesByZones
 } from "../../api/activiteByZone";
 import {
   getZones
 } from "../../api/zone";
-import {getActivites} from "../../api/activite";
+import {getActivites, patchActivites} from "../../api/activite";
 import Select from "../../components/common/Select.vue";
+import {toast} from "vue3-toastify";
 const props = defineProps(['id'])
 const activiteZone_modal = ref(false)
 const readonly = ref(false)
@@ -109,6 +111,15 @@ const mapApiToData = (activiteZoneTemp) => {
   activiteZone.value = activiteZoneTemp
   id_selected.value = activiteZoneTemp.id
   activiteZone_selected.value = activiteZoneTemp.typeEquipement.id
+}
+
+const modifieActivite = async({actif,id}) => {
+  try {
+    await patchActivitesByZones({actif}, id)
+    toast.success('Modification de l\'activité avec succès');
+  } catch (e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur');
+  }
 }
 
 const saveActiviteZone = async () => {

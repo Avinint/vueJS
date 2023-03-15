@@ -60,6 +60,23 @@ export const updateEquipements = async (equipement, id) => {
     return response.json()
 }
 
+
+export const patchEquipements = async (equipement, id) => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/equipements/${id}`, {
+        method:'patch',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type':'application/merge-patch+json',
+            //'Content-Type': 'application/ld+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        },
+        body: JSON.stringify(equipement)
+    })
+    if (response.status !== 200)
+        throw response
+    return response.json()
+}
+
 export const deleteEquipements = async (id) => {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/equipements/${id}`, {
         method:'delete',

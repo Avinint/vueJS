@@ -47,6 +47,23 @@ export const updateActivitesByZones = async (activite, id) => {
     return response.json()
 }
 
+
+export const patchActivitesByZones = async (activite, id) => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
+        method:'patch',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type': 'application/merge-patch+json',
+            //'Content-Type': 'application/ld+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        },
+        body: JSON.stringify(activite)
+    })
+    if (response.status !== 200)
+        throw response
+    return response.json()
+}
+
 export const deleteActivitesByZones = async (id) => {
     const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
         method:'delete',

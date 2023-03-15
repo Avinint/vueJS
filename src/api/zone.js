@@ -44,6 +44,23 @@ export const postZones = async (fa) => {
     return response.json()
 }
 
+export const patchZones = async (zone, id) => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
+        method:'patch',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type': 'application/merge-patch+json',
+            //'Content-Type': 'application/ld+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        },
+        body: JSON.stringify(zone)
+    })
+    if (response.status !== 200)
+        throw response
+    return response.json()
+}
+
+
 export const updateZones = async (zone, id) => {
     const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zones/${id}`, {
         method:'put',
