@@ -139,7 +139,7 @@
 
   const cancel = async () => {
     name.value = []
-    commentaire.value = []
+    commentaire.value = ''
     complement.value = []
     actif.value = []
     address.value = []
