@@ -1,32 +1,44 @@
 <template>
-    Ajout d'équipements {{ typeEquipementTextes }}
+    <div class="cmp_zones_ajout_equipement p-4 border border-gray-300 rounded-md">
+        <h2 class="text-lg pt-2 pb-5">Ajout d'équipements {{ typeEquipementTextes }}</h2>
 
-    <div v-for="(type, typeIdx) in typeEquipements">
-        <p style="font-weight: 700;">{{ type.libelle }}</p>
-        <div >
-            <ul>
+        <div v-for="(type, typeIdx) in typeEquipements" class="pt-2 pb-5">
+            <h2 class="pt-2 pb-5">{{ type.libelle }}</h2>
+            <div>
                 <template v-for="(equipement, equipementIdx) in type.equipements">
-                    <li v-if="isZoneEquipementExist(equipement)">
-                        {{ equipement.id }} {{ equipement.libelle }}
-                        <Button borderless icon="delete" type="secondary" @click.prevent="removeEquipementFromZone(typeIdx, equipementIdx)"/>
-                    </li>
+                    <div v-if="isZoneEquipementExist(equipement)" class="flex items-center justify-between">
+                        {{ equipement.libelle }}
+                        <div>
+                            <Button label="Détails" type="secondary" @click="detailsEquipement(typeIdx, equipementIdx)" class="mr-4"/>
+                            <Button borderless icon="delete" type="secondary" @click.prevent="removeEquipementFromZone(typeIdx, equipementIdx)"/>
+                        </div>
+                    </div>
                 </template>
-            </ul>
 
-            <select v-model="equipementSelectionne[typeIdx]" @change="addEquipementToZone(typeIdx)">
-                <option value="" selected="selected">Ajouter</option>
-                <template v-for="(equipement, equipementIdx) in type.equipements">
-                    <option v-if="!isZoneEquipementExist(equipement)" :value="equipementIdx">{{ equipement.libelle }}</option>
-                </template>
-            </select>
+                <select v-model="equipementSelectionne[typeIdx]" @change="addEquipementToZone(typeIdx)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="" selected="selected">Ajouter</option>
+                    <template v-for="(equipement, equipementIdx) in type.equipements">
+                        <option v-if="!isZoneEquipementExist(equipement)" :value="equipementIdx">{{ equipement.libelle }}</option>
+                    </template>
+                </select>
+            </div>
         </div>
     </div>
+
+    <Modal v-if="detailsEquipement_modal" :type="'visualiser'" :title="'Détails équipement'" @cancel="detailsEquipement_modal = false">
+        <div class="flex justify-between">
+            <span>Adresse IP</span>
+            <span>{{ detailsEquipementData.ip }}</span>
+        </div>
+    </Modal>
+
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { getTypeEquipements } from '../../api/typeEquipement';
 import Button from '../../components/common/Button.vue';
+import Modal from '../../components/common/Modal.vue'
 
 const props = defineProps({
     typeEquipement: String,
@@ -37,10 +49,10 @@ const props = defineProps({
 const typeEquipements = ref([]);
 const typeEquipementTextes = ref('');
 const equipementSelectionne = ref([]);
+const detailsEquipement_modal = ref(false);
+const detailsEquipementData = ref({});
 
 onMounted(async () => {
-
-    console.debug("props.zone",props.zone);
 
     typeEquipements.value = await getTypeEquipements(1, '&categoryTypeEquipement.code='+props.typeEquipement+'&equipements.fitArena=' + props.fa);
 
@@ -90,8 +102,20 @@ const isZoneEquipementExist = (equipement) => {
     });
 };
 
+const detailsEquipement = (typeIdx, equipementIdx) => {
+    detailsEquipementData.value = typeEquipements.value[typeIdx]?.equipements[equipementIdx];
+    detailsEquipement_modal.value = true;
+};
+
 defineExpose({ typeEquipements });
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.cmp_zones_ajout_equipement {
+    /* border: 1px solid darkgray;
+    border-radius: 6px;
+    padding: 1em; */
+}
+
+</style>
