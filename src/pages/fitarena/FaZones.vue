@@ -217,6 +217,7 @@ const cancel = () => {
   espace_selected.value = {}
   subEspace.value = {}
   readonly.value = false
+  id_selected.value = 0;
 }
 
 </script>
