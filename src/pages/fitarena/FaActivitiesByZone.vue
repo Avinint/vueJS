@@ -1,8 +1,9 @@
+
 <template>
   <Card>
     <h1>Activités par zone</h1>
     <div class="p-10">
-      <Card class="space-y-3 mb-10" v-for="zoneFit of zones">
+      <Card class="space-y-3 mb-10" v-for="(zoneFit, zoneIdx) of zones">
         <h2>{{zoneFit.libelle}}</h2>
 
         <div class="relative overflow-x-auto">
@@ -12,14 +13,13 @@
               <th scope="col" class="px-6 py-3"></th>
               <th scope="col" class="px-6 py-3">Actif</th>
               <th scope="col" class="px-6 py-3">Libellé</th>
-              <th scope="col" class="px-6 py-3">Ordre</th>
             </tr>
             </thead>
             <tbody>
             <tr class="bg-white" v-for="(act, i) in zoneFit.zoneActivites">
               <td class="flex justify-center items-center p-3">
-                <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeActivite(i)"/>
-                <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editActivite(i)"/>
+                <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeActiviteZone(act.id)"/>
+                <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editActiviteZone(act.id)"/>
               </td>
               <td class="px-6 py-4">
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -30,7 +30,6 @@
               </td>
               <td class="px-6 py-4">{{ act.activite.libelle }}</td>
 
-              <td class="px-6 py-4">{{ act.ordre }}</td>
               <td class="px-6 py-4">
                 <Button label="Détails" type="secondary" @click="showActivite(i)"/>
               </td>
@@ -38,13 +37,43 @@
             </tbody>
           </table>
         </div>
-        <Button label="Ajouter une Activite" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
+        <Button label="Ajouter une Activite" icon="add" type="secondary" @click="addActiviteZone(zoneIdx)" id="TaddActivite"/>
       </Card>
       <form @submit.prevent="saveActiviteZone">
         <Modal v-if="activiteZone_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false">
-          <Select :options="[{label:'toto', id:1}, {label:'titi', id:2}]" v-model="id_selected">
 
-          </Select>
+          <div>
+            <label for="select_activites" class="mr-4">Activité</label>
+            <select id="select_activites" v-model="activite_selected" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+              <option v-for="act of activites" :value="act.id">{{ act.libelle }}</option>
+            </select>
+          </div>
+
+          <div class="flex item-center">
+            <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
+              Config des équipements motorisés
+            </div>
+            <div>
+              <template v-for="mode of modes">
+                <label :for="'mode_equipements_motorises_'+mode.id">{{ mode.libelle }}</label>
+                <input required="required" type="radio" name="mode_equipements_motorises" :value="mode.id" :id="'mode_equipements_motorises_'+mode.id" v-model="mode_equipements_motorises">
+              </template>
+            </div>
+          </div>
+
+          <div class="flex item-center">
+            <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
+              Mode d'écran géant et d'interface de vidéo et scoring
+            </div>
+            <div>
+              <label :for="'mode_ecran_interface_0'">Aucun</label>
+              <input type="radio" name="mode_ecran_interface" :value="0" id="mode_ecran_interface_0" v-model="mode_ecran_interface">
+              <template v-for="mode of modes">
+                <label :for="'mode_ecran_interface_'+mode.id">{{ mode.libelle }}</label>
+                <input type="radio" name="mode_ecran_interface" :value="mode.id" :id="'mode_ecran_interface_'+mode.id" v-model="mode_ecran_interface">
+              </template>
+            </div>
+          </div>
         </Modal>
       </form>
     </div>
@@ -64,29 +93,45 @@ import {
   updateActivitesByZones,
   patchActivitesByZones
 } from "../../api/activiteByZone";
-import {
-  getZones
-} from "../../api/zone";
+import { getZones } from "../../api/zone";
+import { getModes } from '../../api/mode';
+import { getParametres } from '../../api/parametre';
+import { getParametreZoneActivites, postParametreZoneActivites, updateParametreZoneActivites, deleteParamatreZoneActivites } from '../../api/parametreZoneActivite';
+// import { getZoneActivite } from '../../api/zoneActivite';
 import {getActivites, patchActivites} from "../../api/activite";
 import Select from "../../components/common/Select.vue";
 import {toast} from "vue3-toastify";
 const props = defineProps(['id'])
 const activiteZone_modal = ref(false)
 const readonly = ref(false)
-const id_selected = ref(0)
 const activiteZones = ref([])
 const zones = ref([])
-const zone = ref({})
+// const zone = ref({})
 const activiteZone = ref({})
-const activiteZone_selected = ref({})
+const activiteZone_selected = ref(0)
 const activites = ref([])
+const modal_title = ref('');
+const zone_selected = ref(0);
+const activite_selected = ref(0);
+const modes = ref([]);
+const mode_equipements_motorises = ref(0);
+const mode_ecran_interface = ref(0);
+const id_parametre_config_equipements_motorises = ref(0);
+const id_parametre_mode_ecran_interface_video_scoring = ref(0);
 
-const addActiviteZone = () => {
-  activiteZone_modal.value = true
-}
+const addActiviteZone = (zoneIdx) => {
+  activiteZone_selected.value = 0;
+  activiteZone_modal.value = true;
+  const zone = zones.value[zoneIdx];
+  zone_selected.value = zone.id;
+  activite_selected.value = activites.value[0].id;
+  modal_title.value = "Ajouter une activité à la zone " + zone.libelle;
+  mode_equipements_motorises.value = 0;
+  mode_ecran_interface.value = 0;
+};
 
 const removeActiviteZone = async (i) => {
-  await deleteActiviteZone(i)
+  await deleteActivitesByZones(i)
   cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena='+props.id)
   activites.value = await getActivites(props.id)
@@ -94,10 +139,23 @@ const removeActiviteZone = async (i) => {
 }
 
 const editActiviteZone = async (i) => {
-  const equipementTemp = await getActiviteByZone(i)
-  mapApiToData(equipementTemp)
+  const activiteZoneTemp = await getActiviteByZone(i)
+  mapApiToData(activiteZoneTemp)
+  modal_title.value = "Modifier une activité de la zone " + activiteZoneTemp.zone.libelle;
   activiteZone_modal.value = true
   readonly.value = false
+
+  const data = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value);
+  data.forEach(datum => {
+    switch (datum.parametre.id) {
+      case id_parametre_config_equipements_motorises.value:
+        mode_equipements_motorises.value = datum.valeur;
+        break;
+      case id_parametre_mode_ecran_interface_video_scoring.value:
+        mode_ecran_interface.value = datum.valeur;
+        break;
+    }
+  });
 }
 
 const showActiviteZone = async (i) => {
@@ -108,9 +166,9 @@ const showActiviteZone = async (i) => {
 }
 
 const mapApiToData = (activiteZoneTemp) => {
-  activiteZone.value = activiteZoneTemp
-  id_selected.value = activiteZoneTemp.id
-  activiteZone_selected.value = activiteZoneTemp.typeEquipement.id
+  activiteZone.value = activiteZoneTemp;
+  activiteZone_selected.value = activiteZoneTemp.id;
+  activite_selected.value = activiteZoneTemp.activite.id;
 }
 
 const modifieActivite = async({actif,id}) => {
@@ -124,29 +182,91 @@ const modifieActivite = async({actif,id}) => {
 
 const saveActiviteZone = async () => {
   const ActiviteZoneTemp = {
-    zone: '/api/zones/' + zone_selected.value,
-    activite: '/api/zones/' + activite_selected.value,
-    ordre: equipement.value.libelle,
-    actif: equipement.value.actif == true ? equipement.actif.statut : false
+    activite: '/api/activites/' + activite_selected.value,
+    // actif: equipement.value.actif == true ? equipement.actif.statut : false
+    ordre: 0,
+    actif: true,
   }
-  if (id_selected.value) {
-    const {data} = await updateActivitesByZones(ActiviteZoneTemp, id_selected.value)
+
+  if (zone_selected.value) {
+    ActiviteZoneTemp.zone = '/api/zones/' + zone_selected.value;
+  }
+
+  if (activiteZone_selected.value) {
+    // édition
+    const data = await updateActivitesByZones(ActiviteZoneTemp, activiteZone_selected.value)
+
+    // param config équipements motorisés
+    let parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value + '&parametre=' + id_parametre_config_equipements_motorises.value);
+    if (parametreZoneActivites[0]?.id) {
+      await updateParametreZoneActivites(parametreZoneActivites[0].id, {
+        valeur: mode_equipements_motorises.value.toString(),
+      });
+    }
+
+    // param mode d'écran et d'interface vidéo scoring
+    parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value + '&parametre=' + id_parametre_mode_ecran_interface_video_scoring.value);
+    if (parametreZoneActivites[0]?.id) {
+      if (mode_ecran_interface.value > 0) {
+        // modif du paramètre
+        await updateParametreZoneActivites(parametreZoneActivites[0].id, {
+          valeur: mode_ecran_interface.value.toString(),
+        });
+      } else {
+        // aucun mode => suppression du paramètre
+        await deleteParamatreZoneActivites(parametreZoneActivites[0].id)
+      }
+    } else if (mode_ecran_interface.value > 0) {
+      // le paramètre n'existe pas encore
+      let body = {
+        zoneActivite: '/api/zone_activites/' + activiteZone_selected.value,
+        parametre: '/api/parametres/' + id_parametre_mode_ecran_interface_video_scoring.value,
+        valeur: mode_ecran_interface.value.toString(),
+      };
+      await postParametreZoneActivites(body);
+    }
+
   } else {
-    const {data} = await postActivitesByZones(ActiviteZoneTemp)
+    // création
+    const data = await postActivitesByZones(ActiviteZoneTemp)
+
+    // param config équipements motorisés
+    let body = {
+      zoneActivite: '/api/zone_activites/' + data.id,
+      parametre: '/api/parametres/' + id_parametre_config_equipements_motorises.value,
+      valeur: mode_equipements_motorises.value.toString(),
+    };
+    await postParametreZoneActivites(body);
+
+    // param mode d'écran et d'interface vidéo scoring
+    if (mode_ecran_interface.value > 0) {
+      body.parametre = '/api/parametres/' + id_parametre_mode_ecran_interface_video_scoring.value;
+      body.valeur = mode_ecran_interface.value.toString();
+      await postParametreZoneActivites(body);
+    }
+
   }
+
   activiteZone_modal.value = false
   cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena='+props.id)
   activites.value = await getActivites(props.id)
 
+};
 
-}
 onMounted(async () => {
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena='+props.id)
   activites.value = await getActivites(props.id)
-})
+  modes.value = await getModes();
+  let data = await getParametres(1, '&code=config-des-equipements-motorises');
+  id_parametre_config_equipements_motorises.value = data[0]?.id;
+  data = await getParametres(1, '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring');
+  id_parametre_mode_ecran_interface_video_scoring.value = data[0]?.id;
+});
 
 const cancel = () => {
-  equipement.value = {}
-}
+  zone_selected.value = 0;
+  activite_selected.value = 0;
+  activiteZone_selected.value = 0;
+};
 </script>
