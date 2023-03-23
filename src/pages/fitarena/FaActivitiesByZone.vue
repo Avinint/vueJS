@@ -40,7 +40,7 @@
         <Button label="Ajouter une Activite" icon="add" type="secondary" @click="addActiviteZone(zoneIdx)" id="TaddActivite"/>
       </Card>
       <form @submit.prevent="saveActiviteZone">
-        <Modal v-if="activiteZone_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false">
+        <Modal v-if="activiteZone_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false" class="activite_zone_modal">
 
           <div>
             <label for="select_activites" class="mr-4">Activité</label>
@@ -49,31 +49,44 @@
             </select>
           </div>
 
-          <div class="flex item-center">
+          <div class="flex items-center">
             <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
               Config des équipements motorisés
             </div>
             <div>
               <template v-for="mode of modes">
-                <label :for="'mode_equipements_motorises_'+mode.id">{{ mode.libelle }}</label>
                 <input required="required" type="radio" name="mode_equipements_motorises" :value="mode.id" :id="'mode_equipements_motorises_'+mode.id" v-model="mode_equipements_motorises">
+                <label :for="'mode_equipements_motorises_'+mode.id">{{ mode.libelle }}</label>
               </template>
             </div>
           </div>
 
-          <div class="flex item-center">
+          <div class="flex items-center">
             <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
               Mode d'écran géant et d'interface de vidéo et scoring
             </div>
             <div>
-              <label :for="'mode_ecran_interface_0'">Aucun</label>
               <input type="radio" name="mode_ecran_interface" :value="0" id="mode_ecran_interface_0" v-model="mode_ecran_interface">
+              <label :for="'mode_ecran_interface_0'">Aucun</label>
               <template v-for="mode of modes">
-                <label :for="'mode_ecran_interface_'+mode.id">{{ mode.libelle }}</label>
                 <input type="radio" name="mode_ecran_interface" :value="mode.id" :id="'mode_ecran_interface_'+mode.id" v-model="mode_ecran_interface">
+                <label :for="'mode_ecran_interface_'+mode.id">{{ mode.libelle }}</label>
               </template>
             </div>
           </div>
+
+          <div class="flex items-center">
+            <div class="mr-4">Division en sous-zones</div>
+            <div class="bg-slate-300 rounded-full flex items-center justify-center w-8 h-8 mr-4">{{ sous_zones.length }}</div>
+            <div class="text-blue-300	text-sm">
+              Sous-zone : surface réservable par les utilisateurs (= terrain)
+            </div>
+          </div>
+
+          <div v-for="sous_zone in sous_zones" class="border border-gray-300 rounded-md p-4">
+            <div>{{ sous_zone.libelle }}</div>
+          </div>
+
         </Modal>
       </form>
     </div>
@@ -118,6 +131,7 @@ const mode_equipements_motorises = ref(0);
 const mode_ecran_interface = ref(0);
 const id_parametre_config_equipements_motorises = ref(0);
 const id_parametre_mode_ecran_interface_video_scoring = ref(0);
+const sous_zones = ref([]);
 
 const addActiviteZone = (zoneIdx) => {
   activiteZone_selected.value = 0;
@@ -144,8 +158,12 @@ const editActiviteZone = async (i) => {
   modal_title.value = "Modifier une activité de la zone " + activiteZoneTemp.zone.libelle;
   activiteZone_modal.value = true
   readonly.value = false
+  sous_zones.value = [];
 
-  const data = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value);
+  // récupération des valeurs des paramètres nécessaires
+  mode_equipements_motorises.value = 0;
+  mode_ecran_interface.value = 0;
+  let data = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value);
   data.forEach(datum => {
     switch (datum.parametre.id) {
       case id_parametre_config_equipements_motorises.value:
@@ -155,6 +173,12 @@ const editActiviteZone = async (i) => {
         mode_ecran_interface.value = datum.valeur;
         break;
     }
+  });
+
+  // récupération de la liste des sous-zones
+  data = await getSousZones(zone_selected.value);
+  data.forEach(datum => {
+    sous_zones.value.push(datum);
   });
 }
 
@@ -169,6 +193,7 @@ const mapApiToData = (activiteZoneTemp) => {
   activiteZone.value = activiteZoneTemp;
   activiteZone_selected.value = activiteZoneTemp.id;
   activite_selected.value = activiteZoneTemp.activite.id;
+  zone_selected.value = activiteZoneTemp.zone.id;
 }
 
 const modifieActivite = async({actif,id}) => {
@@ -264,9 +289,30 @@ onMounted(async () => {
   id_parametre_mode_ecran_interface_video_scoring.value = data[0]?.id;
 });
 
+const getSousZones = async (parentId) => {
+  return await getZones(1, '&idZoneParent=' + parentId);
+};
+
 const cancel = () => {
   zone_selected.value = 0;
   activite_selected.value = 0;
   activiteZone_selected.value = 0;
+  sous_zones.value = [];
 };
 </script>
+
+
+<style scoped>
+.activite_zone_modal input[type=radio] {
+  display: none;
+}
+.activite_zone_modal input[type=radio] + label {
+  margin-right: .5em;
+  cursor: pointer;
+  padding: .25em 1em;
+}
+.activite_zone_modal input[type=radio]:checked + label {
+  background-color: #ddd;
+  border-radius: .5em;
+}
+</style>
