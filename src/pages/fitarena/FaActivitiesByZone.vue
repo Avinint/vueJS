@@ -41,7 +41,7 @@
       </Card>
 
       <form @submit.prevent="saveActiviteZone">
-        <Modal v-if="activiteZone_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false;cancel();" class="activite_zone_modal">
+        <Modal v-if="activiteZone_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false;cancel();">
 
           <div>
             <label for="select_activites" class="mr-4">Activité</label>
@@ -55,10 +55,13 @@
               Config des équipements motorisés
             </div>
             <div>
-              <template v-for="mode of modes_motorise">
-                <input :disabled="readonly" required="required" type="radio" name="mode_equipements_motorises" :value="mode.id" :id="'mode_equipements_motorises_'+mode.id" v-model="mode_equipements_motorises">
-                <label :for="'mode_equipements_motorises_'+mode.id">{{ mode.libelle }}</label>
-              </template>
+              <InputRadio
+                ref="inputRadio"
+                :disabled="readonly"
+                name="mode_equipements_motorises"
+                v-model="mode_equipements_motorises"
+                :list="modes_motorise"
+              />
             </div>
           </div>
 
@@ -67,12 +70,17 @@
               Mode d'écran géant et d'interface de vidéo et scoring
             </div>
             <div>
-              <input :disabled="readonly" type="radio" name="mode_ecran_interface" :value="0" id="mode_ecran_interface_0" v-model="mode_ecran_interface">
-              <label :for="'mode_ecran_interface_0'">Aucun</label>
-              <template v-for="mode of modes_numerique">
-                <input :disabled="readonly" type="radio" name="mode_ecran_interface" :value="mode.id" :id="'mode_ecran_interface_'+mode.id" v-model="mode_ecran_interface">
-                <label :for="'mode_ecran_interface_'+mode.id">{{ mode.libelle }}</label>
-              </template>
+              <InputRadio
+                ref="inputRadio"
+                :default="{
+                  label: 'Aucun',
+                  value: 0,
+                }"
+                :disabled="readonly"
+                name="mode_ecran_interface"
+                v-model="mode_ecran_interface"
+                :list="modes_numerique"
+              />
             </div>
           </div>
 
@@ -90,18 +98,20 @@
             <div>
               <Input v-model="new_sous_zone_libelle" label="Nom de la sous-zone" type="text" id="new_sous_zone_libelle" />
             </div>
-            <div class="text-center" >
-              <Button label="Valider" icon="" class="mt-4 bg-green-400 text-white mr-2" type="secondary" @click="validSousZone()"></Button>
+            <div class="text-center mt-4">
+              <Button label="Valider" icon="" class="mr-4" type="secondary" @click="validSousZone()"></Button>
               <Button label="Annuler" icon="" class="" type="secondary" @click="new_sous_zone = false"></Button>
             </div>
           </div>
 
-          <div v-for="(sous_zone, i) in sous_zones" class="border border-gray-300 rounded-md p-4">
-            <div>{{ sous_zone.libelle }}</div>
-            <div>
-              <Button borderless icon="delete" type="secondary" @click="removeSousZone(sous_zone.id, i)"/>
+          <template v-for="(sous_zone, idx) in sous_zones">
+            <div v-if="!sous_zone.toRemove" class="border border-gray-300 rounded-md p-4">
+              <div>{{ sous_zone.libelle }}</div>
+              <div>
+                <Button v-if="!readonly" borderless icon="delete" type="secondary" @click="removeSousZone(idx)"/>
+              </div>
             </div>
-          </div>
+          </template>
 
         </Modal>
       </form>
@@ -114,6 +124,7 @@ import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
+import InputRadio from '../../components/common/InputRadio.vue'
 import {onMounted, ref} from "vue";
 import {
   deleteActivitesByZones,
@@ -155,16 +166,20 @@ const new_sous_zone = ref(false);
 const new_sous_zone_libelle = ref('');
 const id_type_sous_zone = ref(0);
 
-const addActiviteZone = (zoneIdx) => {
+const inputRadio = ref();
+
+const addActiviteZone = async (zoneIdx) => {
   activiteZone_selected.value = 0;
   const zone = zones.value[zoneIdx];
   zone_selected.value = zone.id;
   activite_selected.value = activites.value[0].id;
   modal_title.value = "Ajouter une activité à la zone " + zone.libelle;
-  mode_equipements_motorises.value = 0;
+  mode_equipements_motorises.value = modes_motorise.value[0].id;
   mode_ecran_interface.value = 0;
   readonly.value = false;
   activiteZone_modal.value = true;
+
+  await sousZones(zone_selected.value);
 };
 
 const removeActiviteZone = async (i) => {
@@ -198,7 +213,7 @@ const mapApiToData = async (activiteZoneTemp) => {
   zone_selected.value = activiteZoneTemp.zone.id;
 
   // récupération des valeurs des paramètres nécessaires
-  mode_equipements_motorises.value = 0;
+  mode_equipements_motorises.value = modes_motorise.value[0].id;
   mode_ecran_interface.value = 0;
   let data = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value);
   data.forEach(datum => {
@@ -212,13 +227,17 @@ const mapApiToData = async (activiteZoneTemp) => {
     }
   });
 
+  await sousZones(zone_selected.value);
+}
+
+const sousZones = async (zoneId) => {
   // récupération de la liste des sous-zones
   sous_zones.value = [];
-  data = await getSousZones(zone_selected.value);
+  let data = await getSousZones(zoneId);
   data.forEach(datum => {
     sous_zones.value.push(datum);
   });
-}
+};
 
 const modifieActivite = async({actif,id}) => {
   try {
@@ -232,9 +251,7 @@ const modifieActivite = async({actif,id}) => {
 const saveActiviteZone = async () => {
   const ActiviteZoneTemp = {
     activite: '/api/activites/' + activite_selected.value,
-    // actif: equipement.value.actif == true ? equipement.actif.statut : false
     ordre: 0,
-    actif: true,
   }
 
   if (zone_selected.value) {
@@ -243,18 +260,18 @@ const saveActiviteZone = async () => {
 
   if (activiteZone_selected.value) {
     // édition
-    const data = await updateActivitesByZones(ActiviteZoneTemp, activiteZone_selected.value)
-
-    saveParametres(activiteZone_selected.value);
-    saveSousZones();
+    await updateActivitesByZones(ActiviteZoneTemp, activiteZone_selected.value)
+    await saveParametres(activiteZone_selected.value);
 
   } else {
     // création
+    ActiviteZoneTemp.actif = true;
     const data = await postActivitesByZones(ActiviteZoneTemp)
-
-    saveParametres(data.id, true);
+    await saveParametres(data.id, true);
 
   }
+
+  await saveSousZones(zone_selected.value);
 
   activiteZone_modal.value = false
   cancel()
@@ -359,8 +376,8 @@ const validSousZone = () => {
   });
 };
 
-const saveSousZones = async () => {
-  for (let {isNew, actif, ordre, libelle} of sous_zones.value) {
+const saveSousZones = async (zoneId) => {
+  for (let {isNew, toRemove, actif, ordre, libelle, id} of sous_zones.value) {
     if (isNew) {
       await postZones({
         typeZone: '/api/type_zones/' + id_type_sous_zone.value,
@@ -368,34 +385,27 @@ const saveSousZones = async () => {
         ordre: ordre,
         libelle: libelle,
         actif: actif,
-        idZoneParent: zone_selected.value
+        idZoneParent: zoneId
       });
+    } else if (toRemove) {
+      await deleteZones(id);
     }
   }
 };
 
-const removeSousZone = async (id, index) => {
+const removeSousZone = async (index) => {
+  const sousZone = sous_zones.value[index];
+
   // on peut supprimer dans la liste une zone pas encore créée en base
-  if (id) {
-    await deleteZones(id);
-  } else {
+  if (sousZone.isNew) {
     sous_zones.value.splice(index, 1);
+  } else {
+    sousZone.toRemove = true;
   }
 };
 </script>
 
 
 <style scoped>
-.activite_zone_modal input[type=radio] {
-  display: none;
-}
-.activite_zone_modal input[type=radio] + label {
-  margin-right: .5em;
-  cursor: pointer;
-  padding: .25em 1em;
-}
-.activite_zone_modal input[type=radio]:checked + label {
-  background-color: #ddd;
-  border-radius: .5em;
-}
+
 </style>
