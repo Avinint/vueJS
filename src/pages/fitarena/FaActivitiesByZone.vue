@@ -139,7 +139,6 @@ import { getModes } from '../../api/mode';
 import { getParametres } from '../../api/parametre';
 import { getTypeZone } from '../../api/typeZone';
 import { getParametreZoneActivites, postParametreZoneActivites, updateParametreZoneActivites, deleteParamatreZoneActivites } from '../../api/parametreZoneActivite';
-// import { getZoneActivite } from '../../api/zoneActivite';
 import {getActivites, patchActivites} from "../../api/activite";
 import Select from "../../components/common/Select.vue";
 import {toast} from "vue3-toastify";
@@ -249,26 +248,33 @@ const modifieActivite = async({actif,id}) => {
 }
 
 const saveActiviteZone = async () => {
-  const ActiviteZoneTemp = {
-    activite: '/api/activites/' + activite_selected.value,
-    ordre: 0,
-  }
 
-  if (zone_selected.value) {
-    ActiviteZoneTemp.zone = '/api/zones/' + zone_selected.value;
-  }
+  try {
+    if (activiteZone_selected.value) {
+      // édition
+      await updateActivitesByZones({
+        activiteId: activite_selected.value,
+        actif: activiteZone.value.actif,
+        ordre: activiteZone.value.ordre
+      }, activiteZone_selected.value)
+      await saveParametres(activiteZone_selected.value);
 
-  if (activiteZone_selected.value) {
-    // édition
-    await updateActivitesByZones(ActiviteZoneTemp, activiteZone_selected.value)
-    await saveParametres(activiteZone_selected.value);
+    } else {
+      // création
+      const data = await postActivitesByZones({
+        activiteId: activite_selected.value,
+        zoneId: zone_selected.value,
+        actif: true,
+        ordre: 0
+      });
+      await saveParametres(data.id, true);
 
-  } else {
-    // création
-    ActiviteZoneTemp.actif = true;
-    const data = await postActivitesByZones(ActiviteZoneTemp)
-    await saveParametres(data.id, true);
-
+    }
+  } catch(e) {
+    if (e.status === 409) {
+        toast.error('Activité déjà appliquée à cette zone !');
+      }
+      return;
   }
 
   await saveSousZones(zone_selected.value);

@@ -15,24 +15,23 @@ export const getActivitesByZones = async (page = 1, query = '') => {
     return response.json()
 }
 
-export const postActivitesByZones = async (activite) => {
-    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/zone_activites`, {
+export const postActivitesByZones = async (data) => {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/zone_activite`, {
         method:'post',
         headers: {
             ...defaultHeaders,
             'Content-Type': 'application/ld+json',
             'Authorization': 'Bearer '+ localStorage.getItem('token')
         },
-        body: JSON.stringify(activite)
+        body: JSON.stringify(data)
     })
     if (response.status !== 201)
         throw response
     return response.json()
 }
 
-
-export const updateActivitesByZones = async (activite, id) => {
-    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activites/${id}`, {
+export const updateActivitesByZones = async (data, id) => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone_activite/${id}`, {
         method:'put',
         headers: {
             ...defaultHeaders,
@@ -40,7 +39,7 @@ export const updateActivitesByZones = async (activite, id) => {
             'Content-Type': 'application/ld+json',
             'Authorization': 'Bearer '+ localStorage.getItem('token')
         },
-        body: JSON.stringify(activite)
+        body: JSON.stringify(data)
     })
     if (response.status !== 200)
         throw response
