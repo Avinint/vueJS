@@ -62,6 +62,12 @@
           <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
         </label>
       </div>
+      <div>
+        <AjoutEquipements ref="ajoutEquipementsNume" typeEquipement="numerique" :fa=props.id :zone=id_selected></AjoutEquipements>
+      </div>
+      <div>
+        <AjoutEquipements ref="ajoutEquipementsMoto" typeEquipement="motorise" :fa=props.id :zone=id_selected></AjoutEquipements>
+      </div>
     </Modal>
   </form>
 
@@ -72,8 +78,10 @@
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
+import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import {onMounted, ref} from "vue";
 import {deleteZones, getZones, getZone, postZones, updateZones, patchZones} from "../../api/zone.js";
+import { postZoneEquipement, deleteZoneEquipement, deleteZoneEquipementByIds } from '../../api/zoneEquipement';
 import {useRouter} from "vue-router";
 import {getTypeZone} from "../../api/typeZone";
 import {toast} from "vue3-toastify";
@@ -90,6 +98,8 @@ const subEspace = ref({})
 const espaceParents = ref([])
 let espace_selected = ref({})
 const modal_title = ref('')
+const ajoutEquipementsNume = ref();
+const ajoutEquipementsMoto = ref();
 
 const addEspace = () => {
   cancel()
@@ -149,16 +159,52 @@ const saveEspace = async () => {
     actif: subEspace.value.actif == true ? subEspace.value.actif : false ,
     idZoneParent: espace_selected.value
   }
+
   if (id_selected.value) {
     const {data} = await updateZones(espTemp, id_selected.value)
+    await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, id_selected.value);
+    await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, id_selected.value);
   } else {
-    const {data} = await postZones(espTemp)
+    try {
+      const data = await postZones(espTemp);
+      await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id);
+      await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id);
+    } catch(e) {
+      console.error(e);
+    }
   }
   subEspace_modal.value = false
   cancel()
   subEspaces.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   espaceParents.value = await getZones(1, '&typeZone.code=espace&fitArena=' + props.id)
   typeZones.value = await getTypeZone()
+}
+
+const linkedEquipements = async (typeEquipements, zoneId) => {
+  for (let typeEquipement of typeEquipements) {
+    for (let equipement of typeEquipement.equipements) {
+      if (equipement.linked === true) {
+        try {
+          await postZoneEquipement({
+            zoneId: zoneId,
+            equipementId: equipement.id,
+            actif: true
+          });
+        } catch(e) {
+        }
+
+      } else if (equipement.linked === false) {
+        for (let ze of equipement.zoneEquipements) {
+          if (ze.zone.id == zoneId) {
+            try {
+              await deleteZoneEquipement(ze.id);
+            } catch(e) {
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 onMounted(async () => {
@@ -171,6 +217,7 @@ const cancel = () => {
   espace_selected.value = {}
   subEspace.value = {}
   readonly.value = false
+  id_selected.value = 0;
 }
 
 </script>
