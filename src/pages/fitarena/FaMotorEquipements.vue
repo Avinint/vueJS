@@ -110,29 +110,28 @@
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead>
           <tr>
-            <th scope="col" class="w-1/5 px-6 py-3">Actif</th>
+            <th scope="col" class="w-1/5 px-6 py-3"></th>
             <th scope="col" class="w-1/5 px-6 py-3">Libellé</th>
-            <th scope="col" class="w-1/5 px-6 py-3">Adresse IP</th>
+            <th scope="col" class="w-1/5 px-6 py-3">Nom d'Appel</th>
           </tr>
           </thead>
           <tbody>
           <tr class="bg-white" v-for="(equipementMode, i) in equipement.equipementModes" :key="i">
-            <td class="px-6 py-4">
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" value="true" class="sr-only peer" v-model="equipementMode.actif"  >
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
-                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
-              </label>
+            <td class="flex justify-center items-center p-3">
+              <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeEquipementConfiguration(equipementMode.id)"/>
+              <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editEquipementConfiguration(equipementMode.id)"/>
             </td>
             <td class="px-6 py-4">
-              {{ equipementMode.mode.libelle }}
+              <Input :readonly="equipementMode.mode.readonly" v-model="equipementMode.mode.libelle"/>
             </td>
             <td class="px-6 py-4">
-              {{ equipementMode.nomAppel }}
+              <Input :readonly="equipementMode.mode?.readonly ? true : false" v-model="equipementMode.nomAppel"/>
+              {{equipementMode.mode.readonly}}
             </td>
           </tr>
           </tbody>
         </table>
+        <Button label="Ajouter une configuration" icon="add" type="secondary" @click="addEquipementConfiguration" id="TaddConfiguration"/>
       </CardConfiguration>
     </Modal>
   </form>
@@ -144,6 +143,7 @@ import Card from '../../components/common/Card.vue'
 import CardConfiguration from '../../components/common/CardConfiguration.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
+import Input from '../../components/common/Input.vue'
 import {onMounted, ref} from "vue";
 import {
   deleteEquipements,
@@ -156,8 +156,6 @@ import {
 import {deleteTypeEquipements, getTypeEquipements, postTypeEquipements, updateTypeEquipements} from "../../api/typeEquipement";
 import {toast} from "vue3-toastify";
 import {patchActivites} from "../../api/activite";
-
-
 const props = defineProps(['id'])
 const equipement_modal = ref(false)
 const readonly = ref(false)
@@ -215,7 +213,17 @@ const mapApiToData = (equipementTemp) => {
   equipement_selected.value = equipementTemp.typeEquipement.id
 }
 
-const addConfiguration = () => {
+const addEquipementConfiguration = () => {
+  const mode = {'libelle' : 'toto', 'type' : 'toto', 'readonly': false}
+  equipement.value.equipementModes.push({mode})
+
+}
+
+const removeEquipementConfiguration = () => {
+
+}
+
+const editEquipementConfiguration = () => {
 
 }
 
@@ -254,6 +262,7 @@ const saveEquipement = async () => {
 onMounted(async () => {
   equipements.value = await getEquipements(props.id, 1, '&typeEquipement.categoryTypeEquipement.code=motorise')
   typeEquipements.value = await getTypeEquipements(1, '&categoryTypeEquipement.code=motorise')
+
 })
 
 const cancel = () => {

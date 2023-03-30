@@ -48,14 +48,18 @@
           </td>
 
           <td class="px-6 py-4">
-            <div class="flex items-center">
-              <input disabled :checked="user.mineur" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input onclick="return false;" type="checkbox" value="true" class="sr-only peer"  v-model="user.mineur" checked >
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+            </label>
           </td>
           <td class="px-6 py-4">
-            <div class="flex items-center">
-              <input disabled :checked="user.actif" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input onclick="return false;" type="checkbox" value="true" class="sr-only peer"  v-model="user.actif" checked >
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+            </label>
           </td>
           <td class="px-6 py-4">
             {{ user.identifiant }}

@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', () => {
   const iat = computed(() => parseJwt(token_in_storage.value)?.iat ?? 0)
   const exp = computed(() => parseJwt(token_in_storage.value)?.exp ?? 0)
   const username = computed(() => parseJwt(token_in_storage.value)?.username ?? '')
-  const connected = computed(() => (Math.floor(Date.now() / 1000) < exp?.value) ?? false)
+  const connected = computed(() => (Math.floor(Date.now() / 1000) < exp?.value))
 
   async function login(login, pass) {
     const response = await fetch(import.meta.env.VITE_API_URL +'/auth', {
