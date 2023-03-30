@@ -91,4 +91,16 @@ export const deleteEquipements = async (id) => {
     return {}
 }
 
-
+export const getEquipementsByZone = async (page, zoneId, query = '') => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/zone/${zoneId}/equipements?page=${page}${query}`, {
+        method:'get',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type': 'application/ld+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        }
+    })
+    if (response.status !== 200)
+        throw response
+    return response.json()
+};

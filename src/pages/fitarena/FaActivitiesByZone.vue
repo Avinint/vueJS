@@ -52,11 +52,10 @@
 
           <div class="flex items-center">
             <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
-              Config des équipements motorisés
+              {{ parametre_config_equipements_motorises.libelle }}
             </div>
             <div>
               <InputRadio
-                ref="inputRadio"
                 :disabled="readonly"
                 name="mode_equipements_motorises"
                 v-model="mode_equipements_motorises"
@@ -67,11 +66,10 @@
 
           <div class="flex items-center">
             <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
-              Mode d'écran géant et d'interface de vidéo et scoring
+              {{ parametre_mode_ecran_interface_video_scoring.libelle }}
             </div>
             <div>
               <InputRadio
-                ref="inputRadio"
                 :default="{
                   label: 'Aucun',
                   value: 0,
@@ -106,7 +104,17 @@
 
           <template v-for="(sous_zone, idx) in sous_zones">
             <div v-if="!sous_zone.toRemove" class="border border-gray-300 rounded-md p-4">
-              <div>{{ sous_zone.libelle }}</div>
+              <div>Sous-Zone {{ sous_zone.libelle }}</div>
+              <div>
+                <ParamSousZone
+                  v-if="zoneEquipementsByType[zone_selected]"
+                  :i=idx
+                  :zone=zone_selected
+                  :sous-zone="sous_zone"
+                  :sous-zone-parametres="sousZoneParametres"
+                  :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
+                />
+              </div>
               <div>
                 <Button v-if="!readonly" borderless icon="delete" type="secondary" @click="removeSousZone(idx)"/>
               </div>
@@ -125,6 +133,7 @@ import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
 import InputRadio from '../../components/common/InputRadio.vue'
+import ParamSousZone from '../../components/faActivitesByZone/paramSousZone.vue'
 import {onMounted, ref} from "vue";
 import {
   deleteActivitesByZones,
@@ -134,11 +143,12 @@ import {
   updateActivitesByZones,
   patchActivitesByZones
 } from "../../api/activiteByZone";
-import { getZones, postZones, deleteZones } from "../../api/zone";
+import { getZones, postZones, deleteZones, updateZones } from "../../api/zone";
 import { getModes } from '../../api/mode';
-import { getParametres } from '../../api/parametre';
+import { getParametres, postParametres, updateParametres } from '../../api/parametre';
 import { getTypeZone } from '../../api/typeZone';
 import { getParametreZoneActivites, postParametreZoneActivites, updateParametreZoneActivites, deleteParamatreZoneActivites } from '../../api/parametreZoneActivite';
+import { getEquipementsByZone } from '../../api/equipement';
 import {getActivites, patchActivites} from "../../api/activite";
 import Select from "../../components/common/Select.vue";
 import {toast} from "vue3-toastify";
@@ -158,14 +168,16 @@ const modes_motorise = ref([]);
 const modes_numerique = ref([]);
 const mode_equipements_motorises = ref(0);
 const mode_ecran_interface = ref(0);
-const id_parametre_config_equipements_motorises = ref(0);
-const id_parametre_mode_ecran_interface_video_scoring = ref(0);
+const parametre_config_equipements_motorises = ref({});
+const parametre_mode_ecran_interface_video_scoring = ref({});
 const sous_zones = ref([]);
 const new_sous_zone = ref(false);
 const new_sous_zone_libelle = ref('');
 const id_type_sous_zone = ref(0);
 
-const inputRadio = ref();
+const sousZoneParametres = ref({});
+const zoneEquipementsByType = ref({});
+
 
 const addActiviteZone = async (zoneIdx) => {
   activiteZone_selected.value = 0;
@@ -217,10 +229,10 @@ const mapApiToData = async (activiteZoneTemp) => {
   let data = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value);
   data.forEach(datum => {
     switch (datum.parametre.id) {
-      case id_parametre_config_equipements_motorises.value:
+      case parametre_config_equipements_motorises.value.id:
         mode_equipements_motorises.value = datum.valeur;
         break;
-      case id_parametre_mode_ecran_interface_video_scoring.value:
+      case parametre_mode_ecran_interface_video_scoring.value.id:
         mode_ecran_interface.value = datum.valeur;
         break;
     }
@@ -229,10 +241,10 @@ const mapApiToData = async (activiteZoneTemp) => {
   await sousZones(zone_selected.value);
 }
 
+// récupération de la liste des sous-zones
 const sousZones = async (zoneId) => {
-  // récupération de la liste des sous-zones
   sous_zones.value = [];
-  let data = await getSousZones(zoneId);
+  let data = await getZones(1, '&idZoneParent=' + zoneId + '&zoneActivites.activite.id=' + activite_selected.value);
   data.forEach(datum => {
     sous_zones.value.push(datum);
   });
@@ -277,7 +289,7 @@ const saveActiviteZone = async () => {
       return;
   }
 
-  await saveSousZones(zone_selected.value);
+  await saveSousZones(zone_selected.value, activite_selected.value);
 
   activiteZone_modal.value = false
   cancel()
@@ -291,17 +303,13 @@ onMounted(async () => {
   activites.value = await getActivites(props.id)
   modes_motorise.value = await getModes(1, '&categoryTypeEquipement.code=motorise');
   modes_numerique.value = await getModes(1, '&categoryTypeEquipement.code=numerique');
-  let data = await getParametres(1, '&code=config-des-equipements-motorises');
-  id_parametre_config_equipements_motorises.value = data[0]?.id;
-  data = await getParametres(1, '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring');
-  id_parametre_mode_ecran_interface_video_scoring.value = data[0]?.id;
-  data = await getTypeZone(1, '&code=sous-zone');
+  parametre_config_equipements_motorises.value = (await getParametres(1, '&code=config-des-equipements-motorises')).shift();
+  parametre_mode_ecran_interface_video_scoring.value = (await getParametres(1, '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring')).shift();
+  let data = await getTypeZone(1, '&code=sous-zone');
   id_type_sous_zone.value = data[0]?.id;
+  await fetchSousZoneParametres();
+  await fetchZoneEquipements();
 });
-
-const getSousZones = async (parentId) => {
-  return await getZones(1, '&idZoneParent=' + parentId);
-};
 
 const cancel = () => {
   zone_selected.value = 0;
@@ -316,7 +324,7 @@ const saveParametres = async (zaId, creation = false) => {
   if (!creation) {
 
     // param config équipements motorisés
-    let parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + zaId + '&parametre=' + id_parametre_config_equipements_motorises.value);
+    let parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + zaId + '&parametre=' + parametre_config_equipements_motorises.value.id);
     if (parametreZoneActivites[0]?.id) {
       await updateParametreZoneActivites(parametreZoneActivites[0].id, {
         valeur: mode_equipements_motorises.value.toString(),
@@ -324,7 +332,7 @@ const saveParametres = async (zaId, creation = false) => {
     }
 
     // param mode d'écran et d'interface vidéo scoring
-    parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + zaId + '&parametre=' + id_parametre_mode_ecran_interface_video_scoring.value);
+    parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + zaId + '&parametre=' + parametre_mode_ecran_interface_video_scoring.value.id);
     if (parametreZoneActivites[0]?.id) {
       if (mode_ecran_interface.value > 0) {
         // modif du paramètre
@@ -339,7 +347,7 @@ const saveParametres = async (zaId, creation = false) => {
       // le paramètre n'existe pas encore
       let body = {
         zoneActivite: '/api/zone_activites/' + zaId,
-        parametre: '/api/parametres/' + id_parametre_mode_ecran_interface_video_scoring.value,
+        parametre: '/api/parametres/' + parametre_mode_ecran_interface_video_scoring.value.id,
         valeur: mode_ecran_interface.value.toString(),
       };
       await postParametreZoneActivites(body);
@@ -350,14 +358,14 @@ const saveParametres = async (zaId, creation = false) => {
     // param config équipements motorisés
     let body = {
       zoneActivite: '/api/zone_activites/' + zaId,
-      parametre: '/api/parametres/' + id_parametre_config_equipements_motorises.value,
+      parametre: '/api/parametres/' + parametre_config_equipements_motorises.value.id,
       valeur: mode_equipements_motorises.value.toString(),
     };
     await postParametreZoneActivites(body);
 
     // param mode d'écran et d'interface vidéo scoring
     if (mode_ecran_interface.value > 0) {
-      body.parametre = '/api/parametres/' + id_parametre_mode_ecran_interface_video_scoring.value;
+      body.parametre = '/api/parametres/' + parametre_mode_ecran_interface_video_scoring.value.id;
       body.valeur = mode_ecran_interface.value.toString();
       await postParametreZoneActivites(body);
     }
@@ -382,10 +390,11 @@ const validSousZone = () => {
   });
 };
 
-const saveSousZones = async (zoneId) => {
-  for (let {isNew, toRemove, actif, ordre, libelle, id} of sous_zones.value) {
+const saveSousZones = async (zoneId, activiteId) => {
+  for (let {isNew, toRemove, actif, ordre, libelle, id, zoneActivites} of sous_zones.value) {
     if (isNew) {
-      await postZones({
+      // création
+      let data = await postZones({
         typeZone: '/api/type_zones/' + id_type_sous_zone.value,
         fitArena: '/api/fit_arenas/' + props.id,
         ordre: ordre,
@@ -393,8 +402,45 @@ const saveSousZones = async (zoneId) => {
         actif: actif,
         idZoneParent: zoneId
       });
+      await postActivitesByZones({
+        activiteId: activiteId,
+        zoneId: data.id,
+        actif: true,
+        ordre: 0
+      });
     } else if (toRemove) {
+      // suppression
       await deleteZones(id);
+    } else {
+      // édition
+      const parametres = zoneActivites[0].parametreZoneActivites;
+      const toUpdate = [];
+      const toPost = [];
+      for (let p of parametres) {
+        const data = {
+          parametre: p.parametre.id,
+          valeur: p.valeur
+        };
+        // si on a p = 0 c'est qu'on a modifier un paramètre qui n'existe pas en base
+        if (p.id == 0) {
+          toPost.push(data);
+        } else {
+          toUpdate.push(data);
+        }
+      }
+      const data = {
+        idZone: id,
+        idActivite: activiteId,
+        parametres: []
+      };
+      if (toUpdate.length) {
+        data.parametres = toUpdate;
+        await updateParametres(data);
+      }
+      if (toPost.length) {
+        data.parametres = toPost;
+        await postParametres(data);
+      }
     }
   }
 };
@@ -409,6 +455,43 @@ const removeSousZone = async (index) => {
     sousZone.toRemove = true;
   }
 };
+
+// récupèration des info de base des paramètres nécessaires (globaux, pas par rapport à une sous-zone)
+const fetchSousZoneParametres = async () => {
+  const parametreNombreParticipantsMax = (await getParametres(1, '&code=nombre-de-participants-max')).shift();
+  const parametreNombreParticipantsConseille = (await getParametres(1, '&code=nombre-de-participants-conseille')).shift();
+
+  sousZoneParametres.value = {
+    nombreParticipantsMax: parametreNombreParticipantsMax,
+    nombreParticipantsConseille: parametreNombreParticipantsConseille,
+  };
+};
+
+// récupération des équipements de la zone par type
+const fetchZoneEquipements = async () => {
+  for (let zone of zones.value) {
+    const equipementsTypeTablette = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code=tablette')).map(elt => {
+      return elt.equipement;
+    });
+    const equipementsTypeEcran = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code[]=ecran-geant&equipement.typeEquipement.code[]=ecran-attente&equipement.typeEquipement.code[]=ecran-accueil') ).map(elt => {
+      return elt.equipement;
+    });
+    const equipementsTypeCamera = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code=camera')).map(elt => {
+        return elt.equipement;
+    });
+    const equipementsTypeSono = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code=sonorisation')).map(elt => {
+        return elt.equipement;
+    });
+
+    zoneEquipementsByType.value[zone.id] = {
+      tablette: equipementsTypeTablette,
+      ecran: equipementsTypeEcran,
+      camera: equipementsTypeCamera,
+      sonorisation: equipementsTypeSono
+    };
+  }
+
+}
 </script>
 
 
