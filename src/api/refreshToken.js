@@ -1,8 +1,13 @@
 import { defaultHeaders } from "./api.js";
-import { useUserStore } from "../stores/user.js";
+import {parseJwt, useUserStore} from "../stores/user.js";
+
+const getTokenExpiration = () => {
+  let exp = parseJwt(localStorage.getItem('token')).exp
+  return (Math.floor(Date.now() / 1000) < exp) ?? false
+}
 
 export default async (...args) => {
-  if (!useUserStore().connected) {
+  if (!getTokenExpiration()) {
     try {
       const {token, refresh_token} = await refreshToken()
       useUserStore().setCredential(token, refresh_token)
