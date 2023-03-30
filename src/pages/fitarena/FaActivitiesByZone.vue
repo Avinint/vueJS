@@ -113,6 +113,7 @@
                   :sous-zone="sous_zone"
                   :sous-zone-parametres="sousZoneParametres"
                   :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
+                  @changeEquipement="changeEquipementSousZone"
                 />
               </div>
               <div>
@@ -128,6 +129,12 @@
 </template>
 
 <script setup>
+
+/*
+TODO: quand on ajoute une activité à une zone, il faut lier toutes les sous zones à cette activité
+et inversement quand on ajoute une sous zone il faut la lier à toutes les activités liées à la zone parent
+*/
+
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
@@ -150,6 +157,7 @@ import { getTypeZone } from '../../api/typeZone';
 import { getParametreZoneActivites, postParametreZoneActivites, updateParametreZoneActivites, deleteParamatreZoneActivites } from '../../api/parametreZoneActivite';
 import { getEquipementsByZone } from '../../api/equipement';
 import {getActivites, patchActivites} from "../../api/activite";
+import { postZoneActiviteEquipement, deleteZoneActiviteEquipement } from '../../api/zoneActiviteEquipement';
 import Select from "../../components/common/Select.vue";
 import {toast} from "vue3-toastify";
 const props = defineProps(['id'])
@@ -177,6 +185,10 @@ const id_type_sous_zone = ref(0);
 
 const sousZoneParametres = ref({});
 const zoneEquipementsByType = ref({});
+const sousZoneEquipements = [];
+const changeEquipementSousZone = (i, value) => {
+  sousZoneEquipements[sous_zones.value[i].id] = value;
+};
 
 
 const addActiviteZone = async (zoneIdx) => {
@@ -391,7 +403,7 @@ const validSousZone = () => {
 };
 
 const saveSousZones = async (zoneId, activiteId) => {
-  for (let {isNew, toRemove, actif, ordre, libelle, id, zoneActivites} of sous_zones.value) {
+  for (let {isNew, toRemove, actif, ordre, libelle, id, zoneActivites, } of sous_zones.value) {
     if (isNew) {
       // création
       let data = await postZones({
@@ -413,9 +425,11 @@ const saveSousZones = async (zoneId, activiteId) => {
       await deleteZones(id);
     } else {
       // édition
+
+      // parametres, on les a directement modifiés dans sous_zones...
       const parametres = zoneActivites[0].parametreZoneActivites;
-      const toUpdate = [];
-      const toPost = [];
+      let toUpdate = [];
+      let toPost = [];
       for (let p of parametres) {
         const data = {
           parametre: p.parametre.id,
@@ -441,8 +455,35 @@ const saveSousZones = async (zoneId, activiteId) => {
         data.parametres = toPost;
         await postParametres(data);
       }
+
+      // équipements
+      // on a la config d'un côté
+      const equipements = zoneActivites[0].zoneActiviteEquipements;
+      // on a la sélection en cours d'un autre côté
+
+      let toDelete = [];
+      toPost = [];
+
+      // si présent dans la sélection mais pas la config, on ajoute
+      toPost = sousZoneEquipements[id]?.filter(id => !equipements.some(e => e.equipement.id == id)) || [];
+      // si présent dans la config mais pas la sélection, on supprime
+      // toDelete = equipements.filter(e => !sousZoneEquipements[id]?.includes(e.equipement.id)).map(elt => elt.equipement.id);
+      toDelete = equipements.filter(e => !sousZoneEquipements[id]?.includes(e.equipement.id));
+
+      for (let elt of toPost) {
+        await postZoneActiviteEquipement({
+          equipement: "api/equipements/" + elt,
+          zoneActivite: "api/zone_activites/" + zoneActivites[0].id,
+        });
+      }
+
+      for (let elt of toDelete) {
+        await deleteZoneActiviteEquipement(elt.id);
+      }
+
     }
   }
+
 };
 
 const removeSousZone = async (index) => {
