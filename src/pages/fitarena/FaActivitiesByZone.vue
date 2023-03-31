@@ -114,6 +114,7 @@
                   :sous-zone="sous_zone"
                   :sous-zone-parametres="sousZoneParametres"
                   :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
+                  :readonly=readonly
                   @changeEquipement="changeEquipementSousZone"
                 />
               </div>
@@ -159,7 +160,7 @@ import { getTypeZone } from '../../api/typeZone';
 import { getParametreZoneActivites, postParametreZoneActivites, updateParametreZoneActivites, deleteParamatreZoneActivites } from '../../api/parametreZoneActivite';
 import { getEquipementsByZone } from '../../api/equipement';
 import {getActivites, patchActivites} from "../../api/activite";
-import { postZoneActiviteEquipement, deleteZoneActiviteEquipement } from '../../api/zoneActiviteEquipement';
+import { postZoneActiviteEquipement } from '../../api/zoneActiviteEquipement';
 import { postSousZone } from '../../api/sousZone';
 import Select from "../../components/common/Select.vue";
 import {toast} from "vue3-toastify";
@@ -388,28 +389,10 @@ const saveSousZones = async (zoneId, activiteId) => {
       }
 
       // équipements
-      // on a la config d'un côté
-      const equipements = zoneActivite.zoneActiviteEquipements;
+      await postZoneActiviteEquipement(id, activite_selected.value, {
+        equipements: Object.values(sousZoneEquipements[id])
+      });
 
-      let toDelete = [];
-      toPost = [];
-
-      // si présent dans la sélection mais pas la config, on ajoute
-      toPost = sousZoneEquipements[id]?.filter(id => !equipements.some(e => e.equipement.id == id)) || [];
-      // si présent dans la config mais pas la sélection, on supprime
-      // toDelete = equipements.filter(e => !sousZoneEquipements[id]?.includes(e.equipement.id)).map(elt => elt.equipement.id);
-      toDelete = equipements.filter(e => !sousZoneEquipements[id]?.includes(e.equipement.id));
-
-      for (let elt of toPost) {
-        await postZoneActiviteEquipement({
-          equipement: "api/equipements/" + elt,
-          zoneActivite: "api/zone_activites/" + zoneActivite.id,
-        });
-      }
-
-      for (let elt of toDelete) {
-        await deleteZoneActiviteEquipement(elt.id);
-      }
 
     }
   }

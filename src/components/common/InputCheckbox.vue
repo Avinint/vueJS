@@ -4,6 +4,7 @@
         <input
             type="checkbox"
             v-model="modelValue"
+            :disabled="props.disabled"
             :value="elt.id"
             :name="name"
             :id="idPrefix + elt.id">
@@ -21,6 +22,7 @@ const props = defineProps({
     elements: [],
     name: '',
     id: '',
+    disabled: false
 });
 
 const idPrefix = ref('');

@@ -21,6 +21,7 @@
                     :elements="equipementsTablette"
                     name="equipement_tablette[]"
                     :id="'sous_zone_' + sousZone.id + '_equipement_tablette_'"
+                    :disabled="readonly"
                 />
             </div>
         </div>
@@ -35,6 +36,7 @@
                     :elements="equipementsEcran"
                     name="equipement_ecran[]"
                     :id="'sous_zone_' + sousZone.id + '_equipement_ecran_'"
+                    :disabled="readonly"
                 />
             </div>
         </div>
@@ -84,7 +86,8 @@ const props = defineProps([
     'sousZone',
     'sousZoneParametres',
     'zoneEquipementsByType',
-    'sousZoneEquipements'
+    'sousZoneEquipements',
+    'readonly'
 ]);
 
 const parametreNombreParticipantsMax = ref({});
