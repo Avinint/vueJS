@@ -110,6 +110,7 @@
                   v-if="zoneEquipementsByType[zone_selected]"
                   :i=idx
                   :zone=zone_selected
+                  :activite="activite_selected"
                   :sous-zone="sous_zone"
                   :sous-zone-parametres="sousZoneParametres"
                   :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
@@ -322,61 +323,6 @@ const cancel = () => {
   new_sous_zone.value = false;
 };
 
-const saveParametres = async (zaId, creation = false) => {
-
-  if (!creation) {
-
-    // param config équipements motorisés
-    let parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + zaId + '&parametre=' + parametre_config_equipements_motorises.value.id);
-    if (parametreZoneActivites[0]?.id) {
-      await updateParametreZoneActivites(parametreZoneActivites[0].id, {
-        valeur: mode_equipements_motorises.value.toString(),
-      });
-    }
-
-    // param mode d'écran et d'interface vidéo scoring
-    parametreZoneActivites = await getParametreZoneActivites(1, '&zoneActivite=' + zaId + '&parametre=' + parametre_mode_ecran_interface_video_scoring.value.id);
-    if (parametreZoneActivites[0]?.id) {
-      if (mode_ecran_interface.value > 0) {
-        // modif du paramètre
-        await updateParametreZoneActivites(parametreZoneActivites[0].id, {
-          valeur: mode_ecran_interface.value.toString(),
-        });
-      } else {
-        // aucun mode => suppression du paramètre
-        await deleteParamatreZoneActivites(parametreZoneActivites[0].id)
-      }
-    } else if (mode_ecran_interface.value > 0) {
-      // le paramètre n'existe pas encore
-      let body = {
-        zoneActivite: '/api/zone_activites/' + zaId,
-        parametre: '/api/parametres/' + parametre_mode_ecran_interface_video_scoring.value.id,
-        valeur: mode_ecran_interface.value.toString(),
-      };
-      await postParametreZoneActivites(body);
-    }
-
-  } else {
-
-    // param config équipements motorisés
-    let body = {
-      zoneActivite: '/api/zone_activites/' + zaId,
-      parametre: '/api/parametres/' + parametre_config_equipements_motorises.value.id,
-      valeur: mode_equipements_motorises.value.toString(),
-    };
-    await postParametreZoneActivites(body);
-
-    // param mode d'écran et d'interface vidéo scoring
-    if (mode_ecran_interface.value > 0) {
-      body.parametre = '/api/parametres/' + parametre_mode_ecran_interface_video_scoring.value.id;
-      body.valeur = mode_ecran_interface.value.toString();
-      await postParametreZoneActivites(body);
-    }
-
-  }
-
-};
-
 const addSousZone = () => {
   new_sous_zone_libelle.value = '';
   new_sous_zone.value = true;
@@ -409,8 +355,10 @@ const saveSousZones = async (zoneId, activiteId) => {
     } else {
       // édition
 
+      const zoneActivite = zoneActivites.filter(e => e.activite.id == activite_selected.value).shift();
+
       // parametres, on les a directement modifiés dans sous_zones...
-      const parametres = zoneActivites[0].parametreZoneActivites;
+      const parametres = zoneActivite.parametreZoneActivites;
       let toUpdate = [];
       let toPost = [];
       for (let p of parametres) {
@@ -441,7 +389,7 @@ const saveSousZones = async (zoneId, activiteId) => {
 
       // équipements
       // on a la config d'un côté
-      const equipements = zoneActivites[0].zoneActiviteEquipements;
+      const equipements = zoneActivite.zoneActiviteEquipements;
 
       let toDelete = [];
       toPost = [];
@@ -455,7 +403,7 @@ const saveSousZones = async (zoneId, activiteId) => {
       for (let elt of toPost) {
         await postZoneActiviteEquipement({
           equipement: "api/equipements/" + elt,
-          zoneActivite: "api/zone_activites/" + zoneActivites[0].id,
+          zoneActivite: "api/zone_activites/" + zoneActivite.id,
         });
       }
 

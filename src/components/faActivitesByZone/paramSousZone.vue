@@ -16,10 +16,12 @@
                 Interface de vidéo et scoring
             </div>
             <div>
-                <templace v-for="elt in equipementsTablette">
-                    <input v-model="equipementsSousZone" type="checkbox" :value="elt.id" name="equipement_tablette[]" :id="'sous_zone_' + sousZone.id + '_equipement_tablette_' + elt.id">
-                    <label :for="'sous_zone_' + sousZone.id + '_equipement_tablette_' + elt.id">{{ elt.libelle }}</label>
-                </templace>
+                <InputCheckbox
+                    v-model="equipementsSousZone"
+                    :elements="equipementsTablette"
+                    name="equipement_tablette[]"
+                    :id="'sous_zone_' + sousZone.id + '_equipement_tablette_'"
+                />
             </div>
         </div>
 
@@ -28,10 +30,12 @@
                 Écrans
             </div>
             <div>
-                <templace v-for="elt in equipementsEcran">
-                    <input v-model="equipementsSousZone" type="checkbox" :value="elt.id" name="equipement_ecran[]" :id="'sous_zone_' + sousZone.id + '_equipement_ecran_' + elt.id">
-                    <label :for="'sous_zone_' + sousZone.id + '_equipement_ecran_' + elt.id">{{ elt.libelle }}</label>
-                </templace>
+                <InputCheckbox
+                    v-model="equipementsSousZone"
+                    :elements="equipementsEcran"
+                    name="equipement_ecran[]"
+                    :id="'sous_zone_' + sousZone.id + '_equipement_ecran_'"
+                />
             </div>
         </div>
 
@@ -40,7 +44,12 @@
                 Caméras de jeu
             </div>
             <div>
-
+                <InputCheckbox
+                    v-model="equipementsSousZone"
+                    :elements="equipementsCamera"
+                    name="equipement_camera[]"
+                    :id="'sous_zone_' + sousZone.id + '_equipement_camera_'"
+                />
             </div>
         </div>
 
@@ -49,7 +58,12 @@
                 Sonorisation
             </div>
             <div>
-
+                <InputCheckbox
+                    v-model="equipementsSousZone"
+                    :elements="equipementsSono"
+                    name="equipement_sono[]"
+                    :id="'sous_zone_' + sousZone.id + '_equipement_sono_'"
+                />
             </div>
         </div>
     </div>
@@ -58,24 +72,15 @@
 
 <script setup>
 
-// récupérer id param nombre-de-participants-max
-// récupérer id param nombre-de-participants-conseille
-// récupérer les équipements de type tablette (de la zone parent)
-// récupérer les équipements de type écran ecran-geant + ecran-accueil + ecran-attente (de la zone parent)
-// récupérer les équipements de type caméra (de la zone parent)
-// récupérer les équipements de type sonorisation (de la zone parent)
-// récupérer les équipements de la sous-zone
-
-// faire un component pour gérer des checkbox stylisés (cf. component des radio)
-
 import { onMounted, ref, computed, watch } from "vue";
-import { getEquipementsByZone } from '../../api/equipement';
 
 import Input from '../../components/common/Input.vue';
+import InputCheckbox from '../../components/common/InputCheckbox.vue';
 
 const props = defineProps([
     'i',
     'zone',
+    'activite',
     'sousZone',
     'sousZoneParametres',
     'zoneEquipementsByType',
@@ -113,19 +118,21 @@ onMounted(async () => {
     parametreNombreParticipantsMax.value = props.sousZoneParametres.nombreParticipantsMax;
     parametreNombreParticipantsConseille.value = props.sousZoneParametres.nombreParticipantsConseille;
 
-    equipementsTablette.value = props.zoneEquipementsByType.tablette;
-    equipementsEcran.value = props.zoneEquipementsByType.ecran;
-    equipementsCamera.value = props.zoneEquipementsByType.camera;
-    equipementsSono.value = props.zoneEquipementsByType.sonorisation;
+    equipementsTablette.value = props.zoneEquipementsByType?.tablette;
+    equipementsEcran.value = props.zoneEquipementsByType?.ecran;
+    equipementsCamera.value = props.zoneEquipementsByType?.camera;
+    equipementsSono.value = props.zoneEquipementsByType?.sonorisation;
 
-    parametres.value = props.sousZone.zoneActivites[0].parametreZoneActivites;
+    parametres.value = props.sousZone.zoneActivites[0]?.parametreZoneActivites;
 
     nombreParticipantsMax.value = getParamatreValeurById(parametreNombreParticipantsMax.value.id) || 0;
     nombreParticipantsConseille.value = getParamatreValeurById(parametreNombreParticipantsConseille.value.id) || 0;
 
-    props.sousZone.zoneActivites[0].zoneActiviteEquipements.forEach(elt => {
+    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
+    zoneActivite?.zoneActiviteEquipements.forEach(elt => {
         equipementsSousZone.value.push(elt.equipement.id);
     });
+    emits('changeEquipement', props.i, equipementsSousZone.value);
 });
 
 const getParamatreValeurById = id => {
