@@ -47,10 +47,11 @@ input[type=checkbox] + label {
   margin-right: .5em;
   cursor: pointer;
   padding: .25em 1em;
+  border: 1px solid #ddd;
+  border-radius: .5em;
 }
 input[type=checkbox]:checked + label {
   background-color: #ddd;
-  border-radius: .5em;
 }
 
 </style>
