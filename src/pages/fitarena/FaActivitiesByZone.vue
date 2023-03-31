@@ -148,7 +148,8 @@ import {
   getActivitesByZones,
   postActivitesByZones,
   updateActivitesByZones,
-  patchActivitesByZones
+  patchActivitesByZones,
+  postZoneActivite
 } from "../../api/activiteByZone";
 import { getZones, postZones, deleteZones, updateZones } from "../../api/zone";
 import { getModes } from '../../api/mode';
@@ -158,6 +159,7 @@ import { getParametreZoneActivites, postParametreZoneActivites, updateParametreZ
 import { getEquipementsByZone } from '../../api/equipement';
 import {getActivites, patchActivites} from "../../api/activite";
 import { postZoneActiviteEquipement, deleteZoneActiviteEquipement } from '../../api/zoneActiviteEquipement';
+import { postSousZone } from '../../api/sousZone';
 import Select from "../../components/common/Select.vue";
 import {toast} from "vue3-toastify";
 const props = defineProps(['id'])
@@ -273,33 +275,22 @@ const modifieActivite = async({actif,id}) => {
 
 const saveActiviteZone = async () => {
 
-  try {
-    if (activiteZone_selected.value) {
-      // édition
-      await updateActivitesByZones({
-        activiteId: activite_selected.value,
-        actif: activiteZone.value.actif,
-        ordre: activiteZone.value.ordre
-      }, activiteZone_selected.value)
-      await saveParametres(activiteZone_selected.value);
-
-    } else {
-      // création
-      const data = await postActivitesByZones({
-        activiteId: activite_selected.value,
-        zoneId: zone_selected.value,
-        actif: true,
-        ordre: 0
-      });
-      await saveParametres(data.id, true);
-
-    }
-  } catch(e) {
-    if (e.status === 409) {
-        toast.error('Activité déjà appliquée à cette zone !');
+  await postZoneActivite(zone_selected.value, activite_selected.value, {
+    actif: true,
+    ordre: 0,
+    parametres: [
+      {
+        id: parametre_config_equipements_motorises.value.id,
+        codeParametre: parametre_config_equipements_motorises.value.code,
+        valeur: mode_equipements_motorises.value,
+      },
+      {
+        id: parametre_mode_ecran_interface_video_scoring.value.id,
+        codeParametre: parametre_mode_ecran_interface_video_scoring.value.code,
+        valeur: mode_ecran_interface.value,
       }
-      return;
-  }
+    ]
+  });
 
   await saveSousZones(zone_selected.value, activite_selected.value);
 
@@ -405,21 +396,13 @@ const validSousZone = () => {
 const saveSousZones = async (zoneId, activiteId) => {
   for (let {isNew, toRemove, actif, ordre, libelle, id, zoneActivites, } of sous_zones.value) {
     if (isNew) {
-      // création
-      let data = await postZones({
-        typeZone: '/api/type_zones/' + id_type_sous_zone.value,
-        fitArena: '/api/fit_arenas/' + props.id,
-        ordre: ordre,
-        libelle: libelle,
-        actif: actif,
-        idZoneParent: zoneId
+      await postSousZone(zone_selected.value, {
+        actif,
+        ordre,
+        libelle
       });
-      await postActivitesByZones({
-        activiteId: activiteId,
-        zoneId: data.id,
-        actif: true,
-        ordre: 0
-      });
+
+
     } else if (toRemove) {
       // suppression
       await deleteZones(id);
@@ -459,7 +442,6 @@ const saveSousZones = async (zoneId, activiteId) => {
       // équipements
       // on a la config d'un côté
       const equipements = zoneActivites[0].zoneActiviteEquipements;
-      // on a la sélection en cours d'un autre côté
 
       let toDelete = [];
       toPost = [];

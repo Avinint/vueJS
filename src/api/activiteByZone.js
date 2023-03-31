@@ -91,4 +91,17 @@ export const getActiviteByZone = async (id = 1) => {
     return response.json()
 }
 
-
+export const postZoneActivite = async (zoneId, activiteId, data) => {
+    const response = await $fetch( `${import.meta.env.VITE_API_URL}/api/activite/${zoneId}/${activiteId}`, {
+        method:'post',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type': 'application/ld+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        },
+        body: JSON.stringify(data)
+    })
+    if (response.status !== 201)
+        throw response
+    return response.json()
+}
