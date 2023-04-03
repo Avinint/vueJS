@@ -368,6 +368,7 @@ const saveSousZones = async (zoneId, activiteId) => {
           valeur: p.valeur
         };
         // si on a p = 0 c'est qu'on a modifier un paramètre qui n'existe pas en base
+        // todo: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
         if (p.id == 0) {
           toPost.push(data);
         } else {

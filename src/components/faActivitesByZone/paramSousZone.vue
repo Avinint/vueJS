@@ -126,12 +126,12 @@ onMounted(async () => {
     equipementsCamera.value = props.zoneEquipementsByType?.camera;
     equipementsSono.value = props.zoneEquipementsByType?.sonorisation;
 
-    parametres.value = props.sousZone.zoneActivites[0]?.parametreZoneActivites;
+    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
+    parametres.value = zoneActivite?.parametreZoneActivites || [];
 
     nombreParticipantsMax.value = getParamatreValeurById(parametreNombreParticipantsMax.value.id) || 0;
     nombreParticipantsConseille.value = getParamatreValeurById(parametreNombreParticipantsConseille.value.id) || 0;
 
-    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
     zoneActivite?.zoneActiviteEquipements.forEach(elt => {
         equipementsSousZone.value.push(elt.equipement.id);
     });
@@ -149,6 +149,7 @@ const setParametreValeur = (id, valeur) => {
     } else {
         // le param n'existe pas encore,
         // on l'ajoute avec id = 0 (qui servira à savoir si on update ou post)
+        // todo: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
         parametres.value.push({
             id: 0,
             parametre: { id },
