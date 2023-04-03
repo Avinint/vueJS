@@ -1,39 +1,41 @@
 <template>
   <Card>
     <h1>équipements numériques de la fit arena</h1>
-    <div class="m-5 p-4 border border-gray-200" v-for="(typeEquip, i) of typeEquipements" :key="i">
-      <h2 class="pt-2 pb-5">{{typeEquip.libelle}}</h2>
-      <div class="relative overflow-x-auto">
-        <table v-if="typeEquip.equipements.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" class="px-6 py-3"></th>
-              <th scope="col" class="px-6 py-3">Actif</th>
-              <th scope="col" class="px-6 py-3">Libellé</th>
-              <th scope="col" class="px-6 py-3">Adresse IP</th>
+    <div v-for="(typeEquip, i) of typeEquipements">
+      <div v-if="typeEquip.equipements.length" class="m-5 p-4 border border-gray-200"  :key="i">
+        <h2 v-if="typeEquip.equipements.length" class="pt-2 pb-5">{{typeEquip.libelle}}</h2>
+        <div v-if="typeEquip.equipements.length" class="relative overflow-x-auto">
+          <table v-if="typeEquip.equipements.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" class="px-6 py-3"></th>
+                <th scope="col" class="px-6 py-3">Actif</th>
+                <th scope="col" class="px-6 py-3">Libellé</th>
+                <th scope="col" class="px-6 py-3">Adresse IP</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr class="bg-white" v-for="(equipementTemp, i) in typeEquip.equipements" :key="i">
+              <td class="flex justify-center items-center p-3">
+                <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeEquipement(equipementTemp.id)"/>
+                <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editEquipement(equipementTemp.id)"/>
+              </td>
+              <td class="px-6 py-4">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" value="true" class="sr-only peer" v-if="equipementTemp.statut" @change="modifieEquipement(equipementTemp)">
+                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+                  <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+                </label>
+              </td>
+              <td class="px-6 py-4">{{ equipementTemp.libelle }}</td>
+              <td class="px-6 py-4">{{ equipementTemp.ip }}</td>
+              <td class="px-6 py-4">
+                <Button label="Détails" type="secondary" @click="showEquipement(equipementTemp.id)"/>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-          <tr class="bg-white" v-for="(equipementTemp, i) in typeEquip.equipements" :key="i">
-            <td class="flex justify-center items-center p-3">
-              <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeEquipement(equipementTemp.id)"/>
-              <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editEquipement(equipementTemp.id)"/>
-            </td>
-            <td class="px-6 py-4">
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" value="true" class="sr-only peer" v-if="equipementTemp.statut" @change="modifieEquipement(equipementTemp)">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
-                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
-              </label>
-            </td>
-            <td class="px-6 py-4">{{ equipementTemp.libelle }}</td>
-            <td class="px-6 py-4">{{ equipementTemp.ip }}</td>
-            <td class="px-6 py-4">
-              <Button label="Détails" type="secondary" @click="showEquipement(equipementTemp.id)"/>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <Button label="Ajouter un équipement numérique" icon="add" type="secondary" @click="addEquipement" id="TaddEquipementNumerique"/>
