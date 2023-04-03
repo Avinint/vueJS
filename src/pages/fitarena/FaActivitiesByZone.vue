@@ -199,7 +199,7 @@ const addActiviteZone = async (zoneIdx) => {
   readonly.value = false;
   activiteZone_modal.value = true;
 
-  await sousZones(zone_selected.value);
+  await sousZones(zone_selected.value, activite_selected.value);
 };
 
 const removeActiviteZone = async (i) => {
@@ -247,13 +247,13 @@ const mapApiToData = async (activiteZoneTemp) => {
     }
   });
 
-  await sousZones(zone_selected.value);
+  await sousZones(zone_selected.value, activite_selected.value);
 }
 
 // récupération de la liste des sous-zones
-const sousZones = async (zoneId) => {
+const sousZones = async (zoneId, activiteId) => {
   sous_zones.value = [];
-  let data = await getZones(1, '&idZoneParent=' + zoneId + '&zoneActivites.activite.id=' + activite_selected.value);
+  let data = await getZones(1, '&zoneParent=' + zoneId + '&zoneActivites.activite.id=' + activiteId);
   data.forEach(datum => {
     sous_zones.value.push(datum);
   });
