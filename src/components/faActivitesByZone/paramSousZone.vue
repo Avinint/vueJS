@@ -110,7 +110,7 @@ const equipementsSousZone = ref([]);
 watch(equipementsSousZone, async (newValue, oldValue) => {
     // on émet un événement qu'on intercepte dans le composant parent
     emits('changeEquipement', props.i, newValue);
-    // on modifier modifer par référence (ce qui permet de ne rien avoir à faire dans le composant parent)
+    // on modifier par référence (ce qui permet de ne rien avoir à faire dans le composant parent)
     // props.sousZoneEquipements[props.sousZone.id] = newValue;
 });
 const emits = defineEmits(['changeEquipement']);

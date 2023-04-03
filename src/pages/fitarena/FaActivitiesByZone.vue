@@ -131,12 +131,6 @@
 </template>
 
 <script setup>
-
-/*
-TODO: quand on ajoute une activité à une zone, il faut lier toutes les sous zones à cette activité
-et inversement quand on ajoute une sous zone il faut la lier à toutes les activités liées à la zone parent
-*/
-
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
@@ -169,7 +163,6 @@ const activiteZone_modal = ref(false)
 const readonly = ref(false)
 const activiteZones = ref([])
 const zones = ref([])
-// const zone = ref({})
 const activiteZone = ref({})
 const activiteZone_selected = ref(0)
 const activites = ref([])
@@ -411,7 +404,7 @@ const removeSousZone = async (index) => {
   }
 };
 
-// récupèration des info de base des paramètres nécessaires (globaux, pas par rapport à une sous-zone)
+// récupération des info de base des paramètres nécessaires (globaux, pas par rapport à une sous-zone)
 const fetchSousZoneParametres = async () => {
   const parametreNombreParticipantsMax = (await getParametres(1, '&code=nombre-de-participants-max')).shift();
   const parametreNombreParticipantsConseille = (await getParametres(1, '&code=nombre-de-participants-conseille')).shift();
