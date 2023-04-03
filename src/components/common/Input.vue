@@ -20,7 +20,7 @@
     id?: string,
     inline: boolean
     type: string
-    validation: ((val: any) => boolean | string)[]
+    validation?: ((val: any) => boolean | string)[]
     valid: boolean
   }
 
@@ -38,20 +38,21 @@
 
   const emits = defineEmits<{
     (e: 'update:modelValue', text: string): void
+    (e: 'update:valid', valid: boolean): void
   }>()
 
   const inputValitation = ($event) => {
     const val = $event.target.value
     error.value = ""
+    emits('update:valid', true)
     props.validation.forEach(func => {
-      console.log(func)
       try {
         func(val)
       } catch (e) {
         error.value += e + "<br>"
+        emits('update:valid', false)
       }
     })
-
     emits('update:modelValue', val)
   }
 
