@@ -24,7 +24,7 @@
             </thead>
             <tbody>
             <tr class="bg-white" >
-              <td v-if="equipementTemp.fitArena.id == props.id" class="flex justify-center items-center p-3">
+              <td class="flex justify-center items-center p-3">
                 <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeEquipement(equipementTemp.id)"/>
                 <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editEquipement(equipementTemp.id)"/>
               </td>
