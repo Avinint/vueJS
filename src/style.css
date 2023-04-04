@@ -44,3 +44,15 @@ h3 {
     font-size: 12px;
     line-height: 14px;
 }
+
+.bg-light-blue {
+    background-color: #E8F0FE;
+}
+
+.text-light-blue {
+    color: #1A73E8;
+}
+
+.bg-grey {
+    background-color: #EEEEEE;
+}
