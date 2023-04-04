@@ -2,10 +2,10 @@
     <div class="cmp_zones_ajout_equipement p-4 border border-gray-300 rounded-md">
         <h2 class="text-lg pt-2 pb-5">Ajout d'équipements {{ typeEquipementTextes }}</h2>
 
-        <div v-for="(type, typeIdx) in typeEquipements" class="pt-2 pb-5">
+        <div v-for="(type, typeIdx) in typeEquipements" :key="typeIdx" class="pt-2 pb-5">
             <h2 class="pt-2 pb-5">{{ type.libelle }}</h2>
             <div>
-                <template v-for="(equipement, equipementIdx) in type.equipements">
+                <template v-for="(equipement, equipementIdx) in type.equipements" :key="equipementIdx">
                     <div v-if="isZoneEquipementExist(equipement)" class="flex items-center justify-between">
                         {{ equipement.libelle }}
                         <div>
@@ -17,7 +17,7 @@
 
                 <select v-model="equipementSelectionne[typeIdx]" @change="addEquipementToZone(typeIdx)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="" selected="selected">Ajouter</option>
-                    <template v-for="(equipement, equipementIdx) in type.equipements">
+                    <template v-for="(equipement, equipementIdx) in type.equipements" :key="equipementIdx">
                         <option v-if="!isZoneEquipementExist(equipement)" :value="equipementIdx">{{ equipement.libelle }}</option>
                     </template>
                 </select>
