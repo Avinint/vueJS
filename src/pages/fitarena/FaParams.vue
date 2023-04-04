@@ -1,5 +1,5 @@
 <template>
-    <!-- <CardReservationDuration /> -->
+    <CardReservationDuration />
 
     <Card>
       <h1>Accès à la fit arena</h1>
@@ -13,7 +13,7 @@
       <h1>Condition de visualisation des créneaux</h1>
     </Card>
 
-    <!-- <CardConditionReservationOfSlots /> -->
+    <CardConditionReservationOfSlots />
     <CardKeyMomentDuration />
 
     <Card>
