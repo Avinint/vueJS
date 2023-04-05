@@ -128,7 +128,6 @@
             </td>
             <td class="px-6 py-4">
               <Input :readonly="equipementMode.mode?.readonly ? true : false" v-model="equipementMode.nomAppel"/>
-              {{equipementMode.mode.readonly}}
             </td>
           </tr>
           </tbody>
@@ -216,9 +215,8 @@ const mapApiToData = (equipementTemp) => {
 }
 
 const addEquipementConfiguration = () => {
-  const mode = {'libelle' : 'toto', 'type' : 'toto', 'readonly': false}
-  equipement.value.equipementModes.push({mode})
-
+  const mode = {libelle : '', type : '', readonly: false}
+  equipement.value.equipementModes.push(mode)
 }
 
 const removeEquipementConfiguration = () => {
