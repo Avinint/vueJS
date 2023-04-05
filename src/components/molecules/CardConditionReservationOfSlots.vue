@@ -77,7 +77,16 @@ import {onMounted, ref} from "vue"
 import {useRoute} from "vue-router"
 import {toast} from 'vue3-toastify'
 import "vue3-toastify/dist/index.css"
-
+import {
+  deleteParametreFitArena,
+  getParametreFitArena,
+  updateParametreFitArena,
+  postParametreFitArena,
+  patchParametreFitArena
+} from "../../api/parametreFitArena.js";
+import {getEquipements} from "../../api/equipement";
+import {getTypeEquipements} from "../../api/typeEquipement";
+const props = defineProps(['id'])
 const route = useRoute()
 const idFitArena = ref(route.params.id)
 const parametres = ref({})
@@ -149,7 +158,12 @@ const saveConditionReservation = async (i) => {
         toast.error('Erreur, Veuillez contacter votre administrateur')
       }
     }
-
     conditionReservation_modal.value = false
 }
+
+onMounted(async () => {
+  equipements.value = await getEquipements(props.id, 1, '&typeEquipement.categoryTypeEquipement.code=motorise')
+  typeEquipements.value = await getTypeEquipements(1, '&categoryTypeEquipement.code=motorise')
+
+})
 </script>

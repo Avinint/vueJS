@@ -62,7 +62,17 @@ import {onMounted, ref} from "vue"
 import {useRoute} from "vue-router"
 import {toast} from 'vue3-toastify'
 import "vue3-toastify/dist/index.css"
+import {
+  deleteParametreFitArena,
+  getParametreFitArena,
+  updateParametreFitArena,
+  postParametreFitArena,
+  patchParametreFitArena
+} from "../../api/parametreFitArena.js";
+import {getEquipements} from "../../api/equipement";
+import {getTypeEquipements} from "../../api/typeEquipement";
 
+const props = defineProps(['id'])
 const route = useRoute()
 const idFitArena = ref(route.params.id)
 const parametresSlot = ref({})
@@ -73,11 +83,8 @@ const durationSlot = ['30 min', '1h', '1h30', '2h']
 const durationInterslot = ['1 min', '1min30', '2 min', '2min30']
 const durationSlot_selected = ref({})
 const durationInterslot_selected = ref({})
-
-onMounted(async () => {
-    parametresSlot.value = await getParametresById(6)
-    parametresInterslot.value = await getParametresById(7)
-})
+const durationTemp = ref ({})
+const durationTempInter = ref ({})
 
 const editDurationSlot = () => {
     durationSlot_modal.value = true
@@ -88,35 +95,43 @@ const editDurationInterslot = () => {
 }
 
 const saveDurationSlot = async (i) => {
+  console.error(durationTemp.value[0].parametre.id)
+    //Je recupere la donnée de la durée du creneau
     const paramTemp = {
         fitArena: '/api/fit_arenas/' + idFitArena.value,
+        parametre: '/api/parametres/' + durationTemp.value[0].parametre.id,
         valeur: durationSlot_selected.value,
     }
-    // à voir pour les fonctions à utiliser, j'ai l'impression qu'elles ne sont pas encore configurées (ParametreFitArena sur le swagger)
-
-    //    try {
-    //     const {data} = await post(paramTemp)
-    //   } catch (e) {
-    //     toast.error('Erreur, Veuillez contacter votre administrateur')
-    //   }
-
+    try {
+     const {data} = await postParametreFitArena(paramTemp)
+    } catch (e) {
+    console.error(e)
+     toast.error('Erreur, Veuillez contacter votre administrateur')
+    }
     durationSlot_modal.value = false
-    toast.success('Enregistrement du paramètre avec succès')
+    //toast.success('Enregistrement du paramètre avec succès')
 }
 const saveDurationInterslot = async (i) => {
     const paramTemp = {
         fitArena: '/api/fit_arenas/' + idFitArena.value,
+        parametre: '/api/parametres/' + durationTempInter.value.parametre.id,
         valeur: durationInterslot_selected.value,
     }
 
     // à voir pour les fonctions à utiliser, j'ai l'impression qu'elles ne sont pas encore configurées (ParametreFitArena sur le swagger)
 
-    //    try {
-    //     const {data} = await post(paramTemp)
-    //   } catch (e) {
-    //     toast.error('Erreur, Veuillez contacter votre administrateur')
-    //   }
+    try {
+        const {data} = await post(paramTemp)
+          toast.success('Enregistrement du paramètre avec succès')
+    } catch (e) {
+         toast.error('Erreur, Veuillez contacter votre administrateur')
+    }
     durationInterslot_modal.value = false
-    toast.success('Enregistrement du paramètre avec succès')
+
 }
+
+onMounted(async () => {
+  durationTempInter.value = await getParametreFitArena(1, '&parametre.code=duree-inter-creneau&fitArena.id='+props.id)
+  durationTemp.value = await getParametreFitArena(1, '&parametre.code=duree-du-creneau&fitArena.id='+props.id)
+})
 </script>
