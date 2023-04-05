@@ -157,7 +157,7 @@ const routes = [
                 }
             },
             {
-                path: 'activities',
+                path: 'activites',
                 component: FaActivities,
                 meta: {
                     breadcrumbs: [{
