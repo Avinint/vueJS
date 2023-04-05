@@ -79,7 +79,7 @@ const routes = [
             },
 
             {
-                path: 'spaces',
+                path: 'espaces',
                 component: FaSpaces,
                 meta: {
                     breadcrumbs: [{
@@ -131,7 +131,7 @@ const routes = [
                 }
             },
             {
-                path: 'sub_spaces',
+                path: 'sous-espaces',
                 component: FaSubSpaces,
                 meta: {
                     breadcrumbs: [{
@@ -144,7 +144,7 @@ const routes = [
                 }
             },
             {
-                path: 'activities_by_zone',
+                path: 'activites-par-zone',
                 component: FaActivitiesByZone,
                 meta: {
                     breadcrumbs: [{
