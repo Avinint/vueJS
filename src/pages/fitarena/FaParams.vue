@@ -7,6 +7,17 @@
 
     <Card>
       <h1>Annulation d'une réservation</h1>
+      <div class="relative overflow-x-auto my-4 text-black">
+        <div class="bg-white flex">
+          <div class="flex justify-start items-center w-1/12">
+            <Button test="TeditSlot" borderless icon="edit" type="secondary" class="pl-0" @click="editCancelBooking" />
+          </div>
+          <div class="flex items-center w-full">
+            <p class="py-4 w-4/12">Délai d'annulation d'une réservation avant le début de la séance</p>
+            <Input v-model="cancelSessionTime" :type="'number'"></Input>h
+          </div>
+        </div>
+      </div>
     </Card>
 
     <Card>
@@ -44,6 +55,7 @@
   import Button from "../../components/common/Button.vue"
   import Modal from "../../components/common/Modal.vue"
   import Switch from "../../components/common/Switch.vue"
+  import Input from "../../components/common/Input.vue"
   import CardConditionReservationOfSlots from "../../components/molecules/CardConditionReservationOfSlots.vue"
   import CardKeyMomentDuration from "../../components/molecules/CardKeyMomentDuration.vue"
   import CardReservationDuration from "../../components/molecules/CardReservationDuration.vue"
@@ -58,6 +70,10 @@
 
   const visualisation_creneaux = ref({})
 
+  const modalCancelBooking = ref(false)
+
+  const cancelSessionTime = ref(1)
+
   onMounted(async () => {
     visualisation_creneaux.value = await getParametres(1, '&code=condition-de-visualisation-des-creneaux')
     if (!visualisation_creneaux.value.length) {
@@ -71,5 +87,9 @@
 
   const addVisuCreneaux = () => {
 
+  }
+
+  const editCancelBooking = () => {
+    modalCancelBooking.value = true
   }
 </script>

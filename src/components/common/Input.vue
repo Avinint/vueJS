@@ -17,7 +17,7 @@
     readonly?: boolean
     modelValue: string
     label: string
-    id?: string,
+    id?: string
     inline: boolean
     type: string
     validation?: ((val: any) => boolean | string)[]
