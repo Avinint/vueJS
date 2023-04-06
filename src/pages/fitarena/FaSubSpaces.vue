@@ -61,6 +61,12 @@
           <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
         </label>
       </div>
+      <div>
+        <AjoutEquipements ref="ajoutEquipementsNume" typeEquipement="numerique" :fa=props.id :zone=id_selected></AjoutEquipements>
+      </div>
+      <div>
+        <AjoutEquipements ref="ajoutEquipementsMoto" typeEquipement="motorise" :fa=props.id :zone=id_selected></AjoutEquipements>
+      </div>
     </Modal>
   </form>
 
@@ -76,7 +82,8 @@ import {deleteZones, getZones, getZone, postZones, updateZones, patchZones} from
 import {useRouter} from "vue-router";
 import {getTypeZone} from "../../api/typeZone";
 import {toast} from "vue3-toastify";
-
+import {deleteZoneEquipement, postZoneEquipement} from "../../api/zoneEquipement";
+import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 const props = defineProps(['id'])
 
 const subEspace_modal = ref(false)
@@ -89,6 +96,8 @@ const subEspace = ref({})
 const espaceParents = ref([])
 let espace_selected = ref({})
 const modal_title = ref('')
+const ajoutEquipementsNume = ref();
+const ajoutEquipementsMoto = ref();
 
 const addEspace = () => {
   cancel()
@@ -149,8 +158,16 @@ const saveEspace = async () => {
   }
   if (id_selected.value) {
     const {data} = await updateZones(espTemp, id_selected.value)
+    await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, id_selected.value);
+    await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, id_selected.value);
   } else {
-    const {data} = await postZones(espTemp)
+    try {
+      const data = await postZones(espTemp);
+      await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id);
+      await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id);
+    } catch(e) {
+      console.error(e);
+    }
   }
   subEspace_modal.value = false
   cancel()
@@ -169,6 +186,34 @@ const cancel = () => {
   espace_selected.value = {}
   subEspace.value = {}
   readonly.value = false
+}
+
+
+const linkedEquipements = async (typeEquipements, zoneId) => {
+  for (let typeEquipement of typeEquipements) {
+    for (let equipement of typeEquipement.equipements) {
+      if (equipement.linked === true) {
+        try {
+          await postZoneEquipement({
+            zoneId: zoneId,
+            equipementId: equipement.id,
+            actif: true
+          });
+        } catch(e) {
+        }
+
+      } else if (equipement.linked === false) {
+        for (let ze of equipement.zoneEquipements) {
+          if (ze.zone.id == zoneId) {
+            try {
+              await deleteZoneEquipement(ze.id);
+            } catch(e) {
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 </script>

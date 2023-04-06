@@ -119,7 +119,7 @@
         sub_links: [
           {
             label: 'Activités',
-            link: `/fitarena/${fa.id}/activities`
+            link: `/fitarena/${fa.id}/activites`
           },
           {
             label: 'Equipements motorisés',
@@ -131,11 +131,11 @@
           },
           {
             label: 'Espaces',
-            link: `/fitarena/${fa.id}/spaces`
+            link: `/fitarena/${fa.id}/espaces`
           },
           {
             label: 'Sous-espaces',
-            link: `/fitarena/${fa.id}/sub_spaces`
+            link: `/fitarena/${fa.id}/sous-espaces`
           },
           {
             label: 'Zones',
@@ -143,7 +143,7 @@
           },
           {
             label: 'Activités par zone',
-            link: `/fitarena/${fa.id}/activities_by_zone`
+            link: `/fitarena/${fa.id}/activites-par-zone`
           },
           {
             label: 'Paramètres de la Fit Arena',
