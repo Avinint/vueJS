@@ -10,11 +10,13 @@
       <div class="relative overflow-x-auto my-4 text-black">
         <div class="bg-white flex">
           <div class="flex justify-start items-center w-1/12">
-            <Button test="TeditSlot" borderless icon="edit" type="secondary" class="pl-0" @click="editCancelBooking" />
+            <Button test="TeditSlot" borderless icon="edit" type="secondary" v-if="!editCancelBooking" @click="setCancelBooking" />
+            <Button test="TeditSlot" borderless icon="cross" type="secondary" v-if="editCancelBooking" @click="setCancelBooking" />
           </div>
-          <div class="flex items-center w-full">
+          <div class="flex items-center w-full space-x-2">
             <p class="py-4 w-4/12">Délai d'annulation d'une réservation avant le début de la séance</p>
-            <Input v-model="cancelSessionTime" :type="'number'"></Input>h
+            <input v-if="editCancelBooking" v-model="cancelSessionTime" type="number" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"/>
+            <div v-if="!editCancelBooking">{{cancelSessionTime}} h</div>
           </div>
         </div>
       </div>
@@ -59,37 +61,69 @@
   import CardConditionReservationOfSlots from "../../components/molecules/CardConditionReservationOfSlots.vue"
   import CardKeyMomentDuration from "../../components/molecules/CardKeyMomentDuration.vue"
   import CardReservationDuration from "../../components/molecules/CardReservationDuration.vue"
-  import {getParametreFitArenaById, postParametreFitArena} from "../../api/parametreFitArena.js";
+  import {
+    getParametreFitArena,
+    patchParametreFitArena,
+    postParametreFitArena
+  } from "../../api/parametreFitArena.js";
   import {onMounted, ref} from "vue";
   import {useRoute} from "vue-router";
-  import {getParametres, postParametres} from "../../api/parametre.js";
+  import {getParametres, postParametres} from "../../api/parametres.js";
 
   const ID_VISU_CRENEAU = 16
 
   const route = useRoute()
 
+  const parametres = ref([])
+
   const visualisation_creneaux = ref({})
 
-  const modalCancelBooking = ref(false)
+  const editCancelBooking = ref(false)
 
   const cancelSessionTime = ref(1)
 
   onMounted(async () => {
-    visualisation_creneaux.value = await getParametres(1, '&code=condition-de-visualisation-des-creneaux')
-    if (!visualisation_creneaux.value.length) {
-      await postParametres({
-        fitarena: "api/fitarena/"+route.params.id,
-        parametre: "api/parametre/"+ID_VISU_CRENEAU,
-        valeur: "10"
-      })
-    }
+    // SEARCH ALL PARAMS FOR THIS FIT ARENA
+    parametres.value = await getParametreFitArena(1, '?fitArena.id='+route.params.id)
+
+    // PARAMETRE ANNULATION DES CRENEAUX
+    cancelSessionTime.value = await getParameterByCode('condition-annulation-des-creneaux').valeur
   })
 
-  const addVisuCreneaux = () => {
-
+  const getParameterByCode = async (code, value = 0) => {
+    let parametre = parametres.value.find(el => el.parametre.code === code)
+    if (!parametre) {
+      await createParamsForFitArena(route.params.id, code, value)
+    }
+    parametres.value = await getParametreFitArena(1, '?fitArena.id='+route.params.id)
+    return parametres.value.find(el => el.parametre.code === code)
   }
 
-  const editCancelBooking = () => {
-    modalCancelBooking.value = true
+  const createParamsForFitArena = async (id_fa, code, value) => {
+    // CREATE GENERIC PARAMS
+    const {id} = await postParametres({
+      code,
+      libelle: code,
+      type: code,
+      zoneParametres: []
+    })
+    // LINK PARAMS TO THIS FIT ARENA AND SET VALUE
+    await postParametreFitArena({
+      fitArena: "api/fit_arenas/"+id_fa,
+      parametre: "api/parametres/"+id,
+      valeur: ""+value
+    })
+  }
+
+  const setCancelBooking = async () => {
+    editCancelBooking.value = !editCancelBooking.value
+    if (!editCancelBooking.value) { // RETURN TO READONLY MODE -> SAVE INPUT VIA API
+      const {id} = (await getParametres(1, '&code=condition-annulation-des-creneaux'))[0]
+      await patchParametreFitArena(id, {
+        fitArena: "api/fit_arenas/"+route.params.id,
+        parametre: "api/parametres/"+id,
+        valeur: ""+cancelSessionTime.value
+      })
+    }
   }
 </script>
