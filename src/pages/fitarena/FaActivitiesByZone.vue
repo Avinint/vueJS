@@ -18,7 +18,7 @@
             <tbody>
             <tr class="bg-white" v-for="(act, i) in zoneFit.zoneActivites">
               <td class="flex justify-center items-center p-3">
-                <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeActiviteZone(act.id)"/>
+                <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeActiviteZone(zoneFit.id, act.activite.id)"/>
                 <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editActiviteZone(act.id)"/>
               </td>
               <td class="px-6 py-4">
@@ -146,7 +146,8 @@ import {
   postActivitesByZones,
   updateActivitesByZones,
   patchActivitesByZones,
-  postZoneActivite
+  postZoneActivite,
+  deleteZoneActivite
 } from "../../api/activiteByZone";
 import { getZones, postZones, deleteZones, updateZones } from "../../api/zone";
 import { getModes } from '../../api/mode';
@@ -204,8 +205,8 @@ const addActiviteZone = async (zoneIdx) => {
   await sousZones(zone_selected.value, activite_selected.value);
 };
 
-const removeActiviteZone = async (i) => {
-  await deleteActivitesByZones(i)
+const removeActiviteZone = async (zoneId, activiteId) => {
+  await deleteZoneActivite(zoneId, activiteId)
   cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena='+props.id)
   activites.value = await getActivites(props.id)
@@ -309,6 +310,8 @@ onMounted(async () => {
   id_type_sous_zone.value = data[0]?.id;
   await fetchSousZoneParametres();
   await fetchZoneEquipements();
+
+  console.debug("ZONES", zones.value);
 });
 
 const cancel = () => {

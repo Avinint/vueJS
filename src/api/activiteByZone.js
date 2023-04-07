@@ -105,3 +105,17 @@ export const postZoneActivite = async (zoneId, activiteId, data) => {
         throw response
     return response.json()
 }
+
+export const deleteZoneActivite = async (zoneId, activiteId) => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/activite/${zoneId}/${activiteId}`, {
+        method:'delete',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type': 'application/merge-patch+json',
+            'Authorization': 'Bearer '+ localStorage.getItem('token')
+        }
+    })
+    if (response.status !== 204)
+        throw response
+    return {}
+}
