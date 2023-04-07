@@ -115,6 +115,7 @@
                   :sous-zone-parametres="sousZoneParametres"
                   :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
                   :readonly=readonly
+                  :creation="activiteZone_selected > 0"
                   @changeEquipement="changeEquipementSousZone"
                 />
               </div>
@@ -198,6 +199,7 @@ const addActiviteZone = async (zoneIdx) => {
   mode_ecran_interface.value = 0;
   readonly.value = false;
   activiteZone_modal.value = true;
+
 
   await sousZones(zone_selected.value, activite_selected.value);
 };

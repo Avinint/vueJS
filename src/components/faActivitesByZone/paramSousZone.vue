@@ -83,7 +83,8 @@ const props = defineProps([
     'sousZoneParametres',
     'zoneEquipementsByType',
     'sousZoneEquipements',
-    'readonly'
+    'readonly',
+    'creation'
 ]);
 
 const parametreNombreParticipantsMax = ref({});
@@ -122,7 +123,11 @@ onMounted(async () => {
     equipementsCamera.value = props.zoneEquipementsByType?.camera;
     equipementsSono.value = props.zoneEquipementsByType?.sonorisation;
 
-    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
+    let zoneActivite;
+
+    if (props.creation) {
+        zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
+    }
     parametres.value = zoneActivite?.parametreZoneActivites || [];
 
     nombreParticipantsMax.value = getParamatreValeurById(parametreNombreParticipantsMax.value.id) || 0;
