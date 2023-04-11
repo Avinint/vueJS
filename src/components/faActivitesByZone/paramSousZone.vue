@@ -13,7 +13,7 @@
             </p>
             <div>
                 <InputCheckbox
-                    v-model="equipementsSousZone"
+                    v-model="equipementsSelection"
                     :elements="equipementsTablette"
                     name="equipement_tablette[]"
                     :id="'sous_zone_' + sousZone.id + '_equipement_tablette_'"
@@ -28,7 +28,7 @@
             </p>
             <div>
                 <InputCheckbox
-                    v-model="equipementsSousZone"
+                    v-model="equipementsSelection"
                     :elements="equipementsEcran"
                     name="equipement_ecran[]"
                     :id="'sous_zone_' + sousZone.id + '_equipement_ecran_'"
@@ -43,7 +43,7 @@
             </p>
             <div>
                 <InputCheckbox
-                    v-model="equipementsSousZone"
+                    v-model="equipementsSelection"
                     :elements="equipementsCamera"
                     name="equipement_camera[]"
                     :id="'sous_zone_' + sousZone.id + '_equipement_camera_'"
@@ -57,7 +57,7 @@
             </p>
             <div>
                 <InputCheckbox
-                    v-model="equipementsSousZone"
+                    v-model="equipementsSelection"
                     :elements="equipementsSono"
                     name="equipement_sono[]"
                     :id="'sous_zone_' + sousZone.id + '_equipement_sono_'"
@@ -84,9 +84,10 @@ const props = defineProps([
     'zoneEquipementsByType',
     'sousZoneEquipements',
     'readonly',
-    'creation'
 ]);
 
+const parametres = ref([]);
+const equipements = ref([]);
 const parametreNombreParticipantsMax = ref({});
 const nombreParticipantsMax = ref(0);
 watch(nombreParticipantsMax, async (newValue, oldValue) => {
@@ -97,22 +98,21 @@ const nombreParticipantsConseille = ref(0);
 watch(nombreParticipantsConseille, async (newValue, oldValue) => {
     setParametreValeur(parametreNombreParticipantsConseille.value.id, newValue);
 });
-const parametres = ref([]);
 const equipementsTablette = ref([]);
 const equipementsEcran = ref([]);
 const equipementsCamera = ref([]);
 const equipementsSono = ref([]);
-
-const equipementsSousZone = ref([]);
-watch(equipementsSousZone, async (newValue, oldValue) => {
-    // on émet un événement qu'on intercepte dans le composant parent
-    emits('changeEquipement', props.i, newValue);
-    // on modifier par référence (ce qui permet de ne rien avoir à faire dans le composant parent)
-    // props.sousZoneEquipements[props.sousZone.id] = newValue;
+const equipementsSelection = ref([]);
+watch(equipementsSelection, async (newValue, oldValue) => {
+    equipements.value.length = 0; // effacer tous les éléments sans casser la référence
+    newValue.forEach(value => {
+        equipements.value.push({
+            equipement: {
+                id: value
+            }
+        });
+    });
 });
-const emits = defineEmits(['changeEquipement']);
-
-
 
 onMounted(async () => {
     parametreNombreParticipantsMax.value = props.sousZoneParametres.nombreParticipantsMax;
@@ -123,20 +123,29 @@ onMounted(async () => {
     equipementsCamera.value = props.zoneEquipementsByType?.camera;
     equipementsSono.value = props.zoneEquipementsByType?.sonorisation;
 
-    let zoneActivite;
-
-    if (props.creation) {
-        zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
+    // si nouvelle sous-zone
+    if (!props.sousZone.zoneActivites) {
+        props.sousZone.zoneActivites = [];
+        props.sousZone.zoneActivites.push({
+            activite: {
+                id: props.activite
+            },
+            parametreZoneActivites: [],
+            zoneActiviteEquipements: []
+        });
     }
-    parametres.value = zoneActivite?.parametreZoneActivites || [];
+
+    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
+
+    parametres.value = zoneActivite.parametreZoneActivites; // référence !
+    equipements.value = zoneActivite.zoneActiviteEquipements; // référence !
 
     nombreParticipantsMax.value = getParamatreValeurById(parametreNombreParticipantsMax.value.id) || 0;
     nombreParticipantsConseille.value = getParamatreValeurById(parametreNombreParticipantsConseille.value.id) || 0;
 
-    zoneActivite?.zoneActiviteEquipements.forEach(elt => {
-        equipementsSousZone.value.push(elt.equipement.id);
+    zoneActivite.zoneActiviteEquipements.forEach(elt => {
+        equipementsSelection.value.push(elt.equipement.id);
     });
-    emits('changeEquipement', props.i, equipementsSousZone.value);
 });
 
 const getParamatreValeurById = id => {
@@ -150,7 +159,7 @@ const setParametreValeur = (id, valeur) => {
     } else {
         // le param n'existe pas encore,
         // on l'ajoute avec id = 0 (qui servira à savoir si on update ou post)
-        // todo: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
+        // TODO: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
         parametres.value.push({
             id: 0,
             parametre: { id },

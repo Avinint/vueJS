@@ -115,9 +115,7 @@
                   :sous-zone-parametres="sousZoneParametres"
                   :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
                   :readonly=readonly
-                  :creation="activiteZone_selected > 0"
-                  @changeEquipement="changeEquipementSousZone"
-                />
+                  />
               </div>
               <div>
                 <Button v-if="!readonly" borderless icon="delete" type="secondary" @click="removeSousZone(idx)"/>
@@ -184,10 +182,6 @@ const id_type_sous_zone = ref(0);
 
 const sousZoneParametres = ref({});
 const zoneEquipementsByType = ref({});
-const sousZoneEquipements = [];
-const changeEquipementSousZone = (i, value) => {
-  sousZoneEquipements[sous_zones.value[i].id] = value;
-};
 
 
 const addActiviteZone = async (zoneIdx) => {
@@ -310,8 +304,6 @@ onMounted(async () => {
   id_type_sous_zone.value = data[0]?.id;
   await fetchSousZoneParametres();
   await fetchZoneEquipements();
-
-  console.debug("ZONES", zones.value);
 });
 
 const cancel = () => {
@@ -334,27 +326,47 @@ const validSousZone = () => {
     libelle: new_sous_zone_libelle.value,
     actif: true,
     ordre: 1,
-    isNew: true
+    isNew: true,
+    // parametres et equipements gérés dans paramSousZone
   });
 };
 
 const saveSousZones = async (zoneId, activiteId) => {
   for (let {isNew, toRemove, actif, ordre, libelle, id, zoneActivites, } of sous_zones.value) {
+
+    const zoneActivite = zoneActivites.filter(za => za.activite.id == activite_selected.value).shift();
+
     if (isNew) {
+
+      const parametres = [];
+      zoneActivite.parametreZoneActivites.forEach(param => {
+        parametres.push({
+          id: param.parametre.id,
+          valeur: param.valeur
+        });
+      });
+      const equipements = [];
+      zoneActivite.zoneActiviteEquipements.forEach(equip => {
+        equipements.push({
+          id: equip.equipement.id
+        });
+      });
+
       await postSousZone(zone_selected.value, {
         actif,
         ordre,
-        libelle
+        libelle,
+        activite: "/api/activites/" + activite_selected.value,
+        parametres,
+        equipements
       });
-
 
     } else if (toRemove) {
       // suppression
       await deleteZones(id);
+
     } else {
       // édition
-
-      const zoneActivite = zoneActivites.filter(e => e.activite.id == activite_selected.value).shift();
 
       // parametres, on les a directement modifiés dans sous_zones...
       const parametres = zoneActivite.parametreZoneActivites;
@@ -365,8 +377,8 @@ const saveSousZones = async (zoneId, activiteId) => {
           parametre: p.parametre.id,
           valeur: p.valeur
         };
-        // si on a p = 0 c'est qu'on a modifier un paramètre qui n'existe pas en base
-        // todo: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
+        // si on a id = 0 c'est qu'on a modifié un paramètre qui n'existe pas en base
+        // TODO: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
         if (p.id == 0) {
           toPost.push(data);
         } else {
@@ -389,7 +401,7 @@ const saveSousZones = async (zoneId, activiteId) => {
 
       // équipements
       await postZoneActiviteEquipement(id, activite_selected.value, {
-        equipements: Object.values(sousZoneEquipements[id])
+        equipements: zoneActivite.zoneActiviteEquipements.map(e => e.equipement.id)
       });
 
 
