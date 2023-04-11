@@ -84,6 +84,7 @@ const props = defineProps([
     'zoneEquipementsByType',
     'sousZoneEquipements',
     'readonly',
+    'creation'
 ]);
 
 const parametres = ref([]);
@@ -135,7 +136,14 @@ onMounted(async () => {
         });
     }
 
-    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift();
+    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift(); // référence !
+
+    // quand on veut ajouter une nouvelle activité à une zone, on a une activité pré-sélectionnée,
+    // sauf qu'on ne veut pas aller chercher les paramètres de cette activité si elle est déjà configurée
+    if (props.creation) {
+        zoneActivite.parametreZoneActivites.length = 0;
+        zoneActivite.zoneActiviteEquipements.length = 0;
+    }
 
     parametres.value = zoneActivite.parametreZoneActivites; // référence !
     equipements.value = zoneActivite.zoneActiviteEquipements; // référence !

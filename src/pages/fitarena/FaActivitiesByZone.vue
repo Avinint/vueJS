@@ -115,6 +115,7 @@
                   :sous-zone-parametres="sousZoneParametres"
                   :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
                   :readonly=readonly
+                  :creation="!activiteZone_selected"
                   />
               </div>
               <div>
@@ -136,7 +137,7 @@ import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
 import InputRadio from '../../components/common/InputRadio.vue'
 import ParamSousZone from '../../components/faActivitesByZone/paramSousZone.vue'
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import {
   deleteActivitesByZones,
   getActiviteByZone,
@@ -153,11 +154,11 @@ import { getParametres, postParametres, updateParametres } from '../../api/param
 import { getTypeZone } from '../../api/typeZone';
 import { getParametreZoneActivites, postParametreZoneActivites, updateParametreZoneActivites, deleteParamatreZoneActivites } from '../../api/parametreZoneActivite';
 import { getEquipementsByZone } from '../../api/equipement';
-import {getActivites, patchActivites} from "../../api/activite";
-import { postZoneActiviteEquipement } from '../../api/zoneActiviteEquipement';
+import { getActivites, patchActivites } from "../../api/activite";
 import { postSousZone } from '../../api/sousZone';
+import { postConfigurationZoneActivite } from '../../api/configuration';
 import Select from "../../components/common/Select.vue";
-import {toast} from "vue3-toastify";
+import { toast } from "vue3-toastify";
 const props = defineProps(['id'])
 const activiteZone_modal = ref(false)
 const readonly = ref(false)
@@ -202,7 +203,7 @@ const addActiviteZone = async (zoneIdx) => {
 const removeActiviteZone = async (zoneId, activiteId) => {
   await deleteZoneActivite(zoneId, activiteId)
   cancel()
-  zones.value = await getZones(1, '&typeZone.code=zone&fitArena='+props.id)
+  zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
   activiteZone_modal.value = false
 }
@@ -256,9 +257,9 @@ const sousZones = async (zoneId, activiteId) => {
   });
 };
 
-const modifieActivite = async({actif,id}) => {
+const modifieActivite = async ({ actif, id }) => {
   try {
-    await patchActivitesByZones({actif}, id)
+    await patchActivitesByZones({ actif }, id)
     toast.success('Modification de l\'activité avec succès');
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur');
@@ -288,13 +289,13 @@ const saveActiviteZone = async () => {
 
   activiteZone_modal.value = false
   cancel()
-  zones.value = await getZones(1, '&typeZone.code=zone&fitArena='+props.id)
+  zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
 
 };
 
 onMounted(async () => {
-  zones.value = await getZones(1, '&typeZone.code=zone&fitArena='+props.id)
+  zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
   modes_motorise.value = await getModes(1, '&categoryTypeEquipement.code=motorise');
   modes_numerique.value = await getModes(1, '&categoryTypeEquipement.code=numerique');
@@ -332,11 +333,15 @@ const validSousZone = () => {
 };
 
 const saveSousZones = async (zoneId, activiteId) => {
-  for (let {isNew, toRemove, actif, ordre, libelle, id, zoneActivites, } of sous_zones.value) {
+  for (let { isNew, toRemove, actif, ordre, libelle, id, zoneActivites, } of sous_zones.value) {
 
-    const zoneActivite = zoneActivites.filter(za => za.activite.id == activite_selected.value).shift();
+    if (toRemove) {
+      // suppression
+      await deleteZones(id);
 
-    if (isNew) {
+    } else {
+
+      const zoneActivite = zoneActivites.filter(za => za.activite.id == activiteId).shift();
 
       const parametres = [];
       zoneActivite.parametreZoneActivites.forEach(param => {
@@ -352,60 +357,44 @@ const saveSousZones = async (zoneId, activiteId) => {
         });
       });
 
-      await postSousZone(zone_selected.value, {
-        actif,
-        ordre,
-        libelle,
-        activite: "/api/activites/" + activite_selected.value,
-        parametres,
-        equipements
-      });
+      if (isNew) {
+        // création
 
-    } else if (toRemove) {
-      // suppression
-      await deleteZones(id);
+        await postSousZone(zoneId, {
+          actif,
+          ordre,
+          libelle,
+          activite: "/api/activites/" + activiteId,
+          parametres,
+          equipements
+        });
 
-    } else {
-      // édition
+      } else {
+        // édition
 
-      // parametres, on les a directement modifiés dans sous_zones...
-      const parametres = zoneActivite.parametreZoneActivites;
-      let toUpdate = [];
-      let toPost = [];
-      for (let p of parametres) {
-        const data = {
-          parametre: p.parametre.id,
-          valeur: p.valeur
-        };
-        // si on a id = 0 c'est qu'on a modifié un paramètre qui n'existe pas en base
-        // TODO: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
-        if (p.id == 0) {
-          toPost.push(data);
-        } else {
-          toUpdate.push(data);
-        }
+        const parametres = [];
+        zoneActivite.parametreZoneActivites.forEach(param => {
+          parametres.push({
+            id: param.parametre.id,
+            valeur: param.valeur
+          });
+        });
+        const equipements = [];
+        zoneActivite.zoneActiviteEquipements.forEach(equip => {
+          equipements.push({
+            id: equip.equipement.id
+          });
+        });
+
+        await postConfigurationZoneActivite(id, activiteId, {
+          parametres,
+          equipements
+        });
+
       }
-      const data = {
-        idZone: id,
-        idActivite: activiteId,
-        parametres: []
-      };
-      if (toUpdate.length) {
-        data.parametres = toUpdate;
-        await updateParametres(data);
-      }
-      if (toPost.length) {
-        data.parametres = toPost;
-        await postParametres(data);
-      }
-
-      // équipements
-      await postZoneActiviteEquipement(id, activite_selected.value, {
-        equipements: zoneActivite.zoneActiviteEquipements.map(e => e.equipement.id)
-      });
-
 
     }
+
   }
 
 };
@@ -438,14 +427,14 @@ const fetchZoneEquipements = async () => {
     const equipementsTypeTablette = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code=tablette')).map(elt => {
       return elt.equipement;
     });
-    const equipementsTypeEcran = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code[]=ecran-geant&equipement.typeEquipement.code[]=ecran-attente&equipement.typeEquipement.code[]=ecran-accueil') ).map(elt => {
+    const equipementsTypeEcran = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code[]=ecran-geant&equipement.typeEquipement.code[]=ecran-attente&equipement.typeEquipement.code[]=ecran-accueil')).map(elt => {
       return elt.equipement;
     });
     const equipementsTypeCamera = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code=camera')).map(elt => {
-        return elt.equipement;
+      return elt.equipement;
     });
     const equipementsTypeSono = (await getEquipementsByZone(1, zone.id, '&equipement.typeEquipement.code=sonorisation')).map(elt => {
-        return elt.equipement;
+      return elt.equipement;
     });
 
     zoneEquipementsByType.value[zone.id] = {
@@ -460,6 +449,4 @@ const fetchZoneEquipements = async () => {
 </script>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>
