@@ -137,7 +137,7 @@ import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
 import InputRadio from '../../components/common/InputRadio.vue'
 import ParamSousZone from '../../components/faActivitesByZone/paramSousZone.vue'
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import {
   deleteActivitesByZones,
   getActiviteByZone,
@@ -251,7 +251,8 @@ const mapApiToData = async (activiteZoneTemp) => {
 // récupération de la liste des sous-zones
 const sousZones = async (zoneId, activiteId) => {
   sous_zones.value = [];
-  let data = await getZones(1, '&zoneParent=' + zoneId + '&zoneActivites.activite.id=' + activiteId);
+  // const data = await getZones(1, '&zoneParent=' + zoneId + '&zoneActivites.activite.id=' + activiteId);
+  const data = await getZones(1, '&zoneParent=' + zoneId);
   data.forEach(datum => {
     sous_zones.value.push(datum);
   });

@@ -70,7 +70,7 @@
 
 <script setup>
 
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 import Input from '../../components/common/Input.vue';
 import InputCheckbox from '../../components/common/InputCheckbox.vue';
@@ -115,6 +115,11 @@ watch(equipementsSelection, async (newValue, oldValue) => {
     });
 });
 
+// on vérifie l'activité sélectionnée dans la modal
+watch(() => props.activite, async (newValue, oldValue) => {
+    setup();
+});
+
 onMounted(async () => {
     parametreNombreParticipantsMax.value = props.sousZoneParametres.nombreParticipantsMax;
     parametreNombreParticipantsConseille.value = props.sousZoneParametres.nombreParticipantsConseille;
@@ -124,9 +129,21 @@ onMounted(async () => {
     equipementsCamera.value = props.zoneEquipementsByType?.camera;
     equipementsSono.value = props.zoneEquipementsByType?.sonorisation;
 
-    // si nouvelle sous-zone
-    if (!props.sousZone.zoneActivites) {
-        props.sousZone.zoneActivites = [];
+    setup();
+});
+
+const setup = () => {
+    function getZoneActivite() {
+        return props.sousZone.zoneActivites?.filter(e => e.activite.id == props.activite).shift();
+    }
+
+    let zoneActivite = getZoneActivite(); // référence !
+
+    // si l'activité n'est pas trouvée, on l'ajoute à la liste pour pouvoir gérer la config
+    if (!zoneActivite) {
+        if (!props.sousZone.zoneActivites) {
+            props.sousZone.zoneActivites = [];
+        }
         props.sousZone.zoneActivites.push({
             activite: {
                 id: props.activite
@@ -134,9 +151,9 @@ onMounted(async () => {
             parametreZoneActivites: [],
             zoneActiviteEquipements: []
         });
-    }
 
-    const zoneActivite = props.sousZone.zoneActivites.filter(e => e.activite.id == props.activite).shift(); // référence !
+        zoneActivite = getZoneActivite();
+    }
 
     // quand on veut ajouter une nouvelle activité à une zone, on a une activité pré-sélectionnée,
     // sauf qu'on ne veut pas aller chercher les paramètres de cette activité si elle est déjà configurée
@@ -154,7 +171,7 @@ onMounted(async () => {
     zoneActivite.zoneActiviteEquipements.forEach(elt => {
         equipementsSelection.value.push(elt.equipement.id);
     });
-});
+};
 
 const getParamatreValeurById = id => {
     return getParametreById(id)?.valeur;
