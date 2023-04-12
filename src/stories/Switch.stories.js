@@ -7,18 +7,18 @@ export default {
   component: Switch,
   tags: ['autodocs'],
   argTypes: {
-    readonly: {type: 'boolean'}
+    readonly: { type: 'boolean' },
   },
-};
+}
 
 //👇 We create a “template” of how args map to rendering
 const Template = (args) => ({
   components: { Switch },
   setup() {
-    return { args };
+    return { args }
   },
   template: '<Button v-bind="args" />',
-});
+})
 
-export const Primary = Template.bind({});
-Primary.args = { };
+export const Primary = Template.bind({})
+Primary.args = {}

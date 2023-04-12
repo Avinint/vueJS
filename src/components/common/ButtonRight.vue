@@ -9,8 +9,6 @@
 
 <script setup lang="ts">
 
-  import {defineProps} from "vue";
-
   interface Props {
     label?: string
     icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | '',

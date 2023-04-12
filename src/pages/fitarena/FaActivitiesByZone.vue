@@ -1,19 +1,22 @@
-
 <template>
   <Card>
     <h1>Activités par zone</h1>
     <div class="p-10">
-      <Card class="space-y-3 mb-10" v-for="(zoneFit, zoneIdx) of zones">
-        <h2>{{zoneFit.libelle}}</h2>
+      <Card v-for="(zoneFit, zoneIdx) of zones" class="mb-10 space-y-3">
+        <h2>{{ zoneFit.libelle }}</h2>
 
         <div class="relative overflow-x-auto">
-          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" class="px-6 py-3"></th>
-              <th scope="col" class="px-6 py-3">Actif</th>
-              <th scope="col" class="px-6 py-3">Libellé</th>
-            </tr>
+          <table
+            class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
+          >
+            <thead
+              class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+            >
+              <tr>
+                <th scope="col" class="px-6 py-3"></th>
+                <th scope="col" class="px-6 py-3">Actif</th>
+                <th scope="col" class="px-6 py-3">Libellé</th>
+              </tr>
             </thead>
             <tbody>
             <tr class="bg-white" v-for="(act, i) in zoneFit.zoneActivites">
@@ -30,19 +33,33 @@
               </td>
               <td class="px-6 py-4">{{ act.activite.libelle }}</td>
 
-              <td class="px-6 py-4">
-                <Button label="Détails" type="secondary" @click="showActiviteZone(act.id)"/>
-              </td>
-            </tr>
+                <td class="px-6 py-4">
+                  <Button
+                    label="Détails"
+                    type="secondary"
+                    @click="showActiviteZone(act.id)"
+                  />
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-        <Button label="Ajouter une Activité" icon="add" type="secondary" @click="addActiviteZone(zoneIdx)" id="TaddActivite"/>
+        <Button
+          id="TaddActivite"
+          label="Ajouter une Activité"
+          icon="add"
+          type="secondary"
+          @click="addActiviteZone(zoneIdx)"
+        />
       </Card>
 
       <form @submit.prevent="saveActiviteZone">
-        <Modal v-if="activiteZone_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activiteZone_modal = false;cancel();">
-
+        <Modal
+          v-if="activiteZone_modal"
+          :type="readonly ? 'visualiser' : 'classic'"
+          :title="modal_title"
+          @cancel="activiteZone_modal = falsecancel()"
+        >
           <div>
             <label for="select_activites" class="mr-4">Activité</label>
             <select :disabled="readonly || activiteZone_selected" id="select_activites" v-model="activite_selected" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
@@ -51,32 +68,32 @@
           </div>
 
           <div class="flex items-center">
-            <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
+            <div class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
               {{ parametre_config_equipements_motorises.libelle }}
             </div>
             <div>
               <InputRadio
+                v-model="mode_equipements_motorises"
                 :disabled="readonly"
                 name="mode_equipements_motorises"
-                v-model="mode_equipements_motorises"
                 :list="modes_motorise"
               />
             </div>
           </div>
 
           <div class="flex items-center">
-            <div class="block mb-2 text-sm font-medium text-gray-900 w-1/2">
+            <div class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
               {{ parametre_mode_ecran_interface_video_scoring.libelle }}
             </div>
             <div>
               <InputRadio
+                v-model="mode_ecran_interface"
                 :default="{
                   label: 'Aucun',
                   value: 0,
                 }"
                 :disabled="readonly"
                 name="mode_ecran_interface"
-                v-model="mode_ecran_interface"
                 :list="modes_numerique"
               />
             </div>
@@ -84,32 +101,66 @@
 
           <div class="flex items-center">
             <div class="mr-4">Division en sous-zones</div>
-            <div class="bg-slate-300 rounded-full flex items-center justify-center w-8 h-8 mr-4">{{ sous_zones.length }}</div>
-            <div class="text-blue-300	text-sm">
+            <div
+              class="mr-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-300"
+            >
+              {{ sous_zones.length }}
+            </div>
+            <div class="text-sm text-blue-300">
               Sous-zone : surface réservable par les utilisateurs (= terrain)
             </div>
           </div>
 
-          <Button v-if="!new_sous_zone && !readonly" label="Ajouter une Sous-zone" icon="add" type="secondary" @click="addSousZone()" id="TaddSousZone"/>
+          <Button
+            v-if="!new_sous_zone && !readonly"
+            id="TaddSousZone"
+            label="Ajouter une Sous-zone"
+            icon="add"
+            type="secondary"
+            @click="addSousZone()"
+          />
 
-          <div v-if="new_sous_zone" class="border border-gray-300 rounded-md p-4">
+          <div
+            v-if="new_sous_zone"
+            class="rounded-md border border-gray-300 p-4"
+          >
             <div>
-              <Input v-model="new_sous_zone_libelle" label="Nom de la sous-zone" type="text" id="new_sous_zone_libelle" />
+              <Input
+                id="new_sous_zone_libelle"
+                v-model="new_sous_zone_libelle"
+                label="Nom de la sous-zone"
+                type="text"
+              />
             </div>
-            <div class="text-center mt-4">
-              <Button label="Valider" icon="" class="mr-4" type="secondary" @click="validSousZone()"></Button>
-              <Button label="Annuler" icon="" class="" type="secondary" @click="new_sous_zone = false"></Button>
+            <div class="mt-4 text-center">
+              <Button
+                label="Valider"
+                icon=""
+                class="mr-4"
+                type="secondary"
+                @click="validSousZone()"
+              ></Button>
+              <Button
+                label="Annuler"
+                icon=""
+                class=""
+                type="secondary"
+                @click="new_sous_zone = false"
+              ></Button>
             </div>
           </div>
 
           <template v-for="(sous_zone, idx) in sous_zones">
-            <div v-if="!sous_zone.toRemove" class="border border-gray-300 rounded-md p-4">
+            <div
+              v-if="!sous_zone.toRemove"
+              class="rounded-md border border-gray-300 p-4"
+            >
               <div>Sous-Zone {{ sous_zone.libelle }}</div>
               <div>
                 <ParamSousZone
                   v-if="zoneEquipementsByType[zone_selected]"
-                  :i=idx
-                  :zone=zone_selected
+                  :i="idx"
+                  :zone="zone_selected"
                   :activite="activite_selected"
                   :sous-zone="sous_zone"
                   :sous-zone-parametres="sousZoneParametres"
@@ -119,11 +170,16 @@
                   />
               </div>
               <div>
-                <Button v-if="!readonly" borderless icon="delete" type="secondary" @click="removeSousZone(idx)"/>
+                <Button
+                  v-if="!readonly"
+                  borderless
+                  icon="delete"
+                  type="secondary"
+                  @click="removeSousZone(idx)"
+                />
               </div>
             </div>
           </template>
-
         </Modal>
       </form>
     </div>
@@ -167,34 +223,34 @@ const zones = ref([])
 const activiteZone = ref({})
 const activiteZone_selected = ref(0)
 const activites = ref([])
-const modal_title = ref('');
-const zone_selected = ref(0);
-const activite_selected = ref(0);
-const modes_motorise = ref([]);
-const modes_numerique = ref([]);
-const mode_equipements_motorises = ref(0);
-const mode_ecran_interface = ref(0);
-const parametre_config_equipements_motorises = ref({});
-const parametre_mode_ecran_interface_video_scoring = ref({});
-const sous_zones = ref([]);
-const new_sous_zone = ref(false);
-const new_sous_zone_libelle = ref('');
-const id_type_sous_zone = ref(0);
+const modal_title = ref('')
+const zone_selected = ref(0)
+const activite_selected = ref(0)
+const modes_motorise = ref([])
+const modes_numerique = ref([])
+const mode_equipements_motorises = ref(0)
+const mode_ecran_interface = ref(0)
+const parametre_config_equipements_motorises = ref({})
+const parametre_mode_ecran_interface_video_scoring = ref({})
+const sous_zones = ref([])
+const new_sous_zone = ref(false)
+const new_sous_zone_libelle = ref('')
+const id_type_sous_zone = ref(0)
 
 const sousZoneParametres = ref({});
 const zoneEquipementsByType = ref({});
 
 
 const addActiviteZone = async (zoneIdx) => {
-  activiteZone_selected.value = 0;
-  const zone = zones.value[zoneIdx];
-  zone_selected.value = zone.id;
-  activite_selected.value = activites.value[0].id;
-  modal_title.value = "Ajouter une activité à la zone " + zone.libelle;
-  mode_equipements_motorises.value = modes_motorise.value[0].id;
-  mode_ecran_interface.value = 0;
-  readonly.value = false;
-  activiteZone_modal.value = true;
+  activiteZone_selected.value = 0
+  const zone = zones.value[zoneIdx]
+  zone_selected.value = zone.id
+  activite_selected.value = activites.value[0].id
+  modal_title.value = 'Ajouter une activité à la zone ' + zone.libelle
+  mode_equipements_motorises.value = modes_motorise.value[0].id
+  mode_ecran_interface.value = 0
+  readonly.value = false
+  activiteZone_modal.value = true
 
 
   await sousZones(zone_selected.value, activite_selected.value);
@@ -211,41 +267,45 @@ const removeActiviteZone = async (zoneId, activiteId) => {
 const editActiviteZone = async (i) => {
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
-  modal_title.value = "Modifier une activité de la zone " + activiteZoneTemp.zone.libelle;
+  modal_title.value =
+    'Modifier une activité de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = false
   activiteZone_modal.value = true
 }
 
 const showActiviteZone = async (i) => {
-  const activiteZoneTemp = await getActiviteByZone(i);
-  await mapApiToData(activiteZoneTemp);
-  modal_title.value = "Information de la zone " + activiteZoneTemp.zone.libelle;
-  readonly.value = true;
-  activiteZone_modal.value = true;
+  const activiteZoneTemp = await getActiviteByZone(i)
+  await mapApiToData(activiteZoneTemp)
+  modal_title.value = 'Information de la zone ' + activiteZoneTemp.zone.libelle
+  readonly.value = true
+  activiteZone_modal.value = true
 }
 
 const mapApiToData = async (activiteZoneTemp) => {
-  activiteZone.value = activiteZoneTemp;
-  activiteZone_selected.value = activiteZoneTemp.id;
-  activite_selected.value = activiteZoneTemp.activite.id;
-  zone_selected.value = activiteZoneTemp.zone.id;
+  activiteZone.value = activiteZoneTemp
+  activiteZone_selected.value = activiteZoneTemp.id
+  activite_selected.value = activiteZoneTemp.activite.id
+  zone_selected.value = activiteZoneTemp.zone.id
 
   // récupération des valeurs des paramètres nécessaires
-  mode_equipements_motorises.value = modes_motorise.value[0].id;
-  mode_ecran_interface.value = 0;
-  let data = await getParametreZoneActivites(1, '&zoneActivite=' + activiteZone_selected.value);
-  data.forEach(datum => {
+  mode_equipements_motorises.value = modes_motorise.value[0].id
+  mode_ecran_interface.value = 0
+  let data = await getParametreZoneActivites(
+    1,
+    '&zoneActivite=' + activiteZone_selected.value
+  )
+  data.forEach((datum) => {
     switch (datum.parametre.id) {
       case parametre_config_equipements_motorises.value.id:
-        mode_equipements_motorises.value = datum.valeur;
-        break;
+        mode_equipements_motorises.value = datum.valeur
+        break
       case parametre_mode_ecran_interface_video_scoring.value.id:
-        mode_ecran_interface.value = datum.valeur;
-        break;
+        mode_ecran_interface.value = datum.valeur
+        break
     }
-  });
+  })
 
-  await sousZones(zone_selected.value, activite_selected.value);
+  await sousZones(zone_selected.value, activite_selected.value)
 }
 
 // récupération de la liste des sous-zones
@@ -261,14 +321,13 @@ const sousZones = async (zoneId, activiteId) => {
 const modifieActivite = async ({ actif, id }) => {
   try {
     await patchActivitesByZones({ actif }, id)
-    toast.success('Modification de l\'activité avec succès');
+    toast.success("Modification de l'activité avec succès")
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur');
+    toast.error('Erreur, Veuillez contacter votre administrateur')
   }
 }
 
 const saveActiviteZone = async () => {
-
   await postZoneActivite(zone_selected.value, activite_selected.value, {
     actif: true,
     ordre: 0,
@@ -282,47 +341,59 @@ const saveActiviteZone = async () => {
         id: parametre_mode_ecran_interface_video_scoring.value.id,
         codeParametre: parametre_mode_ecran_interface_video_scoring.value.code,
         valeur: mode_ecran_interface.value,
-      }
-    ]
-  });
+      },
+    ],
+  })
 
-  await saveSousZones(zone_selected.value, activite_selected.value);
+  await saveSousZones(zone_selected.value, activite_selected.value)
 
   activiteZone_modal.value = false
   cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
-
-};
+}
 
 onMounted(async () => {
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
-  modes_motorise.value = await getModes(1, '&categoryTypeEquipement.code=motorise');
-  modes_numerique.value = await getModes(1, '&categoryTypeEquipement.code=numerique');
-  parametre_config_equipements_motorises.value = (await getParametres(1, '&code=config-des-equipements-motorises')).shift();
-  parametre_mode_ecran_interface_video_scoring.value = (await getParametres(1, '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring')).shift();
-  let data = await getTypeZone(1, '&code=sous-zone');
-  id_type_sous_zone.value = data[0]?.id;
-  await fetchSousZoneParametres();
-  await fetchZoneEquipements();
-});
+  modes_motorise.value = await getModes(
+    1,
+    '&categoryTypeEquipement.code=motorise'
+  )
+  modes_numerique.value = await getModes(
+    1,
+    '&categoryTypeEquipement.code=numerique'
+  )
+  parametre_config_equipements_motorises.value = (
+    await getParametres(1, '&code=config-des-equipements-motorises')
+  ).shift()
+  parametre_mode_ecran_interface_video_scoring.value = (
+    await getParametres(
+      1,
+      '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring'
+    )
+  ).shift()
+  let data = await getTypeZone(1, '&code=sous-zone')
+  id_type_sous_zone.value = data[0]?.id
+  await fetchSousZoneParametres()
+  await fetchZoneEquipements()
+})
 
 const cancel = () => {
-  zone_selected.value = 0;
-  activite_selected.value = 0;
-  activiteZone_selected.value = 0;
-  sous_zones.value = [];
-  new_sous_zone.value = false;
-};
+  zone_selected.value = 0
+  activite_selected.value = 0
+  activiteZone_selected.value = 0
+  sous_zones.value = []
+  new_sous_zone.value = false
+}
 
 const addSousZone = () => {
-  new_sous_zone_libelle.value = '';
-  new_sous_zone.value = true;
-};
+  new_sous_zone_libelle.value = ''
+  new_sous_zone.value = true
+}
 
 const validSousZone = () => {
-  new_sous_zone.value = false;
+  new_sous_zone.value = false
   sous_zones.value.push({
     type: id_type_sous_zone.value,
     libelle: new_sous_zone_libelle.value,
@@ -397,30 +468,33 @@ const saveSousZones = async (zoneId, activiteId) => {
     }
 
   }
-
-};
+}
 
 const removeSousZone = async (index) => {
-  const sousZone = sous_zones.value[index];
+  const sousZone = sous_zones.value[index]
 
   // on peut supprimer dans la liste une zone pas encore créée en base
   if (sousZone.isNew) {
-    sous_zones.value.splice(index, 1);
+    sous_zones.value.splice(index, 1)
   } else {
-    sousZone.toRemove = true;
+    sousZone.toRemove = true
   }
-};
+}
 
 // récupération des info de base des paramètres nécessaires (globaux, pas par rapport à une sous-zone)
 const fetchSousZoneParametres = async () => {
-  const parametreNombreParticipantsMax = (await getParametres(1, '&code=nombre-de-participants-max')).shift();
-  const parametreNombreParticipantsConseille = (await getParametres(1, '&code=nombre-de-participants-conseille')).shift();
+  const parametreNombreParticipantsMax = (
+    await getParametres(1, '&code=nombre-de-participants-max')
+  ).shift()
+  const parametreNombreParticipantsConseille = (
+    await getParametres(1, '&code=nombre-de-participants-conseille')
+  ).shift()
 
   sousZoneParametres.value = {
     nombreParticipantsMax: parametreNombreParticipantsMax,
     nombreParticipantsConseille: parametreNombreParticipantsConseille,
-  };
-};
+  }
+}
 
 // récupération des équipements de la zone par type
 const fetchZoneEquipements = async () => {
@@ -442,12 +516,10 @@ const fetchZoneEquipements = async () => {
       tablette: equipementsTypeTablette,
       ecran: equipementsTypeEcran,
       camera: equipementsTypeCamera,
-      sonorisation: equipementsTypeSono
-    };
+      sonorisation: equipementsTypeSono,
+    }
   }
-
 }
 </script>
-
 
 <style scoped></style>

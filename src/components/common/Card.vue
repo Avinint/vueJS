@@ -1,13 +1,9 @@
 <template>
-  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow">
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow">
     <slot></slot>
   </div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -6,19 +6,16 @@ export default {
   title: 'Common/Input',
   component: Input,
   tags: ['autodocs'],
-  argTypes: {
-
-  },
-
-};
+  argTypes: {},
+}
 
 const Template = (args) => ({
   components: { Input },
   setup() {
-    return { args };
+    return { args }
   },
   template: `<Input v-bind="args" v-model="args.val"/>`,
-});
+})
 
-export const Primary = Template.bind({});
-Primary.args = { placeholder: 'placeholder'};
+export const Primary = Template.bind({})
+Primary.args = { placeholder: 'placeholder' }

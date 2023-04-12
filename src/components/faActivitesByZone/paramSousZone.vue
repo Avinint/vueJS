@@ -1,4 +1,5 @@
 <template>
+  <div>
     <div>
         <div>
             <Input v-model="nombreParticipantsMax" :label="parametreNombreParticipantsMax.libelle" type="number" :id="'sous_zone_' + sousZone.id + '_param_' + parametreNombreParticipantsMax.id" />
@@ -66,9 +67,47 @@
         </div>
     </div>
 
+    <div>
+      <p class="mb-4 mt-4">Écrans</p>
+      <div>
+        <InputCheckbox
+          :id="'sous_zone_' + sousZone.id + '_equipement_ecran_'"
+          v-model="equipementsSousZone"
+          :elements="equipementsEcran"
+          name="equipement_ecran[]"
+          :disabled="readonly"
+        />
+      </div>
+    </div>
+
+    <div>
+      <p class="mb-4 mt-4">Caméras de jeu</p>
+      <div>
+        <InputCheckbox
+          :id="'sous_zone_' + sousZone.id + '_equipement_camera_'"
+          v-model="equipementsSousZone"
+          :elements="equipementsCamera"
+          name="equipement_camera[]"
+        />
+      </div>
+    </div>
+
+    <div>
+      <p class="mb-4">Sonorisation</p>
+      <div>
+        <InputCheckbox
+          :id="'sous_zone_' + sousZone.id + '_equipement_sono_'"
+          v-model="equipementsSousZone"
+          :elements="equipementsSono"
+          name="equipement_sono[]"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { onMounted, ref, computed, watch } from 'vue'
 
 import { onMounted, ref, watch } from "vue";
 
@@ -92,10 +131,10 @@ const equipements = ref([]);
 const parametreNombreParticipantsMax = ref({});
 const nombreParticipantsMax = ref(0);
 watch(nombreParticipantsMax, async (newValue, oldValue) => {
-    setParametreValeur(parametreNombreParticipantsMax.value.id, newValue);
-});
-const parametreNombreParticipantsConseille = ref({});
-const nombreParticipantsConseille = ref(0);
+  setParametreValeur(parametreNombreParticipantsMax.value.id, newValue)
+})
+const parametreNombreParticipantsConseille = ref({})
+const nombreParticipantsConseille = ref(0)
 watch(nombreParticipantsConseille, async (newValue, oldValue) => {
     setParametreValeur(parametreNombreParticipantsConseille.value.id, newValue);
 });
@@ -121,13 +160,15 @@ watch(() => props.activite, async (newValue, oldValue) => {
 });
 
 onMounted(async () => {
-    parametreNombreParticipantsMax.value = props.sousZoneParametres.nombreParticipantsMax;
-    parametreNombreParticipantsConseille.value = props.sousZoneParametres.nombreParticipantsConseille;
+  parametreNombreParticipantsMax.value =
+    props.sousZoneParametres.nombreParticipantsMax
+  parametreNombreParticipantsConseille.value =
+    props.sousZoneParametres.nombreParticipantsConseille
 
-    equipementsTablette.value = props.zoneEquipementsByType?.tablette;
-    equipementsEcran.value = props.zoneEquipementsByType?.ecran;
-    equipementsCamera.value = props.zoneEquipementsByType?.camera;
-    equipementsSono.value = props.zoneEquipementsByType?.sonorisation;
+  equipementsTablette.value = props.zoneEquipementsByType?.tablette
+  equipementsEcran.value = props.zoneEquipementsByType?.ecran
+  equipementsCamera.value = props.zoneEquipementsByType?.camera
+  equipementsSono.value = props.zoneEquipementsByType?.sonorisation
 
     setup();
 });
@@ -165,17 +206,19 @@ const setup = () => {
     parametres.value = zoneActivite.parametreZoneActivites; // référence !
     equipements.value = zoneActivite.zoneActiviteEquipements; // référence !
 
-    nombreParticipantsMax.value = getParamatreValeurById(parametreNombreParticipantsMax.value.id) || 0;
-    nombreParticipantsConseille.value = getParamatreValeurById(parametreNombreParticipantsConseille.value.id) || 0;
+  nombreParticipantsMax.value =
+    getParamatreValeurById(parametreNombreParticipantsMax.value.id) || 0
+  nombreParticipantsConseille.value =
+    getParamatreValeurById(parametreNombreParticipantsConseille.value.id) || 0
 
     zoneActivite.zoneActiviteEquipements.forEach(elt => {
         equipementsSelection.value.push(elt.equipement.id);
     });
 };
 
-const getParamatreValeurById = id => {
-    return getParametreById(id)?.valeur;
-};
+const getParamatreValeurById = (id) => {
+  return getParametreById(id)?.valeur
+}
 
 const setParametreValeur = (id, valeur) => {
     const param = getParametreById(id);
@@ -189,10 +232,7 @@ const setParametreValeur = (id, valeur) => {
         });
     }
 
-};
-
-const getParametreById = id => {
-    return parametres.value?.filter(param => param.parametre.id === id).shift();
-};
-
+const getParametreById = (id) => {
+  return parametres.value?.filter((param) => param.parametre.id === id).shift()
+}
 </script>

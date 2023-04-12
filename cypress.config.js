@@ -1,4 +1,4 @@
-import { defineConfig } from "cypress";
+import { defineConfig } from "cypress"
 
 export default defineConfig({
   projectId: "4tfcuw",
@@ -8,4 +8,4 @@ export default defineConfig({
     },
     experimentalStudio: true
   },
-});
+})

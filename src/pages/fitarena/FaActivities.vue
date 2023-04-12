@@ -3,109 +3,220 @@
     <h1>Activités pratiquables dans la fit arena</h1>
 
     <div class="relative overflow-x-auto">
-      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
-        <tr>
-          <th scope="col" class="px-6 py-3"></th>
-          <th scope="col" class="px-6 py-3">Actif</th>
-          <th scope="col" class="px-6 py-3">Libellé</th>
-          <th scope="col" class="px-6 py-3">Ordre</th>
-        </tr>
+      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+        <thead
+          class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+        >
+          <tr>
+            <th scope="col" class="px-6 py-3"></th>
+            <th scope="col" class="px-6 py-3">Actif</th>
+            <th scope="col" class="px-6 py-3">Libellé</th>
+            <th scope="col" class="px-6 py-3">Ordre</th>
+          </tr>
         </thead>
         <tbody>
-        <tr class="bg-white" v-for="(act, i) in activites" :key="i">
-          <td class="flex justify-center items-center p-3">
-            <Button test="TdeleteClient" borderless icon="delete" type="secondary" @click="removeActivite(i)"/>
-            <Button test="TeditClient" borderless icon="edit" type="secondary" @click="editActivite(i)"/>
-          </td>
-          <td class="px-6 py-4">
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" value="true" class="sr-only peer" v-model="act.actif" @change="modifieActivite(act)" >
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
-              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
-            </label>
-          </td>
-          <td class="px-6 py-4">{{ act.libelle }}</td>
+          <tr v-for="(act, i) in activites" :key="i" class="bg-white">
+            <td class="flex items-center justify-center p-3">
+              <Button
+                test="TdeleteClient"
+                borderless
+                icon="delete"
+                type="secondary"
+                @click="removeActivite(i)"
+              />
+              <Button
+                test="TeditClient"
+                borderless
+                icon="edit"
+                type="secondary"
+                @click="editActivite(i)"
+              />
+            </td>
+            <td class="px-6 py-4">
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="act.actif"
+                  type="checkbox"
+                  value="true"
+                  class="peer sr-only"
+                  @change="modifieActivite(act)"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                ></div>
+                <span
+                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                ></span>
+              </label>
+            </td>
+            <td class="px-6 py-4">{{ act.libelle }}</td>
 
-          <td class="px-6 py-4">{{ act.ordre }}</td>
-          <td class="px-6 py-4">
-            <Button label="Détails" type="secondary" @click="showActivite(i)"/>
-          </td>
-        </tr>
+            <td class="px-6 py-4">{{ act.ordre }}</td>
+            <td class="px-6 py-4">
+              <Button
+                label="Détails"
+                type="secondary"
+                @click="showActivite(i)"
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
-    <Button label="Ajouter une activité" icon="add" type="secondary" @click="addActivite" id="TaddActivite"/>
+    <Button
+      id="TaddActivite"
+      label="Ajouter une activité"
+      icon="add"
+      type="secondary"
+      @click="addActivite"
+    />
   </Card>
   <form @submit.prevent="saveActivite">
-    <Modal v-if="activite_modal" :type="readonly ? 'visualiser' : 'classic'" :title="modal_title" @cancel="activite_modal = false">
+    <Modal
+      v-if="activite_modal"
+      :type="readonly ? 'visualiser' : 'classic'"
+      :title="modal_title"
+      @cancel="activite_modal = false"
+    >
       <div class="flex items-center">
-        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Type d'activité</label>
-        <select v-if="typeActivites.length" v-model="activite_selected" id="TTypeActivite" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option v-for="(typeActivite, i) in typeActivites" :key="i" :value="typeActivite.id">{{typeActivite.libelle}}</option>
+        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+          >Type d'activité</label
+        >
+        <select
+          v-if="typeActivites.length"
+          id="TTypeActivite"
+          v-model="activite_selected"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+        >
+          <option
+            v-for="(typeActivite, i) in typeActivites"
+            :key="i"
+            :value="typeActivite.id"
+          >
+            {{ typeActivite.libelle }}
+          </option>
         </select>
       </div>
       <div class="flex items-center">
-        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Nom</label>
-        <input :readonly="readonly" v-model="activite.libelle" id="TActiviteLibelle" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
+        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+          >Nom</label
+        >
+        <input
+          id="TActiviteLibelle"
+          v-model="activite.libelle"
+          :readonly="readonly"
+          type="text"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          placeholder=""
+          required
+        />
       </div>
       <div class="flex items-center">
-        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white pr-3" for="small_size">Icône</label>
-        <input class="block w-full mb-5 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="small_size" type="file">
+        <label
+          class="mb-2 block pr-3 text-sm font-medium text-gray-900 dark:text-white"
+          for="small_size"
+          >Icône</label
+        >
+        <input
+          id="small_size"
+          class="mb-5 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+          type="file"
+        />
       </div>
       <div class="flex items-center">
-        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Description</label>
-        <textarea :readonly="readonly" v-model="activite.description" id="TActiviteDescription" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required></textarea>
+        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+          >Description</label
+        >
+        <textarea
+          id="TActiviteDescription"
+          v-model="activite.description"
+          :readonly="readonly"
+          type="text"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          placeholder=""
+          required
+        ></textarea>
       </div>
       <div class="flex items-center">
-        <label class="block mb-2 text-sm font-medium text-gray-900 w-1/2">Ordre</label>
-        <input :readonly="readonly" v-model="activite.ordre" id="TActiviteOrdre" type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required>
+        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+          >Ordre</label
+        >
+        <input
+          id="TActiviteOrdre"
+          v-model="activite.ordre"
+          :readonly="readonly"
+          type="number"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          placeholder=""
+          required
+        />
       </div>
       <div class="flex items-center">
-        <span class="text-sm font-medium text-gray-900 dark:text-gray-300 w-1/2">Actif : </span>
-        <label class="relative inline-flex items-center cursor-pointer w-full">
-          <input type="checkbox" value="true" class="sr-only peer" v-model="activite.actif">
-          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
-          <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
+        <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Actif :
+        </span>
+        <label class="relative inline-flex w-full cursor-pointer items-center">
+          <input
+            v-model="activite.actif"
+            type="checkbox"
+            value="true"
+            class="peer sr-only"
+          />
+          <div
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+          ></div>
+          <span
+            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+          ></span>
         </label>
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation individuelle</span>
-        <label  class="relative inline-flex items-center cursor-pointer">
-          <input v-model="activite.reservationDeGroupe" type="checkbox" value="" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Réservation individuelle</span
+        >
+        <label class="relative inline-flex cursor-pointer items-center">
+          <input
+            v-model="activite.reservationDeGroupe"
+            type="checkbox"
+            value="true"
+            class="peer sr-only"
+          />
+          <div
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+          ></div>
         </label>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Réservation de groupe</span>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Réservation de groupe</span
+        >
       </div>
-  </Modal>
+    </Modal>
   </form>
 </template>
 
 <script setup>
-
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
-import {onMounted, ref} from "vue";
-import {getTypeActivites} from "../../api/typeActivite.js";
+import { onMounted, ref } from 'vue'
+import { getTypeActivites } from '../../api/typeActivite.js'
 import {
   deleteActivites,
   getActivites,
   postActivites,
   updateActivites,
   postActiviteWithIcone,
-  patchActivites
-} from "../../api/activite.js";
-import {useRouter} from "vue-router";
-import {getClients, postClient, updateClient} from "../../api/client";
-import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
+  patchActivites,
+} from '../../api/activite.js'
+import { useRouter } from 'vue-router'
+import { getClients, postClient, updateClient } from '../../api/client'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 
 const props = defineProps(['id'])
 const notify = () => {
-  toast("Wow so easy !", {
+  toast('Wow so easy !', {
     autoClose: 1000,
-  }); // ToastOptions
+  }) // ToastOptions
 }
 
 const activite_modal = ref(false)
@@ -126,12 +237,12 @@ const addActivite = () => {
   modal_title.value = 'Ajouter une activité'
 }
 
-const modifieActivite = async({actif,id}) => {
+const modifieActivite = async ({ actif, id }) => {
   try {
-    await patchActivites({actif}, id)
-    toast.success('Modification de l\'activité avec succès');
+    await patchActivites({ actif }, id)
+    toast.success("Modification de l'activité avec succès")
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur');
+    toast.error('Erreur, Veuillez contacter votre administrateur')
   }
 }
 
@@ -139,9 +250,9 @@ const removeActivite = async (i) => {
   const activiteTemp = activites.value[i]
   try {
     await deleteActivites(activiteTemp.id)
-    toast.success('Suppression de l\'activité avec succès');
+    toast.success("Suppression de l'activité avec succès")
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur');
+    toast.error('Erreur, Veuillez contacter votre administrateur')
   }
   cancel()
   activites.value = await getActivites(props.id)
@@ -180,24 +291,28 @@ const saveActivite = async () => {
     ordre: activite.value.ordre,
     libelle: activite.value.libelle,
     description: activite.value.description,
-    actif: activite.value.actif,
+    actif: activite.value.actif == true
+        ? activite.value.actif
+        : false,
     icone: activite.value.icone,
-    reservationDeGroupe: activite.value.reservationDeGroupe == true ? activite.value.reservationDeGroupe : false
+    reservationDeGroupe:
+      activite.value.reservationDeGroupe == true
+        ? activite.value.reservationDeGroupe
+        : false,
   }
   if (id_selected.value) {
     try {
-      const {data} = await updateActivites(actTemp, id_selected.value)
-      toast.success('Enregistrement de l\'activité avec succès');
+      const { data } = await updateActivites(actTemp, id_selected.value)
+      toast.success("Enregistrement de l'activité avec succès")
     } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur');
+      toast.error('Erreur, Veuillez contacter votre administrateur')
     }
-
   } else {
     try {
-      const {data} = await postActivites(actTemp)
-      toast.success('Enregistrement de l\'activité avec succès');
+      const { data } = await postActivites(actTemp)
+      toast.success("Enregistrement de l'activité avec succès")
     } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur');
+      toast.error('Erreur, Veuillez contacter votre administrateur')
     }
 
     //const {data} = await postActiviteWithIcone(actTemp)
@@ -215,8 +330,5 @@ onMounted(async () => {
 
 const cancel = () => {
   activite.value = {}
-
 }
-
 </script>
-
