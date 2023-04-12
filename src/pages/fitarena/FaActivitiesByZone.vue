@@ -45,7 +45,7 @@
 
           <div>
             <label for="select_activites" class="mr-4">Activité</label>
-            <select :disabled="readonly" id="select_activites" v-model="activite_selected" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <select :disabled="readonly || activiteZone_selected" id="select_activites" v-model="activite_selected" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
               <option v-for="act of activites" :value="act.id">{{ act.libelle }}</option>
             </select>
           </div>
