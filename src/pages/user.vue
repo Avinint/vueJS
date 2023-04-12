@@ -3,16 +3,12 @@
 </template>
 
 <script setup>
-
-import {ref} from "vue";
-import {useRouter} from "vue-router";
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 import SideNav from './../components/SideNav.vue'
 import UserList from './../components/User.vue'
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

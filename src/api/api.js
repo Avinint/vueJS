@@ -1,7 +1,4 @@
 export const defaultHeaders = {
-  'Accept': 'application/json',
+  Accept: 'application/json',
   // 'Authorization': 'Bearer '+ localStorage.getItem('token')
 }
-
-
-

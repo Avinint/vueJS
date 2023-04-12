@@ -30,7 +30,7 @@
           </tr>
         </thead>
         <tbody>
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" v-for="user in users" :key="user.id">
+        <tr v-for="user in users" :key="user.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
           <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
             <td class="flex justify-center items-center p-3">
               <Button test="TdeleteActivities" borderless icon="delete" type="secondary" @click="supprimer(user)"/>
@@ -49,14 +49,14 @@
 
           <td class="px-6 py-4">
             <label class="relative inline-flex items-center cursor-pointer">
-              <input onclick="return false;" type="checkbox" value="true" class="sr-only peer"  v-model="user.mineur" checked >
+              <input v-model="user.mineur" onclick="return false" type="checkbox" value="true"  class="sr-only peer" checked >
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
               <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
             </label>
           </td>
           <td class="px-6 py-4">
             <label class="relative inline-flex items-center cursor-pointer">
-              <input onclick="return false;" type="checkbox" value="true" class="sr-only peer"  v-model="user.actif" checked >
+              <input v-model="user.actif" onclick="return false" type="checkbox" value="true"  class="sr-only peer" checked >
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
               <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
             </label>
@@ -80,49 +80,49 @@
       </div>
     </Card>
   </div>
-  <Modal :title="'Consultation de ' + user.nom + ' ' + user.prenom" @cancel="cancel" @confirm="cancel" v-if="is_open_modal.consult">
+  <Modal v-if="is_open_modal.consult" :title="'Consultation de ' + user.nom + ' ' + user.prenom" @cancel="cancel" @confirm="cancel">
     <div class="grid grid-cols-6 gap-6">
       <div class="col-span-6 sm:col-span-3">
         <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom</label>
-        <input readonly type="text" name="first-name" :value=user.prenom id="first-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Bonnie" required>
+        <input id="first-name" readonly type="text" name="first-name" :value=user.prenom class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Bonnie" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="last-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom</label>
-        <input readonly type="text" name="last-name" :value=user.nom id="last-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Green" required>
+        <input id="last-name" readonly type="text" name="last-name" :value=user.nom class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Green" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-        <input readonly type="email" name="email" :value=user.email id="email" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="example@company.com" required>
+        <input id="email" readonly type="email" name="email" :value=user.email class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="example@company.com" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="identifiant-user" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Identifiant</label>
-        <input readonly type="text" name="identifiant-user" v-model="user.identifiant" id="identifiant-user" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
+        <input id="identifiant-user" v-model="user.identifiant" readonly type="text" name="identifiant-user" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
       </div>
     </div>
   </Modal>
 
-  <Modal :title="'Edition de ' + user.nom + ' ' + user.prenom" @confirm="confirm" @cancel="cancel" v-if="is_open_modal.edit">
+  <Modal v-if="is_open_modal.edit" :title="'Edition de ' + user.nom + ' ' + user.prenom" @confirm="confirm" @cancel="cancel">
     <div class="grid grid-cols-6 gap-6">
       <div class="col-span-6 sm:col-span-3">
         <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
-        <input type="text" name="first-name" v-model="user.prenom"  id="first-name-edit" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Bonnie" required>
+        <input id="first-name-edit" v-model="user.prenom" type="text"  name="first-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Bonnie" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="last-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
-        <input type="text" name="last-name" v-model="user.nom" id="last-name-edit" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Green" required>
+        <input id="last-name-edit" v-model="user.nom" type="text" name="last-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Green" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-        <input type="email" name="email" v-model="user.email" id="email-edit" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="example@company.com" required>
+        <input id="email-edit" v-model="user.email" type="email" name="email" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="example@company.com" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="identifiant-edit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Identifiant</label>
-        <input type="text" name="identifiant-edit" v-model="user.identifiant" id="identifiant-edit" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
+        <input id="identifiant-edit" v-model="user.identifiant" type="text" name="identifiant-edit" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
       </div>
     </div>
   </Modal>
 
-  <Modal :title="'Suppression de ' + user.nom + ' ' + user.prenom" @confirm="deleted" @cancel="cancel" v-if="is_open_modal.deleted">
+  <Modal v-if="is_open_modal.deleted" :title="'Suppression de ' + user.nom + ' ' + user.prenom" @confirm="deleted" @cancel="cancel">
     <div class="grid grid-cols-1 gap-1">
       <p>
         Attention vous allez supprimer un utilisateur, êtes-vous sûr de votre choix ?
@@ -131,46 +131,46 @@
   </Modal>
 
 
-  <Modal title="Nouvel utilisateur" @confirm="add" @cancel="cancel" v-if="is_open_modal.add">
+  <Modal v-if="is_open_modal.add" title="Nouvel utilisateur" @confirm="add" @cancel="cancel">
     <div class="grid grid-cols-6 gap-6">
       <div class="col-span-6 sm:col-span-3">
         <label for="first-name-new" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom</label>
-        <input v-model="user.prenom" type="text" name="first-name-new" id="first-name-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Bonnie" required>
+        <input id="first-name-new" v-model="user.prenom" type="text" name="first-name-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Bonnie" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="last-name-new" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom</label>
-        <input type="text" name="last-name-new" v-model="user.nom" id="last-name-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Green" required>
+        <input id="last-name-new" v-model="user.nom" type="text" name="last-name-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Green" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="email-new" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-        <input type="email" name="email-new" v-model="user.email" id="email-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="example@company.com" required>
+        <input id="email-new" v-model="user.email" type="email" name="email-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="example@company.com" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="identifiant-new" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Identifiant</label>
-        <input type="text" name="identifiant-new" v-model="user.identifiant" id="identifiant-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
+        <input id="identifiant-new" v-model="user.identifiant" type="text" name="identifiant-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
       </div>
 
       <div class="col-span-6 sm:col-span-3">
         <label class="relative inline-flex items-center mr-5 cursor-pointer">
-          <input type="checkbox" v-model="user.actif" value="true" class="sr-only peer" checked>
+          <input v-model="user.actif" type="checkbox" value="true" class="sr-only peer" checked>
           <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
           <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Actif</span>
         </label>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label class="relative inline-flex items-center mr-5 cursor-pointer">
-          <input type="checkbox" v-model="user.mineur" value="false" class="sr-only peer">
+          <input v-model="user.mineur" type="checkbox" value="false" class="sr-only peer">
           <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
           <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Mineur</span>
         </label>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="portable-new" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Portable</label>
-        <input type="text" name="identifiant-new" v-model="user.portable" id="portable-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
+        <input id="portable-new" v-model="user.portable" type="text" name="identifiant-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
       </div>
       <div class="col-span-6 sm:col-span-3">
         <label for="password-new" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-        <input type="password" name="password-new" v-model="user.plainPassword" id="password-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
+        <input id="password-new" v-model="user.plainPassword" type="password" name="password-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="e.g. React developer" required>
       </div>
     </div>
   </Modal>
@@ -182,7 +182,7 @@
 import Modal from './common/Modal.vue'
 import Card from './common/Card.vue'
 
-  import {reactive, ref} from "vue";
+  import {reactive, ref} from "vue"
   import Button from './common/Button.vue'
 
   const users = ref([])

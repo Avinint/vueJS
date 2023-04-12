@@ -9,7 +9,7 @@
 <script setup lang="ts">
 
   import InputLabel from './InputLabel.vue'
-  import {computed, ref, withDefaults} from "vue";
+  import {computed, ref, withDefaults} from "vue"
 
   interface Props {
     placeholder: string

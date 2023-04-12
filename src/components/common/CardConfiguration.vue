@@ -1,13 +1,9 @@
 <template>
-  <div class="p-5 w-full bg-white border border-gray-200 rounded-lg shadow">
+  <div class="w-full rounded-lg border border-gray-200 bg-white p-5 shadow">
     <slot></slot>
   </div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -9,18 +9,19 @@ export default {
   component: Modal,
   tags: ['autodocs'],
   argTypes: {
-    title: {type: 'input'},
+    title: { type: 'input' },
     type: {
-      control: {type: 'radio'},  options: ['classic', 'alert'],
-    }
+      control: { type: 'radio' },
+      options: ['classic', 'alert'],
+    },
   },
-};
+}
 
 //👇 We create a “template” of how args map to rendering
 const Template = (args) => ({
   components: { Modal },
   setup() {
-    return { args };
+    return { args }
   },
   template: `<Modal v-bind="args" @cancel="cancel" @confirm="confirm">
     TEST MODAL
@@ -28,8 +29,8 @@ const Template = (args) => ({
   methods: {
     cancel: action('cancel'),
     confirm: action('confirm'),
-  }
-});
+  },
+})
 
-export const Primary = Template.bind({});
-Primary.args = { title: 'Button' };
+export const Primary = Template.bind({})
+Primary.args = { title: 'Button' }

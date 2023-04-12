@@ -1,12 +1,12 @@
-const api_gouv = "https://api-adresse.data.gouv.fr"
+const api_gouv = 'https://api-adresse.data.gouv.fr'
 
 const extractAddress = (result) => {
   result = result.features
-  return result.map(({properties, geometry}) => {
+  return result.map(({ properties, geometry }) => {
     return {
       latitude: geometry.coordinates[0],
       longitude: geometry.coordinates[1],
-      ...properties
+      ...properties,
     }
   })
 }

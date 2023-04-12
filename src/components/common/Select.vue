@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
   import InputLabel from './InputLabel.vue'
-  import {computed, withDefaults} from "vue";
+  import {computed, withDefaults} from "vue"
 
   interface Props {
     readonly: boolean

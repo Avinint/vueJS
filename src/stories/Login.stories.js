@@ -6,16 +6,15 @@ export default {
   title: 'Page/Login',
   tags: ['autodocs'],
   argTypes: {
-    mail_title: {type: 'string',defaultValue: 'Votre E-mail',},
-    mdp_title: {type: 'string', defaultValue: 'Mot de passe',}
+    mail_title: { type: 'string', defaultValue: 'Votre E-mail' },
+    mdp_title: { type: 'string', defaultValue: 'Mot de passe' },
   },
-};
-
+}
 
 const Template = (args) => ({
   components: { Input },
   setup() {
-    return { args };
+    return { args }
   },
   template: `<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -32,7 +31,7 @@ const Template = (args) => ({
           </div>
         </div>
   </div>`,
-});
+})
 
-export const Primary = Template.bind({});
-Primary.args = { title: 'Button' };
+export const Primary = Template.bind({})
+Primary.args = { title: 'Button' }
