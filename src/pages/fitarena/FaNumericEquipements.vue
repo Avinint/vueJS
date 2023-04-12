@@ -190,6 +190,7 @@ import {
   updateTypeEquipements,
 } from '../../api/typeEquipement'
 import { toast } from 'vue3-toastify'
+import {useRoute} from "vue-router";
 
 const props = defineProps(['id'])
 const equipement_modal = ref(false)
@@ -201,6 +202,8 @@ const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
 const modal_title = ref('')
+
+const id_fa = useRoute().params.id
 
 const addEquipement = () => {
   equipement_modal.value = true
@@ -276,7 +279,7 @@ const saveEquipement = async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique'
+    '&categoryTypeEquipement.code=numerique&equipements.fitArena='+id_fa
   )
 }
 onMounted(async () => {
@@ -287,7 +290,7 @@ onMounted(async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique'
+    '&categoryTypeEquipement.code=numerique&equipements.fitArena='+id_fa
   )
 })
 
