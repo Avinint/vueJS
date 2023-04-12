@@ -182,11 +182,8 @@ const setParametreValeur = (id, valeur) => {
     if (param) {
         param.valeur = valeur;
     } else {
-        // le param n'existe pas encore,
-        // on l'ajoute avec id = 0 (qui servira à savoir si on update ou post)
-        // TODO: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
+        // le param n'existe pas encore
         parametres.value.push({
-            id: 0,
             parametre: { id },
             valeur
         });
