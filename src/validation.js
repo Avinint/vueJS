@@ -18,13 +18,13 @@ export const requiredValidation = (val) => {
   if (!val) throw 'Un texte est requis'
 }
 
-export const maxLenghtValidation = (max) => {
+export const maxLengthValidation = (max) => {
   return (val) => {
     if (val.length > max) throw 'Maximum de caracteres depassés'
   }
 }
 
-export const lenghtValidation = (min, max) => {
+export const lengthValidation = (min, max) => {
   return (val) => {
     if (val.length < min || val.length > max)
       throw `Le nombre de caracteres doit etre entre ${min} et ${max}`

@@ -1,7 +1,7 @@
 <template>
   <div class="flex" :class="props.inline ? 'items-center' : 'flex-col'">
     <InputLabel :for="props.id">{{ label }}</InputLabel>
-    <input :readonly="props.readonly" :id="props.id" @input="inputValitation" :value="props.modelValue" :type="props.type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder" required>
+    <input :readonly="props.readonly" :id="props.id" @input="inputValitation" :value="props.modelValue" :type="props.type" :required="props.required" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder">
     <p v-html="error"></p>
   </div>
 </template>
@@ -22,6 +22,7 @@
     type: string
     validation?: ((val: any) => boolean | string)[]
     valid: boolean
+    required: boolean
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -33,7 +34,8 @@
     type: 'text',
     id: "",
     validation: [],
-    valid: true
+    valid: true,
+    required: false
   })
 
   const emits = defineEmits<{
