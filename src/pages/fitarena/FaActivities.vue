@@ -178,7 +178,7 @@
           <input
             v-model="activite.reservationDeGroupe"
             type="checkbox"
-            value=""
+            value="true"
             class="peer sr-only"
           />
           <div
@@ -291,7 +291,9 @@ const saveActivite = async () => {
     ordre: activite.value.ordre,
     libelle: activite.value.libelle,
     description: activite.value.description,
-    actif: activite.value.actif,
+    actif: activite.value.actif == true
+        ? activite.value.actif
+        : false,
     icone: activite.value.icone,
     reservationDeGroupe:
       activite.value.reservationDeGroupe == true
