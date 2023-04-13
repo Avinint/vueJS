@@ -8,7 +8,6 @@
       :value="elt.id"
       :name="name"
     />
-    />
     <label :for="idPrefix + elt.id">{{ elt.libelle }}</label>
   </templace>
 </template>

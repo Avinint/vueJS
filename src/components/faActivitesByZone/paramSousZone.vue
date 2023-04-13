@@ -8,107 +8,71 @@
             <Input v-model="nombreParticipantsConseille" :label="parametreNombreParticipantsConseille.libelle" type="number" :id="'sous_zone_' + sousZone.id + '_param_' + parametreNombreParticipantsConseille.id" />
         </div>
         <p class="text-blue-300	text-sm mb-4">Le prix par personne indiqué aux utilisateurs sera basé sur le nombre de joueurs conseillé.</p>
-        <div>
-            <p class="mb-4 mt-4">
-                Interface de vidéo et scoring
-            </p>
-            <div>
-                <InputCheckbox
-                    v-model="equipementsSelection"
-                    :elements="equipementsTablette"
-                    name="equipement_tablette[]"
-                    :id="'sous_zone_' + sousZone.id + '_equipement_tablette_'"
-                    :disabled="readonly"
-                />
-            </div>
-        </div>
 
-        <div>
-            <p class="mb-4 mt-4">
-                Écrans
-            </p>
-            <div>
-                <InputCheckbox
-                    v-model="equipementsSelection"
-                    :elements="equipementsEcran"
-                    name="equipement_ecran[]"
-                    :id="'sous_zone_' + sousZone.id + '_equipement_ecran_'"
-                    :disabled="readonly"
-                />
-            </div>
-        </div>
+    </div>
 
+    <div>
+        <p class="mb-4 mt-4">
+            Interface de vidéo et scoring
+        </p>
         <div>
-            <p class="mb-4 mt-4">
-                Caméras de jeu
-            </p>
-            <div>
-                <InputCheckbox
-                    v-model="equipementsSelection"
-                    :elements="equipementsCamera"
-                    name="equipement_camera[]"
-                    :id="'sous_zone_' + sousZone.id + '_equipement_camera_'"
-                />
-            </div>
-        </div>
-
-        <div>
-            <p class="mb-4">
-                Sonorisation
-            </p>
-            <div>
-                <InputCheckbox
-                    v-model="equipementsSelection"
-                    :elements="equipementsSono"
-                    name="equipement_sono[]"
-                    :id="'sous_zone_' + sousZone.id + '_equipement_sono_'"
-                />
-            </div>
+            <InputCheckbox
+                v-model="equipementsSelection"
+                :elements="equipementsTablette"
+                name="equipement_tablette[]"
+                :id="'sous_zone_' + sousZone.id + '_equipement_tablette_'"
+                :disabled="readonly"
+            />
         </div>
     </div>
 
     <div>
-      <p class="mb-4 mt-4">Écrans</p>
-      <div>
-        <InputCheckbox
-          :id="'sous_zone_' + sousZone.id + '_equipement_ecran_'"
-          v-model="equipementsSousZone"
-          :elements="equipementsEcran"
-          name="equipement_ecran[]"
-          :disabled="readonly"
-        />
-      </div>
+        <p class="mb-4 mt-4">
+            Écrans
+        </p>
+        <div>
+            <InputCheckbox
+                v-model="equipementsSelection"
+                :elements="equipementsEcran"
+                name="equipement_ecran[]"
+                :id="'sous_zone_' + sousZone.id + '_equipement_ecran_'"
+                :disabled="readonly"
+            />
+        </div>
     </div>
 
     <div>
-      <p class="mb-4 mt-4">Caméras de jeu</p>
-      <div>
-        <InputCheckbox
-          :id="'sous_zone_' + sousZone.id + '_equipement_camera_'"
-          v-model="equipementsSousZone"
-          :elements="equipementsCamera"
-          name="equipement_camera[]"
-        />
-      </div>
+        <p class="mb-4 mt-4">
+            Caméras de jeu
+        </p>
+        <div>
+            <InputCheckbox
+                v-model="equipementsSelection"
+                :elements="equipementsCamera"
+                name="equipement_camera[]"
+                :id="'sous_zone_' + sousZone.id + '_equipement_camera_'"
+            />
+        </div>
     </div>
 
     <div>
-      <p class="mb-4">Sonorisation</p>
-      <div>
-        <InputCheckbox
-          :id="'sous_zone_' + sousZone.id + '_equipement_sono_'"
-          v-model="equipementsSousZone"
-          :elements="equipementsSono"
-          name="equipement_sono[]"
-        />
-      </div>
+        <p class="mb-4">
+            Sonorisation
+        </p>
+        <div>
+            <InputCheckbox
+                v-model="equipementsSelection"
+                :elements="equipementsSono"
+                name="equipement_sono[]"
+                :id="'sous_zone_' + sousZone.id + '_equipement_sono_'"
+            />
+        </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue'
-
 import { onMounted, ref, watch } from "vue";
 
 import Input from '../../components/common/Input.vue';
@@ -218,7 +182,7 @@ const setup = () => {
 
 const getParamatreValeurById = (id) => {
   return getParametreById(id)?.valeur
-}
+};
 
 const setParametreValeur = (id, valeur) => {
     const param = getParametreById(id);
@@ -231,8 +195,9 @@ const setParametreValeur = (id, valeur) => {
             valeur
         });
     }
+};
 
 const getParametreById = (id) => {
   return parametres.value?.filter((param) => param.parametre.id === id).shift()
-}
+};
 </script>
