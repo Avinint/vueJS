@@ -42,7 +42,7 @@
                   @change="modifieActivite(act)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                 ></div>
                 <span
                   class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -86,6 +86,7 @@
           v-if="typeActivites.length"
           id="TTypeActivite"
           v-model="activite_selected"
+          :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
@@ -98,20 +99,18 @@
         </select>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Nom</label
-        >
-        <input
+        <Input
           id="TActiviteLibelle"
           v-model="activite.libelle"
           :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
         />
       </div>
       <div class="flex items-center">
+        <!-- <Input :readonly="readonly" id="small_size" :type="'file'" label="Icône" class="w-full" /> -->
         <label
           class="mb-2 block pr-3 text-sm font-medium text-gray-900 dark:text-white"
           for="small_size"
@@ -133,22 +132,27 @@
           :readonly="readonly"
           type="text"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
           required
         ></textarea>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Ordre</label
-        >
-        <input
+        <Input
+          v-if="!readonly"
           id="TActiviteOrdre"
           v-model="activite.ordre"
-          :readonly="readonly"
-          type="number"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
+          :type="'number'"
+          label="Ordre"
+          :required="true"
+          class="w-full"
+        />
+        <Input
+          v-else
+          id="TActiviteOrdre"
+          v-model="activite.ordre"
+          readonly
+          :type="'text'"
+          label="Ordre"
+          class="w-full"
         />
       </div>
       <div class="flex items-center">
@@ -158,12 +162,13 @@
         <label class="relative inline-flex w-full cursor-pointer items-center">
           <input
             v-model="activite.actif"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <span
             class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -177,12 +182,13 @@
         <label class="relative inline-flex cursor-pointer items-center">
           <input
             v-model="activite.reservationDeGroupe"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
         </label>
         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -197,6 +203,7 @@
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
+import Input from '../../components/common/Input.vue'
 import { onMounted, ref } from 'vue'
 import { getTypeActivites } from '../../api/typeActivite.js'
 import {
@@ -204,11 +211,8 @@ import {
   getActivites,
   postActivites,
   updateActivites,
-  postActiviteWithIcone,
   patchActivites,
 } from '../../api/activite.js'
-import { useRouter } from 'vue-router'
-import { getClients, postClient, updateClient } from '../../api/client'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
@@ -234,6 +238,7 @@ const addActivite = () => {
   activite.value = {}
   activite_selected.value = {}
   activite_modal.value = true
+  readonly.value = false
   modal_title.value = 'Ajouter une activité'
 }
 

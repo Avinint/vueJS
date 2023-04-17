@@ -1,13 +1,13 @@
 <template>
   <Card>
     <h1>équipements motorisés de la fit arena</h1>
-    <div v-for="(typeEquip, i) of typeEquipements">
+    <div v-for="(typeEquip, i) of typeEquipements" :key="i">
       <div
         v-if="typeEquip.equipements.length"
         :key="i"
         class="m-5 border border-gray-200 p-4"
       >
-        <h2 v-if="typeEquip.equipements.length" class="pt-2 pb-5">
+        <h2 v-if="typeEquip.equipements.length" class="pb-5 pt-2">
           {{ typeEquip.libelle }}
         </h2>
         <div
@@ -71,7 +71,7 @@
                       @change="modifieEquipement(equipementTemp)"
                     />
                     <div
-                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-green-800"
+                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-green-800"
                     ></div>
                     <span
                       class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -92,7 +92,7 @@
                 <td></td>
                 <td colspan="3">
                   <CardConfiguration>
-                    <h3 class="pt-2 pl-10">Configuration</h3>
+                    <h3 class="pl-10 pt-2">Configuration</h3>
                     <table
                       v-if="equipementTemp.equipementModes.length"
                       class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
@@ -125,7 +125,7 @@
                                 class="peer sr-only"
                               />
                               <div
-                                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                               ></div>
                               <span
                                 class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -173,6 +173,7 @@
           v-if="typeEquipements.length"
           id="TTypeActivite"
           v-model="equipement_selected"
+          :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
@@ -185,31 +186,25 @@
         </select>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Nom</label
-        >
-        <input
+        <Input
           id="TEquipementLibelle"
           v-model="equipement.libelle"
           :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
         />
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Adresse IP</label
-        >
-        <input
+        <Input
           id="TEquipementIp"
           v-model="equipement.ip"
           :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
+          :type="'text'"
+          label="Adresse IP"
+          :required="true"
+          class="w-full"
         />
       </div>
       <div class="flex items-center">
@@ -219,12 +214,13 @@
         <label class="relative inline-flex w-full cursor-pointer items-center">
           <input
             v-model="equipement.statut"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <span
             class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -232,7 +228,7 @@
         </label>
       </div>
       <CardConfiguration>
-        <h3 class="pt-2 pl-10">Configuration</h3>
+        <h3 class="pl-10 pt-2">Configuration</h3>
         <table
           class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
         >
@@ -281,6 +277,7 @@
           </tbody>
         </table>
         <Button
+          v-if="!readonly"
           id="TaddConfiguration"
           label="Ajouter une configuration"
           icon="add"
@@ -307,15 +304,9 @@ import {
   updateEquipements,
   patchEquipements,
 } from '../../api/equipement'
-import {
-  deleteTypeEquipements,
-  getTypeEquipements,
-  postTypeEquipements,
-  updateTypeEquipements,
-} from '../../api/typeEquipement'
+import { getTypeEquipements } from '../../api/typeEquipement'
 import { toast } from 'vue3-toastify'
-import { patchActivites } from '../../api/activite'
-import {useRoute} from "vue-router";
+import { useRoute } from 'vue-router'
 const props = defineProps(['id'])
 const equipement_modal = ref(false)
 const readonly = ref(false)
@@ -332,6 +323,7 @@ const id_fa = useRoute().params.id
 const addEquipement = () => {
   cancel()
   equipement_modal.value = true
+  readonly.value = false
   modal_title.value = 'Ajouter un équipement motorisé'
 }
 
@@ -428,7 +420,7 @@ const saveEquipement = async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena='+id_fa
+    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
   )
 }
 onMounted(async () => {
@@ -439,7 +431,7 @@ onMounted(async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena='+id_fa
+    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
   )
 })
 

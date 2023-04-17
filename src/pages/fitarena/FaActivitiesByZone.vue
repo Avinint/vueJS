@@ -2,7 +2,7 @@
   <Card>
     <h1>Activités par zone</h1>
     <div class="p-10">
-      <Card v-for="(zoneFit, zoneIdx) of zones" class="mb-10 space-y-3">
+      <Card v-for="(zoneFit, zoneIdx) of zones" :key="zoneIdx" class="mb-10 space-y-3">
         <h2>{{ zoneFit.libelle }}</h2>
 
         <div class="relative overflow-x-auto">
@@ -19,7 +19,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(act, i) in zoneFit.zoneActivites" class="bg-white">
+              <tr v-for="(act, i) in zoneFit.zoneActivites" :key="i" class="bg-white">
                 <td class="flex items-center justify-center p-3">
                   <Button
                     test="TdeleteClient"
@@ -82,17 +82,17 @@
           v-if="activiteZone_modal"
           :type="readonly ? 'visualiser' : 'classic'"
           :title="modal_title"
-          @cancel="activiteZone_modal = falsecancel()"
+          @cancel="activiteZone_modal = false"
         >
-          <div>
-            <label for="select_activites" class="mr-4">Activité</label>
+          <div class="flex items-center">
+            <label for="select_activites" class="mb-2 block w-1/2 text-sm font-medium text-gray-900">Activité</label>
             <select
               id="select_activites"
               v-model="activite_selected"
-              :disabled="readonly"
-              class="rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              :disabled="readonly == true ? true : false"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             >
-              <option v-for="act of activites" :value="act.id">
+              <option v-for="act of activites" :key="act.id" :value="act.id">
                 {{ act.libelle }}
               </option>
             </select>
@@ -105,7 +105,7 @@
             <div>
               <InputRadio
                 v-model="mode_equipements_motorises"
-                :disabled="readonly"
+                :disabled="readonly == true ? true : false"
                 name="mode_equipements_motorises"
                 :list="modes_motorise"
               />
@@ -121,9 +121,9 @@
                 v-model="mode_ecran_interface"
                 :default="{
                   label: 'Aucun',
-                  value: 0,
+                  value: 0
                 }"
-                :disabled="readonly"
+                :disabled="readonly == true ? true : false"
                 name="mode_ecran_interface"
                 :list="modes_numerique"
               />
@@ -137,7 +137,7 @@
             >
               {{ sous_zones.length }}
             </div>
-            <div class="text-sm text-blue-300">
+            <div class="text-sm text-light-blue">
               Sous-zone : surface réservable par les utilisateurs (= terrain)
             </div>
           </div>
@@ -181,7 +181,7 @@
             </div>
           </div>
 
-          <template v-for="(sous_zone, idx) in sous_zones">
+          <template v-for="(sous_zone, idx) in sous_zones" :key="idx">
             <div
               v-if="!sous_zone.toRemove"
               class="rounded-md border border-gray-300 p-4"
@@ -195,9 +195,7 @@
                   :activite="activite_selected"
                   :sous-zone="sous_zone"
                   :sous-zone-parametres="sousZoneParametres"
-                  :zone-equipements-by-type="
-                    zoneEquipementsByType[zone_selected]
-                  "
+                  :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
                   :readonly="readonly"
                   @changeEquipement="changeEquipementSousZone"
                 />
@@ -230,13 +228,10 @@ import { onMounted, ref } from 'vue'
 import {
   deleteActivitesByZones,
   getActiviteByZone,
-  getActivitesByZones,
-  postActivitesByZones,
-  updateActivitesByZones,
   patchActivitesByZones,
   postZoneActivite,
 } from '../../api/activiteByZone'
-import { getZones, postZones, deleteZones, updateZones } from '../../api/zone'
+import { getZones, deleteZones, updateZones } from '../../api/zone'
 import { getModes } from '../../api/mode'
 import {
   getParametres,
@@ -244,18 +239,14 @@ import {
   updateParametres,
 } from '../../api/parametre'
 import { getTypeZone } from '../../api/typeZone'
-import {
-  getParametreZoneActivites,
-  postParametreZoneActivites,
-  updateParametreZoneActivites,
-  deleteParamatreZoneActivites,
-} from '../../api/parametreZoneActivite'
+import { getParametreZoneActivites } from '../../api/parametreZoneActivite'
 import { getEquipementsByZone } from '../../api/equipement'
-import { getActivites, patchActivites } from '../../api/activite'
+import { getActivites } from '../../api/activite'
 import { postZoneActiviteEquipement } from '../../api/zoneActiviteEquipement'
 import { postSousZone } from '../../api/sousZone'
 import Select from '../../components/common/Select.vue'
 import { toast } from 'vue3-toastify'
+
 const props = defineProps(['id'])
 const activiteZone_modal = ref(false)
 const readonly = ref(false)
@@ -281,6 +272,7 @@ const id_type_sous_zone = ref(0)
 const sousZoneParametres = ref({})
 const zoneEquipementsByType = ref({})
 const sousZoneEquipements = []
+
 const changeEquipementSousZone = (i, value) => {
   sousZoneEquipements[sous_zones.value[i].id] = value
 }
@@ -310,8 +302,7 @@ const removeActiviteZone = async (i) => {
 const editActiviteZone = async (i) => {
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
-  modal_title.value =
-    'Modifier une activité de la zone ' + activiteZoneTemp.zone.libelle
+  modal_title.value = 'Modifier une activité de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = false
   activiteZone_modal.value = true
 }
@@ -483,7 +474,7 @@ const saveSousZones = async (zoneId, activiteId) => {
           parametre: p.parametre.id,
           valeur: p.valeur,
         }
-        // si on a p = 0 c'est qu'on a modifier un paramètre qui n'existe pas en base
+        // si on a p = 0 c'est qu'on a modifié un paramètre qui n'existe pas en base
         // todo: il faudrait plutôt un post dans tous les cas, et on gère insertion ou maj côté backend
         if (p.id == 0) {
           toPost.push(data)
@@ -524,7 +515,7 @@ const removeSousZone = async (index) => {
   }
 }
 
-// récupération des info de base des paramètres nécessaires (globaux, pas par rapport à une sous-zone)
+// récupération des infos de base des paramètres nécessaires (globaux, pas par rapport à une sous-zone)
 const fetchSousZoneParametres = async () => {
   const parametreNombreParticipantsMax = (
     await getParametres(1, '&code=nombre-de-participants-max')

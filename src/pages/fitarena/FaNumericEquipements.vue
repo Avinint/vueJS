@@ -1,7 +1,7 @@
 <template>
   <Card>
     <h1>équipements numériques de la fit arena</h1>
-    <div v-for="(typeEquip, i) of typeEquipements">
+    <div v-for="(typeEquip, i) of typeEquipements" :key="i">
       <div
         v-if="typeEquip.equipements.length"
         :key="i"
@@ -106,6 +106,7 @@
         >
         <select
           v-if="typeEquipements.length"
+          :disabled="readonly == true ? true : false"
           id="TTypeActivite"
           v-model="equipement_selected"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
@@ -120,32 +121,10 @@
         </select>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Nom</label
-        >
-        <input
-          id="TEquipementLibelle"
-          v-model="equipement.libelle"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input :readonly="readonly" id="TEquipementLibelle" v-model="equipement.libelle" :type="'text'" label="Nom" :required="true" class="w-full" />
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Adresse IP</label
-        >
-        <input
-          id="TEquipementIp"
-          v-model="equipement.ip"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input :readonly="readonly" id="TEquipementIp" v-model="equipement.ip" :type="'text'" label="Adresse IP" :required="true" class="w-full" />
       </div>
       <div class="flex items-center">
         <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -154,6 +133,7 @@
         <label class="relative inline-flex w-full cursor-pointer items-center">
           <input
             v-model="equipement.statut"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
@@ -174,6 +154,7 @@
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
+import Input from '../../components/common/Input.vue'
 import { onMounted, ref } from 'vue'
 import {
   deleteEquipements,
@@ -183,12 +164,7 @@ import {
   postEquipements,
   updateEquipements,
 } from '../../api/equipement'
-import {
-  deleteTypeEquipements,
-  getTypeEquipements,
-  postTypeEquipements,
-  updateTypeEquipements,
-} from '../../api/typeEquipement'
+import { getTypeEquipements } from '../../api/typeEquipement'
 import { toast } from 'vue3-toastify'
 import {useRoute} from "vue-router";
 
@@ -207,6 +183,7 @@ const id_fa = useRoute().params.id
 
 const addEquipement = () => {
   equipement_modal.value = true
+  readonly.value = false
   modal_title.value = 'Ajouter un équipement'
 }
 

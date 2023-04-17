@@ -2,6 +2,7 @@
   <div>
     <div>
       <Input
+        v-if="!readonly"
         :id="
           'sous_zone_' +
           sousZone.id +
@@ -12,9 +13,23 @@
         :label="parametreNombreParticipantsMax.libelle"
         type="number"
       />
+      <Input
+        v-else
+        :id="
+          'sous_zone_' +
+          sousZone.id +
+          '_param_' +
+          parametreNombreParticipantsMax.id
+        "
+        v-model="nombreParticipantsMax"
+        :label="parametreNombreParticipantsMax.libelle"
+        readonly
+        type="text"
+      />
     </div>
     <div>
       <Input
+        v-if="!readonly"
         :id="
           'sous_zone_' +
           sousZone.id +
@@ -25,8 +40,21 @@
         :label="parametreNombreParticipantsConseille.libelle"
         type="number"
       />
+      <Input
+        v-else
+        :id="
+          'sous_zone_' +
+          sousZone.id +
+          '_param_' +
+          parametreNombreParticipantsConseille.id
+        "
+        v-model="nombreParticipantsConseille"
+        :label="parametreNombreParticipantsConseille.libelle"
+        type="text"
+        readonly
+      />
     </div>
-    <p class="mb-4 text-sm text-blue-300">
+    <p class="text-light-blue mb-4 text-sm">
       Le prix par personne indiqué aux utilisateurs sera basé sur le nombre de
       joueurs conseillé.
     </p>
@@ -64,6 +92,7 @@
           v-model="equipementsSousZone"
           :elements="equipementsCamera"
           name="equipement_camera[]"
+          :disabled="readonly"
         />
       </div>
     </div>
@@ -76,6 +105,7 @@
           v-model="equipementsSousZone"
           :elements="equipementsSono"
           name="equipement_sono[]"
+          :disabled="readonly"
         />
       </div>
     </div>
@@ -83,7 +113,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import Input from '../../components/common/Input.vue'
 import InputCheckbox from '../../components/common/InputCheckbox.vue'

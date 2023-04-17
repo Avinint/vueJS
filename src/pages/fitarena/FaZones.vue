@@ -78,28 +78,15 @@
       @cancel=";(subEspace_modal = false), cancel()"
     >
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Nom</label
-        >
-        <input
-          id="TEspaceLibelle"
-          v-model="subEspace.libelle"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input :readonly="readonly" id="TEspaceLibelle" v-model="subEspace.libelle" :type="'text'" label="Nom" :required="true" class="w-full" />
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Sous Espace</label
-        >
+        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">Sous Espace</label>
         <select
           v-if="espaceParents.length"
           id="TfaSelectEspace"
           v-model="espace_selected"
-          :readonly="readonly"
+          :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
@@ -112,18 +99,8 @@
         </select>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Ordre</label
-        >
-        <input
-          id="TEspaceOrdre"
-          v-model="subEspace.ordre"
-          :readonly="readonly"
-          type="number"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input v-if="!readonly" id="TEspaceOrdre" v-model="subEspace.ordre" :type="'number'" label="Ordre" :required="true" class="w-full" />
+        <Input v-else readonly id="TEspaceOrdre" v-model="subEspace.ordre" :type="'text'" label="Ordre" class="w-full" />
       </div>
       <div class="flex items-center">
         <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -132,6 +109,7 @@
         <label class="relative inline-flex cursor-pointer items-center">
           <input
             v-model="subEspace.actif"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
@@ -150,6 +128,7 @@
           type-equipement="numerique"
           :fa="props.id"
           :zone="id_selected"
+          :readonly="readonly"
         ></AjoutEquipements>
       </div>
       <div>
@@ -158,6 +137,7 @@
           type-equipement="motorise"
           :fa="props.id"
           :zone="id_selected"
+          :readonly="readonly"
         ></AjoutEquipements>
       </div>
     </Modal>
@@ -168,6 +148,7 @@
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
+import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import { onMounted, ref } from 'vue'
 import {
@@ -180,10 +161,8 @@ import {
 } from '../../api/zone.js'
 import {
   postZoneEquipement,
-  deleteZoneEquipement,
-  deleteZoneEquipementByIds,
+  deleteZoneEquipement
 } from '../../api/zoneEquipement'
-import { useRouter } from 'vue-router'
 import { getTypeZone } from '../../api/typeZone'
 import { toast } from 'vue3-toastify'
 
@@ -205,6 +184,7 @@ const ajoutEquipementsMoto = ref()
 const addEspace = () => {
   cancel()
   subEspace_modal.value = true
+  readonly.value = false
   modal_title.value = 'Ajouter une zone'
 }
 

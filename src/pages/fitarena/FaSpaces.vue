@@ -77,32 +77,11 @@
       @cancel="espace_modal = false"
     >
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Nom</label
-        >
-        <input
-          id="TEspaceLibelle"
-          v-model="espace.libelle"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input :readonly="readonly" id="TEspaceLibelle" v-model="espace.libelle" :type="'text'" label="Nom" :required="true" class="w-full" />
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Ordre</label
-        >
-        <input
-          id="TEspaceOrdre"
-          v-model="espace.ordre"
-          :readonly="readonly"
-          type="number"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input v-if="!readonly" id="TEspaceOrdre" v-model="espace.ordre" :type="'number'" label="Ordre" :required="true" class="w-full" />
+        <Input v-else readonly id="TEspaceOrdre" v-model="espace.ordre" :type="'text'" label="Ordre" class="w-full" />
       </div>
       <div class="flex items-center">
         <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -111,6 +90,7 @@
         <label class="relative inline-flex w-full cursor-pointer items-center">
           <input
             v-model="espace.actif"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
@@ -129,6 +109,7 @@
           type-equipement="numerique"
           :fa="props.id"
           :zone="id_selected"
+          :readonly="readonly"
         ></AjoutEquipements>
       </div>
       <div>
@@ -137,6 +118,7 @@
           type-equipement="motorise"
           :fa="props.id"
           :zone="id_selected"
+          :readonly="readonly"
         ></AjoutEquipements>
       </div>
     </Modal>
@@ -147,6 +129,7 @@
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
+import Input from '../../components/common/Input.vue'
 import { onMounted, ref } from 'vue'
 import {
   deleteZones,
@@ -155,9 +138,7 @@ import {
   updateZones,
   patchZones,
 } from '../../api/zone.js'
-import { useRouter } from 'vue-router'
 import { getTypeZone } from '../../api/typeZone'
-import { patchEquipements } from '../../api/equipement'
 import { toast } from 'vue3-toastify'
 import {
   deleteZoneEquipement,
@@ -181,6 +162,7 @@ const ajoutEquipementsMoto = ref()
 const addEspace = () => {
   cancel()
   espace_modal.value = true
+  readonly.value = false
   modal_title.value = 'Ajouter un espace'
 }
 
