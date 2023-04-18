@@ -6,7 +6,7 @@
     <SideNav class="min-w-1/4"></SideNav>
     <div class="h-full w-full bg-gray-50 dark:bg-gray-900 lg:ml-64">
       <NavBar />
-      <div class="min-h-screen w-full overflow-auto bg-gray-100 px-4 pt-20">
+      <div class="min-h-screen w-full overflow-auto bg-white px-4 pt-20">
         <router-view></router-view>
       </div>
     </div>

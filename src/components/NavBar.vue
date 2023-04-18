@@ -12,6 +12,7 @@
             type="secondary"
             label="Deconnexion"
             class="text-red-600 hover:bg-red-100"
+            :submit="false"
             @click="logout"
           />
         </div>
@@ -25,7 +26,7 @@ import Breadcrumbs from './common/Breadcrumbs.vue'
 import Button from './common/Button.vue'
 
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '../stores/user.js'
+import { useUserStore } from '@stores/user.js'
 
 const user = useUserStore()
 

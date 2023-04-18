@@ -2,8 +2,8 @@
   <Card>
     <h1>Zones</h1>
     <span class="text-sm font-bold"
-      >Zones d’activité : ensemble de sous-zones délimité physiquement sur
-      lequel est praticable une seule activité en même temps
+      >Zones dâ€™activitÃ© : ensemble de sous-zones dÃ©limitÃ© physiquement sur
+      lequel est praticable une seule activitÃ© en mÃªme temps
     </span>
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -13,7 +13,7 @@
           <tr>
             <th scope="col" class="px-6 py-3"></th>
             <th scope="col" class="px-6 py-3">Actif</th>
-            <th scope="col" class="px-6 py-3">Libellé</th>
+            <th scope="col" class="px-6 py-3">LibellÃ©</th>
             <th scope="col" class="px-6 py-3">Ordre</th>
           </tr>
         </thead>
@@ -45,7 +45,7 @@
                   @change="modifieEspace(esp)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                 ></div>
                 <span
                   class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -55,7 +55,11 @@
             <td class="px-6 py-4">{{ esp.libelle }}</td>
             <td class="px-6 py-4">{{ esp.ordre }}</td>
             <td class="px-6 py-4">
-              <Button label="Détails" type="secondary" @click="showEspace(i)" />
+              <Button
+                label="DÃ©tails"
+                type="secondary"
+                @click="showEspace(i)"
+              />
             </td>
           </tr>
         </tbody>
@@ -78,10 +82,20 @@
       @cancel=";(subEspace_modal = false), cancel()"
     >
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TEspaceLibelle" v-model="subEspace.libelle" :type="'text'" label="Nom" :required="true" class="w-full" />
+        <Input
+          id="TEspaceLibelle"
+          v-model="subEspace.libelle"
+          :readonly="readonly"
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">Sous Espace</label>
+        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+          >Sous Espace</label
+        >
         <select
           v-if="espaceParents.length"
           id="TfaSelectEspace"
@@ -99,8 +113,24 @@
         </select>
       </div>
       <div class="flex items-center">
-        <Input v-if="!readonly" id="TEspaceOrdre" v-model="subEspace.ordre" :type="'number'" label="Ordre" :required="true" class="w-full" />
-        <Input v-else readonly id="TEspaceOrdre" v-model="subEspace.ordre" :type="'text'" label="Ordre" class="w-full" />
+        <Input
+          v-if="!readonly"
+          id="TEspaceOrdre"
+          v-model="subEspace.ordre"
+          :type="'number'"
+          label="Ordre"
+          :required="true"
+          class="w-full"
+        />
+        <Input
+          v-else
+          id="TEspaceOrdre"
+          v-model="subEspace.ordre"
+          readonly
+          :type="'text'"
+          label="Ordre"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
         <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -115,7 +145,7 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <span
             class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -161,7 +191,7 @@ import {
 } from '../../api/zone.js'
 import {
   postZoneEquipement,
-  deleteZoneEquipement
+  deleteZoneEquipement,
 } from '../../api/zoneEquipement'
 import { getTypeZone } from '../../api/typeZone'
 import { toast } from 'vue3-toastify'
@@ -202,7 +232,7 @@ const removeEspace = async (i) => {
 const modifieEspace = async ({ actif, id }) => {
   try {
     await patchZones({ actif }, id)
-    toast.success('Modification de la zone avec succès')
+    toast.success('Modification de la zone avec succÃ¨s')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }

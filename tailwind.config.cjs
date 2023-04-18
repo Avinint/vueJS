@@ -15,6 +15,7 @@ module.exports = {
         warmGray: colors.stone,
         trueGray: colors.gray,
         blueGray: colors.slate,
+        faBlue: '#0B83D9',
       },
     },
   },

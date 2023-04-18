@@ -15,6 +15,7 @@ import FaActivitiesByZone from './pages/fitarena/FaActivitiesByZone.vue'
 import FaActivities from './pages/fitarena/FaActivities.vue'
 import FaNumericEquipements from './pages/fitarena/FaNumericEquipements.vue'
 import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
+import FaPlanning from './pages/fitarena/FaPlanning.vue'
 
 import { useUserStore } from './stores/user.js'
 
@@ -67,6 +68,22 @@ const routes = [
       breadcrumbs: [],
     },
     children: [
+      {
+        path: 'planning',
+        component: FaPlanning,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
+            {
+              label: 'Fit Arena - Dijon',
+              link: 'fitarena/',
+            },
+          ],
+        },
+      },
       {
         path: 'params',
         component: FaParams,
