@@ -184,7 +184,7 @@ const addActiviteZone = async (zoneIdx) => {
   activiteZone_selected.value = 0;
   const zone = zones.value[zoneIdx];
   zone_selected.value = zone.id;
-  activite_selected.value = activites.value[0].id;
+  // activite_selected.value = activites.value[0].id;
   modal_title.value = "Ajouter une activité à la zone " + zone.libelle;
   mode_equipements_motorises.value = modes_motorise.value[0].id;
   mode_ecran_interface.value = 0;
@@ -246,8 +246,7 @@ const mapApiToData = async (activiteZoneTemp) => {
 // récupération de la liste des sous-zones
 const sousZones = async (zoneId, activiteId) => {
   sous_zones.value = [];
-  // const data = await getZones(1, '&zoneParent=' + zoneId + '&zoneActivites.activite.id=' + activiteId);
-  const data = await getZones(1, '&zoneParent=' + zoneId);
+  const data = await getZones(1, '&zoneParent=' + zoneId + '&zoneActivites.activite.id=' + activiteId);
   data.forEach(datum => {
     sous_zones.value.push(datum);
   });
@@ -356,11 +355,10 @@ const saveSousZones = async (zoneId, activiteId) => {
       if (isNew) {
         // création
 
-        await postSousZone(zoneId, {
+        await postSousZone(zoneId, activiteId, {
           actif,
           ordre,
           libelle,
-          activite: "/api/activites/" + activiteId,
           parametres,
           equipements
         });

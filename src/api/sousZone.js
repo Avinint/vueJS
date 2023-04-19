@@ -1,9 +1,9 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
 
-export const postSousZone = async (zoneId, data) => {
+export const postSousZone = async (zoneId, activiteId, data) => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/sous_zone/zone/${zoneId}`,
+    `${import.meta.env.VITE_API_URL}/api/sous_zone/zone/${zoneId}/activite/${activiteId}`,
     {
       method: 'post',
       headers: {
