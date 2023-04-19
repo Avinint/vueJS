@@ -2,8 +2,6 @@
   <div class="fa-planning">
     <PlanningNavigation
       :calendar-api="calendarApi"
-      :current-range-date="currentRangeDate"
-      :current-week="currentWeek"
       @filterUpdated="renderEvents"
     />
     <FullCalendar
@@ -33,6 +31,7 @@ import PlanningNavigation from '@components/faPlanning/navigation.vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 import { getActivites } from '@api/activite.js'
@@ -47,7 +46,12 @@ export default {
   data() {
     return {
       calendarOptions: {
-        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+        plugins: [
+          dayGridPlugin,
+          timeGridPlugin,
+          resourceTimeGridPlugin,
+          interactionPlugin,
+        ],
         headerToolbar: false,
         initialView: 'timeGridWeek',
         locale: frLocale,
@@ -61,9 +65,10 @@ export default {
         nowIndicator: true,
         eventDisplay: 'block',
         events: [],
+        resources: [],
         allDaySlot: false,
         height: 'auto',
-        timeFormat: 'h:mm',
+        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         // timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
         slotMinTime: '07:00:00',
         slotMaxTime: '22:00:00',
@@ -72,48 +77,32 @@ export default {
           minute: '2-digit',
         },
       },
-      activites: [],
-      currentRangeDate: '',
-      currentWeek: '',
-      calendarApi: null,
-      currentViewType: null,
+      calendarApi: {},
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
   },
   async mounted() {
-    await this.planningStore.fetch()
-    this.renderEvents()
     this.calendarApi = this.$refs.fullCalendar.getApi()
-    this.currentViewType = this.calendarApi.currentViewType
-    this.activites = await getActivites(this.$route.params.id)
+    this.setRessources()
+    this.planningStore.fetch()
+    this.renderEvents()
   },
   methods: {
+    async setRessources() {
+      const activites = await getActivites(this.$route.params.id)
+      // map cause error (operator 'in' problem), use forEach
+      activites.forEach(function (activite) {
+        activite.title = activite.libelle
+      })
+      this.calendarOptions.resources = activites
+    },
     renderEvents() {
       this.calendarOptions.events = this.planningStore.creneaux
     },
     refreshDates(dateInfo) {
-      this.currentWeek = this.getWeekNumber(dateInfo.start)
-      this.currentRangeDate =
-        this.$dayjs(dateInfo.start).format('D MMMM') +
-        '-' +
-        this.$dayjs(dateInfo.end).format('D MMMM YYYY')
-    },
-    getWeekNumber: function (date) {
-      var d = new Date(date)
-      d.setHours(0, 0, 0, 0)
-      d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
-      var week1 = new Date(d.getFullYear(), 0, 4)
-      return (
-        1 +
-        Math.round(
-          ((d.getTime() - week1.getTime()) / 86400000 -
-            3 +
-            ((week1.getDay() + 6) % 7)) /
-            7
-        )
-      )
+      this.planningStore.dateInfo = dateInfo
     },
   },
 }

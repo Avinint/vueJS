@@ -2,9 +2,7 @@
   <nav class="flex">
     <section class="flex w-full justify-between pb-9">
       <NavigationSection class="grow">
-        <template #title>
-          Zone active {{ planningStore.getNumberActiveZone }}
-        </template>
+        <template #title> Zone active </template>
         <template #content>
           <Button
             v-for="zone in zones"
@@ -28,7 +26,7 @@
             @click="today()"
           />
           <Button
-            :label="currentViewName"
+            :label="currentViewName === 'day' ? 'Journée >' : 'Semaine >'"
             type="secondary"
             icon=""
             :submit="false"
@@ -48,7 +46,10 @@
             @click="prev()"
           />
           <div class="cursor-default px-4">
-            {{ currentRangeDate }}
+            {{ planningStore.getStartDate }}
+            <template v-if="currentViewName === 'day'">
+              - {{ planningStore.getEndDate }}
+            </template>
           </div>
           <Button
             label=">"
@@ -59,7 +60,7 @@
           />
           <Button
             class="cursor-default"
-            :label="'S' + currentWeek"
+            :label="'S' + planningStore.getCurrentWeek"
             type="secondary"
             icon="next"
             :submit="false"
@@ -82,10 +83,15 @@ export default {
     Button,
     NavigationSection,
   },
-  props: ['calendarApi', 'currentRangeDate', 'currentWeek'],
+  props: {
+    calendarApi: {
+      type: Object || null,
+      required: true,
+    },
+  },
   data() {
     return {
-      currentViewName: 'Journée',
+      currentViewName: 'week',
       zones: [],
     }
   },
@@ -97,7 +103,7 @@ export default {
       1,
       '&typeZone.code=zone&fitArena=' + this.$route.params.id
     )
-    this.selectFirstZone()
+    this.viewWeek()
   },
   methods: {
     today() {
@@ -109,15 +115,12 @@ export default {
     next() {
       this.calendarApi.next()
     },
-    selectFirstZone() {
-      this.clickFilter(this.zones[0].id)
-    },
     clickFilter(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
         case 'timeGridWeek':
           this.planningStore.selectZone(zoneId)
           break
-        case 'timeGridDay':
+        case 'resourceTimeGridDay':
           this.planningStore.toggleZone(zoneId)
           break
       }
@@ -126,15 +129,21 @@ export default {
     toggleView() {
       switch (this.calendarApi.currentData.currentViewType) {
         case 'timeGridWeek':
-          this.calendarApi.changeView('timeGridDay')
-          this.currentViewName = 'Semaine'
+          this.viewDay()
           break
-        case 'timeGridDay':
-          this.calendarApi.changeView('timeGridWeek')
-          this.selectFirstZone()
-          this.currentViewName = 'Journée'
+        case 'resourceTimeGridDay':
+          this.viewWeek()
           break
       }
+    },
+    viewWeek() {
+      this.calendarApi.changeView('timeGridWeek')
+      this.clickFilter(this.zones[0].id) // select first zone
+      this.currentViewName = 'day'
+    },
+    viewDay() {
+      this.calendarApi.changeView('resourceTimeGridDay')
+      this.currentViewName = 'week'
     },
   },
 }

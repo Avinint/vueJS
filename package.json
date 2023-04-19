@@ -13,6 +13,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@fullcalendar/resource": "^6.1.5",
+    "@fullcalendar/resource-timegrid": "^6.1.5",
     "@vueuse/core": "^9.13.0",
     "pinia": "^2.0.34",
     "vue": "^3.2.47",
