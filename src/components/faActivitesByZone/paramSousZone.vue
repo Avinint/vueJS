@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from 'vue'
 
 import Input from '../../components/common/Input.vue';
 import InputCheckbox from '../../components/common/InputCheckbox.vue';

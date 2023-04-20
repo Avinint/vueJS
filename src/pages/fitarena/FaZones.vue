@@ -2,8 +2,8 @@
   <Card>
     <h1>Zones</h1>
     <span class="text-sm font-bold"
-      >Zones d’activité : ensemble de sous-zones délimité physiquement sur
-      lequel est praticable une seule activité en même temps
+      >Zones dâ€™activitÃ© : ensemble de sous-zones dÃ©limitÃ© physiquement sur
+      lequel est praticable une seule activitÃ© en mÃªme temps
     </span>
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -13,7 +13,7 @@
           <tr>
             <th scope="col" class="px-6 py-3"></th>
             <th scope="col" class="px-6 py-3">Actif</th>
-            <th scope="col" class="px-6 py-3">Libellé</th>
+            <th scope="col" class="px-6 py-3">LibellÃ©</th>
             <th scope="col" class="px-6 py-3">Ordre</th>
           </tr>
         </thead>
@@ -45,7 +45,7 @@
                   @change="modifieEspace(esp)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                 ></div>
                 <span
                   class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -55,7 +55,11 @@
             <td class="px-6 py-4">{{ esp.libelle }}</td>
             <td class="px-6 py-4">{{ esp.ordre }}</td>
             <td class="px-6 py-4">
-              <Button label="Détails" type="secondary" @click="showEspace(i)" />
+              <Button
+                label="DÃ©tails"
+                type="secondary"
+                @click="showEspace(i)"
+              />
             </td>
           </tr>
         </tbody>
@@ -78,17 +82,14 @@
       @cancel=";(subEspace_modal = false), cancel()"
     >
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Nom</label
-        >
-        <input
+        <Input
           id="TEspaceLibelle"
           v-model="subEspace.libelle"
           :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
         />
       </div>
       <div class="flex items-center">
@@ -99,7 +100,7 @@
           v-if="espaceParents.length"
           id="TfaSelectEspace"
           v-model="espace_selected"
-          :readonly="readonly"
+          :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
@@ -112,17 +113,23 @@
         </select>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Ordre</label
-        >
-        <input
+        <Input
+          v-if="!readonly"
           id="TEspaceOrdre"
           v-model="subEspace.ordre"
-          :readonly="readonly"
-          type="number"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
+          :type="'number'"
+          label="Ordre"
+          :required="true"
+          class="w-full"
+        />
+        <Input
+          v-else
+          id="TEspaceOrdre"
+          v-model="subEspace.ordre"
+          readonly
+          :type="'text'"
+          label="Ordre"
+          class="w-full"
         />
       </div>
       <div class="flex items-center">
@@ -132,12 +139,13 @@
         <label class="relative inline-flex cursor-pointer items-center">
           <input
             v-model="subEspace.actif"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <span
             class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -150,6 +158,7 @@
           type-equipement="numerique"
           :fa="props.id"
           :zone="id_selected"
+          :readonly="readonly"
         ></AjoutEquipements>
       </div>
       <div>
@@ -158,6 +167,7 @@
           type-equipement="motorise"
           :fa="props.id"
           :zone="id_selected"
+          :readonly="readonly"
         ></AjoutEquipements>
       </div>
     </Modal>
@@ -168,6 +178,7 @@
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import Button from '../../components/common/Button.vue'
+import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import { onMounted, ref } from 'vue'
 import {
@@ -181,9 +192,7 @@ import {
 import {
   postZoneEquipement,
   deleteZoneEquipement,
-  deleteZoneEquipementByIds,
 } from '../../api/zoneEquipement'
-import { useRouter } from 'vue-router'
 import { getTypeZone } from '../../api/typeZone'
 import { toast } from 'vue3-toastify'
 
@@ -205,6 +214,7 @@ const ajoutEquipementsMoto = ref()
 const addEspace = () => {
   cancel()
   subEspace_modal.value = true
+  readonly.value = false
   modal_title.value = 'Ajouter une zone'
 }
 
@@ -222,7 +232,7 @@ const removeEspace = async (i) => {
 const modifieEspace = async ({ actif, id }) => {
   try {
     await patchZones({ actif }, id)
-    toast.success('Modification de la zone avec succès')
+    toast.success('Modification de la zone avec succÃ¨s')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }

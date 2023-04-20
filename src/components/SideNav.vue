@@ -127,6 +127,10 @@ onMounted(async () => {
       path: '/fitarena/' + fa.id,
       sub_links: [
         {
+          label: 'Planning d\'ouverture',
+          path: `/fitarena/${fa.id}/planning`
+        },
+        {
           label: 'Activités',
           path: `/fitarena/${fa.id}/activites`
         },

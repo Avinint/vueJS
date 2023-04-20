@@ -71,9 +71,9 @@
               <InputRadio
                 :default="{
                   label: 'Aucun',
-                  value: 0,
+                  value: 0
                 }"
-                :disabled="readonly"
+                :disabled="readonly == true ? true : false"
                 name="mode_ecran_interface"
                 v-model="mode_ecran_interface"
                 :list="modes_numerique"

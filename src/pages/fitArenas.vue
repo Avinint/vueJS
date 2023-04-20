@@ -66,7 +66,7 @@
           v-if="clients.length"
           id="TfaSelectCollectivite"
           v-model="client_selected"
-          :readonly="readonly"
+          :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option v-for="client in clients" :key="client.id" :value="client.id">
@@ -75,18 +75,7 @@
         </select>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Nom</label
-        >
-        <input
-          id="TfaNom"
-          v-model="name"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input :readonly="readonly" id="TfaNom" v-model="name" :type="'text'" label="Nom" :required="true" class="w-full" />
       </div>
       <div class="flex items-center">
         <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
@@ -124,7 +113,7 @@
           />
         </div>
       </div>
-      <div class="flex items-center">
+      <div v-if="!readonly" class="flex items-center">
         <div class="mr-1.5 block w-1/2"></div>
         <select
           v-if="address.length"
@@ -139,44 +128,13 @@
         </select>
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Complément</label
-        >
-        <input
-          id="TadresseComplement"
-          v-model="complement"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-        />
+        <Input :readonly="readonly" id="TadresseComplement" v-model="complement" :type="'text'" label="Complément" class="w-full" />
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Code postal</label
-        >
-        <input
-          id="TadressePostcode"
-          v-model="address_selected.postcode"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input :readonly="readonly" id="TadressePostcode" v-model="address_selected.postcode" :type="'text'" :required="true" label="Code postal" class="w-full" />
       </div>
       <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Ville</label
-        >
-        <input
-          v-model="address_selected.city"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
-          required
-        />
+        <Input :readonly="readonly" id="TadresseCity" v-model="address_selected.city" :type="'text'" :required="true" label="Ville" class="w-full" />
       </div>
       <div class="flex items-center">
         <div class="flex w-1/2 items-center justify-between">
@@ -208,7 +166,6 @@
           :readonly="readonly"
           type="text"
           class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          placeholder=""
           required
         />
       </div>
@@ -219,9 +176,7 @@
         <textarea
           v-model="commentaire"
           :readonly="readonly"
-          type=""
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder=""
         ></textarea>
       </div>
       <div class="flex items-center">
@@ -231,7 +186,7 @@
         <label class="relative inline-flex cursor-pointer items-center">
           <input
             v-model="actif"
-            :readonly="readonly"
+            :disabled="readonly == true ? true : false"
             type="checkbox"
             value="true"
             class="peer sr-only"
@@ -250,17 +205,17 @@
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
 import Button from '../components/common/Button.vue'
+import Input from '../components/common/Input.vue'
 import { watchDebounced } from '@vueuse/core'
 import { getAdresses } from '../api/address.js'
 import { onMounted, ref } from 'vue'
-import { deleteClient, getClients } from '../api/client.js'
+import { getClients } from '../api/client.js'
 import {
   deleteFitArenas,
   getFitArenas,
   postFitArenas,
   updateFitarenas,
 } from '../api/fit-arena.js'
-import { postActivites, updateActivites } from '../api/activite'
 import { toast } from 'vue3-toastify'
 
 const fa_modal = ref(false)
@@ -285,6 +240,7 @@ const modal_title = ref('')
 const addFa = () => {
   cancel()
   fa_modal.value = true
+  readonly.value = false
   modal_title.value = 'Ajouter une Fit Arena'
 }
 

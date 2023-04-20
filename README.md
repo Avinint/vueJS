@@ -10,4 +10,4 @@ npm i
 npm run dev
 ```
 
-Attention à l'hôte dans le  .env : prendre celle du back.
+Attention à l'hôte dans le [.env](.env) : prendre celle du back.
