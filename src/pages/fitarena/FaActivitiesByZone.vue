@@ -89,7 +89,7 @@
             </div>
           </div>
 
-          <NewSousZone @valid-sous-zone="newSousZone($event)" />
+          <NewSousZone v-if="!readonly" @valid-sous-zone="newSousZone($event)" />
 
           <template v-for="(sous_zone, idx) in sous_zones">
             <div v-if="!sous_zone.toRemove" class="border border-gray-300 rounded-md p-4">
@@ -98,13 +98,14 @@
                 <ParamSousZone
                   v-if="zoneEquipementsByType[zone_selected]"
                   :i=idx
-                  :zone=zone_selected
-                  :activite="activite_selected"
-                  :sous-zone="sous_zone"
-                  :sous-zone-parametres="sousZoneParametres"
+                  :sous-zone-id=sous_zone.id
+                  :parametres="sousZoneParametres"
+                  :parametreValeurs="getParametreValeurs(sous_zone, activite_selected)"
                   :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
+                  :sous-zone-equipements="getEquipementsSousZone(sous_zone, activite_selected)"
                   :readonly=readonly
-                  :creation="!activiteZone_selected"
+                  @change-param-value="changeParamValueSousZone($event)"
+                  @change-equipements="changeEquipementsSousZone($event)"
                   />
               </div>
               <div>
@@ -120,7 +121,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { toast } from "vue3-toastify";
 
 import Card from '../../components/common/Card.vue'
@@ -300,7 +301,13 @@ const newSousZone = (libelle) => {
     actif: true,
     ordre: 1,
     isNew: true,
-    // parametres et equipements gérés dans paramSousZone
+    zoneActivites: [{
+      activite: {
+        id: activite_selected.value
+      },
+      parametreZoneActivites: [],
+      zoneActiviteEquipements: []
+    }]
   });
 };
 
@@ -308,7 +315,6 @@ const saveSousZones = async (zoneId, activiteId) => {
   for (let { isNew, toRemove, actif, ordre, libelle, id, zoneActivites, } of sous_zones.value) {
 
     if (toRemove) {
-      // suppression
       await deleteZones(id);
 
     } else {
@@ -329,20 +335,13 @@ const saveSousZones = async (zoneId, activiteId) => {
       });
 
       if (isNew) {
-        // création
         await postSousZone(zoneId, activiteId, {
-          actif,
-          ordre,
-          libelle,
-          parametres,
-          equipements
+          actif, ordre, libelle, parametres, equipements
         });
 
       } else {
-        // édition
         await postConfigurationZoneActivite(id, activiteId, {
-          parametres,
-          equipements
+          parametres, equipements
         });
       }
     }
@@ -351,7 +350,6 @@ const saveSousZones = async (zoneId, activiteId) => {
 
 const removeSousZone = async (index) => {
   const sousZone = sous_zones.value[index]
-
   // on peut supprimer dans la liste une zone pas encore créée en base
   if (sousZone.isNew) {
     sous_zones.value.splice(index, 1)
@@ -361,6 +359,7 @@ const removeSousZone = async (index) => {
 }
 
 // récupération des info de base des paramètres nécessaires (globaux, pas par rapport à une sous-zone)
+// TODO: en passant par 1 store, on pourra déporter ça directement vers le composant paramSousZone
 const fetchSousZoneParametres = async () => {
   const parametreNombreParticipantsMax = (await getParametres(1, '&code=nombre-de-participants-max')).shift();
   const parametreNombreParticipantsConseille = (await getParametres(1, '&code=nombre-de-participants-conseille')).shift();
@@ -394,5 +393,53 @@ const fetchZoneEquipements = async () => {
       sonorisation: equipementsTypeSono,
     }
   }
+}
+
+const getParametreValeurs = (sousZone, activiteId) => {
+  const za = sousZone.zoneActivites?.filter(e => e.activite.id == activiteId).shift()
+  if (!za) { return [] }
+  return za.parametreZoneActivites.map((elt) => {
+    return {
+      parametreId: elt.parametre.id,
+      valeur: elt.valeur
+    }
+  })
+}
+
+const changeParamValueSousZone = (e) => {
+  const sousZone = sous_zones.value[e.idx];
+  const za = sousZone && sousZone.zoneActivites.filter(za => za.activite.id == activite_selected.value).shift();
+  if (!za.parametreZoneActivites) { za.parametreZoneActivites = [] }
+  const param = za.parametreZoneActivites.filter(p => p.parametre.id == e.parametreId).shift()
+  if (param) {
+    param.valeur = e.valeur;
+  } else {
+    // le param n'existe pas encore
+    za.parametreZoneActivites.push({
+        parametre: { id: e.parametreId },
+        valeur: e.valeur
+    });
+  }
+}
+
+const getEquipementsSousZone = (sousZone, activiteId) => {
+  const equipementsSelection = [];
+  const za = sousZone.zoneActivites.filter(e => e.activite.id == activiteId).shift();
+  za && za.zoneActiviteEquipements.forEach(elt => {
+    equipementsSelection.push(elt.equipement.id);
+  });
+  return equipementsSelection;
+}
+
+const changeEquipementsSousZone = (e) => {
+  const sousZone = sous_zones.value[e.idx]
+  const za = sousZone && sousZone.zoneActivites?.filter(za => za.activite.id == activite_selected.value).shift()
+  if (!za.zoneActiviteEquipements) { za.zoneActiviteEquipements = [] }
+  za.zoneActiviteEquipements.length = 0
+  e.equipementIds.forEach(id => {
+    za.zoneActiviteEquipements.push({
+      equipement: { id }
+    })
+  })
 }
 </script>
