@@ -23,7 +23,7 @@
                 borderless
                 icon="delete"
                 type="secondary"
-                @click="removeFa(i)"
+                @click="removeFa(fit_arena.id)"
               />
               <Button
                 test="TeditClient"
@@ -75,7 +75,15 @@
         </select>
       </div>
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TfaNom" v-model="name" :type="'text'" label="Nom" :required="true" class="w-full" />
+        <Input
+          id="TfaNom"
+          v-model="name"
+          :readonly="readonly"
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
         <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
@@ -128,13 +136,36 @@
         </select>
       </div>
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TadresseComplement" v-model="complement" :type="'text'" label="Complément" class="w-full" />
+        <Input
+          id="TadresseComplement"
+          v-model="complement"
+          :readonly="readonly"
+          :type="'text'"
+          label="Complément"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TadressePostcode" v-model="address_selected.postcode" :type="'text'" :required="true" label="Code postal" class="w-full" />
+        <Input
+          id="TadressePostcode"
+          v-model="address_selected.postcode"
+          :readonly="readonly"
+          :type="'text'"
+          :required="true"
+          label="Code postal"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TadresseCity" v-model="address_selected.city" :type="'text'" :required="true" label="Ville" class="w-full" />
+        <Input
+          id="TadresseCity"
+          v-model="address_selected.city"
+          :readonly="readonly"
+          :type="'text'"
+          :required="true"
+          label="Ville"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
         <div class="flex w-1/2 items-center justify-between">
@@ -192,23 +223,41 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <!-- <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span> -->
         </label>
       </div>
     </Modal>
   </form>
+
+  <form @submit.prevent="deleteFitArenaValidation(deleteFitArenaId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="updateFitArenaValidation()">
+    <ValidationModal v-if="edit_modal" type="edit" @cancel="edit_modal = false">
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="addFitArenaValidation()">
+    <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
+import ValidationModal from '../components/common/ValidationModal.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
-import { watchDebounced } from '@vueuse/core'
 import { getAdresses } from '../api/address.js'
-import { onMounted, ref } from 'vue'
 import { getClients } from '../api/client.js'
 import {
   deleteFitArenas,
@@ -216,15 +265,23 @@ import {
   postFitArenas,
   updateFitarenas,
 } from '../api/fit-arena.js'
+import { onMounted, ref } from 'vue'
+import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 
 const fa_modal = ref(false)
 const readonly = ref(false)
 
-const fas = ref([])
 const clients = ref([])
 
 const fit_arenas = ref([])
+
+const delete_modal = ref(false)
+const deleteFitArenaId = ref(0)
+const fit_arena = ref({})
+const edit_modal = ref(false)
+const add_modal = ref(false)
 
 const client_selected = ref({})
 const id_selected = ref(0)
@@ -236,6 +293,11 @@ const addresses = ref([])
 const address = ref('')
 const address_selected = ref({})
 const modal_title = ref('')
+
+onMounted(async () => {
+  fit_arenas.value = await getFitArenas()
+  clients.value = await getClients()
+})
 
 const addFa = () => {
   cancel()
@@ -255,9 +317,20 @@ const cancel = async () => {
   client_selected.value = {}
 }
 
-const removeFa = async (i) => {
-  const fitArena = fit_arenas.value[i]
-  await deleteFitArenas(fitArena.id)
+const removeFa = (id) => {
+  deleteFitArenaId.value = id
+  delete_modal.value = true
+}
+
+const deleteFitArenaValidation = async (id) => {
+  try {
+    await deleteFitArenas(id)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+  delete_modal.value = false
+  deleteFitArenaId.value = 0
   fit_arenas.value = await getFitArenas()
 }
 
@@ -297,9 +370,8 @@ const mapApiToData = (fitArena) => {
   id_selected.value = fitArena.id
 }
 
-const saveFA = async () => {
-  console.error(address_selected)
-  const fa = {
+const saveFA = () => {
+  fit_arena.value = {
     client: 'api/clients/' + client_selected.value,
     commentaire: commentaire.value,
     ordre: 1,
@@ -319,17 +391,39 @@ const saveFA = async () => {
       nomDepartement: '' + address_selected.value.context.split(',')[1],
     },
   }
+
   if (id_selected.value) {
-    const { data } = await updateFitarenas(fa, id_selected.value)
+    edit_modal.value = true
   } else {
-    try {
-      const { data } = await postFitArenas(fa)
-      toast.success('Enregistrement de la fitArena avec succes')
-    } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur')
-    }
+    add_modal.value = true
   }
+}
+
+const updateFitArenaValidation = async () => {
+  try {
+    await updateFitarenas(fit_arena, id_selected.value)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  edit_modal.value = false
   fa_modal.value = false
+  cancel()
+  fit_arenas.value = await getFitArenas()
+}
+
+const addFitArenaValidation = async () => {
+  try {
+    await postFitArenas(fit_arena)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
+  fa_modal.value = false
+  cancel()
   fit_arenas.value = await getFitArenas()
 }
 
@@ -342,9 +436,4 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
-
-onMounted(async () => {
-  fit_arenas.value = await getFitArenas()
-  clients.value = await getClients()
-})
 </script>

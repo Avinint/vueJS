@@ -25,7 +25,7 @@
                 borderless
                 icon="delete"
                 type="secondary"
-                @click="removeEspace(i)"
+                @click="removeEspace(esp.id)"
               />
               <Button
                 test="TeditClient"
@@ -45,7 +45,7 @@
                   @change="modifieEspace(esp)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                 ></div>
                 <span
                   class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -78,7 +78,15 @@
       @cancel=";(subEspace_modal = false), cancel()"
     >
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TEspaceLibelle" v-model="subEspace.libelle" :type="'text'" label="Nom" :required="true" class="w-full" />
+        <Input
+          id="TEspaceLibelle"
+          v-model="subEspace.libelle"
+          :readonly="readonly"
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
         <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
@@ -101,8 +109,24 @@
         </select>
       </div>
       <div class="flex items-center">
-        <Input v-if="!readonly" id="TEspaceOrdre" v-model="subEspace.ordre" :type="'number'" label="Ordre" :required="true" class="w-full" />
-        <Input v-else readonly id="TEspaceOrdre" v-model="subEspace.ordre" :type="'text'" label="Ordre" class="w-full" />
+        <Input
+          v-if="!readonly"
+          id="TEspaceOrdre"
+          v-model="subEspace.ordre"
+          :type="'number'"
+          label="Ordre"
+          :required="true"
+          class="w-full"
+        />
+        <Input
+          v-else
+          id="TEspaceOrdre"
+          v-model="subEspace.ordre"
+          readonly
+          :type="'text'"
+          label="Ordre"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
         <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -117,7 +141,7 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <span
             class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -144,14 +168,34 @@
       </div>
     </Modal>
   </form>
+
+  <form @submit.prevent="deleteSubspaceValidation(deleteSubspaceId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="updateSubspaceValidation()">
+    <ValidationModal v-if="edit_modal" type="edit" @cancel="edit_modal = false">
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="addSubspaceValidation()">
+    <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
-import { onMounted, ref } from 'vue'
+import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import {
   deleteZones,
   getZones,
@@ -160,18 +204,24 @@ import {
   updateZones,
   patchZones,
 } from '../../api/zone.js'
-import { getTypeZone } from '../../api/typeZone'
-import { toast } from 'vue3-toastify'
+import { getTypeZone } from '../../api/typeZone.js'
 import {
   deleteZoneEquipement,
   postZoneEquipement,
-} from '../../api/zoneEquipement'
-import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
+} from '../../api/zoneEquipement.js'
+import { onMounted, ref } from 'vue'
+import { toast } from 'vue3-toastify'
 
 const props = defineProps(['id'])
 
 const subEspace_modal = ref(false)
 const readonly = ref(false)
+
+const delete_modal = ref(false)
+const deleteSubspaceId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const espTemp = ref({})
 
 const id_selected = ref(0)
 const subEspaces = ref([])
@@ -183,6 +233,18 @@ const modal_title = ref('')
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
+onMounted(async () => {
+  subEspaces.value = await getZones(
+    1,
+    '&typeZone.code=sous-espace&fitArena=' + props.id
+  )
+  espaceParents.value = await getZones(
+    1,
+    '&typeZone.code=espace&fitArena=' + props.id
+  )
+  typeZones.value = await getTypeZone()
+})
+
 const addEspace = () => {
   cancel()
   subEspace_modal.value = true
@@ -190,9 +252,21 @@ const addEspace = () => {
   modal_title.value = 'Ajouter un sous-espace'
 }
 
-const removeEspace = async (i) => {
-  const espaceTemp = subEspaces.value[i]
-  await deleteZones(espaceTemp.id)
+const removeEspace = (id) => {
+  deleteSubspaceId.value = id
+  delete_modal.value = true
+}
+
+const deleteSubspaceValidation = async (id) => {
+  try {
+    await deleteZones(id)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  delete_modal.value = false
+  deleteSubspaceId.value = 0
   cancel()
   subEspaces.value = await getZones(
     1,
@@ -204,9 +278,9 @@ const removeEspace = async (i) => {
 const modifieEspace = async ({ actif, id }) => {
   try {
     await patchZones({ actif }, id)
-    toast.success('Modification du sous espace avec succès')
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
@@ -236,7 +310,8 @@ const mapApiToData = async (espaceTemp) => {
 
 const saveEspace = async () => {
   const espaceTemp = await getTypeZone(1, '&code=sous-espace')
-  const espTemp = {
+
+  espTemp.value = {
     typeZone: '/api/type_zones/' + espaceTemp[0].id,
     fitArena: '/api/fit_arenas/' + props.id,
     ordre: subEspace.value.ordre,
@@ -244,8 +319,17 @@ const saveEspace = async () => {
     actif: subEspace.value.actif == true ? subEspace.value.actif : false,
     idZoneParent: espace_selected.value,
   }
+
   if (id_selected.value) {
-    const { data } = await updateZones(espTemp, id_selected.value)
+    edit_modal.value = true
+  } else {
+    add_modal.value = true
+  }
+}
+
+const updateSubspaceValidation = async () => {
+  try {
+    await updateZones(espTemp, id_selected.value)
     await linkedEquipements(
       ajoutEquipementsNume.value.typeEquipements,
       id_selected.value
@@ -254,21 +338,12 @@ const saveEspace = async () => {
       ajoutEquipementsMoto.value.typeEquipements,
       id_selected.value
     )
-  } else {
-    try {
-      const data = await postZones(espTemp)
-      await linkedEquipements(
-        ajoutEquipementsNume.value.typeEquipements,
-        data.id
-      )
-      await linkedEquipements(
-        ajoutEquipementsMoto.value.typeEquipements,
-        data.id
-      )
-    } catch (e) {
-      console.error(e)
-    }
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
   }
+
+  edit_modal.value = false
   subEspace_modal.value = false
   cancel()
   subEspaces.value = await getZones(
@@ -282,7 +357,19 @@ const saveEspace = async () => {
   typeZones.value = await getTypeZone()
 }
 
-onMounted(async () => {
+const addSubspaceValidation = async () => {
+  try {
+    const data = await postZones(espTemp)
+    await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id)
+    await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
+  subEspace_modal.value = false
+  cancel()
   subEspaces.value = await getZones(
     1,
     '&typeZone.code=sous-espace&fitArena=' + props.id
@@ -292,12 +379,13 @@ onMounted(async () => {
     '&typeZone.code=espace&fitArena=' + props.id
   )
   typeZones.value = await getTypeZone()
-})
+}
 
 const cancel = () => {
   espace_selected.value = {}
   subEspace.value = {}
   readonly.value = false
+  id_selected.value = 0
 }
 
 const linkedEquipements = async (typeEquipements, zoneId) => {

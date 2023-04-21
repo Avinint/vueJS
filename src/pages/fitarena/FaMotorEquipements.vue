@@ -287,15 +287,34 @@
       </CardConfiguration>
     </Modal>
   </form>
+
+  <form @submit.prevent="deleteEquipmentValidation(deleteEquipmentId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="updateEquipmentValidation()">
+    <ValidationModal v-if="edit_modal" type="edit" @cancel="edit_modal = false">
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="addEquipmentValidation()">
+    <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
 import CardConfiguration from '../../components/common/CardConfiguration.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
-import { onMounted, ref } from 'vue'
 import {
   deleteEquipements,
   getEquipement,
@@ -303,11 +322,21 @@ import {
   postEquipements,
   updateEquipements,
   patchEquipements,
-} from '../../api/equipement'
-import { getTypeEquipements } from '../../api/typeEquipement'
-import { toast } from 'vue3-toastify'
+} from '../../api/equipement.js'
+import { getTypeEquipements } from '../../api/typeEquipement.js'
 import { useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
+
 const props = defineProps(['id'])
+
+const delete_modal = ref(false)
+const deleteEquipmentId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const equipmentTemp = ref({})
+
 const equipement_modal = ref(false)
 const readonly = ref(false)
 const id_selected = ref(0)
@@ -320,6 +349,18 @@ const modal_title = ref('')
 
 const id_fa = useRoute().params.id
 
+onMounted(async () => {
+  equipements.value = await getEquipements(
+    props.id,
+    1,
+    '&typeEquipement.categoryTypeEquipement.code=motorise'
+  )
+  typeEquipements.value = await getTypeEquipements(
+    1,
+    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
+  )
+})
+
 const addEquipement = () => {
   cancel()
   equipement_modal.value = true
@@ -327,8 +368,21 @@ const addEquipement = () => {
   modal_title.value = 'Ajouter un équipement motorisé'
 }
 
-const removeEquipement = async (i) => {
-  await deleteEquipements(i)
+const removeEquipement = (id) => {
+  deleteEquipmentId.value = id
+  delete_modal.value = true
+}
+
+const deleteEquipmentValidation = async (id) => {
+  try {
+    await deleteEquipements(id)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  delete_modal.value = false
+  deleteEquipmentId.value = 0
   cancel()
   equipements.value = await getEquipements(
     props.id,
@@ -345,9 +399,9 @@ const removeEquipement = async (i) => {
 const modifieEquipement = async ({ statut, id }) => {
   try {
     await patchEquipements({ statut }, id)
-    toast.success("Modification de l'élément motorisé avec succès")
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
@@ -382,35 +436,31 @@ const removeEquipementConfiguration = () => {}
 
 const editEquipementConfiguration = () => {}
 
-const saveEquipement = async () => {
-  console.log(equipement.value)
-  const equipementTemp = {
+const saveEquipement = () => {
+  equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
     libelle: equipement.value.libelle,
     statut: equipement.value.statut == true ? equipement.value.statut : false,
     ip: equipement.value.ip,
   }
-  if (id_selected.value) {
-    try {
-      const { data } = await updateEquipements(
-        equipementTemp,
-        id_selected.value
-      )
-      toast.success("Enregistrement de l'élément motorisé avec succès")
-    } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur')
-    }
-  } else {
-    try {
-      const { data } = await postEquipements(equipementTemp)
-      toast.success("Enregistrement de l'élément motorisé avec succès")
-    } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur')
-    }
 
-    //const {data} = await postActiviteWithIcone(actTemp)
+  if (id_selected.value) {
+    edit_modal.value = true
+  } else {
+    add_modal.value = true
   }
+}
+
+const updateEquipmentValidation = async () => {
+  try {
+    await updateEquipements(equipmentTemp, id_selected.value)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  edit_modal.value = false
   equipement_modal.value = false
   cancel()
   equipements.value = await getEquipements(
@@ -423,7 +473,18 @@ const saveEquipement = async () => {
     '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
   )
 }
-onMounted(async () => {
+
+const addEquipmentValidation = async () => {
+  try {
+    await postEquipements(equipmentTemp)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
+  equipement_modal.value = false
+  cancel()
   equipements.value = await getEquipements(
     props.id,
     1,
@@ -433,11 +494,11 @@ onMounted(async () => {
     1,
     '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
   )
-})
+}
 
 const cancel = () => {
   equipement.value = {}
-  //id_selected.value = {}
+  id_selected.value = 0
   equipement_selected.value = {}
 }
 </script>
