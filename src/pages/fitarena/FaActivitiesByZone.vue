@@ -2,7 +2,11 @@
   <Card>
     <h1>Activités par zone</h1>
     <div class="p-10">
-      <Card v-for="(zoneFit, zoneIdx) of zones" :key="zoneIdx" class="mb-10 space-y-3">
+      <Card
+        v-for="(zoneFit, zoneIdx) of zones"
+        :key="zoneIdx"
+        class="mb-10 space-y-3"
+      >
         <h2>{{ zoneFit.libelle }}</h2>
 
         <div class="relative overflow-x-auto">
@@ -19,7 +23,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(act, i) in zoneFit.zoneActivites" :key="i" class="bg-white">
+              <tr
+                v-for="(act, i) in zoneFit.zoneActivites"
+                :key="i"
+                class="bg-white"
+              >
                 <td class="flex items-center justify-center p-3">
                   <Button
                     test="TdeleteClient"
@@ -48,7 +56,7 @@
                       @change="modifieActivite(act)"
                     />
                     <div
-                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                     ></div>
                     <span
                       class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -85,7 +93,11 @@
           @cancel="activiteZone_modal = false"
         >
           <div class="flex items-center">
-            <label for="select_activites" class="mb-2 block w-1/2 text-sm font-medium text-gray-900">Activité</label>
+            <label
+              for="select_activites"
+              class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+              >Activité</label
+            >
             <select
               id="select_activites"
               v-model="activite_selected"
@@ -121,7 +133,7 @@
                 v-model="mode_ecran_interface"
                 :default="{
                   label: 'Aucun',
-                  value: 0
+                  value: 0,
                 }"
                 :disabled="readonly == true ? true : false"
                 name="mode_ecran_interface"
@@ -137,7 +149,7 @@
             >
               {{ sous_zones.length }}
             </div>
-            <div class="text-sm text-light-blue">
+            <div class="text-light-blue text-sm">
               Sous-zone : surface réservable par les utilisateurs (= terrain)
             </div>
           </div>
@@ -195,7 +207,9 @@
                   :activite="activite_selected"
                   :sous-zone="sous_zone"
                   :sous-zone-parametres="sousZoneParametres"
-                  :zone-equipements-by-type="zoneEquipementsByType[zone_selected]"
+                  :zone-equipements-by-type="
+                    zoneEquipementsByType[zone_selected]
+                  "
                   :readonly="readonly"
                   @changeEquipement="changeEquipementSousZone"
                 />
@@ -214,40 +228,70 @@
         </Modal>
       </form>
     </div>
+
+    <form @submit.prevent="deleteActivityValidation(deleteActivityId)">
+      <ValidationModal
+        v-if="delete_modal"
+        type="delete"
+        @cancel="delete_modal = false"
+      >
+      </ValidationModal>
+    </form>
+
+    <form @submit.prevent="updateActivityValidation()">
+      <ValidationModal
+        v-if="edit_modal"
+        type="edit"
+        @cancel="edit_modal = false"
+      >
+      </ValidationModal>
+    </form>
+
+    <form @submit.prevent="addActivityValidation()">
+      <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+      </ValidationModal>
+    </form>
   </Card>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
 import InputRadio from '../../components/common/InputRadio.vue'
 import ParamSousZone from '../../components/faActivitesByZone/paramSousZone.vue'
-import { onMounted, ref } from 'vue'
 import {
   deleteActivitesByZones,
   getActiviteByZone,
   patchActivitesByZones,
   postZoneActivite,
-} from '../../api/activiteByZone'
-import { getZones, deleteZones, updateZones } from '../../api/zone'
-import { getModes } from '../../api/mode'
+} from '../../api/activiteByZone.js'
+import { getZones, deleteZones } from '../../api/zone.js'
+import { getModes } from '../../api/mode.js'
 import {
   getParametres,
   postParametres,
   updateParametres,
-} from '../../api/parametre'
-import { getTypeZone } from '../../api/typeZone'
-import { getParametreZoneActivites } from '../../api/parametreZoneActivite'
-import { getEquipementsByZone } from '../../api/equipement'
-import { getActivites } from '../../api/activite'
-import { postZoneActiviteEquipement } from '../../api/zoneActiviteEquipement'
-import { postSousZone } from '../../api/sousZone'
-import Select from '../../components/common/Select.vue'
+} from '../../api/parametre.js'
+import { getTypeZone } from '../../api/typeZone.js'
+import { getParametreZoneActivites } from '../../api/parametreZoneActivite.js'
+import { getEquipementsByZone } from '../../api/equipement.js'
+import { getActivites } from '../../api/activite.js'
+import { postZoneActiviteEquipement } from '../../api/zoneActiviteEquipement.js'
+import { postSousZone } from '../../api/sousZone.js'
 import { toast } from 'vue3-toastify'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps(['id'])
+
+const delete_modal = ref(false)
+const deleteActivityId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const zoneTemp = ref({})
+
 const activiteZone_modal = ref(false)
 const readonly = ref(false)
 const activiteZones = ref([])
@@ -273,6 +317,32 @@ const sousZoneParametres = ref({})
 const zoneEquipementsByType = ref({})
 const sousZoneEquipements = []
 
+onMounted(async () => {
+  zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
+  activites.value = await getActivites(props.id)
+  modes_motorise.value = await getModes(
+    1,
+    '&categoryTypeEquipement.code=motorise'
+  )
+  modes_numerique.value = await getModes(
+    1,
+    '&categoryTypeEquipement.code=numerique'
+  )
+  parametre_config_equipements_motorises.value = (
+    await getParametres(1, '&code=config-des-equipements-motorises')
+  ).shift()
+  parametre_mode_ecran_interface_video_scoring.value = (
+    await getParametres(
+      1,
+      '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring'
+    )
+  ).shift()
+  let data = await getTypeZone(1, '&code=sous-zone')
+  id_type_sous_zone.value = data[0]?.id
+  await fetchSousZoneParametres()
+  await fetchZoneEquipements()
+})
+
 const changeEquipementSousZone = (i, value) => {
   sousZoneEquipements[sous_zones.value[i].id] = value
 }
@@ -291,8 +361,21 @@ const addActiviteZone = async (zoneIdx) => {
   await sousZones(zone_selected.value, activite_selected.value)
 }
 
-const removeActiviteZone = async (i) => {
-  await deleteActivitesByZones(i)
+const removeActiviteZone = (id) => {
+  deleteActivityId.value = id
+  delete_modal.value = true
+}
+
+const deleteActivityValidation = async (id) => {
+  try {
+    await deleteActivitesByZones(id)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  delete_modal.value = false
+  deleteActivityId.value = 0
   cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
@@ -302,7 +385,8 @@ const removeActiviteZone = async (i) => {
 const editActiviteZone = async (i) => {
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
-  modal_title.value = 'Modifier une activité de la zone ' + activiteZoneTemp.zone.libelle
+  modal_title.value =
+    'Modifier une activité de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = false
   activiteZone_modal.value = true
 }
@@ -310,7 +394,7 @@ const editActiviteZone = async (i) => {
 const showActiviteZone = async (i) => {
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
-  modal_title.value = 'Information de la zone ' + activiteZoneTemp.zone.libelle
+  modal_title.value = 'Informations de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = true
   activiteZone_modal.value = true
 }
@@ -357,14 +441,14 @@ const sousZones = async (zoneId, activiteId) => {
 const modifieActivite = async ({ actif, id }) => {
   try {
     await patchActivitesByZones({ actif }, id)
-    toast.success("Modification de l'activité avec succès")
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
 const saveActiviteZone = async () => {
-  await postZoneActivite(zone_selected.value, activite_selected.value, {
+  zoneTemp.value = {
     actif: true,
     ordre: 0,
     parametres: [
@@ -379,41 +463,54 @@ const saveActiviteZone = async () => {
         valeur: mode_ecran_interface.value,
       },
     ],
-  })
+  }
 
-  await saveSousZones(zone_selected.value, activite_selected.value)
+  if (modal_title.value.includes('Modifier')) {
+    edit_modal.value = true
+  } else {
+    add_modal.value = true
+  }
+}
 
+const updateActivityValidation = async () => {
+  try {
+    await postZoneActivite(
+      zone_selected.value,
+      activite_selected.value,
+      zoneTemp
+    )
+    await saveSousZones(zone_selected.value, activite_selected.value)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  edit_modal.value = false
   activiteZone_modal.value = false
   cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
 }
 
-onMounted(async () => {
+const addActivityValidation = async () => {
+  try {
+    await postZoneActivite(
+      zone_selected.value,
+      activite_selected.value,
+      zoneTemp
+    )
+    await saveSousZones(zone_selected.value, activite_selected.value)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
+  activiteZone_modal.value = false
+  cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
-  modes_motorise.value = await getModes(
-    1,
-    '&categoryTypeEquipement.code=motorise'
-  )
-  modes_numerique.value = await getModes(
-    1,
-    '&categoryTypeEquipement.code=numerique'
-  )
-  parametre_config_equipements_motorises.value = (
-    await getParametres(1, '&code=config-des-equipements-motorises')
-  ).shift()
-  parametre_mode_ecran_interface_video_scoring.value = (
-    await getParametres(
-      1,
-      '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring'
-    )
-  ).shift()
-  let data = await getTypeZone(1, '&code=sous-zone')
-  id_type_sous_zone.value = data[0]?.id
-  await fetchSousZoneParametres()
-  await fetchZoneEquipements()
-})
+}
 
 const cancel = () => {
   zone_selected.value = 0
@@ -460,7 +557,6 @@ const saveSousZones = async (zoneId, activiteId) => {
       await deleteZones(id)
     } else {
       // édition
-
       const zoneActivite = zoneActivites
         .filter((e) => e.activite.id == activite_selected.value)
         .shift()

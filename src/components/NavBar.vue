@@ -10,7 +10,7 @@
             test="Tlogout"
             icon="logout"
             type="secondary"
-            label="Deconnexion"
+            label="Déconnexion"
             class="text-red-600 hover:bg-red-100"
             :submit="false"
             @click="logout"

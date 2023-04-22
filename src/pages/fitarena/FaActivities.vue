@@ -22,7 +22,7 @@
                 borderless
                 icon="delete"
                 type="secondary"
-                @click="removeActivite(i)"
+                @click="removeActivite(act.id)"
               />
               <Button
                 test="TeditClient"
@@ -197,14 +197,33 @@
       </div>
     </Modal>
   </form>
+
+  <form @submit.prevent="deleteActivityValidation(deleteActivityId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="updateActivityValidation()">
+    <ValidationModal v-if="edit_modal" type="edit" @cancel="edit_modal = false">
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="addActivityValidation()">
+    <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
-import { onMounted, ref } from 'vue'
 import { getTypeActivites } from '../../api/typeActivite.js'
 import {
   deleteActivites,
@@ -213,10 +232,12 @@ import {
   updateActivites,
   patchActivites,
 } from '../../api/activite.js'
+import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
 const props = defineProps(['id'])
+
 const notify = () => {
   toast('Wow so easy !', {
     autoClose: 1000,
@@ -226,6 +247,12 @@ const notify = () => {
 const activite_modal = ref(false)
 const readonly = ref(false)
 
+const delete_modal = ref(false)
+const deleteActivityId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const actTemp = ref({})
+
 const id_selected = ref(0)
 const activites = ref([])
 const typeActivites = ref([])
@@ -233,6 +260,11 @@ const typeActivite = ref({})
 const activite = ref({})
 const activite_selected = ref({})
 const modal_title = ref('')
+
+onMounted(async () => {
+  activites.value = await getActivites(props.id)
+  typeActivites.value = await getTypeActivites()
+})
 
 const addActivite = () => {
   activite.value = {}
@@ -245,20 +277,26 @@ const addActivite = () => {
 const modifieActivite = async ({ actif, id }) => {
   try {
     await patchActivites({ actif }, id)
-    toast.success("Modification de l'activité avec succès")
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
-const removeActivite = async (i) => {
-  const activiteTemp = activites.value[i]
+const removeActivite = (id) => {
+  deleteActivityId.value = id
+  delete_modal.value = true
+}
+
+const deleteActivityValidation = async (id) => {
   try {
-    await deleteActivites(activiteTemp.id)
-    toast.success("Suppression de l'activité avec succès")
+    await deleteActivites(id)
+    toast.success('Suppression effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
+
+  delete_modal.value = false
   cancel()
   activites.value = await getActivites(props.id)
   typeActivites.value = await getTypeActivites()
@@ -287,53 +325,60 @@ const mapApiToData = (activiteTemp) => {
   activite_selected.value = activiteTemp.typeActivite.id
 }
 
-const saveActivite = async () => {
-  const actTemp = {
+const saveActivite = () => {
+  actTemp.value = {
     typeActivite: '/api/type_activites/' + activite_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
-    //typeActivite: activite_selected.value,
-    //fitArena: props.id,
     ordre: activite.value.ordre,
     libelle: activite.value.libelle,
     description: activite.value.description,
-    actif: activite.value.actif == true
-        ? activite.value.actif
-        : false,
+    actif: activite.value.actif == true ? activite.value.actif : false,
     icone: activite.value.icone,
     reservationDeGroupe:
       activite.value.reservationDeGroupe == true
         ? activite.value.reservationDeGroupe
         : false,
   }
-  if (id_selected.value) {
-    try {
-      const { data } = await updateActivites(actTemp, id_selected.value)
-      toast.success("Enregistrement de l'activité avec succès")
-    } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur')
-    }
-  } else {
-    try {
-      const { data } = await postActivites(actTemp)
-      toast.success("Enregistrement de l'activité avec succès")
-    } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur')
-    }
 
-    //const {data} = await postActiviteWithIcone(actTemp)
+  if (id_selected.value) {
+    edit_modal.value = true
+  } else {
+    add_modal.value = true
+  }
+}
+
+const updateActivityValidation = async () => {
+  try {
+    await updateActivites(actTemp, id_selected.value)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
   }
 
+  edit_modal.value = false
   activite_modal.value = false
-
+  cancel()
   activites.value = await getActivites(props.id)
   typeActivites.value = await getTypeActivites()
 }
-onMounted(async () => {
+
+const addActivityValidation = async () => {
+  try {
+    await postActivites(actTemp)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
+  activite_modal.value = false
+  cancel()
   activites.value = await getActivites(props.id)
   typeActivites.value = await getTypeActivites()
-})
+}
 
 const cancel = () => {
   activite.value = {}
+  id_selected.value = 0
 }
 </script>

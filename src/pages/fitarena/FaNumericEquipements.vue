@@ -7,7 +7,7 @@
         :key="i"
         class="m-5 border border-gray-200 p-4"
       >
-        <h2 v-if="typeEquip.equipements.length" class="pt-2 pb-5">
+        <h2 v-if="typeEquip.equipements.length" class="pb-5 pt-2">
           {{ typeEquip.libelle }}
         </h2>
         <div
@@ -62,7 +62,7 @@
                       @change="modifieEquipement(equipementTemp)"
                     />
                     <div
-                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                     ></div>
                     <span
                       class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -106,9 +106,9 @@
         >
         <select
           v-if="typeEquipements.length"
-          :disabled="readonly == true ? true : false"
           id="TTypeActivite"
           v-model="equipement_selected"
+          :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
@@ -121,10 +121,26 @@
         </select>
       </div>
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TEquipementLibelle" v-model="equipement.libelle" :type="'text'" label="Nom" :required="true" class="w-full" />
+        <Input
+          id="TEquipementLibelle"
+          v-model="equipement.libelle"
+          :readonly="readonly"
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TEquipementIp" v-model="equipement.ip" :type="'text'" label="Adresse IP" :required="true" class="w-full" />
+        <Input
+          id="TEquipementIp"
+          v-model="equipement.ip"
+          :readonly="readonly"
+          :type="'text'"
+          label="Adresse IP"
+          :required="true"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
         <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -139,7 +155,7 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <span
             class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -148,14 +164,33 @@
       </div>
     </Modal>
   </form>
+
+  <form @submit.prevent="deleteEquipmentValidation(deleteEquipmentId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="updateEquipmentValidation()">
+    <ValidationModal v-if="edit_modal" type="edit" @cancel="edit_modal = false">
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="addEquipmentValidation()">
+    <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
-import { onMounted, ref } from 'vue'
 import {
   deleteEquipements,
   getEquipement,
@@ -163,12 +198,20 @@ import {
   patchEquipements,
   postEquipements,
   updateEquipements,
-} from '../../api/equipement'
-import { getTypeEquipements } from '../../api/typeEquipement'
+} from '../../api/equipement.js'
+import { getTypeEquipements } from '../../api/typeEquipement.js'
+import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
-import {useRoute} from "vue-router";
+import { useRoute } from 'vue-router'
 
 const props = defineProps(['id'])
+
+const delete_modal = ref(false)
+const deleteEquipmentId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const equipmentTemp = ref({})
+
 const equipement_modal = ref(false)
 const readonly = ref(false)
 const id_selected = ref(0)
@@ -181,14 +224,40 @@ const modal_title = ref('')
 
 const id_fa = useRoute().params.id
 
+onMounted(async () => {
+  equipements.value = await getEquipements(
+    props.id,
+    1,
+    '&typeEquipement.categoryTypeEquipement.code=numerique'
+  )
+  typeEquipements.value = await getTypeEquipements(
+    1,
+    '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + id_fa
+  )
+})
+
 const addEquipement = () => {
+  cancel()
   equipement_modal.value = true
   readonly.value = false
   modal_title.value = 'Ajouter un équipement'
 }
 
-const removeEquipement = async (i) => {
-  await deleteEquipements(i)
+const removeEquipement = (id) => {
+  deleteEquipmentId.value = id
+  delete_modal.value = true
+}
+
+const deleteEquipmentValidation = async (id) => {
+  try {
+    await deleteEquipements(id)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  delete_modal.value = false
+  deleteEquipmentId.value = 0
   cancel()
   equipements.value = await getEquipements(
     props.id,
@@ -205,9 +274,9 @@ const removeEquipement = async (i) => {
 const modifieEquipement = async ({ statut, id }) => {
   try {
     await patchEquipements({ statut }, id)
-    toast.success("Modification de l'élément motorisé avec succès")
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
@@ -234,7 +303,7 @@ const mapApiToData = (equipementTemp) => {
 }
 
 const saveEquipement = async () => {
-  const equipementTemp = {
+  equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
     libelle: equipement.value.libelle,
@@ -242,11 +311,21 @@ const saveEquipement = async () => {
     ip: equipement.value.ip,
   }
   if (id_selected.value) {
-    const { data } = await updateEquipements(equipementTemp, id_selected.value)
+    edit_modal.value = true
   } else {
-    const { data } = await postEquipements(equipementTemp)
-    //const {data} = await postActiviteWithIcone(actTemp)
+    add_modal.value = true
   }
+}
+
+const updateEquipmentValidation = async () => {
+  try {
+    await updateEquipements(equipmentTemp, id_selected.value)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  edit_modal.value = false
   equipement_modal.value = false
   cancel()
   equipements.value = await getEquipements(
@@ -256,10 +335,21 @@ const saveEquipement = async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique&equipements.fitArena='+id_fa
+    '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + id_fa
   )
 }
-onMounted(async () => {
+
+const addEquipmentValidation = async () => {
+  try {
+    await postEquipements(equipmentTemp)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
+  equipement_modal.value = false
+  cancel()
   equipements.value = await getEquipements(
     props.id,
     1,
@@ -267,11 +357,12 @@ onMounted(async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique&equipements.fitArena='+id_fa
+    '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + id_fa
   )
-})
+}
 
 const cancel = () => {
   equipement.value = {}
+  id_selected.value = 0
 }
 </script>

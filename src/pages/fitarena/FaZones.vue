@@ -2,8 +2,8 @@
   <Card>
     <h1>Zones</h1>
     <span class="text-sm font-bold"
-      >Zones dâ€™activitÃ© : ensemble de sous-zones dÃ©limitÃ© physiquement sur
-      lequel est praticable une seule activitÃ© en mÃªme temps
+      >Zones d'activité : ensemble de sous-zones délimitée physiquement sur
+      lequel est praticable une seule activité en même temps
     </span>
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -13,7 +13,7 @@
           <tr>
             <th scope="col" class="px-6 py-3"></th>
             <th scope="col" class="px-6 py-3">Actif</th>
-            <th scope="col" class="px-6 py-3">LibellÃ©</th>
+            <th scope="col" class="px-6 py-3">Libellé</th>
             <th scope="col" class="px-6 py-3">Ordre</th>
           </tr>
         </thead>
@@ -25,7 +25,7 @@
                 borderless
                 icon="delete"
                 type="secondary"
-                @click="removeEspace(i)"
+                @click="removeEspace(esp.id)"
               />
               <Button
                 test="TeditClient"
@@ -55,11 +55,7 @@
             <td class="px-6 py-4">{{ esp.libelle }}</td>
             <td class="px-6 py-4">{{ esp.ordre }}</td>
             <td class="px-6 py-4">
-              <Button
-                label="DÃ©tails"
-                type="secondary"
-                @click="showEspace(i)"
-              />
+              <Button label="Détails" type="secondary" @click="showEspace(i)" />
             </td>
           </tr>
         </tbody>
@@ -172,15 +168,34 @@
       </div>
     </Modal>
   </form>
+
+  <form @submit.prevent="deleteZoneValidation(deleteZoneId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="updateZoneValidation()">
+    <ValidationModal v-if="edit_modal" type="edit" @cancel="edit_modal = false">
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="addZoneValidation()">
+    <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
-import { onMounted, ref } from 'vue'
 import {
   deleteZones,
   getZones,
@@ -192,14 +207,21 @@ import {
 import {
   postZoneEquipement,
   deleteZoneEquipement,
-} from '../../api/zoneEquipement'
-import { getTypeZone } from '../../api/typeZone'
+} from '../../api/zoneEquipement.js'
+import { getTypeZone } from '../../api/typeZone.js'
 import { toast } from 'vue3-toastify'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps(['id'])
 
 const subEspace_modal = ref(false)
 const readonly = ref(false)
+
+const delete_modal = ref(false)
+const deleteZoneId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const espTemp = ref({})
 
 const id_selected = ref(0)
 const subEspaces = ref([])
@@ -211,6 +233,18 @@ const modal_title = ref('')
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
+onMounted(async () => {
+  subEspaces.value = await getZones(
+    1,
+    '&typeZone.code=zone&fitArena=' + props.id
+  )
+  espaceParents.value = await getZones(
+    1,
+    '&typeZone.code=sous-espace&fitArena=' + props.id
+  )
+  typeZones.value = await getTypeZone()
+})
+
 const addEspace = () => {
   cancel()
   subEspace_modal.value = true
@@ -218,9 +252,21 @@ const addEspace = () => {
   modal_title.value = 'Ajouter une zone'
 }
 
-const removeEspace = async (i) => {
-  const espaceTemp = subEspaces.value[i]
-  await deleteZones(espaceTemp.id)
+const removeEspace = (id) => {
+  deleteZoneId.value = id
+  delete_modal.value = true
+}
+
+const deleteZoneValidation = async (id) => {
+  try {
+    await deleteZones(id)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  delete_modal.value = false
+  deleteZoneId.value = 0
   cancel()
   subEspaces.value = await getZones(
     1,
@@ -232,13 +278,13 @@ const removeEspace = async (i) => {
 const modifieEspace = async ({ actif, id }) => {
   try {
     await patchZones({ actif }, id)
-    toast.success('Modification de la zone avec succÃ¨s')
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
-const editEspace = async (i) => {
+const editEspace = (i) => {
   const espaceTemp = subEspaces.value[i]
   mapApiToData(espaceTemp)
   subEspace_modal.value = true
@@ -246,7 +292,7 @@ const editEspace = async (i) => {
   modal_title.value = 'Modifier une zone'
 }
 
-const showEspace = async (i) => {
+const showEspace = (i) => {
   const espaceTemp = subEspaces.value[i]
   mapApiToData(espaceTemp)
   subEspace_modal.value = true
@@ -264,7 +310,8 @@ const mapApiToData = async (espaceTemp) => {
 
 const saveEspace = async () => {
   const espaceTemp = await getTypeZone(1, '&code=zone')
-  const espTemp = {
+
+  espTemp.value = {
     typeZone: '/api/type_zones/' + espaceTemp[0].id,
     fitArena: '/api/fit_arenas/' + props.id,
     ordre: subEspace.value.ordre,
@@ -274,7 +321,15 @@ const saveEspace = async () => {
   }
 
   if (id_selected.value) {
-    const { data } = await updateZones(espTemp, id_selected.value)
+    edit_modal.value = true
+  } else {
+    add_modal.value = true
+  }
+}
+
+const updateZoneValidation = async () => {
+  try {
+    await updateZones(espTemp, id_selected.value)
     await linkedEquipements(
       ajoutEquipementsNume.value.typeEquipements,
       id_selected.value
@@ -283,21 +338,36 @@ const saveEspace = async () => {
       ajoutEquipementsMoto.value.typeEquipements,
       id_selected.value
     )
-  } else {
-    try {
-      const data = await postZones(espTemp)
-      await linkedEquipements(
-        ajoutEquipementsNume.value.typeEquipements,
-        data.id
-      )
-      await linkedEquipements(
-        ajoutEquipementsMoto.value.typeEquipements,
-        data.id
-      )
-    } catch (e) {
-      console.error(e)
-    }
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
   }
+
+  edit_modal.value = false
+  subEspace_modal.value = false
+  cancel()
+  subEspaces.value = await getZones(
+    1,
+    '&typeZone.code=zone&fitArena=' + props.id
+  )
+  espaceParents.value = await getZones(
+    1,
+    '&typeZone.code=espace&fitArena=' + props.id
+  )
+  typeZones.value = await getTypeZone()
+}
+
+const addZoneValidation = async () => {
+  try {
+    const data = await postZones(espTemp)
+    await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id)
+    await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
   subEspace_modal.value = false
   cancel()
   subEspaces.value = await getZones(
@@ -334,18 +404,6 @@ const linkedEquipements = async (typeEquipements, zoneId) => {
     }
   }
 }
-
-onMounted(async () => {
-  subEspaces.value = await getZones(
-    1,
-    '&typeZone.code=zone&fitArena=' + props.id
-  )
-  espaceParents.value = await getZones(
-    1,
-    '&typeZone.code=sous-espace&fitArena=' + props.id
-  )
-  typeZones.value = await getTypeZone()
-})
 
 const cancel = () => {
   espace_selected.value = {}
