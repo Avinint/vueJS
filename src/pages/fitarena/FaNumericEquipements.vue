@@ -34,7 +34,7 @@
                 :key="i"
                 class="bg-white"
               >
-                <td class="flex items-center justify-center p-3">
+                <td class="flex w-2/12 p-3">
                   <Button
                     test="TdeleteClient"
                     borderless
@@ -50,7 +50,7 @@
                     @click="editEquipement(equipementTemp.id)"
                   />
                 </td>
-                <td class="px-6 py-4">
+                <td class="w-1/12 px-6 py-4">
                   <label
                     class="relative inline-flex cursor-pointer items-center"
                   >
@@ -69,9 +69,11 @@
                     ></span>
                   </label>
                 </td>
-                <td class="px-6 py-4">{{ equipementTemp.libelle }}</td>
-                <td class="px-6 py-4">{{ equipementTemp.ip }}</td>
-                <td class="px-6 py-4">
+                <td class="w-1/2 max-w-xs truncate break-all px-6 py-4">
+                  {{ equipementTemp.libelle }}
+                </td>
+                <td class="w-2/12 px-6 py-4">{{ equipementTemp.ip }}</td>
+                <td class="w-1/12 px-6 py-4">
                   <Button
                     label="Détails"
                     type="secondary"
