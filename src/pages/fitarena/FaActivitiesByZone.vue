@@ -71,7 +71,7 @@
               <InputRadio
                 :default="{
                   label: 'Aucun',
-                  value: 0
+                  value: 0,
                 }"
                 :disabled="readonly == true ? true : false"
                 name="mode_ecran_interface"
@@ -117,6 +117,29 @@
         </Modal>
       </form>
     </div>
+
+    <form @submit.prevent="deleteActivityValidation(deleteActivityId)">
+      <ValidationModal
+        v-if="delete_modal"
+        type="delete"
+        @cancel="delete_modal = false"
+      >
+      </ValidationModal>
+    </form>
+
+    <form @submit.prevent="updateActivityValidation()">
+      <ValidationModal
+        v-if="edit_modal"
+        type="edit"
+        @cancel="edit_modal = false"
+      >
+      </ValidationModal>
+    </form>
+
+    <form @submit.prevent="addActivityValidation()">
+      <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+      </ValidationModal>
+    </form>
   </Card>
 </template>
 
@@ -126,6 +149,7 @@ import { toast } from "vue3-toastify";
 
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
 import Select from "../../components/common/Select.vue";
@@ -138,16 +162,16 @@ import {
   patchActivitesByZones,
   postZoneActivite,
   deleteZoneActivite
-} from "../../api/activiteByZone";
-import { getZones, deleteZones } from "../../api/zone";
-import { getModes } from '../../api/mode';
-import { getParametres } from '../../api/parametre';
-import { getTypeZone } from '../../api/typeZone';
-import { getParametreZoneActivites } from '../../api/parametreZoneActivite';
-import { getEquipementsByZone } from '../../api/equipement';
-import { getActivites } from "../../api/activite";
-import { postSousZone } from '../../api/sousZone';
-import { postConfigurationZoneActivite } from '../../api/configuration';
+} from '../../api/activiteByZone.js';
+import { getZones, deleteZones } from '../../api/zone.js';
+import { getModes } from '../../api/mode.js';
+import { getParametres } from '../../api/parametre.js';
+import { getTypeZone } from '../../api/typeZone.js';
+import { getParametreZoneActivites } from '../../api/parametreZoneActivite.js';
+import { getEquipementsByZone } from '../../api/equipement.js';
+import { getActivites } from '../../api/activite.js';
+import { postSousZone } from '../../api/sousZone.js';
+import { postConfigurationZoneActivite } from '../../api/configuration.js';
 
 const props = defineProps(['id'])
 
@@ -169,6 +193,12 @@ const sous_zones = ref([]);
 const id_type_sous_zone = ref(0);
 const sousZoneParametres = ref({});
 const zoneEquipementsByType = ref({});
+const delete_modal = ref(false)
+const deleteActivityId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const zoneTemp = ref({})
+
 
 onMounted(async () => {
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
@@ -186,9 +216,9 @@ onMounted(async () => {
 const modifieActivite = async ({ actif, id }) => {
   try {
     await patchActivitesByZones({ actif }, id)
-    toast.success("Modification de l'activité avec succès")
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
@@ -270,7 +300,7 @@ const getSousZones = async (zoneId, activiteId) => {
 };
 
 const saveActiviteZone = async () => {
-  await postZoneActivite(zone_selected.value, activite_selected.value, {
+  zoneTemp.value = {
     actif: true,
     ordre: 0,
     parametres: [
@@ -283,16 +313,44 @@ const saveActiviteZone = async () => {
         id: parametre_mode_ecran_interface_video_scoring.value.id,
         codeParametre: parametre_mode_ecran_interface_video_scoring.value.code,
         valeur: mode_ecran_interface.value,
-      }
-    ]
-  });
+      },
+    ],
+  }
 
-  await saveSousZones(zone_selected.value, activite_selected.value);
+  if (modal_title.value.includes('Modifier')) {
+    edit_modal.value = true
+  } else {
+    add_modal.value = true
+  }
+}
 
+const updateActivityValidation = async () => {
+  activityValidation('Modification effectuée avec succès', 'Une erreur est survenue')
+};
+
+const addActivityValidation = async () => {
+  activityValidation('Ajout effectué avec succès', 'Une erreur est survenue')
+}
+
+const activityValidation = async (msgOk, msgNoOk) => {
+  try {
+    await postZoneActivite(
+      zone_selected.value,
+      activite_selected.value,
+      zoneTemp.value
+    )
+    await saveSousZones(zone_selected.value, activite_selected.value)
+    toast.success(msgOk)
+  } catch (e) {
+    toast.error(msgNoOk)
+  }
+
+  edit_modal.value = false
+  add_modal.value = false
   activiteZone_modal.value = false
   cancel()
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
-};
+}
 
 const newSousZone = (libelle) => {
   sous_zones.value.push({

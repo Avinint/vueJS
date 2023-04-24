@@ -24,7 +24,7 @@
                 borderless
                 icon="delete"
                 type="secondary"
-                @click="removeEspace(i)"
+                @click="removeEspace(esp.id)"
               />
               <Button
                 test="TeditClient"
@@ -44,7 +44,7 @@
                   @change="modifieEspace(esp)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                 ></div>
                 <span
                   class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -77,11 +77,35 @@
       @cancel="espace_modal = false"
     >
       <div class="flex items-center">
-        <Input :readonly="readonly" id="TEspaceLibelle" v-model="espace.libelle" :type="'text'" label="Nom" :required="true" class="w-full" />
+        <Input
+          id="TEspaceLibelle"
+          v-model="espace.libelle"
+          :readonly="readonly"
+          :type="'text'"
+          label="Nom"
+          :required="true"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
-        <Input v-if="!readonly" id="TEspaceOrdre" v-model="espace.ordre" :type="'number'" label="Ordre" :required="true" class="w-full" />
-        <Input v-else readonly id="TEspaceOrdre" v-model="espace.ordre" :type="'text'" label="Ordre" class="w-full" />
+        <Input
+          v-if="!readonly"
+          id="TEspaceOrdre"
+          v-model="espace.ordre"
+          :type="'number'"
+          label="Ordre"
+          :required="true"
+          class="w-full"
+        />
+        <Input
+          v-else
+          id="TEspaceOrdre"
+          v-model="espace.ordre"
+          readonly
+          :type="'text'"
+          label="Ordre"
+          class="w-full"
+        />
       </div>
       <div class="flex items-center">
         <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -96,7 +120,7 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
           ></div>
           <span
             class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -123,14 +147,34 @@
       </div>
     </Modal>
   </form>
+
+  <form @submit.prevent="deleteSpaceValidation(deleteSpaceId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="updateSpaceValidation()">
+    <ValidationModal v-if="edit_modal" type="edit" @cancel="edit_modal = false">
+    </ValidationModal>
+  </form>
+
+  <form @submit.prevent="addSpaceValidation()">
+    <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
+import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import Input from '../../components/common/Input.vue'
-import { onMounted, ref } from 'vue'
+import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import {
   deleteZones,
   getZones,
@@ -138,14 +182,21 @@ import {
   updateZones,
   patchZones,
 } from '../../api/zone.js'
-import { getTypeZone } from '../../api/typeZone'
-import { toast } from 'vue3-toastify'
 import {
   deleteZoneEquipement,
   postZoneEquipement,
-} from '../../api/zoneEquipement'
-import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
+} from '../../api/zoneEquipement.js'
+import { getTypeZone } from '../../api/typeZone.js'
+import { onMounted, ref } from 'vue'
+import { toast } from 'vue3-toastify'
+
 const props = defineProps(['id'])
+
+const delete_modal = ref(false)
+const deleteSpaceId = ref(0)
+const edit_modal = ref(false)
+const add_modal = ref(false)
+const espTemp = ref({})
 
 const espace_modal = ref(false)
 const readonly = ref(false)
@@ -159,6 +210,14 @@ const espace_selected = ref({})
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
+onMounted(async () => {
+  espaces.value = await getZones(
+    1,
+    '&typeZone.code=espace&fitArena=' + props.id
+  )
+  typeZones.value = await getTypeZone()
+})
+
 const addEspace = () => {
   cancel()
   espace_modal.value = true
@@ -166,9 +225,21 @@ const addEspace = () => {
   modal_title.value = 'Ajouter un espace'
 }
 
-const removeEspace = async (i) => {
-  const espaceTemp = espaces.value[i]
-  await deleteZones(espaceTemp.id)
+const removeEspace = (id) => {
+  deleteSpaceId.value = id
+  delete_modal.value = true
+}
+
+const deleteSpaceValidation = async (id) => {
+  try {
+    await deleteZones(id)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  delete_modal.value = false
+  deleteSpaceId.value = 0
   cancel()
   espaces.value = await getZones(
     '1',
@@ -180,9 +251,9 @@ const removeEspace = async (i) => {
 const modifieEspace = async ({ actif, id }) => {
   try {
     await patchZones({ actif }, id)
-    toast.success("Modification de l'espace avec succès")
+    toast.success('Modification effectuée avec succès')
   } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Une erreur est survenue')
   }
 }
 
@@ -209,15 +280,25 @@ const mapApiToData = (espaceTemp) => {
 
 const saveEspace = async () => {
   const espaceTemp = await getTypeZone(1, '&code=espace')
-  const espTemp = {
+
+  espTemp.value = {
     typeZone: '/api/type_zones/' + espaceTemp[0].id,
     fitArena: '/api/fit_arenas/' + props.id,
     ordre: espace.value.ordre,
     libelle: espace.value.libelle,
     actif: espace.value.actif == true ? espace.value.actif : false,
   }
+
   if (id_selected.value) {
-    const { data } = await updateZones(espTemp, id_selected.value)
+    edit_modal.value = true
+  } else {
+    add_modal.value = true
+  }
+}
+
+const updateSpaceValidation = async () => {
+  try {
+    await updateZones(espTemp, id_selected.value)
     await linkedEquipements(
       ajoutEquipementsNume.value.typeEquipements,
       id_selected.value
@@ -226,21 +307,12 @@ const saveEspace = async () => {
       ajoutEquipementsMoto.value.typeEquipements,
       id_selected.value
     )
-  } else {
-    try {
-      const data = await postZones(espTemp)
-      await linkedEquipements(
-        ajoutEquipementsNume.value.typeEquipements,
-        data.id
-      )
-      await linkedEquipements(
-        ajoutEquipementsMoto.value.typeEquipements,
-        data.id
-      )
-    } catch (e) {
-      console.error(e)
-    }
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
   }
+
+  edit_modal.value = false
   espace_modal.value = false
   cancel()
   espaces.value = await getZones(
@@ -249,18 +321,32 @@ const saveEspace = async () => {
   )
   typeZones.value = await getTypeZone()
 }
-onMounted(async () => {
+
+const addSpaceValidation = async () => {
+  try {
+    const data = await postZones(espTemp)
+    await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id)
+    await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id)
+    toast.success('Ajout effectué avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+
+  add_modal.value = false
+  espace_modal.value = false
+  cancel()
   espaces.value = await getZones(
     1,
     '&typeZone.code=espace&fitArena=' + props.id
   )
   typeZones.value = await getTypeZone()
-})
+}
 
 const cancel = () => {
   espace.value = {}
   espace_selected.value = {}
   readonly.value = false
+  id_selected.value = 0
 }
 
 const linkedEquipements = async (typeEquipements, zoneId) => {
