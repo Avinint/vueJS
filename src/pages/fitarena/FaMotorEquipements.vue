@@ -90,13 +90,13 @@
                   />
                 </td>
               </tr>
-              <tr v-if="equipementTemp.equipementModes.length">
+              <tr >
                 <td></td>
                 <td colspan="3">
                   <CardConfiguration>
                     <h3 class="pl-10 pt-2">Configuration</h3>
                     <table
-                      v-if="equipementTemp.equipementModes.length"
+                      v-if="equipement.equipementModes.length"
                       class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
                     >
                       <thead>
@@ -110,7 +110,7 @@
                         <tr
                           v-for="(
                             equipementMode, i
-                          ) in equipementTemp.equipementModes"
+                          ) in equipement.equipementModes"
                           :key="i"
                           class="bg-white"
                         >
@@ -246,7 +246,7 @@
             <tr
               v-for="(equipementMode, i) in equipement.equipementModes"
               :key="i"
-              class="bg-white"
+              class="bg-white items-center"
             >
               <td class="flex items-center justify-center p-3">
                 <Button
@@ -254,20 +254,20 @@
                   borderless
                   icon="delete"
                   type="secondary"
-                  @click="removeEquipementConfiguration(equipementMode.id)"
+                  @click="removeEquipementConfiguration(i)"
                 />
                 <Button
                   test="TeditClient"
                   borderless
                   icon="edit"
                   type="secondary"
-                  @click="editEquipementConfiguration(equipementMode.id)"
+                  @click="editEquipementConfiguration(i)"
                 />
               </td>
               <td class="px-6 py-4">
                 <Input
-                  v-model="equipementMode.mode.libelle"
-                  :readonly="equipementMode.mode.readonly"
+                  v-model="equipementMode.libelle"
+                  :readonly="equipementMode.readonly"
                 />
               </td>
               <td class="px-6 py-4">
@@ -431,13 +431,20 @@ const mapApiToData = (equipementTemp) => {
 }
 
 const addEquipementConfiguration = () => {
-  const mode = { libelle: '', type: '', readonly: false }
+  const mode = {libelle: '', type: '', readonly: false }
+  if (!equipement.value.hasOwnProperty('equipementModes'))
+    equipement.value.equipementModes = []
   equipement.value.equipementModes.push(mode)
 }
 
-const removeEquipementConfiguration = () => {}
+const removeEquipementConfiguration = (i) => {
+  delete equipement.value.equipementModes[i]
+}
 
-const editEquipementConfiguration = () => {}
+const editEquipementConfiguration = (i) => {
+  let equipementMode = equipement.value.equipementModes[i]
+  equipementMode.readonly = false
+}
 
 const saveEquipement = () => {
   equipmentTemp.value = {
@@ -479,7 +486,7 @@ const updateEquipmentValidation = async () => {
 
 const addEquipmentValidation = async () => {
   try {
-    await postEquipements(equipmentTemp)
+    await postEquipements(equipmentTemp.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
