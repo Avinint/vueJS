@@ -12,7 +12,7 @@
   interface Props {
     label?: string
     icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | '',
-    type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | '',
+    type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
     icon_placement?: 'right' | 'left'| '',
     borderless?: boolean
     submit: boolean

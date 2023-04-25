@@ -1,10 +1,10 @@
 <template>
-  <form @submit.prevent="sendCreneau()">
+  <form @submit.prevent="submitCreneau()">
     <Modal
       v-if="isOpen"
       :type="readonly ? 'visualiser' : 'classic'"
-      :title="modal_title"
-      @cancel="$emit('closeAddCreneau')"
+      :title="modalTitle"
+      @cancel="$emit('closeModalCreneau')"
     >
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Veuillez sélectionner le type créneau à créer.
@@ -92,18 +92,18 @@
         </label>
         <div class="grid grid-cols-2">
           <template v-for="activite in activites" :key="activite.id">
-            <div class="m-4 flex">
+            <div class="my-4 mr-10 flex justify-between">
               <Button
                 test="Tlogout"
                 type="secondary"
                 :label="activite.title"
-                class="w-60 hover:bg-blue-500 hover:text-white"
+                class="w-52 hover:bg-sky-600 hover:text-white"
                 :submit="false"
               />
               <Input
                 v-model="activite.price"
                 type="text"
-                class="w-24 text-center after:ml-1 after:content-[attr(suffix)]"
+                class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
                 suffix="€"
               />
             </div>
@@ -138,12 +138,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    typeAction: {
+      type: String,
+      default: 'create',
+    },
   },
-  emits: ['closeAddCreneau'],
+  emits: ['closeModalCreneau'],
   data() {
     return {
       typeCreneauList: [],
-      modal_title: 'Création de creneau',
       parametres: [],
       typeCreneau: '',
       selectedZone: '',
@@ -159,6 +162,18 @@ export default {
       return this.$dayjs(this.planningStore.dateInfo.startStr).format(
         'DD/MM/YYYY'
       )
+    },
+    modalTitle() {
+      switch(this.typeAction) {
+        case 'create':
+          return 'Création de creneau'
+          break
+        case 'edit':
+          return 'Modifier un creneau'
+          break
+        defaiult:
+          return 'Modifier un creneau'
+      } 
     },
     slotMinTimeNumber() {
       return Number(
@@ -248,15 +263,26 @@ export default {
         this.planningStore.timeSeparator
       )[1]
     },
-    sendCreneau() {
-      console.log(
-        this.typeCreneau,
-        this.title,
-        this.selectedZone,
-        this.planningStore.selectedDate,
-        this.activites
-      )
-      this.$emit('closeAddCreneau')
+    submitCreneau() {
+      if (this.typeAction === 'create') {
+        this.planningStore.addCreneau(
+          this.typeCreneau,
+          this.title,
+          this.selectedZone,
+          this.planningStore.selectedDate,
+          this.activites
+        )
+      }
+      if (this.thisAction === 'edit') {
+        this.planningStore.editCreneau(
+          this.typeCreneau,
+          this.title,
+          this.selectedZone,
+          this.planningStore.selectedDate,
+          this.activites
+        )
+      }
+      this.$emit('closeModalCreneau')
     },
   },
 }

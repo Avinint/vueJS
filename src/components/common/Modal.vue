@@ -44,7 +44,7 @@ import Button from './Button.vue'
 
 interface Props {
   title: string
-  type: 'classic' | 'alert'
+  type: 'classic' | 'alert' | 'visualiser'
 }
 
 const emit = defineEmits(['confirm', 'cancel'])

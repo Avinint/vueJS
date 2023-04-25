@@ -7,10 +7,11 @@
       :current-date-end="currentDateEnd"
       :current-week="currentWeek"
     />
-    <addCreneau
-      v-if="isModalAddCreneauOpen"
-      :is-open="isModalAddCreneauOpen"
-      @closeAddCreneau="isModalAddCreneauOpen = false"
+    <modalCreneau
+      v-if="isModalCreneauOpen"
+      :is-open="isModalCreneauOpen"
+      :type-action="actionType"
+      @closeModalCreneau="isModalCreneauOpen = false"
     />
     <FullCalendar ref="fullCalendar" :options="calendarOptions">
       <template #eventContent="arg">
@@ -32,7 +33,7 @@
 
 <script lang="ts">
 import PlanningNavigation from '@components/faPlanning/navigation.vue' // PlanningNavigation as navigation is an html reserved tag
-import addCreneau from '@components/faPlanning/addCreneau.vue'
+import modalCreneau from '@components/faPlanning/modalCreneau.vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -47,7 +48,7 @@ import Modal from '@components/common/Modal.vue'
 export default {
   components: {
     PlanningNavigation,
-    addCreneau,
+    modalCreneau,
     FullCalendar,
   },
   data() {
@@ -88,10 +89,11 @@ export default {
         },
       },
       calendarApi: {},
-      isModalAddCreneauOpen: false,
+      isModalCreneauOpen: false,
       currentDateStart: '',
       currentDateEnd: '',
       currentWeek: '',
+      actionType: '',
     }
   },
   computed: {
@@ -139,11 +141,13 @@ export default {
     },
     eventClick(eventClickInfo) {
       this.planningStore.setSelectedDate(eventClickInfo.event)
-      this.isModalAddCreneauOpen = true
+      this.actionType = 'edit'
+      this.isModalCreneauOpen = true
     },
     select(selectionInfo) {
       this.planningStore.setSelectedDate(selectionInfo)
-      this.isModalAddCreneauOpen = true
+      this.actionType = 'create'
+      this.isModalCreneauOpen = true
     },
   },
 }
