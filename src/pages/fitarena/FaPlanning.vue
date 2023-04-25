@@ -137,12 +137,12 @@ export default {
         )
       )
     },
-    eventClick(info) {
-      this.planningStore.setSelectedDate(info)
+    eventClick(eventClickInfo) {
+      this.planningStore.setSelectedDate(eventClickInfo.event)
       this.isModalAddCreneauOpen = true
     },
-    select(info) {
-      this.planningStore.setSelectedDate(info)
+    select(selectionInfo) {
+      this.planningStore.setSelectedDate(selectionInfo)
       this.isModalAddCreneauOpen = true
     },
   },
