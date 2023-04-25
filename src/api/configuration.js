@@ -17,24 +17,6 @@ export const getConfigActiviteById = async (activite_id) => {
   return response.json()
 }
 
-export const getConfigZoneByActivites = async (activite_id, zone_id) => {
-  const response = await $fetch(
-    `${
-      import.meta.env.VITE_API_URL
-    }/api/configuration/activite/${activite_id}/zone/${zone_id}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
-}
-
 export const getConfigFitArenaById = async (fitArena_id) => {
   const response = await $fetch(
     `${
@@ -101,4 +83,20 @@ export const postConfig = async (config) => {
   )
   if (response.status !== 201) throw response
   return response.json()
+}
+
+// data = { equipements, parametres }
+export const postConfigurationZoneActivite = async (zoneId, activiteId, data) => {
+    const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/configuration/zone/${zoneId}/activite/${activiteId}`, {
+        method: 'post',
+        headers: {
+            ...defaultHeaders,
+            'Content-Type': 'application/ld+json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify(data)
+    })
+    if (response.status !== 201)
+        throw response
+    return response.json()
 }
