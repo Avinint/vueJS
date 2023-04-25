@@ -10,7 +10,6 @@ export const usePlanningStore = defineStore('planning', {
     filter: {
       zone: [],
     },
-    currentDate: {},
     selectedDate: {
       date: '',
       day: '',
@@ -23,6 +22,7 @@ export const usePlanningStore = defineStore('planning', {
         hour: 0,
       },
     },
+    currentViewName: 'week',
     slotMinTime: '07:00:00',
     slotMaxTime: '22:00:00',
     timeSeparator: ':',
@@ -36,21 +36,6 @@ export const usePlanningStore = defineStore('planning', {
     getNumberActiveZone(state) {
       const nbZone = state.filter.zone.length
       return nbZone === 0 ? '' : `(${nbZone})`
-    },
-    getCurrentWeek(state) {
-      var d = new Date(state.currentDate.start)
-      d.setHours(0, 0, 0, 0)
-      d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
-      var week1 = new Date(d.getFullYear(), 0, 4)
-      return (
-        1 +
-        Math.round(
-          ((d.getTime() - week1.getTime()) / 86400000 -
-            3 +
-            ((week1.getDay() + 6) % 7)) /
-            7
-        )
-      )
     },
     getSelectedFormatedStart(state) {
       return (

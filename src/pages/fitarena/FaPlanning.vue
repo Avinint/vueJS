@@ -3,6 +3,9 @@
     <PlanningNavigation
       :calendar-api="calendarApi"
       @filterUpdated="renderEvents"
+      :current-date-start="currentDateStart"
+      :current-date-end="currentDateEnd"
+      :current-week="currentWeek"
     />
     <addCreneau
       v-if="isModalAddCreneauOpen"
@@ -86,6 +89,9 @@ export default {
       },
       calendarApi: {},
       isModalAddCreneauOpen: false,
+      currentDateStart: '',
+      currentDateEnd: '',
+      currentWeek: '',
     }
   },
   computed: {
@@ -112,7 +118,24 @@ export default {
       this.calendarOptions.events = this.planningStore.creneaux
     },
     refreshDates(dateInfo) {
-      this.planningStore.dateInfo = dateInfo
+      this.currentWeek = this.getWeekNumber(dateInfo.start)
+      this.currentDateStart = this.$dayjs(dateInfo.start).format('D MMMM')
+      this.currentDateEnd = this.$dayjs(dateInfo.end - 1).format('D MMMM YYYY')
+    },
+    getWeekNumber: function (date) {
+      var d = new Date(date)
+      d.setHours(0, 0, 0, 0)
+      d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
+      var week1 = new Date(d.getFullYear(), 0, 4)
+      return (
+        1 +
+        Math.round(
+          ((d.getTime() - week1.getTime()) / 86400000 -
+            3 +
+            ((week1.getDay() + 6) % 7)) /
+            7
+        )
+      )
     },
     eventClick(info) {
       this.planningStore.setSelectedDate(info)

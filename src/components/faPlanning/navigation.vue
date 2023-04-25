@@ -26,7 +26,7 @@
             @click="today()"
           />
           <Button
-            :label="currentViewName === 'day' ? 'Journée >' : 'Semaine >'"
+            :label="planningStore.currentViewName === 'day' ? 'Journée >' : 'Semaine >'"
             type="secondary"
             icon=""
             :submit="false"
@@ -46,9 +46,9 @@
             @click="prev()"
           />
           <div class="cursor-default px-4">
-            {{ planningStore.getCurrentDateStart }}
-            <template v-if="currentViewName === 'day'">
-              - {{ planningStore.getCurrentDateEnd }}
+            {{ currentDateStart }}
+            <template v-if="planningStore.currentViewName === 'day'">
+              - {{ currentDateEnd }}
             </template>
           </div>
           <Button
@@ -60,7 +60,7 @@
           />
           <Button
             class="cursor-default"
-            :label="'S' + planningStore.getCurrentWeek"
+            :label="'S' + currentWeek"
             type="secondary"
             icon="next"
             :submit="false"
@@ -88,10 +88,21 @@ export default {
       type: Object || null,
       required: true,
     },
+    currentDateStart: {
+      type: String,
+      required: true,
+    },
+    currentDateEnd: {
+      type: String,
+      required: true,
+    },
+    currentWeek: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
-      currentViewName: 'week',
       zones: [],
     }
   },
@@ -139,11 +150,11 @@ export default {
     viewWeek() {
       this.calendarApi.changeView('timeGridWeek')
       this.clickFilter(this.zones[0].id) // select first zone
-      this.currentViewName = 'day'
+      this.planningStore.currentViewName = 'day'
     },
     viewDay() {
       this.calendarApi.changeView('resourceTimeGridDay')
-      this.currentViewName = 'week'
+      this.planningStore.currentViewName = 'week'
     },
   },
 }
