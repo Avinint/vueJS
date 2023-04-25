@@ -46,9 +46,9 @@
             @click="prev()"
           />
           <div class="cursor-default px-4">
-            {{ planningStore.getStartDate }}
+            {{ planningStore.getCurrentDateStart }}
             <template v-if="currentViewName === 'day'">
-              - {{ planningStore.getEndDate }}
+              - {{ planningStore.getCurrentDateEnd }}
             </template>
           </div>
           <Button

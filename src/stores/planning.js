@@ -10,7 +10,22 @@ export const usePlanningStore = defineStore('planning', {
     filter: {
       zone: [],
     },
-    dateInfo: {},
+    currentDate: {},
+    selectedDate: {
+      date: '',
+      day: '',
+      start: {
+        minute: 0,
+        hour: 0,
+      },
+      end: {
+        minute: 0,
+        hour: 0,
+      },
+    },
+    slotMinTime: '07:00:00',
+    slotMaxTime: '22:00:00',
+    timeSeparator: ':',
   }),
   getters: {
     isZoneActive(state) {
@@ -22,14 +37,8 @@ export const usePlanningStore = defineStore('planning', {
       const nbZone = state.filter.zone.length
       return nbZone === 0 ? '' : `(${nbZone})`
     },
-    getStartDate(state) {
-      return dayjs(state.dateInfo.start).format('D MMMM')
-    },
-    getEndDate(state) {
-      return dayjs(state.dateInfo.end).format('D MMMM YYYY')
-    },
     getCurrentWeek(state) {
-      var d = new Date(state.dateInfo.start)
+      var d = new Date(state.currentDate.start)
       d.setHours(0, 0, 0, 0)
       d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
       var week1 = new Date(d.getFullYear(), 0, 4)
@@ -41,6 +50,20 @@ export const usePlanningStore = defineStore('planning', {
             ((week1.getDay() + 6) % 7)) /
             7
         )
+      )
+    },
+    getSelectedFormatedStart(state) {
+      return (
+        state.selectedDate.start.hour +
+        state.timeSeparator +
+        state.selectedDate.start.minute
+      )
+    },
+    getSelectedFormatedEnd(state) {
+      return (
+        state.selectedDate.end.hour +
+        state.timeSeparator +
+        state.selectedDate.end.minute
       )
     },
   },
@@ -158,9 +181,45 @@ export const usePlanningStore = defineStore('planning', {
       } else {
         this.creneaux = this.creneauxFetched.filter((creneau) => {
           return this.filter.zone.some((zoneId) => {
-            return creneau.zones.includes(zoneId)
+            return creneau.zones?.includes(zoneId)
           })
         })
+      }
+    },
+    setSelectedDate(info) {
+      this.selectedDate.date = info.start
+      this.selectedDate.day = dayjs(info.start).format('DD / MM / YYYY')
+      this.selectedDate.start.hour = dayjs(info.start).format('H')
+      this.selectedDate.start.minute = dayjs(info.start).format('mm')
+      this.selectedDate.end.hour = dayjs(info.end).format('H')
+      this.selectedDate.end.minute = dayjs(info.end).format('mm')
+    },
+    addCreneau(creneau) {
+      // query
+      this.creneauxFetched.push(creneau)
+    },
+    editCreneau(creneau) {
+      // query
+      const index = this.creneauxFetched.findIndex(
+        (oldCreneau) => oldCreneau.id === creneau.id
+      )
+      if (index) {
+        this.creneauxFetched[index] = creneau
+        this.applyFilter()
+      } else {
+        console.log('no creneau to edit')
+      }
+    },
+    deleteCreneau(creneau) {
+      // query
+      const index = this.creneauxFetched.findIndex(
+        (oldCreneau) => oldCreneau.id === creneau.id
+      )
+      if (index) {
+        this.creneauxFetched.splice(index, 1)
+        this.applyFilter()
+      } else {
+        console.log('no creneau to delete')
       }
     },
   },

@@ -59,14 +59,10 @@ input[type=radio] {
 }
 
 input[type=radio]+label {
-  margin-right: .5em;
-  cursor: pointer;
-  padding: .25em 1em;
-  border: 1px solid #ddd;
-  border-radius: .5em;
+  @apply cursor-pointer px-6 py-3 rounded-lg border-none text-sm text-black bg-neutral-200 mr-9 mb-3 inline-block drop-shadow-sm;
 }
 
 input[type=radio]:checked+label {
-  background-color: #ddd;
+  @apply bg-sky-600 text-white;
 }
 </style>

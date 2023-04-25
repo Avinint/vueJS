@@ -4,18 +4,19 @@
       :calendar-api="calendarApi"
       @filterUpdated="renderEvents"
     />
-    <FullCalendar
-      ref="fullCalendar"
-      class="demo-app-calendar"
-      :options="calendarOptions"
-    >
+    <addCreneau
+      v-if="isModalAddCreneauOpen"
+      :is-open="isModalAddCreneauOpen"
+      @closeAddCreneau="isModalAddCreneauOpen = false"
+    />
+    <FullCalendar ref="fullCalendar" :options="calendarOptions">
       <template #eventContent="arg">
         <div class="flex h-full items-center">
           <div class="h-full w-2 rounded-l-xl bg-red-500"></div>
           <div class="flex grow flex-col pl-3 text-xs text-black">
             <span class="">
-              {{ $dayjs(arg.event.start).format('h:mm') }} -
-              {{ $dayjs(arg.event.end).format('h:mm') }}
+              {{ $dayjs(arg.event.start).format('H:mm') }} -
+              {{ $dayjs(arg.event.end).format('H:mm') }}
               <br />{{ arg.event.extendedProps.activites }}
             </span>
             <span class="">{{ arg.event.title }}</span>
@@ -27,7 +28,8 @@
 </template>
 
 <script lang="ts">
-import PlanningNavigation from '@components/faPlanning/navigation.vue'
+import PlanningNavigation from '@components/faPlanning/navigation.vue' // PlanningNavigation as navigation is an html reserved tag
+import addCreneau from '@components/faPlanning/addCreneau.vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -37,10 +39,12 @@ import frLocale from '@fullcalendar/core/locales/fr'
 import { getActivites } from '@api/activite.js'
 import { usePlanningStore } from '@stores/planning.js'
 import { mapStores } from 'pinia'
+import Modal from '@components/common/Modal.vue'
 
 export default {
   components: {
     PlanningNavigation,
+    addCreneau,
     FullCalendar,
   },
   data() {
@@ -59,8 +63,11 @@ export default {
         selectable: true,
         selectMirror: true,
         dayMaxEvents: true,
+        slotEventOverlap: true,
         weekends: true,
         datesSet: this.refreshDates,
+        eventClick: this.eventClick,
+        select: this.select,
         dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'long' },
         nowIndicator: true,
         eventDisplay: 'block',
@@ -78,12 +85,15 @@ export default {
         },
       },
       calendarApi: {},
+      isModalAddCreneauOpen: false,
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
   },
   async mounted() {
+    this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
+    this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
     this.calendarApi = this.$refs.fullCalendar.getApi()
     this.setRessources()
     this.planningStore.fetch()
@@ -103,6 +113,14 @@ export default {
     },
     refreshDates(dateInfo) {
       this.planningStore.dateInfo = dateInfo
+    },
+    eventClick(info) {
+      this.planningStore.setSelectedDate(info)
+      this.isModalAddCreneauOpen = true
+    },
+    select(info) {
+      this.planningStore.setSelectedDate(info)
+      this.isModalAddCreneauOpen = true
     },
   },
 }

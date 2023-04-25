@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 import router from './router'
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
+import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -12,4 +13,4 @@ const app = createApp(App)
 dayjs.locale('fr')
 app.config.globalProperties.$dayjs = dayjs
 
-app.use(router).use(pinia).mount('#app')
+app.use(VueTailwindDatepicker).use(router).use(pinia).mount('#app')
