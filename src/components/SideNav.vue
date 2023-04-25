@@ -8,7 +8,7 @@
       </router-link>
     </div>
     <div class="h-full overflow-y-auto bg-white ">
-      <div v-for="(link, i) in links" class="flex flex-col items-center text-base font-normal text-gray-900 ">
+      <div v-for="(link, i) in links" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900 ">
         <div class="flex items-center ml-10 px-1 py-2 w-full"
           :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 text-sm'">
           <svg @click="openSubLinks(i)" class="cursor-pointer h-8 w-8"
@@ -22,7 +22,7 @@
         </div>
         <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.sub_links_open && link.sub_links.length"
           class="w-full flex flex-col bg-gray-100">
-          <div class="flex w-full  pl-3 pr-3">
+          <div class="flex w-full pl-3 pr-3">
             <svg @click="openSubSubLinks(i, sub_i)" class="cursor-pointer h-8 w-8"
               :class="sub_link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"
               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -60,7 +60,7 @@ let links: Link[] = reactive([
   },
   {
     label: 'Clients',
-    path: 'clients',
+    path: '/clients',
     icon: '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.625 16.375V4.23438H4.23438V0.625H12.7656V7.84375H16.375V16.375H9.65938V12.7656H7.34063V16.375H0.625ZM1.9375 15.0625H4.23438V12.7656H1.9375V15.0625ZM1.9375 11.4531H4.23438V9.15625H1.9375V11.4531ZM1.9375 7.84375H4.23438V5.54688H1.9375V7.84375ZM5.54688 11.4531H7.84375V9.15625H5.54688V11.4531ZM5.54688 7.84375H7.84375V5.54688H5.54688V7.84375ZM5.54688 4.23438H7.84375V1.9375H5.54688V4.23438ZM9.15625 11.4531H11.4531V9.15625H9.15625V11.4531ZM9.15625 7.84375H11.4531V5.54688H9.15625V7.84375ZM9.15625 4.23438H11.4531V1.9375H9.15625V4.23438ZM12.7656 15.0625H15.0625V12.7656H12.7656V15.0625ZM12.7656 11.4531H15.0625V9.15625H12.7656V11.4531Z" fill="#DE001A"/></svg>'
   },
   {
