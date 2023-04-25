@@ -1,15 +1,15 @@
 <template>
-  <div class="cmp_zones_ajout_equipement rounded-md border border-gray-300 p-4">
-    <h2 class="pt-2 pb-5 text-lg">
+  <div class="rounded-md border border-gray-300 p-4">
+    <h2 class="pb-5 pt-2 text-lg">
       Ajout d'équipements {{ typeEquipementTextes }}
     </h2>
 
     <div
       v-for="(type, typeIdx) in typeEquipements"
       :key="typeIdx"
-      class="pt-2 pb-5"
+      class="pb-5 pt-2"
     >
-      <h2 class="pt-2 pb-5">{{ type.libelle }}</h2>
+      <h2 class="pb-5 pt-2">{{ type.libelle }}</h2>
       <div>
         <template
           v-for="(equipement, equipementIdx) in type.equipements"
@@ -20,14 +20,15 @@
             class="flex items-center justify-between"
           >
             {{ equipement.libelle }}
-            <div>
+            <div class="flex">
               <Button
                 label="Détails"
                 type="secondary"
                 class="mr-4"
                 @click="detailsEquipement(typeIdx, equipementIdx)"
               />
-              <Button v-if="!readonly"
+              <Button
+                v-if="!readonly"
                 borderless
                 icon="delete"
                 type="secondary"
@@ -39,9 +40,10 @@
           </div>
         </template>
 
-        <select v-if="!readonly"
+        <select
+          v-if="!readonly"
           v-model="equipementSelectionne[typeIdx]"
-          class="block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="mt-2 block w-1/3 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
           @change="addEquipementToZone(typeIdx)"
         >
           <option value="" selected="selected">Ajouter</option>
@@ -84,7 +86,7 @@ const props = defineProps({
   typeEquipement: String,
   fa: Number,
   zone: Number,
-  readonly: Boolean
+  readonly: Boolean,
 })
 
 const typeEquipements = ref([])
@@ -154,10 +156,4 @@ const detailsEquipement = (typeIdx, equipementIdx) => {
 defineExpose({ typeEquipements })
 </script>
 
-<style scoped>
-.cmp_zones_ajout_equipement {
-  /* border: 1px solid darkgray;
-    border-radius: 6px;
-    padding: 1em; */
-}
-</style>
+<style scoped></style>
