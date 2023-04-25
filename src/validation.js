@@ -11,7 +11,7 @@ export const emailValidation = (val) => {
   if (match && match.length) {
     return true
   }
-  throw 'Verifier votre email'
+  throw 'Vérifier votre email'
 }
 
 export const requiredValidation = (val) => {
@@ -20,13 +20,13 @@ export const requiredValidation = (val) => {
 
 export const maxLengthValidation = (max) => {
   return (val) => {
-    if (val.length > max) throw 'Maximum de caracteres depassés'
+    if (val.length > max) throw 'Maximum de caractères dépassés'
   }
 }
 
 export const lengthValidation = (min, max) => {
   return (val) => {
     if (val.length < min || val.length > max)
-      throw `Le nombre de caracteres doit etre entre ${min} et ${max}`
+      throw `Le nombre de caractères doit être entre ${min} et ${max}`
   }
 }

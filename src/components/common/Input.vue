@@ -1,8 +1,10 @@
 <template>
   <div class="flex" :class="props.inline ? 'items-center' : 'flex-col'">
     <InputLabel :for="props.id">{{ label }}</InputLabel>
-    <input :readonly="props.readonly" :id="props.id" @input="inputValitation" :value="props.modelValue" :type="props.type" :required="props.required" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder">
-    <p v-html="error"></p>
+    <div class="w-full">
+      <input :readonly="props.readonly" :id="props.id" @input="inputValidation" :value="props.modelValue" :type="props.type" :required="props.required" :pattern="props.pattern" :minlength="props.minlength" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder">
+      <p v-html="error"></p>
+    </div>
   </div>
 </template>
 
@@ -22,7 +24,10 @@
     type: string
     validation?: ((val: any) => boolean | string)[]
     valid: boolean
-    required: boolean
+    required: boolean,
+    pattern: string,
+    minlength: number,
+    maxlength: number
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -35,7 +40,7 @@
     id: "",
     validation: [],
     valid: true,
-    required: false
+    required: false,
   })
 
   const emits = defineEmits<{
@@ -43,7 +48,7 @@
     (e: 'update:valid', valid: boolean): void
   }>()
 
-  const inputValitation = ($event) => {
+  const inputValidation = ($event) => {
     const val = $event.target.value
     error.value = ""
     emits('update:valid', true)

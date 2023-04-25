@@ -205,6 +205,7 @@
           label="Adresse IP"
           :required="true"
           class="w-full"
+          pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
         />
       </div>
       <div class="flex items-center">

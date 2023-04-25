@@ -148,6 +148,7 @@
                 label="Code Postal"
                 class="w-full"
                 :required="true"
+                pattern="[0-9]{5}"
               />
             </div>
             <div class="flex items-center">
@@ -159,6 +160,7 @@
                 label="Ville"
                 class="w-full"
                 :required="true"
+                pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï-]{1,50}"
               />
             </div>
           </div>
@@ -221,16 +223,19 @@
                 :type="'text'"
                 label="Numéro de téléphone"
                 class="w-full"
+                pattern="[0-9]{10}"
               />
             </div>
             <div class="flex items-center">
               <Input
                 id="TrefEmail"
                 v-model="exploit_referent.email"
+                v-model:valid="validation.email"
                 :readonly="readonly"
                 :type="'text'"
                 label="Email"
                 class="w-full"
+                :validation="[emailValidation]"
               />
             </div>
           </Card>
@@ -286,11 +291,13 @@
               <Input
                 id="TcomMail"
                 v-model="community_manager.email"
+                v-model:valid="validation.email2"
                 :readonly="readonly"
                 :type="'text'"
                 label="Email"
                 class="w-full"
                 :required="true"
+                :validation="[emailValidation]"
               />
             </div>
           </Card>
@@ -344,6 +351,7 @@ import {
   updateClient,
 } from '../api/client.js'
 import { getAdresses } from '../api/address.js'
+import { emailValidation, isValid } from '../validation.js'
 import { onMounted, ref } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -375,6 +383,8 @@ const readonly = ref(true)
 const exploit_referents = ref([])
 const community_managers = ref([])
 
+const validation = ref({})
+
 onMounted(async () => {
   try {
     clients.value = await getClients(1)
@@ -400,6 +410,7 @@ const refExploitationIsValid = () => {
 
 const saveClient = () => {
   if (!refExploitationIsValid()) return // IL FAUT QU'AU MOINS UN DES CHAMPS SOIT REMPLI POUR ENREGISTRER LA MODIFICATION / L'AJOUT
+  if (!isValid(validation)) return
 
   client.value = {
     nom: name.value,

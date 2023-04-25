@@ -262,7 +262,7 @@ const activite_selected = ref({})
 const modal_title = ref('')
 
 onMounted(async () => {
-  activites.value = await getActivites(props.id)
+  activites.value = await getActivites(props.id, 1, '&order=asc')
   typeActivites.value = await getTypeActivites()
 })
 
