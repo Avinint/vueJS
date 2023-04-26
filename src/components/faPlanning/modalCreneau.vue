@@ -167,10 +167,9 @@ export default {
       switch (this.typeAction) {
         case 'create':
           return 'Création de creneau'
-          break
         case 'edit':
           return 'Modifier un creneau'
-          break
+        default:
           return 'Modifier un creneau'
       }
     },
@@ -271,13 +270,6 @@ export default {
     submitCreneau() {
       if (this.typeAction === 'create') {
         this.planningStore.addCreneau(
-          // id: '',
-          // dateDebut: '2023-04-26T10:00:00.000+00:00',
-          // dateFinActivite: '2023-04-26T10:50:00.000+00:00',
-          // dateSortie: '2023-04-26T11:00:00.000+00:00',
-          // titre: this.title,
-          // zones: [19, 4, 21],
-          // activite: 1,
           this.typeCreneau,
           this.title,
           this.selectedZone,

@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
-import { getPlanning } from '@api/planning.js'
+import {
+  getPlanning,
+  postCreneau,
+  updateCreneau,
+  deleteCreneau,
+} from '@api/planning.js'
 import dayjs from 'dayjs'
 
 export const usePlanningStore = defineStore('planning', {
@@ -84,28 +89,31 @@ export const usePlanningStore = defineStore('planning', {
       this.selectedCreneau.end.hour = dayjs(info.end).format('H')
       this.selectedCreneau.end.minute = dayjs(info.end).format('mm')
     },
-    addCreneau(creneau) {
+    async addCreneau(creneau) {
       // query
-      this.creneauxFetched.push(creneau)
+      await postCreneau(creneau)
+      this.creneaux.push(creneau)
     },
-    editCreneau(creneau) {
+    async editCreneau(creneau) {
       // query
-      const index = this.creneauxFetched.findIndex(
+      await updateCreneau(creneau)
+      const index = this.creneaux.findIndex(
         (oldCreneau) => oldCreneau.id === creneau.id
       )
       if (index) {
-        this.creneauxFetched[index] = creneau
+        this.creneaux[index] = creneau
       } else {
         console.log('no creneau to edit')
       }
     },
-    deleteCreneau(creneau) {
+    async dropCreneau(creneau) {
       // query
-      const index = this.creneauxFetched.findIndex(
+      await deleteCreneau(creneau)
+      const index = this.creneaux.findIndex(
         (oldCreneau) => oldCreneau.id === creneau.id
       )
       if (index) {
-        this.creneauxFetched.splice(index, 1)
+        this.creneaux.splice(index, 1)
       } else {
         console.log('no creneau to delete')
       }
