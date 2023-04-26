@@ -26,7 +26,11 @@
             @click="today()"
           />
           <Button
-            :label="planningStore.currentViewName === 'day' ? 'Journée >' : 'Semaine >'"
+            :label="
+              planningStore.currentViewName === 'day'
+                ? 'Journée >'
+                : 'Semaine >'
+            "
             type="secondary"
             icon=""
             :submit="false"
@@ -135,7 +139,7 @@ export default {
           this.planningStore.toggleZone(zoneId)
           break
       }
-      this.$emit('filterUpdated')
+      this.$emit('filter-updated')
     },
     toggleView() {
       switch (this.calendarApi.currentData.currentViewType) {

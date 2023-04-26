@@ -2,10 +2,10 @@
   <div class="fa-planning">
     <PlanningNavigation
       :calendar-api="calendarApi"
-      @filterUpdated="renderEvents"
       :current-date-start="currentDateStart"
       :current-date-end="currentDateEnd"
       :current-week="currentWeek"
+      @filter-updated="planningStore.applyFilter"
     />
     <modalCreneau
       v-if="isModalCreneauOpen"
@@ -100,12 +100,12 @@ export default {
     ...mapStores(usePlanningStore),
   },
   async mounted() {
-    this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
-    this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
     this.calendarApi = this.$refs.fullCalendar.getApi()
     this.setRessources()
-    this.planningStore.fetch()
-    this.renderEvents()
+    await this.planningStore.fetch()
+    this.calendarOptions.events = this.planningStore.creneaux
+    this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
+    this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
   },
   methods: {
     async setRessources() {
@@ -115,9 +115,6 @@ export default {
         activite.title = activite.libelle
       })
       this.calendarOptions.resources = activites
-    },
-    renderEvents() {
-      this.calendarOptions.events = this.planningStore.creneaux
     },
     refreshDates(dateInfo) {
       this.currentWeek = this.getWeekNumber(dateInfo.start)
@@ -140,12 +137,12 @@ export default {
       )
     },
     eventClick(eventClickInfo) {
-      this.planningStore.setSelectedDate(eventClickInfo.event)
+      this.planningStore.setSelectedCreneau(eventClickInfo.event)
       this.actionType = 'edit'
       this.isModalCreneauOpen = true
     },
     select(selectionInfo) {
-      this.planningStore.setSelectedDate(selectionInfo)
+      this.planningStore.setSelectedCreneau(selectionInfo)
       this.actionType = 'create'
       this.isModalCreneauOpen = true
     },

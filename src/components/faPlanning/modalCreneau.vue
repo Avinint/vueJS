@@ -7,7 +7,7 @@
       @cancel="$emit('closeModalCreneau')"
     >
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-        Veuillez sélectionner le type créneau à créer.
+        Veuillez sélectionner le type créneau.
       </label>
       <div class="py-3">
         <InputRadio
@@ -18,7 +18,7 @@
       </div>
       <div>
         <Input
-          v-model="title"
+          v-model="planningStore.selectedCreneau.title"
           :inline="false"
           :required="true"
           label="Ajouter un titre à votre créneau"
@@ -33,7 +33,7 @@
             Date du créneau
           </label>
           <vue-tailwind-datepicker
-            v-model="planningStore.selectedDate.day"
+            v-model="planningStore.selectedCreneau.day"
             i18n="fr"
             as-single
             :formatter="{ date: 'DD / MM / YYYY' }"
@@ -94,11 +94,11 @@
           <template v-for="activite in activites" :key="activite.id">
             <div class="my-4 mr-10 flex justify-between">
               <Button
-                test="Tlogout"
                 type="secondary"
                 :label="activite.title"
                 class="w-52 hover:bg-sky-600 hover:text-white"
                 :submit="false"
+                @click=""
               />
               <Input
                 v-model="activite.price"
@@ -153,7 +153,7 @@ export default {
       title: '',
       startHourMinute: '',
       endHourMinute: '',
-      activites: '',
+      activites: [],
     }
   },
   computed: {
@@ -164,16 +164,15 @@ export default {
       )
     },
     modalTitle() {
-      switch(this.typeAction) {
+      switch (this.typeAction) {
         case 'create':
           return 'Création de creneau'
           break
         case 'edit':
           return 'Modifier un creneau'
           break
-        defaiult:
           return 'Modifier un creneau'
-      } 
+      }
     },
     slotMinTimeNumber() {
       return Number(
@@ -192,20 +191,24 @@ export default {
     listStart() {
       let list = []
       for (let i = this.slotMinTimeNumber; i < this.slotMaxTimeNumber; i++) {
-        list.push(i + this.planningStore.timeSeparator + '00')
-        list.push(i + this.planningStore.timeSeparator + '30')
+        for (let y = 0; y < 55; y += 5) {
+          const minutes = y.toString().length === 1 ? '0' + y : y
+          list.push(i + this.planningStore.timeSeparator + minutes)
+        }
       }
       return list
     },
     listEnd() {
       let list = []
       for (
-        let i = this.planningStore.selectedDate.start.hour;
+        let i = this.planningStore.selectedCreneau.start.hour;
         i < this.slotMaxTimeNumber;
         i++
       ) {
-        list.push(i + this.planningStore.timeSeparator + '00')
-        list.push(i + this.planningStore.timeSeparator + '30')
+        for (let y = 5; y < 55; y += 5) {
+          const minutes = y.toString().length === 1 ? '0' + y : y
+          list.push(i + this.planningStore.timeSeparator + minutes)
+        }
       }
       return list
     },
@@ -217,21 +220,25 @@ export default {
           id: 3,
           title: 'Futsal',
           price: 80,
+          selected: false,
         },
         {
           id: 4,
           title: 'Basket',
           price: 80,
+          selected: false,
         },
         {
           id: 5,
           title: 'Tennis',
           price: 80,
+          selected: false,
         },
         {
           id: 6,
           title: 'Handball',
           price: 80,
+          selected: false,
         },
       ]
     },
@@ -248,37 +255,42 @@ export default {
   },
   methods: {
     storeDateStart() {
-      this.planningStore.selectedDate.start.hour = this.startHourMinute.split(
-        this.planningStore.timeSeparator
-      )[0]
-      this.planningStore.selectedDate.start.minute = this.startHourMinute.split(
-        this.planningStore.timeSeparator
-      )[1]
+      this.planningStore.selectedCreneau.start.hour =
+        this.startHourMinute.split(this.planningStore.timeSeparator)[0]
+      this.planningStore.selectedCreneau.start.minute =
+        this.startHourMinute.split(this.planningStore.timeSeparator)[1]
     },
     storeDateEnd() {
-      this.planningStore.selectedDate.end.hour = this.endHourMinute.split(
+      this.planningStore.selectedCreneau.end.hour = this.endHourMinute.split(
         this.planningStore.timeSeparator
       )[0]
-      this.planningStore.selectedDate.end.minute = this.endHourMinute.split(
+      this.planningStore.selectedCreneau.end.minute = this.endHourMinute.split(
         this.planningStore.timeSeparator
       )[1]
     },
     submitCreneau() {
       if (this.typeAction === 'create') {
         this.planningStore.addCreneau(
+          // id: '',
+          // dateDebut: '2023-04-26T10:00:00.000+00:00',
+          // dateFinActivite: '2023-04-26T10:50:00.000+00:00',
+          // dateSortie: '2023-04-26T11:00:00.000+00:00',
+          // titre: this.title,
+          // zones: [19, 4, 21],
+          // activite: 1,
           this.typeCreneau,
           this.title,
           this.selectedZone,
-          this.planningStore.selectedDate,
+          this.planningStore.selectedCreneau,
           this.activites
         )
       }
-      if (this.thisAction === 'edit') {
+      if (this.typeAction === 'edit') {
         this.planningStore.editCreneau(
           this.typeCreneau,
           this.title,
           this.selectedZone,
-          this.planningStore.selectedDate,
+          this.planningStore.selectedCreneau,
           this.activites
         )
       }
