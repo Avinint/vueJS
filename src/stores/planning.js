@@ -64,6 +64,7 @@ export const usePlanningStore = defineStore('planning', {
         creneau.start = creneau.dateDebut
         creneau.end = creneau.dateSortie
         creneau.title = creneau.titre
+        creneau.idCreneau = creneau.id
         return creneau
       })
     },
@@ -78,7 +79,7 @@ export const usePlanningStore = defineStore('planning', {
       }
     },
     applyFilter() {
-      console.log('apply filters')
+      // console.log('apply filters')
     },
     setSelectedCreneau(info) {
       this.selectedCreneau.title = info.title
@@ -94,17 +95,18 @@ export const usePlanningStore = defineStore('planning', {
       await postCreneau(creneau)
       this.creneaux.push(creneau)
     },
-    async editCreneau(creneau) {
-      // query
-      await updateCreneau(creneau)
-      const index = this.creneaux.findIndex(
-        (oldCreneau) => oldCreneau.id === creneau.id
-      )
-      if (index) {
-        this.creneaux[index] = creneau
-      } else {
-        console.log('no creneau to edit')
-      }
+    async editCreneau(id, creneau) {
+      console.log(id, creneau)
+      const resp = await updateCreneau(id, creneau)
+      console.log(resp)
+      // const index = this.creneaux.findIndex(
+      //   (oldCreneau) => oldCreneau.id === creneau.id
+      // )
+      // if (index) {
+      //   this.creneaux[index] = creneau
+      // } else {
+      //   console.log('no creneau to edit')
+      // }
     },
     async dropCreneau(creneau) {
       // query

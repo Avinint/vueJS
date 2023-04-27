@@ -12,17 +12,15 @@ module.exports = {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
+      faBlue: '#0B83D9',
+      'vtd-primary': colors.sky, // Light mode Datepicker color
+      'vtd-secondary': colors.gray, // Dark mode Datepicker color
       ...colors,
-    },
-    extend: {
-      colors: {
-        lightBlue: colors.sky,
-        warmGray: colors.stone,
-        trueGray: colors.gray,
-        blueGray: colors.slate,
-        faBlue: '#0B83D9',
-        'vtd-primary': colors.sky, // Light mode Datepicker color
-        'vtd-secondary': colors.gray, // Dark mode Datepicker color
+      fontSize: {
+        '2xs': '0.4rem',
+      },
+      borderWidth: {
+        3: '3px',
       },
     },
   },
