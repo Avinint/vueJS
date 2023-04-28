@@ -7,18 +7,18 @@
       @cancel="$emit('closeModalCreneau')"
     >
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-        Veuillez sélectionner le type créneau à créer.
+        Veuillez sélectionner le type créneau.
       </label>
       <div class="py-3">
         <InputRadio
-          v-model="typeCreneau"
+          v-model="creneauStore.selectedCreneau.type"
           name="typeCreneau"
           :list="typeCreneauList"
         />
       </div>
       <div>
         <Input
-          v-model="title"
+          v-model="creneauStore.selectedCreneau.title"
           :inline="false"
           :required="true"
           label="Ajouter un titre à votre créneau"
@@ -33,7 +33,7 @@
             Date du créneau
           </label>
           <vue-tailwind-datepicker
-            v-model="planningStore.selectedDate.day"
+            v-model="creneauStore.selectedCreneau.day"
             i18n="fr"
             as-single
             :formatter="{ date: 'DD / MM / YYYY' }"
@@ -94,11 +94,11 @@
           <template v-for="activite in activites" :key="activite.id">
             <div class="my-4 mr-10 flex justify-between">
               <Button
-                test="Tlogout"
                 type="secondary"
                 :label="activite.title"
                 class="w-52 hover:bg-sky-600 hover:text-white"
                 :submit="false"
+                @click=""
               />
               <Input
                 v-model="activite.price"
@@ -119,6 +119,7 @@ import Modal from '@components/common/Modal.vue'
 import Button from '@components/common/Button.vue'
 import { mapStores } from 'pinia'
 import { usePlanningStore } from '@stores/planning.js'
+import { useCreneauStore } from '@stores/creneau.js'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
@@ -148,64 +149,65 @@ export default {
     return {
       typeCreneauList: [],
       parametres: [],
-      typeCreneau: '',
       selectedZone: '',
-      title: '',
       startHourMinute: '',
       endHourMinute: '',
-      activites: '',
+      activites: [],
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
+    ...mapStores(useCreneauStore),
     dayCreneau() {
-      return this.$dayjs(this.planningStore.dateInfo.startStr).format(
+      return this.$dayjs(this.creneauStore.dateInfo.startStr).format(
         'DD/MM/YYYY'
       )
     },
     modalTitle() {
-      switch(this.typeAction) {
+      switch (this.typeAction) {
         case 'create':
           return 'Création de creneau'
-          break
         case 'edit':
           return 'Modifier un creneau'
-          break
-        defaiult:
+        default:
           return 'Modifier un creneau'
-      } 
+      }
     },
     slotMinTimeNumber() {
       return Number(
         this.planningStore.slotMinTime
-          .split(this.planningStore.timeSeparator)[0]
+          .split(this.creneauStore.timeSeparator)[0]
           .replace('0', '')
       )
     },
     slotMaxTimeNumber() {
       return Number(
         this.planningStore.slotMaxTime
-          .split(this.planningStore.timeSeparator)[0]
+          .split(this.creneauStore.timeSeparator)[0]
           .replace('0', '')
       )
     },
     listStart() {
       let list = []
       for (let i = this.slotMinTimeNumber; i < this.slotMaxTimeNumber; i++) {
-        list.push(i + this.planningStore.timeSeparator + '00')
-        list.push(i + this.planningStore.timeSeparator + '30')
+        for (let y = 0; y < 55; y += 5) {
+          const minutes = y.toString().length === 1 ? '0' + y : y
+          list.push(i + this.creneauStore.timeSeparator + minutes)
+        }
       }
       return list
     },
     listEnd() {
       let list = []
       for (
-        let i = this.planningStore.selectedDate.start.hour;
+        let i = this.creneauStore.selectedCreneau.start.hour;
         i < this.slotMaxTimeNumber;
         i++
       ) {
-        list.push(i + this.planningStore.timeSeparator + '00')
-        list.push(i + this.planningStore.timeSeparator + '30')
+        for (let y = 5; y < 55; y += 5) {
+          const minutes = y.toString().length === 1 ? '0' + y : y
+          list.push(i + this.creneauStore.timeSeparator + minutes)
+        }
       }
       return list
     },
@@ -217,28 +219,32 @@ export default {
           id: 3,
           title: 'Futsal',
           price: 80,
+          selected: false,
         },
         {
           id: 4,
           title: 'Basket',
           price: 80,
+          selected: false,
         },
         {
           id: 5,
           title: 'Tennis',
           price: 80,
+          selected: false,
         },
         {
           id: 6,
           title: 'Handball',
           price: 80,
+          selected: false,
         },
       ]
     },
   },
   async mounted() {
-    this.startHourMinute = this.planningStore.getSelectedFormatedStart
-    this.endHourMinute = this.planningStore.getSelectedFormatedEnd
+    this.startHourMinute = this.creneauStore.getSelectedFormatedStart
+    this.endHourMinute = this.creneauStore.getSelectedFormatedEnd
     this.zones = await getZones(
       1,
       '&typeZone.code=zone&fitArena=' + this.$route.params.id
@@ -248,41 +254,30 @@ export default {
   },
   methods: {
     storeDateStart() {
-      this.planningStore.selectedDate.start.hour = this.startHourMinute.split(
-        this.planningStore.timeSeparator
+      this.creneauStore.selectedCreneau.start.hour = this.startHourMinute.split(
+        this.creneauStore.timeSeparator
       )[0]
-      this.planningStore.selectedDate.start.minute = this.startHourMinute.split(
-        this.planningStore.timeSeparator
-      )[1]
+      this.creneauStore.selectedCreneau.start.minute =
+        this.startHourMinute.split(this.creneauStore.timeSeparator)[1]
     },
     storeDateEnd() {
-      this.planningStore.selectedDate.end.hour = this.endHourMinute.split(
-        this.planningStore.timeSeparator
+      this.creneauStore.selectedCreneau.end.hour = this.endHourMinute.split(
+        this.creneauStore.timeSeparator
       )[0]
-      this.planningStore.selectedDate.end.minute = this.endHourMinute.split(
-        this.planningStore.timeSeparator
+      this.creneauStore.selectedCreneau.end.minute = this.endHourMinute.split(
+        this.creneauStore.timeSeparator
       )[1]
     },
     submitCreneau() {
-      if (this.typeAction === 'create') {
-        this.planningStore.addCreneau(
-          this.typeCreneau,
-          this.title,
-          this.selectedZone,
-          this.planningStore.selectedDate,
-          this.activites
-        )
-      }
-      if (this.thisAction === 'edit') {
-        this.planningStore.editCreneau(
-          this.typeCreneau,
-          this.title,
-          this.selectedZone,
-          this.planningStore.selectedDate,
-          this.activites
-        )
-      }
-      this.$emit('closeModalCreneau')
+      console.log(this.selectedZone)
+      console.log(this.activites)
+      // if (this.typeAction === 'create') {
+      //   this.creneauStore.addCreneau()
+      // }
+      // if (this.typeAction === 'edit') {
+      //   this.creneauStore.editCreneau()
+      // }
+      // this.$emit('closeModalCreneau')
     },
   },
 }
