@@ -155,6 +155,7 @@
           :fa="props.id"
           :zone="id_selected"
           :readonly="readonly"
+          @open-modal-details="openModalDetails"
         ></AjoutEquipements>
       </div>
       <div>
@@ -164,6 +165,7 @@
           :fa="props.id"
           :zone="id_selected"
           :readonly="readonly"
+          @open-modal-details="openModalDetails"
         ></AjoutEquipements>
       </div>
     </Modal>
@@ -187,6 +189,18 @@
     <ValidationModal v-if="add_modal" type="add" @cancel="add_modal = false">
     </ValidationModal>
   </form>
+
+  <Modal
+    v-if="detailsEquipement_modal"
+    :type="'visualiser'"
+    :title="'Détails équipement'"
+    @cancel="detailsEquipement_modal = false"
+  >
+    <div class="flex justify-between">
+      <span>Adresse IP</span>
+      <span>{{ detailsEquipementData.ip }}</span>
+    </div>
+  </Modal>
 </template>
 
 <script setup>
@@ -216,6 +230,9 @@ const props = defineProps(['id'])
 
 const subEspace_modal = ref(false)
 const readonly = ref(false)
+
+const detailsEquipement_modal = ref(false)
+const detailsEquipementData = ref({})
 
 const delete_modal = ref(false)
 const deleteSubspaceId = ref(0)
@@ -379,6 +396,11 @@ const addSubspaceValidation = async () => {
     '&typeZone.code=espace&fitArena=' + props.id
   )
   typeZones.value = await getTypeZone()
+}
+
+const openModalDetails = (detailsEquipementDataEmitted) => {
+  detailsEquipementData.value = detailsEquipementDataEmitted
+  detailsEquipement_modal.value = true
 }
 
 const cancel = () => {

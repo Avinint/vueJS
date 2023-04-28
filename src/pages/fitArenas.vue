@@ -147,6 +147,7 @@
       </div>
       <div class="flex items-center">
         <Input
+          v-if="address_selected"
           id="TadressePostcode"
           v-model="address_selected.postcode"
           :readonly="readonly"
@@ -159,6 +160,7 @@
       </div>
       <div class="flex items-center">
         <Input
+          v-if="address_selected"
           id="TadresseCity"
           v-model="address_selected.city"
           :readonly="readonly"
@@ -169,7 +171,7 @@
           pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï-]{1,50}"
         />
       </div>
-      <div class="flex items-center">
+      <div v-if="address_selected" class="flex items-center">
         <div class="flex w-1/2 items-center justify-between">
           <label class="block w-1/2 text-sm font-medium text-gray-900"
             >Latitude</label
@@ -186,7 +188,7 @@
           pattern="[0-9]{1,2}\.[0-9]{1,10}"
         />
       </div>
-      <div class="flex items-center">
+      <div v-if="address_selected" class="flex items-center">
         <div class="flex w-1/2 items-center justify-between">
           <label class="block w-1/2 text-sm font-medium text-gray-900"
             >Longitude</label
@@ -194,6 +196,7 @@
           <p class="text-sm text-blue-400">Format : 46.7897</p>
         </div>
         <input
+          v-if="address_selected"
           id="TfaLongitude"
           v-model="address_selected.longitude"
           :readonly="readonly"
