@@ -235,7 +235,7 @@ onMounted(async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + id_fa
+    '&categoryTypeEquipement.code=numerique'
   )
 })
 
