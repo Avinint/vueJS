@@ -14,6 +14,16 @@ export const emailValidation = (val) => {
   throw 'Vérifier votre email'
 }
 
+export const ipValidation = (val) => {
+  const match = val.match(
+    /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
+  )
+  if (match && match.length) {
+    return true
+  }
+  throw 'Vérifier votre email'
+}
+
 export const requiredValidation = (val) => {
   if (!val) throw 'Un texte est requis'
 }
