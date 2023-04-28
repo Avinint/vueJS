@@ -1,26 +1,23 @@
 <template>
   <Card>
     <h1>équipements motorisés de la fit arena</h1>
-    <div v-for="(typeEquip, i) of typeEquipements" :key="i">
+    <div v-for="(typeEquipement, i) in typeEquipements" :key="i">
       <div
-        v-if="typeEquip.equipements.length"
-        :key="i"
+        v-if="typeEquipement.equipements.length"
         class="m-5 border border-gray-200 p-4"
       >
-        <h2 v-if="typeEquip.equipements.length" class="pb-5 pt-2">
-          {{ typeEquip.libelle }}
+        <h2 class="pb-5 pt-2">
+          {{ typeEquipement.libelle }}
         </h2>
         <div
-          v-if="typeEquip.equipements.length"
           class="relative overflow-x-auto"
         >
           <table
-            v-for="(equipementTemp, i) in typeEquip.equipements"
+            v-for="(equipement, i) in typeEquipement.equipements"
             :key="i"
             class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
           >
             <thead
-              v-if="i == 0"
               class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
             >
               <tr>
@@ -28,17 +25,6 @@
                 <th scope="col" class="px-6 py-3">Actif</th>
                 <th scope="col" class="px-6 py-3">Libellé</th>
                 <th scope="col" class="px-6 py-3">Adresse IP</th>
-              </tr>
-            </thead>
-            <thead
-              v-if="i > 0"
-              class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
-            >
-              <tr>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3"></th>
               </tr>
             </thead>
             <tbody>
@@ -49,14 +35,14 @@
                     borderless
                     icon="delete"
                     type="secondary"
-                    @click="removeEquipement(equipementTemp.id)"
+                    @click="removeEquipement(equipement.id)"
                   />
                   <Button
                     test="TeditClient"
                     borderless
                     icon="edit"
                     type="secondary"
-                    @click="editEquipement(equipementTemp.id)"
+                    @click="editEquipement(equipement.id)"
                   />
                 </td>
                 <td class="w-1/12 px-6 py-4">
@@ -64,11 +50,11 @@
                     class="relative inline-flex cursor-pointer items-center"
                   >
                     <input
-                      v-model="equipementTemp.statut"
+                      v-model="equipement.statut"
                       type="checkbox"
                       value="true"
                       class="peer sr-only"
-                      @change="modifieEquipement(equipementTemp)"
+                      @change="modifieEquipement(equipement)"
                     />
                     <div
                       class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-green-800"
@@ -79,14 +65,14 @@
                   </label>
                 </td>
                 <td class="w-1/2 max-w-xs truncate break-all px-6 py-4">
-                  {{ equipementTemp.libelle }}
+                  {{ equipement.libelle }}
                 </td>
-                <td class="w-2/12 px-6 py-4">{{ equipementTemp.ip }}</td>
+                <td class="w-2/12 px-6 py-4">{{ equipement.ip }}</td>
                 <td class="w-1/12 px-6 py-4">
                   <Button
                     label="Détails"
                     type="secondary"
-                    @click="showEquipement(equipementTemp.id)"
+                    @click="showEquipement(equipement.id)"
                   />
                 </td>
               </tr>
@@ -360,7 +346,7 @@ onMounted(async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
+    '&categoryTypeEquipement.code=motorise'
   )
 })
 
