@@ -91,13 +91,17 @@ export const usePlanningStore = defineStore('planning', {
       this.selectedCreneau.end.minute = dayjs(info.end).format('mm')
     },
     async addCreneau(creneau) {
+      console.log(creneau)
       // query
-      await postCreneau(creneau)
-      this.creneaux.push(creneau)
+      // await postCreneau(creneau)
+      // this.creneaux.push(creneau)
     },
-    async editCreneau(id, creneau) {
-      console.log(id, creneau)
-      const resp = await updateCreneau(id, creneau)
+    async editCreneau(creneau) {
+      const creneauFormated = this.convertCreneauReceiveToSend(creneau)
+      const resp = await updateCreneau(
+        creneau.extendedProps.idCreneau,
+        creneauFormated
+      )
       console.log(resp)
       // const index = this.creneaux.findIndex(
       //   (oldCreneau) => oldCreneau.id === creneau.id
@@ -118,6 +122,33 @@ export const usePlanningStore = defineStore('planning', {
         this.creneaux.splice(index, 1)
       } else {
         console.log('no creneau to delete')
+      }
+    },
+    convertCreneauReceiveToSend(creneau) {
+      creneau.extendedProps.activites.forEach((activite) => {
+        activite.activiteId = activite.id
+        activite.tarif = activite.prix
+        delete activite.id
+        delete activite.prix
+        delete activite.maxTerrain
+        delete activite.libelle
+      })
+      return {
+        creneauType: creneau.extendedProps.type,
+        zoneId: creneau.extendedProps.zones[0],
+        activites: creneau.extendedProps.activites,
+        titre: creneau.extendedProps.titre,
+        date: dayjs(creneau.start).format('YYYY-MM-DD'), // 2023-01-23
+        heureDebut: dayjs(creneau.start).format('hh:mm:ss'), // "14:30:00"
+        heureFin: dayjs(creneau.end).format('hh:mm:ss'), // "14:30:00"
+        dureeActivite: creneau.extendedProps.dureeActivite, // 55
+        dureeInterCreneau: creneau.extendedProps.dureeInterCreneau, // 5
+        description: '',
+        organisme: 0,
+        animateurLabellise: 0,
+        niveauPratique: 0,
+        tarifHoraire: 0,
+        nbParticipants: 0,
       }
     },
   },

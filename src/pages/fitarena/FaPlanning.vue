@@ -178,31 +178,7 @@ export default {
       this.isModalCreneauOpen = true
     },
     eventResizeOrDrag(info) {
-      info.event.extendedProps.activites.forEach((activite) => {
-        activite.activiteId = activite.id
-        activite.tarif = activite.prix
-        delete activite.id
-        delete activite.prix
-        delete activite.maxTerrain
-        delete activite.libelle
-      })
-      this.planningStore.editCreneau(info.event.extendedProps.idCreneau, {
-        creneauType: info.event.extendedProps.type,
-        zoneId: info.event.extendedProps.zones[0],
-        activites: info.event.extendedProps.activites,
-        titre: info.event.extendedProps.titre,
-        date: this.$dayjs(info.event.start).format('YYYY-MM-DD'), // 2023-01-23
-        heureDebut: this.$dayjs(info.event.start).format('hh:mm:ss'), // "14:30:00"
-        heureFin: this.$dayjs(info.event.end).format('hh:mm:ss'), // "14:30:00"
-        dureeActivite: info.event.extendedProps.dureeActivite, // 55
-        dureeInterCreneau: info.event.extendedProps.dureeInterCreneau, // 5
-        description: '',
-        organisme: 0,
-        animateurLabellise: 0,
-        niveauPratique: 0,
-        tarifHoraire: 0,
-        nbParticipants: 0,
-      })
+      this.planningStore.editCreneau(info.event)
     },
   },
 }
@@ -244,9 +220,5 @@ export default {
 }
 .fc-direction-ltr .fc-timegrid-col-events {
   margin: 0;
-}
-
-.fc .fc-agendaWeek-view .fc-bg tr > td {
-  border: 2px solid red;
 }
 </style>

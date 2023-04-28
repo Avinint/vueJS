@@ -1,4 +1,4 @@
-// SQRS Lecture
+// SQRS Lecture / RECEIVE Format
 export default interface ActiviteRECEIVE {
   id: Number,
   libelle: String,
@@ -23,7 +23,7 @@ export default interface CreneauRECEIVE {
   title: String,
 }
 
-// SQRS Ecriture
+// SQRS Ecriture / SEND Format
 export default interface ActiviteSEND {
   activiteId: Number,
   tarif: Number,
