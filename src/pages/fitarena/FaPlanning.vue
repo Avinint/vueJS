@@ -11,7 +11,7 @@
       v-if="isModalCreneauOpen"
       :is-open="isModalCreneauOpen"
       :type-action="actionType"
-      @closeModalCreneau="isModalCreneauOpen = false"
+      @close-modal-creneau="isModalCreneauOpen = false"
     />
     <FullCalendar ref="fullCalendar" :options="calendarOptions">
       <template #eventContent="arg">
@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import PlanningNavigation from '@components/faPlanning/navigation.vue' // PlanningNavigation as navigation is an html reserved tag
 import modalCreneau from '@components/faPlanning/modalCreneau.vue'
 import FullCalendar from '@fullcalendar/vue3'
@@ -56,8 +56,8 @@ import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 import { getActivites } from '@api/activite.js'
 import { usePlanningStore } from '@stores/planning.js'
+import { useCreneauStore } from '@stores/creneau.js'
 import { mapStores } from 'pinia'
-import Modal from '@components/common/Modal.vue'
 
 export default {
   components: {
@@ -99,8 +99,6 @@ export default {
         height: 'auto',
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         // timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
-        slotMinTime: '07:00:00',
-        slotMaxTime: '22:00:00',
         slotLabelFormat: {
           hour: 'numeric',
           minute: '2-digit',
@@ -129,6 +127,7 @@ export default {
   },
   computed: {
     ...mapStores(usePlanningStore),
+    ...mapStores(useCreneauStore),
   },
   async mounted() {
     this.calendarApi = this.$refs.fullCalendar.getApi()
@@ -168,17 +167,17 @@ export default {
       )
     },
     eventClick(eventClickInfo) {
-      this.planningStore.setSelectedCreneau(eventClickInfo.event)
+      this.creneauStore.setSelectedCreneau(eventClickInfo.event)
       this.actionType = 'edit'
       this.isModalCreneauOpen = true
     },
     select(selectionInfo) {
-      this.planningStore.setSelectedCreneau(selectionInfo)
+      this.creneauStore.setSelectedCreneau(selectionInfo)
       this.actionType = 'create'
       this.isModalCreneauOpen = true
     },
     eventResizeOrDrag(info) {
-      this.planningStore.editCreneau(info.event)
+      this.creneauStore.editCreneau(info.event)
     },
   },
 }
