@@ -204,7 +204,11 @@ export default {
         i < this.slotMaxTimeNumber;
         i++
       ) {
-        for (let y = 5; y < 55; y += 5) {
+        for (
+          let y = Number(this.creneauStore.selectedCreneau.start.minute) + 5;
+          y < 55;
+          y += 5
+        ) {
           const minutes = y.toString().length === 1 ? '0' + y : y
           list.push(i + this.creneauStore.timeSeparator + minutes)
         }
