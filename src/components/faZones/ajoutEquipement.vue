@@ -62,25 +62,12 @@
       </div>
     </div>
   </div>
-
-  <Modal
-    v-if="detailsEquipement_modal"
-    :type="'visualiser'"
-    :title="'Détails équipement'"
-    @cancel="detailsEquipement_modal = false"
-  >
-    <div class="flex justify-between">
-      <span>Adresse IP</span>
-      <span>{{ detailsEquipementData.ip }}</span>
-    </div>
-  </Modal>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { getTypeEquipements } from '../../api/typeEquipement'
 import Button from '../../components/common/Button.vue'
-import Modal from '../../components/common/Modal.vue'
 
 const props = defineProps({
   typeEquipement: String,
@@ -92,8 +79,8 @@ const props = defineProps({
 const typeEquipements = ref([])
 const typeEquipementTextes = ref('')
 const equipementSelectionne = ref([])
-const detailsEquipement_modal = ref(false)
-const detailsEquipementData = ref({})
+
+const emit = defineEmits(['openModalDetails'])
 
 onMounted(async () => {
   typeEquipements.value = await getTypeEquipements(
@@ -148,9 +135,10 @@ const isZoneEquipementExist = (equipement) => {
 }
 
 const detailsEquipement = (typeIdx, equipementIdx) => {
-  detailsEquipementData.value =
+  emit(
+    'openModalDetails',
     typeEquipements.value[typeIdx]?.equipements[equipementIdx]
-  detailsEquipement_modal.value = true
+  )
 }
 
 defineExpose({ typeEquipements })
