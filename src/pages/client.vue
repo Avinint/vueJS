@@ -141,6 +141,7 @@
             </div>
             <div class="flex items-center">
               <Input
+                v-if="address_selected"
                 id="TadressePostcode"
                 v-model="address_selected.postcode"
                 :readonly="readonly"
@@ -153,6 +154,7 @@
             </div>
             <div class="flex items-center">
               <Input
+                v-if="address_selected"
                 id="TadresseCity"
                 v-model="address_selected.city"
                 :readonly="readonly"
