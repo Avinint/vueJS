@@ -4,6 +4,7 @@
       v-if="isOpen"
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modalTitle"
+      size="4xl"
       @cancel="$emit('closeModalCreneau')"
     >
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
@@ -76,15 +77,57 @@
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Zones
       </label>
-      <div class="py-3">
-        <InputRadio
-          v-model="selectedZone"
-          name="selectedZone"
-          :list="zones"
-          @click="showActivites()"
-        />
+      <div class="flex overflow-x-scroll py-3">
+        <div v-for="zone in zones" :key="zone.id" class="flex-col">
+          <input
+            :id="zone.id"
+            v-model="creneauStore.zoneId"
+            type="checkbox"
+            :value="zone.id"
+            class="hidden"
+            @change="toggleZone(zone)"
+          />
+          <label
+            class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-sm text-black drop-shadow-sm"
+            :class="{ 'bg-sky-600 text-white': isZoneChecked(zone.id) }"
+            :for="zone.id"
+          >
+            {{ zone.libelle }}
+          </label>
+          <div class="w-72 flex-col">
+            <div
+              v-for="activite in zone.zoneActivites"
+              v-if="isZoneChecked(zone.id)"
+              :key="activite.id"
+            >
+              <div class="my-4 mr-10 flex justify-between">
+                <input
+                  :id="activite.id"
+                  v-model="creneauStore.activites"
+                  type="checkbox"
+                  :value="activite.id"
+                  class="hidden"
+                />
+                <label
+                  class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-sm text-black drop-shadow-sm"
+                  :class="{
+                    'bg-sky-600 text-white': isActiviteChecked(activite.id),
+                  }"
+                  :for="activite.id"
+                  >{{ activite.libelle }}
+                </label>
+                <Input
+                  v-model="activite.price"
+                  type="text"
+                  class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
+                  suffix="€"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div v-if="selectedZone">
+      <!-- <div v-if="creneauStore.zoneId">
         <label class="mb-2 block text-sm font-medium text-gray-900">
           Activités
         </label>
@@ -107,7 +150,7 @@
             </div>
           </template>
         </div>
-      </div>
+      </div> -->
     </Modal>
   </form>
 </template>
@@ -121,16 +164,19 @@ import { useCreneauStore } from '@stores/creneau.js'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
-import InputRadio from '@components/common/InputRadio.vue'
 import Input from '@components/common/Input.vue'
+import InputRadio from '@components/common/InputRadio.vue'
+import InputCheckbox from '@components/common/InputCheckbox.vue'
 import { getActiviteByZone } from '@api/activiteByZone'
+import { getActivites } from '../../api/activite.js'
 
 export default {
   components: {
     Button,
     Modal,
-    InputRadio,
     Input,
+    InputRadio,
+    InputCheckbox,
   },
   props: {
     isOpen: {
@@ -147,8 +193,8 @@ export default {
     return {
       typeCreneauList: [],
       parametres: [],
-      selectedZone: '',
-      activites: [],
+      zones: [],
+      // activites: [],
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
@@ -220,34 +266,6 @@ export default {
         this.datepickerFormat
       ).format('YYYY-MM-DD')
     },
-    async selectedZone() {
-      this.activites = [
-        {
-          id: 3,
-          title: 'Futsal',
-          price: 80,
-          selected: false,
-        },
-        {
-          id: 4,
-          title: 'Basket',
-          price: 80,
-          selected: false,
-        },
-        {
-          id: 5,
-          title: 'Tennis',
-          price: 80,
-          selected: false,
-        },
-        {
-          id: 6,
-          title: 'Handball',
-          price: 80,
-          selected: false,
-        },
-      ]
-    },
   },
   async mounted() {
     this.datepicked = this.$dayjs(this.creneauStore.date).format(
@@ -269,6 +287,18 @@ export default {
         this.creneauStore.editCreneau()
       }
       this.$emit('closeModalCreneau')
+    },
+    isZoneChecked(zoneId) {
+      return this.creneauStore.zoneId.includes(zoneId)
+    },
+    isActiviteChecked(activiteId) {
+      return this.creneauStore.activites.includes(activiteId)
+    },
+    async toggleZone(zone) {
+      if (!zone.zoneActivites.length) {
+        const activites = await getActiviteByZone(zone.id)
+        zone.zoneActivites.push(activites.activite)
+      }
     },
   },
 }

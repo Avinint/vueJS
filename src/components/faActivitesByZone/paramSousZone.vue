@@ -41,7 +41,7 @@
         <InputCheckbox
           :id="'sous_zone_' + sousZoneId + '_equipement_tablette_'"
           v-model="equipementsSelection"
-          :elements="equipementsTablette"
+          :list="equipementsTablette"
           name="equipement_tablette[]"
           :disabled="readonly"
         />
@@ -54,7 +54,7 @@
         <InputCheckbox
           :id="'sous_zone_' + sousZoneId + '_equipement_ecran_'"
           v-model="equipementsSelection"
-          :elements="equipementsEcran"
+          :list="equipementsEcran"
           name="equipement_ecran[]"
           :disabled="readonly"
         />
@@ -67,7 +67,7 @@
         <InputCheckbox
           :id="'sous_zone_' + sousZoneId + '_equipement_camera_'"
           v-model="equipementsSelection"
-          :elements="equipementsCamera"
+          :list="equipementsCamera"
           name="equipement_camera[]"
           :disabled="readonly"
         />
@@ -80,7 +80,7 @@
         <InputCheckbox
           :id="'sous_zone_' + sousZoneId + '_equipement_sono_'"
           v-model="equipementsSelection"
-          :elements="equipementsSono"
+          :list="equipementsSono"
           name="equipement_sono[]"
           :disabled="readonly"
         />

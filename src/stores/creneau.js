@@ -4,7 +4,7 @@ import { postCreneau, updateCreneau, deleteCreneau } from '@api/planning.js'
 export const useCreneauStore = defineStore('creneau', {
   state: () => ({
     creneauType: 0,
-    zoneId: 0,
+    zoneId: [],
     activites: [],
     titre: '',
     date: '',

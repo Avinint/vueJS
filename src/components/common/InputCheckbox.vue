@@ -1,57 +1,39 @@
 <template>
-  <templace v-for="elt in props.elements">
+  <div v-for="item in list" :key="item.id">
     <input
-      :id="idPrefix + elt.id"
-      v-model="modelValue"
+      :id="item.id"
       type="checkbox"
-      :disabled="props.disabled"
-      :value="elt.id"
-      :name="name"
+      :value="item.id"
+      @input="handleInput"
     />
-    <label :for="idPrefix + elt.id">{{ elt.libelle }}</label>
-  </templace>
+    <label
+      class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-sm text-black drop-shadow-sm peer-checked:bg-sky-600 peer-checked:text-white"
+      :for="item.id"
+    >
+      {{ item.libelle }}
+    </label>
+  </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
-
-const props = defineProps({
-  modelValue: 0,
-  elements: [],
-  name: '',
-  id: '',
-  disabled: false,
-})
-
-const idPrefix = ref('')
-idPrefix.value = props.id + '_'
-
-const emits = defineEmits(['update:modelValue'])
-const modelValue = computed({
-  get() {
-    return props.modelValue
+<script>
+export default {
+  props: {
+    list: {
+      type: Array,
+      required: true,
+    },
   },
-  set(value) {
-    emits('update:modelValue', value)
+  data() {
+    return {
+      content: this.value,
+    }
   },
-})
+  methods: {
+    handleInput(e) {
+      this.$emit('input', this.content)
+    },
+  },
+}
 </script>
 
-<style scoped>
-input[type='checkbox'] {
-  display: none;
-  /* /!\ bloque les messages "required", utiliser opacity 0, width 1px... à la place si nécessaire */
-}
-
-input[type='checkbox'] + label {
-  margin-right: 0.5em;
-  cursor: pointer;
-  padding: 0.25em 1em;
-  border: 1px solid #ddd;
-  border-radius: 0.5em;
-}
-
-input[type='checkbox']:checked + label {
-  background-color: #ddd;
-}
-</style>
+<style></style>
