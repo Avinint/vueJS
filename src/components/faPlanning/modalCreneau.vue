@@ -15,6 +15,7 @@
           v-model="creneauStore.creneauType"
           name="typeCreneau"
           :list="typeCreneauList"
+          required
         />
       </div>
       <div>
@@ -74,11 +75,11 @@
           </div>
         </div>
       </div>
-      <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
+      <label class="mb-2 block text-sm font-medium text-gray-900">
         Zones
       </label>
       <div class="flex overflow-x-scroll py-3">
-        <div v-for="zone in zones" :key="zone.id" class="flex-col">
+        <div v-for="zone in zones" :key="zone.id" class="w-80 flex-col">
           <input
             :id="zone.id"
             v-model="creneauStore.zoneId"
@@ -94,31 +95,29 @@
           >
             {{ zone.libelle }}
           </label>
-          <div class="w-72 flex-col">
+          <div class="flex-col">
             <div
               v-for="activite in zone.zoneActivites"
               v-if="isZoneChecked(zone.id)"
-              :key="activite.id"
+              :key="activite.activeId"
             >
               <div class="my-4 mr-10 flex justify-between">
                 <input
-                  :id="activite.id"
-                  v-model="creneauStore.activites"
+                  :id="activite.activeLibelle.replace(' ', '')"
+                  v-model="activite.checked"
                   type="checkbox"
-                  :value="activite.id"
                   class="hidden"
                 />
                 <label
                   class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-sm text-black drop-shadow-sm"
                   :class="{
-                    'bg-sky-600 text-white': isActiviteChecked(activite.id),
+                    'bg-sky-600 text-white': activite.checked,
                   }"
-                  :for="activite.id"
-                  >{{ activite.libelle }}
+                  :for="activite.activeLibelle.replace(' ', '')"
+                  >{{ activite.activeLibelle }}
                 </label>
                 <Input
-                  v-model="activite.price"
-                  type="text"
+                  v-model.number="activite.tarif"
                   class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
                   suffix="€"
                 />
@@ -292,12 +291,19 @@ export default {
       return this.creneauStore.zoneId.includes(zoneId)
     },
     isActiviteChecked(activiteId) {
-      return this.creneauStore.activites.includes(activiteId)
+      this.creneauStore.activites.some(
+        (activite) => activite.activiteId === activiteId
+      )
     },
     async toggleZone(zone) {
       if (!zone.zoneActivites.length) {
         const activites = await getActiviteByZone(zone.id)
-        zone.zoneActivites.push(activites.activite)
+        zone.zoneActivites.push({
+          activiteId: activites.activite.id,
+          activeLibelle: activites.activite.libelle,
+          tarif: 0,
+          checked: false,
+        })
       }
     },
   },

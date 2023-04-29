@@ -1,38 +1,13 @@
-// SQRS Lecture / RECEIVE Format
-export default interface ActiviteRECEIVE {
-  id: Number,
-  libelle: String,
-  maxTerrain: Number,
-  prix?: Number,
-}
-export default interface CreneauRECEIVE {
-  id: Number,
-  dateDebut: String,
-  dateFinCreneau: String,
-  dateSortie: String,
-  titre: String,
-  activites: ActiviteRECEIVE[],
-  type: Number,
-  remplissage: Number,
-  zones: Number[],
-  dureeActivite: Number,
-  dureeInterCreneau: Number,
-
-  start: String,
-  end: String,
-  title: String,
-}
-
 // SQRS Ecriture / SEND Format
-export default interface ActiviteSEND {
+export default interface Activite {
   activiteId: Number,
   tarif: Number,
 }
 
-export default interface CreneauSEND {
+export default interface Creneau {
   creneauType: Number,
   zoneId: Number,
-  activites: ActiviteSEND[],
+  activites: Activite[],
   titre: String,
   date: String,
   heureDebut: String, // "14:30:00"

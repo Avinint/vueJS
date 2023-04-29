@@ -11,7 +11,7 @@ export const useCreneauStore = defineStore('creneau', {
     heureDebut: '', // "14:30:00"
     heureFin: '', // "14:30:00"
     dureeActivite: 0, // 55
-    dureeInterCreneau: 0, // 5
+    dureeInterCreneau: 5,
     description: '',
     organisme: 0,
     animateurLabellise: 0,
@@ -21,10 +21,12 @@ export const useCreneauStore = defineStore('creneau', {
   }),
   actions: {
     async addCreneau() {
+      this.formatCreneau()
       const resp = await postCreneau(this.$state)
       console.log(resp)
     },
     async editCreneau() {
+      this.formatCreneau()
       const id = 4
       const resp = await updateCreneau(id, this.$state)
       console.log(resp)
@@ -40,15 +42,15 @@ export const useCreneauStore = defineStore('creneau', {
         console.log('no creneau to delete')
       }
     },
-    formatCreneau(creneau) {
-      creneau.extendedProps.activites.forEach((activite) => {
-        activite.activiteId = activite.id
-        activite.tarif = activite.prix
-        delete activite.id
-        delete activite.prix
-        delete activite.maxTerrain
-        delete activite.libelle
-      })
+    formatCreneau() {
+      this.heureDebut += ':00'
+      this.heureFin += ':00'
+      const minuteDebut =
+        this.heureDebut.split(':')[0] * 60 +
+        Number(this.heureDebut.split(':')[1])
+      const minuteFin =
+        this.heureFin.split(':')[0] * 60 + Number(this.heureFin.split(':')[1])
+      this.dureeActivite = minuteFin - minuteDebut
     },
   },
 })
