@@ -11,14 +11,14 @@
       </label>
       <div class="py-3">
         <InputRadio
-          v-model="creneauStore.selectedCreneau.type"
+          v-model="creneauStore.creneauType"
           name="typeCreneau"
           :list="typeCreneauList"
         />
       </div>
       <div>
         <Input
-          v-model="creneauStore.selectedCreneau.title"
+          v-model="creneauStore.titre"
           :inline="false"
           :required="true"
           label="Ajouter un titre à votre créneau"
@@ -33,10 +33,10 @@
             Date du créneau
           </label>
           <vue-tailwind-datepicker
-            v-model="creneauStore.selectedCreneau.day"
+            v-model="datepicked"
             i18n="fr"
             as-single
-            :formatter="{ date: 'DD / MM / YYYY' }"
+            :formatter="{ date: datepickerFormat }"
             class="text-center"
           />
         </div>
@@ -46,9 +46,8 @@
           </label>
           <div class="flex">
             <select
-              v-model="startHourMinute"
+              v-model="creneauStore.heureDebut"
               class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              @change="storeDateStart()"
             >
               <option
                 v-for="(creneauHoraire, i) in listStart"
@@ -60,9 +59,8 @@
             </select>
             <div class="px-4 py-2">à</div>
             <select
-              v-model="endHourMinute"
+              v-model="creneauStore.heureFin"
               class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              @change="storeDateEnd()"
             >
               <option
                 v-for="(creneauHoraire, i) in listEnd"
@@ -150,9 +148,10 @@ export default {
       typeCreneauList: [],
       parametres: [],
       selectedZone: '',
-      startHourMinute: '',
-      endHourMinute: '',
       activites: [],
+      datepicked: '',
+      datepickerFormat: 'DD / MM / YYYY',
+      timeSeparator: ':',
     }
   },
   computed: {
@@ -176,23 +175,24 @@ export default {
     slotMinTimeNumber() {
       return Number(
         this.planningStore.slotMinTime
-          .split(this.creneauStore.timeSeparator)[0]
+          .split(this.timeSeparator)[0]
           .replace('0', '')
       )
     },
     slotMaxTimeNumber() {
       return Number(
         this.planningStore.slotMaxTime
-          .split(this.creneauStore.timeSeparator)[0]
+          .split(this.timeSeparator)[0]
           .replace('0', '')
       )
     },
     listStart() {
       let list = []
       for (let i = this.slotMinTimeNumber; i < this.slotMaxTimeNumber; i++) {
-        for (let y = 0; y < 55; y += 5) {
+        for (let y = 0; y < 59; y += 5) {
+          const hours = i.toString().length === 1 ? '0' + i : i
           const minutes = y.toString().length === 1 ? '0' + y : y
-          list.push(i + this.creneauStore.timeSeparator + minutes)
+          list.push(hours + this.timeSeparator + minutes)
         }
       }
       return list
@@ -200,23 +200,26 @@ export default {
     listEnd() {
       let list = []
       for (
-        let i = this.creneauStore.selectedCreneau.start.hour;
+        let i = this.creneauStore.heureDebut.split(this.timeSeparator)[0];
         i < this.slotMaxTimeNumber;
         i++
       ) {
-        for (
-          let y = Number(this.creneauStore.selectedCreneau.start.minute) + 5;
-          y < 55;
-          y += 5
-        ) {
+        for (let y = 0; y < 59; y += 5) {
+          const hours = i.toString().length === 1 ? '0' + i : i
           const minutes = y.toString().length === 1 ? '0' + y : y
-          list.push(i + this.creneauStore.timeSeparator + minutes)
+          list.push(hours + this.timeSeparator + minutes)
         }
       }
       return list
     },
   },
   watch: {
+    datepicked(newDatepicked) {
+      this.creneauStore.date = this.$dayjs(
+        newDatepicked,
+        this.datepickerFormat
+      ).format('YYYY-MM-DD')
+    },
     async selectedZone() {
       this.activites = [
         {
@@ -247,8 +250,9 @@ export default {
     },
   },
   async mounted() {
-    this.startHourMinute = this.creneauStore.getSelectedFormatedStart
-    this.endHourMinute = this.creneauStore.getSelectedFormatedEnd
+    this.datepicked = this.$dayjs(this.creneauStore.date).format(
+      this.datepickerFormat
+    )
     this.zones = await getZones(
       1,
       '&typeZone.code=zone&fitArena=' + this.$route.params.id
@@ -257,31 +261,14 @@ export default {
     this.parametres = await getParametres()
   },
   methods: {
-    storeDateStart() {
-      this.creneauStore.selectedCreneau.start.hour = this.startHourMinute.split(
-        this.creneauStore.timeSeparator
-      )[0]
-      this.creneauStore.selectedCreneau.start.minute =
-        this.startHourMinute.split(this.creneauStore.timeSeparator)[1]
-    },
-    storeDateEnd() {
-      this.creneauStore.selectedCreneau.end.hour = this.endHourMinute.split(
-        this.creneauStore.timeSeparator
-      )[0]
-      this.creneauStore.selectedCreneau.end.minute = this.endHourMinute.split(
-        this.creneauStore.timeSeparator
-      )[1]
-    },
     submitCreneau() {
-      console.log(this.selectedZone)
-      console.log(this.activites)
-      // if (this.typeAction === 'create') {
-      //   this.creneauStore.addCreneau()
-      // }
-      // if (this.typeAction === 'edit') {
-      //   this.creneauStore.editCreneau()
-      // }
-      // this.$emit('closeModalCreneau')
+      if (this.typeAction === 'create') {
+        this.creneauStore.addCreneau()
+      }
+      if (this.typeAction === 'edit') {
+        this.creneauStore.editCreneau()
+      }
+      this.$emit('closeModalCreneau')
     },
   },
 }
