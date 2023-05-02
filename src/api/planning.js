@@ -1,12 +1,7 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
 
-export const getPlanning = async (
-  debut = '1682502975',
-  fit_arena = 1,
-  duree = 7,
-  zone = [1, 2, 3]
-) => {
+export const getPlanning = async (debut, fit_arena, duree, zone) => {
   const response = await $fetch(
     `${
       import.meta.env.VITE_API_URL

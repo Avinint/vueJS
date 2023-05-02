@@ -78,7 +78,6 @@
       <label class="mb-2 block text-sm font-medium text-gray-900">
         Zones
       </label>
-      <button @click="creneauStore.trySend">sendEu</button>
       <div class="flex overflow-x-scroll py-3">
         <div v-for="zone in zones" :key="zone.id" class="w-80 flex-col">
           <input
@@ -87,7 +86,6 @@
             type="checkbox"
             :value="zone.id"
             class="hidden"
-            @change="toggleZone(zone)"
           />
           <label
             class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-sm text-black drop-shadow-sm"
@@ -98,27 +96,29 @@
           </label>
           <div class="flex-col">
             <div
-              v-for="activite in zone.zoneActivites"
+              v-for="zoneActivite in zone.zoneActivites"
               v-if="isZoneChecked(zone.id)"
-              :key="activite.activeId"
+              :key="zone.id + '-' + zoneActivite.activite.id"
             >
               <div class="my-4 mr-10 flex justify-between">
                 <input
-                  :id="activite.activeLibelle.replace(' ', '')"
-                  v-model="activite.checked"
+                  :id="zone.id + '-' + zoneActivite.activite.id"
+                  v-model="zoneActivite.activite.checked"
                   type="checkbox"
                   class="hidden"
+                  @change="toggleActivite(zoneActivite.activite, zone.id)"
                 />
                 <label
                   class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-sm text-black drop-shadow-sm"
                   :class="{
-                    'bg-sky-600 text-white': activite.checked,
+                    'bg-sky-600 text-white': zoneActivite.activite.checked,
                   }"
-                  :for="activite.activeLibelle.replace(' ', '')"
-                  >{{ activite.activeLibelle }}
+                  :for="zone.id + '-' + zoneActivite.activite.id"
+                  >{{ zoneActivite.activite.libelle }}
                 </label>
                 <Input
-                  v-model.number="activite.tarif"
+                  v-model.number="zoneActivite.activite.tarif"
+                  :default-value="defaultTarif"
                   class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
                   suffix="€"
                 />
@@ -198,6 +198,7 @@ export default {
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
+      defaultTarif: 0,
     }
   },
   computed: {
@@ -271,14 +272,29 @@ export default {
     this.datepicked = this.$dayjs(this.creneauStore.date).format(
       this.datepickerFormat
     )
-    this.zones = await getZones(
-      1,
-      '&typeZone.code=zone&fitArena=' + this.$route.params.id
-    )
+    this.fetchZones()
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
   },
   methods: {
+    async fetchZones() {
+      this.zones = await getZones(
+        1,
+        '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      )
+    },
+    toggleActivite(activite, zoneId) {
+      if (activite.checked) {
+        activite = {
+          zoneId: zoneId,
+          activiteId: activite.id,
+          tarif: activite.tarif || 0,
+        }
+        this.creneauStore.addActivite(activite)
+      } else {
+        this.creneauStore.dropActivite(activite.id)
+      }
+    },
     submitCreneau() {
       if (this.typeAction === 'create') {
         this.creneauStore.addCreneau()
@@ -290,22 +306,6 @@ export default {
     },
     isZoneChecked(zoneId) {
       return this.creneauStore.zoneId.includes(zoneId)
-    },
-    isActiviteChecked(activiteId) {
-      this.creneauStore.activites.some(
-        (activite) => activite.activiteId === activiteId
-      )
-    },
-    async toggleZone(zone) {
-      if (!zone.zoneActivites.length) {
-        const activites = await getActiviteByZone(zone.id)
-        zone.zoneActivites.push({
-          activiteId: activites.activite.id,
-          activeLibelle: activites.activite.libelle,
-          tarif: 0,
-          checked: false,
-        })
-      }
     },
   },
 }

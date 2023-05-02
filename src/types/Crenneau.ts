@@ -9,7 +9,7 @@ export default interface Creneau {
   zoneId: Number,
   activites: Activite[],
   titre: String,
-  date: String,
+  date: String, // '2023-05-02'
   heureDebut: String, // "14:30:00"
   heureFin: String, // "14:30:00"
   dureeActivite: Number, // 55
@@ -18,6 +18,6 @@ export default interface Creneau {
   organisme: Number,
   animateurLabellise: Number,
   niveauPratique: Number,
-  tarifHoraire: Number,
+  tarifHoraire: Number,  // en centimes
   nbParticipants: Number,
 }

@@ -116,13 +116,15 @@ export default {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
   },
+  async created() {
+    this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
+    this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
+  },
   async mounted() {
     this.calendarApi = this.$refs.fullCalendar.getApi()
     this.setRessources()
     await this.planningStore.fetch()
     this.calendarOptions.events = this.planningStore.creneaux
-    this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
-    this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
   },
   methods: {
     async setRessources() {
