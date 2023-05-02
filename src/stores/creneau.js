@@ -52,5 +52,30 @@ export const useCreneauStore = defineStore('creneau', {
         this.heureFin.split(':')[0] * 60 + Number(this.heureFin.split(':')[1])
       this.dureeActivite = minuteFin - minuteDebut
     },
+    async trySend() {
+      const resp = await postCreneau({
+        creneauType: 2,
+        zoneId: 3,
+        activites: [
+          {
+            activiteId: 4,
+            tarif: 34,
+          },
+        ],
+        titre: 'Test en dur',
+        date: '01-05-2023',
+        heureDebut: '14:30:00',
+        heureFin: '14:30:00',
+        dureeActivite: 55,
+        dureeInterCreneau: 5,
+        description: 'description',
+        organisme: 3,
+        animateurLabellise: 0,
+        niveauPratique: 0,
+        tarifHoraire: 0,
+        nbParticipants: 0,
+      })
+      console.log(resp)
+    },
   },
 })

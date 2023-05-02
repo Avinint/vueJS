@@ -8,7 +8,7 @@
             v-for="zone in zones"
             :key="zone.id"
             :label="zone.libelle"
-            type="checkbox"
+            type="secondary"
             :submit="false"
             :class="{ active: planningStore.isZoneActive(zone.id) }"
             @click="clickFilter(zone.id)"
@@ -122,12 +122,15 @@ export default {
   },
   methods: {
     today() {
+      // WS query api Today
       this.calendarApi.today()
     },
     prev() {
+      // WS query api WEEK 4-5
       this.calendarApi.prev()
     },
     next() {
+      // WS query api Next
       this.calendarApi.next()
     },
     clickFilter(zoneId) {
@@ -163,7 +166,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scopped>
 .active {
   background-color: #0b83d9;
   color: white;

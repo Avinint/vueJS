@@ -16,10 +16,16 @@ import FaActivities from './pages/fitarena/FaActivities.vue'
 import FaNumericEquipements from './pages/fitarena/FaNumericEquipements.vue'
 import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
 import FaPlanning from './pages/fitarena/FaPlanning.vue'
+import API from './pages/API.vue'
 
 import { useUserStore } from './stores/user.js'
 
 const routes = [
+  {
+    path: '/api',
+    name: 'API',
+    component: API,
+  },
   {
     path: '/login',
     name: 'Login',

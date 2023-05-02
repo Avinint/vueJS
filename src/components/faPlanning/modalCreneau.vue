@@ -49,7 +49,7 @@
           <div class="flex">
             <select
               v-model="creneauStore.heureDebut"
-              class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listStart"
@@ -62,7 +62,7 @@
             <div class="px-4 py-2">à</div>
             <select
               v-model="creneauStore.heureFin"
-              class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listEnd"
@@ -78,6 +78,7 @@
       <label class="mb-2 block text-sm font-medium text-gray-900">
         Zones
       </label>
+      <button @click="creneauStore.trySend">sendEu</button>
       <div class="flex overflow-x-scroll py-3">
         <div v-for="zone in zones" :key="zone.id" class="w-80 flex-col">
           <input
