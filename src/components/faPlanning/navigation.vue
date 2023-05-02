@@ -15,6 +15,7 @@
           />
         </template>
       </NavigationSection>
+      {{ planningStore.filters.debut }}
       <NavigationSection>
         <template #title> Affichage du planning </template>
         <template #content>
@@ -50,9 +51,9 @@
             @click="prev()"
           />
           <div class="min-w-max cursor-default px-4">
-            {{ currentDateStart }}
+            {{ planningStore.getCurrentDateStart }}
             <template v-if="planningStore.currentViewName === 'day'">
-              - {{ currentDateEnd }}
+              - {{ planningStore.getCurrentDateEnd }}
             </template>
           </div>
           <Button
@@ -64,7 +65,7 @@
           />
           <Button
             class="cursor-default"
-            :label="'S' + currentWeek"
+            :label="'S' + planningStore.currentWeek"
             type="secondary"
             icon="next"
             :submit="false"
@@ -92,18 +93,6 @@ export default {
       type: Object || null,
       required: true,
     },
-    currentDateStart: {
-      type: String,
-      required: true,
-    },
-    currentDateEnd: {
-      type: String,
-      required: true,
-    },
-    currentWeek: {
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
@@ -114,25 +103,31 @@ export default {
     ...mapStores(usePlanningStore),
   },
   async mounted() {
-    this.zones = await getZones(
-      1,
-      '&typeZone.code=zone&fitArena=' + this.$route.params.id
-    )
+    await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
+    this.planningStore.$subscribe(async (mutation) => {
+      if (mutation.events.key !== 'creneaux') await this.planningStore.fetch()
+    })
   },
   methods: {
     today() {
-      // WS query api Today
       this.calendarApi.today()
+      this.updateDebut()
     },
     prev() {
-      // WS query api WEEK 4-5
       this.calendarApi.prev()
+      this.updateDebut()
     },
     next() {
-      // WS query api Next
       this.calendarApi.next()
+      this.updateDebut()
+    },
+    async setZones() {
+      this.zones = await getZones(
+        1,
+        '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      )
     },
     filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
@@ -156,36 +151,56 @@ export default {
       }
     },
     viewWeek() {
-      this.planningStore.filter.debut = this.getFirstTimestampOfWeek()
-      this.planningStore.filter.fit_arena = this.$route.params.id
-      this.planningStore.filter.duree = 7
-      this.filterByZone(this.zones[0].id) // select first zone
+      this.planningStore.filters.debut = this.getDebutOfWeek()
+      this.planningStore.filters.fit_arena = this.$route.params.id
+      this.planningStore.filters.duree = 7
+      this.planningStore.filters.zone = [this.zones[0].id] // select first zone
       this.calendarApi.changeView('timeGridWeek')
       this.planningStore.currentViewName = 'day'
     },
     viewDay() {
+      this.planningStore.filters.debut = this.getDebutOfDay()
+      this.planningStore.filters.duree = 1
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'week'
     },
-    getFirstTimestampOfWeek() {
-      const currentDate = new Date()
+    updateDebut() {
+      this.planningStore.filters.debut =
+        this.planningStore.currentViewName === 'week'
+          ? this.getDebutOfWeek()
+          : this.getDebutOfDay()
+    },
+    getDebutOfWeek() {
       const firstDayOfWeek = new Date(
-        currentDate.setDate(
-          currentDate.getDate() - ((currentDate.getDay() + 6) % 7)
+        this.planningStore.currentDateStart.setDate(
+          this.planningStore.currentDateStart.getDate() -
+            ((this.planningStore.currentDateStart.getDay() + 6) % 7)
         )
       )
       firstDayOfWeek.setHours(0, 0, 0, 0)
       return Math.floor(firstDayOfWeek.getTime() / 1000)
     },
+    getDebutOfDay() {
+      const date = this.planningStore.currentDateStart
+      date.setHours(0, 0, 0, 0)
+      return Math.floor(date.getTime() / 1000)
+    },
   },
 }
 </script>
-<style scopped>
+<style scopped lang="scss">
 .active {
   background-color: #0b83d9;
   color: white;
 }
 button {
   @apply min-w-max;
+  &:hover {
+    @apply bg-sky-600 text-white;
+  }
+  &:active {
+    @apply relative;
+    top: 1px;
+  }
 }
 </style>

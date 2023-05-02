@@ -2,9 +2,6 @@
   <div class="fa-planning">
     <PlanningNavigation
       :calendar-api="calendarApi"
-      :current-date-start="currentDateStart"
-      :current-date-end="currentDateEnd"
-      :current-week="currentWeek"
       @filter-updated="planningStore.applyFilter"
     />
     <modalCreneau
@@ -105,9 +102,6 @@ export default {
       },
       calendarApi: {},
       isModalCreneauOpen: false,
-      currentDateStart: '',
-      currentDateEnd: '',
-      currentWeek: '',
       actionType: '',
     }
   },
@@ -118,10 +112,10 @@ export default {
   async created() {
     this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
     this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
+    // sync events from store/api
     this.$watch(
       () => this.planningStore.creneaux,
       (newCreneaux) => {
-        console.log(newCreneaux)
         this.calendarOptions.events = newCreneaux
       }
     )
@@ -133,16 +127,16 @@ export default {
   methods: {
     async setRessources() {
       const activites = await getActivites(this.$route.params.id)
-      // do not use map with vue3 var (type Proxy), it wont work, use forEach instead
+      // do not use map with vue3 var (Proxy type), it wont work, use forEach instead
       activites.forEach(function (activite) {
         activite.title = activite.libelle
       })
       this.calendarOptions.resources = activites
     },
     refreshDates(dateInfo) {
-      this.currentWeek = this.getWeekNumber(dateInfo.start)
-      this.currentDateStart = this.$dayjs(dateInfo.start).format('D MMMM')
-      this.currentDateEnd = this.$dayjs(dateInfo.end - 1).format('D MMMM YYYY')
+      this.planningStore.currentWeek = this.getWeekNumber(dateInfo.start)
+      this.planningStore.currentDateStart = dateInfo.start
+      this.planningStore.currentDateEnd = dateInfo.end
     },
     eventClick(eventClickInfo) {
       this.setSelectedCreneau(eventClickInfo.event)

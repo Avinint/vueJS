@@ -1,58 +1,75 @@
 import { defineStore } from 'pinia'
 import { getPlanning } from '@api/planning.js'
+import dayjs from 'dayjs'
 
 export const usePlanningStore = defineStore('planning', {
   state: () => ({
     creneaux: [],
-    filter: {
+    filters: {
       debut: 0,
       fit_arena: 0,
       duree: 0,
       zone: [],
     },
     currentViewName: 'week',
+    currentDateStart: {},
+    currentDateEnd: {},
+    currentWeek: 0,
     slotMinTime: '07:00',
     slotMaxTime: '22:00',
   }),
   getters: {
     isZoneActive(state) {
       return (id) => {
-        return state.filter.zone.includes(id)
+        return state.filters.zone.includes(id)
       }
     },
     getNumberActiveZone(state) {
-      const nbZone = state.filter.zone.length
+      const nbZone = state.filters.zone.length
       return nbZone === 0 ? '' : `(${nbZone})`
+    },
+    getCurrentDateStart(state) {
+      return dayjs(state.currentDateStart).format('D MMMM')
+    },
+    getCurrentDateEnd(state) {
+      return dayjs(state.currentDateEnd - 1).format('D MMMM YYYY')
     },
   },
   actions: {
     async fetch() {
       const response = await getPlanning(
-        this.filter.debut,
-        this.filter.fit_arena,
-        this.filter.duree,
-        this.filter.zone.join(',')
+        this.filters.debut,
+        this.filters.fit_arena,
+        this.filters.duree,
+        this.filters.zone.join(',')
       )
-      this.creneaux = response.creneaux.map((creneau) => {
+      this.pushCreneaux(response.creneaux)
+    },
+    pushCreneaux(creneaux) {
+      this.creneaux = creneaux.map((creneau) => {
         creneau.start = creneau.dateDebut
         creneau.end = creneau.dateSortie
         creneau.title = creneau.titre
         creneau.idCreneau = creneau.id
+        creneau.resourceIds = creneau.activites.map((activite) => activite.id)
         return creneau
       })
     },
     selectZone(newZone) {
-      this.filter.zone = [newZone]
+      this.filters.zone = [newZone]
     },
     toggleZone(newZone) {
-      if (this.filter.zone.includes(newZone)) {
-        this.filter.zone.splice(this.filter.zone.indexOf(newZone), 1)
+      if (this.filters.zone.includes(newZone)) {
+        this.filters.zone.splice(this.filters.zone.indexOf(newZone), 1)
       } else {
-        this.filter.zone.push(newZone)
+        this.filters.zone.push(newZone)
       }
     },
-    applyFilter() {
-      // console.log('apply filters')
+    setDebut() {
+      this.filter.debut =
+        this.currentViewName === 'week'
+          ? this.getDebutOfWeek()
+          : this.getDebutOfDay()
     },
   },
 })

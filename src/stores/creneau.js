@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { postCreneau, updateCreneau } from '@api/planning.js'
+import { usePlanningStore } from '@stores/planning.js'
 
 export const useCreneauStore = defineStore('creneau', {
   state: () => ({
@@ -31,7 +32,8 @@ export const useCreneauStore = defineStore('creneau', {
         )
         dataToSend.activites.forEach((activite) => delete activite.zoneId)
         const resp = await postCreneau(dataToSend)
-        console.log(resp)
+        const planningStore = usePlanningStore()
+        planningStore.pushCreneaux(resp.creneaux)
       })
     },
     async editCreneau() {
