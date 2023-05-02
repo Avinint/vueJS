@@ -11,7 +11,7 @@
             type="secondary"
             :submit="false"
             :class="{ active: planningStore.isZoneActive(zone.id) }"
-            @click="clickFilter(zone.id)"
+            @click="filterByZone(zone.id)"
           />
         </template>
       </NavigationSection>
@@ -119,6 +119,7 @@ export default {
       '&typeZone.code=zone&fitArena=' + this.$route.params.id
     )
     this.viewWeek()
+    await this.planningStore.fetch()
   },
   methods: {
     today() {
@@ -133,7 +134,7 @@ export default {
       // WS query api Next
       this.calendarApi.next()
     },
-    clickFilter(zoneId) {
+    filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
         case 'timeGridWeek':
           this.planningStore.selectZone(zoneId)
@@ -155,13 +156,26 @@ export default {
       }
     },
     viewWeek() {
+      this.planningStore.filter.debut = this.getFirstTimestampOfWeek()
+      this.planningStore.filter.fit_arena = this.$route.params.id
+      this.planningStore.filter.duree = 7
+      this.filterByZone(this.zones[0].id) // select first zone
       this.calendarApi.changeView('timeGridWeek')
-      this.clickFilter(this.zones[0].id) // select first zone
       this.planningStore.currentViewName = 'day'
     },
     viewDay() {
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'week'
+    },
+    getFirstTimestampOfWeek() {
+      const currentDate = new Date()
+      const firstDayOfWeek = new Date(
+        currentDate.setDate(
+          currentDate.getDate() - ((currentDate.getDay() + 6) % 7)
+        )
+      )
+      firstDayOfWeek.setHours(0, 0, 0, 0)
+      return Math.floor(firstDayOfWeek.getTime() / 1000)
     },
   },
 }

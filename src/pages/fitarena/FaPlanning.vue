@@ -29,7 +29,6 @@
               <span
                 v-if="arg.event.extendedProps.activites"
                 class="mr-2 fill-red-600"
-                v-html="ICON[arg.event.extendedProps.activites[0].libelle]"
               ></span>
               <span
                 class="text-2xs border-3 flex h-8 w-8 items-center justify-center rounded-full border-red-600 bg-white text-center leading-none"
@@ -119,12 +118,17 @@ export default {
   async created() {
     this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
     this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
+    this.$watch(
+      () => this.planningStore.creneaux,
+      (newCreneaux) => {
+        console.log(newCreneaux)
+        this.calendarOptions.events = newCreneaux
+      }
+    )
   },
-  async mounted() {
+  mounted() {
     this.calendarApi = this.$refs.fullCalendar.getApi()
     this.setRessources()
-    await this.planningStore.fetch()
-    this.calendarOptions.events = this.planningStore.creneaux
   },
   methods: {
     async setRessources() {
@@ -139,21 +143,6 @@ export default {
       this.currentWeek = this.getWeekNumber(dateInfo.start)
       this.currentDateStart = this.$dayjs(dateInfo.start).format('D MMMM')
       this.currentDateEnd = this.$dayjs(dateInfo.end - 1).format('D MMMM YYYY')
-    },
-    getWeekNumber: function (date) {
-      var d = new Date(date)
-      d.setHours(0, 0, 0, 0)
-      d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
-      var week1 = new Date(d.getFullYear(), 0, 4)
-      return (
-        1 +
-        Math.round(
-          ((d.getTime() - week1.getTime()) / 86400000 -
-            3 +
-            ((week1.getDay() + 6) % 7)) /
-            7
-        )
-      )
     },
     eventClick(eventClickInfo) {
       this.setSelectedCreneau(eventClickInfo.event)
@@ -191,6 +180,21 @@ export default {
         this.creneauStore.dureeInterCreneau =
           fullCalendarCreneau.extendedProps.dureeInterCreneau // 5
       }
+    },
+    getWeekNumber: function (date) {
+      var d = new Date(date)
+      d.setHours(0, 0, 0, 0)
+      d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
+      var week1 = new Date(d.getFullYear(), 0, 4)
+      return (
+        1 +
+        Math.round(
+          ((d.getTime() - week1.getTime()) / 86400000 -
+            3 +
+            ((week1.getDay() + 6) % 7)) /
+            7
+        )
+      )
     },
   },
 }

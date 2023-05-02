@@ -5,6 +5,9 @@ export const usePlanningStore = defineStore('planning', {
   state: () => ({
     creneaux: [],
     filter: {
+      debut: 0,
+      fit_arena: 0,
+      duree: 0,
       zone: [],
     },
     currentViewName: 'week',
@@ -24,7 +27,12 @@ export const usePlanningStore = defineStore('planning', {
   },
   actions: {
     async fetch() {
-      const response = await getPlanning()
+      const response = await getPlanning(
+        this.filter.debut,
+        this.filter.fit_arena,
+        this.filter.duree,
+        this.filter.zone.join(',')
+      )
       this.creneaux = response.creneaux.map((creneau) => {
         creneau.start = creneau.dateDebut
         creneau.end = creneau.dateSortie
