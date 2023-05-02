@@ -49,6 +49,7 @@
           <div class="flex">
             <select
               v-model="creneauStore.heureDebut"
+              required
               class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             >
               <option
@@ -62,6 +63,7 @@
             <div class="px-4 py-2">à</div>
             <select
               v-model="creneauStore.heureFin"
+              required
               class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             >
               <option
@@ -88,7 +90,7 @@
             class="hidden"
           />
           <label
-            class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-sm text-black drop-shadow-sm"
+            class="mb-3 mr-9 inline-block min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-sm text-black drop-shadow-sm"
             :class="{ 'bg-sky-600 text-white': isZoneChecked(zone.id) }"
             :for="zone.id"
           >
@@ -109,7 +111,7 @@
                   @change="toggleActivite(zoneActivite.activite, zone.id)"
                 />
                 <label
-                  class="mb-3 mr-9 inline-block cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-sm text-black drop-shadow-sm"
+                  class="mb-3 mr-9 inline-block min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-sm text-black drop-shadow-sm"
                   :class="{
                     'bg-sky-600 text-white': zoneActivite.activite.checked,
                   }"
@@ -286,7 +288,7 @@ export default {
     toggleActivite(activite, zoneId) {
       if (activite.checked) {
         activite = {
-          zoneId: zoneId,
+          zoneId: zoneId, // will be deprecated for the next API
           activiteId: activite.id,
           tarif: activite.tarif || 0,
         }

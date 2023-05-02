@@ -49,7 +49,7 @@
             class="m-0"
             @click="prev()"
           />
-          <div class="cursor-default px-4">
+          <div class="min-w-max cursor-default px-4">
             {{ currentDateStart }}
             <template v-if="planningStore.currentViewName === 'day'">
               - {{ currentDateEnd }}
@@ -170,5 +170,8 @@ export default {
 .active {
   background-color: #0b83d9;
   color: white;
+}
+button {
+  @apply min-w-max;
 }
 </style>

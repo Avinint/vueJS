@@ -8,8 +8,8 @@ export const usePlanningStore = defineStore('planning', {
       zone: [],
     },
     currentViewName: 'week',
-    slotMinTime: '07:00:00',
-    slotMaxTime: '22:00:00',
+    slotMinTime: '07:00',
+    slotMaxTime: '22:00',
   }),
   getters: {
     isZoneActive(state) {
