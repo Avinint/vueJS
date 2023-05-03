@@ -18,7 +18,7 @@
           required
         />
       </div>
-      <div>
+      <div class="w-96">
         <Input
           v-model="creneauStore.titre"
           :inline="false"
@@ -44,7 +44,7 @@
         </div>
         <div class="ml-20 grow">
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-            plage horaire du créneau
+            Plage horaire du créneau
           </label>
           <div class="flex">
             <select
@@ -115,7 +115,7 @@
                     @change="toggleActivite(zoneActivite.activite, zone.id)"
                   />
                   <label
-                    class="mb-3 mr-9 inline-block min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-sm text-black drop-shadow-sm"
+                    class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
                     :class="{
                       'bg-sky-600 text-white': zoneActivite.activite.checked,
                     }"
@@ -253,6 +253,7 @@ export default {
     await this.fetchZones()
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
+    this.creneauStore.activites = []
   },
   methods: {
     async fetchZones() {
@@ -276,7 +277,6 @@ export default {
     },
     checkActivites() {
       if (this.typeAction === 'edit') {
-        console.log('checkActivites')
         this.zones.forEach((zone) => {
           if (zone.id === this.creneauStore.zoneId[0])
             zone.zoneActivites.forEach((zoneActivite) => {
