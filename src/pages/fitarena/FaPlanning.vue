@@ -139,13 +139,13 @@ export default {
       this.planningStore.currentDateEnd = dateInfo.end
     },
     eventClick(eventClickInfo) {
-      this.setSelectedCreneau(eventClickInfo.event)
       this.actionType = 'edit'
+      this.setSelectedCreneau(eventClickInfo.event)
       this.isModalCreneauOpen = true
     },
     select(selectionInfo) {
-      this.setSelectedCreneau(selectionInfo)
       this.actionType = 'create'
+      this.setSelectedCreneau(selectionInfo)
       this.isModalCreneauOpen = true
     },
     eventResizeOrDrag(info) {
@@ -165,14 +165,25 @@ export default {
       // if there's already some data in the 'creneau' :
       if (fullCalendarCreneau.extendedProps) {
         this.creneauStore.creneauType = fullCalendarCreneau.extendedProps.type
-        this.creneauStore.zoneId = fullCalendarCreneau.extendedProps.zones[0]
+        this.creneauStore.zoneId = fullCalendarCreneau.extendedProps.zones
         this.creneauStore.activites =
-          fullCalendarCreneau.extendedProps.activites
+          fullCalendarCreneau.extendedProps.activites.map((activite) => {
+            activite.activiteId = activite.id
+            activite.tarif = activite.prix
+            activite.zoneId = fullCalendarCreneau.extendedProps.zones[0]
+            delete activite.id
+            delete activite.prix
+            delete activite.libelle
+            delete activite.maxTerrain
+            return activite
+          })
         this.creneauStore.titre = fullCalendarCreneau.extendedProps.titre
         this.creneauStore.dureeActivite =
           fullCalendarCreneau.extendedProps.dureeActivite // 55
         this.creneauStore.dureeInterCreneau =
           fullCalendarCreneau.extendedProps.dureeInterCreneau // 5
+      } else {
+        this.creneauStore.zoneId = []
       }
     },
     getWeekNumber: function (date) {

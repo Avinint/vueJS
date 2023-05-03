@@ -15,7 +15,6 @@
           />
         </template>
       </NavigationSection>
-      {{ planningStore.filters.debut }}
       <NavigationSection>
         <template #title> Affichage du planning </template>
         <template #content>
@@ -113,15 +112,12 @@ export default {
   methods: {
     today() {
       this.calendarApi.today()
-      this.updateDebut()
     },
     prev() {
       this.calendarApi.prev()
-      this.updateDebut()
     },
     next() {
       this.calendarApi.next()
-      this.updateDebut()
     },
     async setZones() {
       this.zones = await getZones(
@@ -151,7 +147,6 @@ export default {
       }
     },
     viewWeek() {
-      this.planningStore.filters.debut = this.getDebutOfWeek()
       this.planningStore.filters.fit_arena = this.$route.params.id
       this.planningStore.filters.duree = 7
       this.planningStore.filters.zone = [this.zones[0].id] // select first zone
@@ -159,31 +154,9 @@ export default {
       this.planningStore.currentViewName = 'day'
     },
     viewDay() {
-      this.planningStore.filters.debut = this.getDebutOfDay()
       this.planningStore.filters.duree = 1
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'week'
-    },
-    updateDebut() {
-      this.planningStore.filters.debut =
-        this.planningStore.currentViewName === 'week'
-          ? this.getDebutOfWeek()
-          : this.getDebutOfDay()
-    },
-    getDebutOfWeek() {
-      const firstDayOfWeek = new Date(
-        this.planningStore.currentDateStart.setDate(
-          this.planningStore.currentDateStart.getDate() -
-            ((this.planningStore.currentDateStart.getDay() + 6) % 7)
-        )
-      )
-      firstDayOfWeek.setHours(0, 0, 0, 0)
-      return Math.floor(firstDayOfWeek.getTime() / 1000)
-    },
-    getDebutOfDay() {
-      const date = this.planningStore.currentDateStart
-      date.setHours(0, 0, 0, 0)
-      return Math.floor(date.getTime() / 1000)
     },
   },
 }

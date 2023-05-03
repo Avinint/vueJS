@@ -34,9 +34,28 @@ export const usePlanningStore = defineStore('planning', {
     getCurrentDateEnd(state) {
       return dayjs(state.currentDateEnd - 1).format('D MMMM YYYY')
     },
+    getDebutOfWeek(state) {
+      const firstDayOfWeek = new Date(
+        state.currentDateStart.setDate(
+          state.currentDateStart.getDate() -
+            ((state.currentDateStart.getDay() + 6) % 7)
+        )
+      )
+      firstDayOfWeek.setHours(0, 0, 0, 0)
+      return Math.floor(firstDayOfWeek.getTime() / 1000)
+    },
+    getDebutOfDay() {
+      const date = new Date(this.currentDateStart)
+      date.setHours(0, 0, 0, 0)
+      return Math.floor(date.getTime() / 1000)
+    },
   },
   actions: {
     async fetch() {
+      this.filters.debut =
+        this.currentViewName === 'day'
+          ? this.getDebutOfWeek
+          : this.getDebutOfDay
       const response = await getPlanning(
         this.filters.debut,
         this.filters.fit_arena,
