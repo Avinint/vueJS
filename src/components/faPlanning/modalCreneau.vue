@@ -4,6 +4,7 @@
       v-if="isOpen"
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modalTitle"
+      size="4xl"
       @cancel="$emit('closeModalCreneau')"
     >
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
@@ -11,14 +12,15 @@
       </label>
       <div class="py-3">
         <InputRadio
-          v-model="creneauStore.selectedCreneau.type"
+          v-model="creneauStore.creneauType"
           name="typeCreneau"
           :list="typeCreneauList"
+          required
         />
       </div>
-      <div>
+      <div class="w-96">
         <Input
-          v-model="creneauStore.selectedCreneau.title"
+          v-model="creneauStore.titre"
           :inline="false"
           :required="true"
           label="Ajouter un titre à votre créneau"
@@ -33,22 +35,22 @@
             Date du créneau
           </label>
           <vue-tailwind-datepicker
-            v-model="creneauStore.selectedCreneau.day"
+            v-model="datepicked"
             i18n="fr"
             as-single
-            :formatter="{ date: 'DD / MM / YYYY' }"
-            class="text-center"
+            :formatter="{ date: datepickerFormat }"
+            class="bg-gray-50 text-center"
           />
         </div>
-        <div class="ml-6 grow">
+        <div class="ml-20 grow">
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-            plage horaire du créneau
+            Plage horaire du créneau
           </label>
           <div class="flex">
             <select
-              v-model="startHourMinute"
-              class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              @change="storeDateStart()"
+              v-model="creneauStore.heureDebut"
+              required
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listStart"
@@ -60,9 +62,9 @@
             </select>
             <div class="px-4 py-2">à</div>
             <select
-              v-model="endHourMinute"
-              class="block h-10 w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              @change="storeDateEnd()"
+              v-model="creneauStore.heureFin"
+              required
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listEnd"
@@ -75,39 +77,61 @@
           </div>
         </div>
       </div>
-      <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-        Zones
-      </label>
-      <div class="py-3">
-        <InputRadio
-          v-model="selectedZone"
-          name="selectedZone"
-          :list="zones"
-          @click="showActivites()"
-        />
-      </div>
-      <div v-if="selectedZone">
-        <label class="mb-2 block text-sm font-medium text-gray-900">
+      <div class="relative rounded-lg border border-gray-300 p-4">
+        <label class="block text-sm font-bold text-gray-900"> Zones </label>
+        <label
+          class="absolute top-32 mb-2 block text-sm font-bold text-gray-900"
+        >
           Activités
         </label>
-        <div class="grid grid-cols-2">
-          <template v-for="activite in activites" :key="activite.id">
-            <div class="my-4 mr-10 flex justify-between">
-              <Button
-                type="secondary"
-                :label="activite.title"
-                class="w-52 hover:bg-sky-600 hover:text-white"
-                :submit="false"
-                @click=""
-              />
-              <Input
-                v-model="activite.price"
-                type="text"
-                class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
-                suffix="€"
-              />
+        <div class="flex overflow-x-scroll py-3">
+          <div v-for="zone in zones" :key="zone.id" class="w-80 flex-col">
+            <input
+              :id="zone.id"
+              v-model="creneauStore.zoneId"
+              type="checkbox"
+              :value="zone.id"
+              class="hidden"
+            />
+            <label
+              class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
+              :class="{ 'bg-sky-600 text-white': isZoneChecked(zone.id) }"
+              :for="zone.id"
+            >
+              {{ zone.libelle }}
+            </label>
+            <div class="flex-col pt-10">
+              <div
+                v-for="zoneActivite in zone.zoneActivites"
+                v-if="isZoneChecked(zone.id)"
+                :key="zone.id + '-' + zoneActivite.activite.id"
+              >
+                <div class="my-4 mr-10 flex justify-between">
+                  <input
+                    :id="zone.id + '-' + zoneActivite.activite.id"
+                    v-model="zoneActivite.activite.checked"
+                    type="checkbox"
+                    class="hidden"
+                    @change="toggleActivite(zoneActivite.activite, zone.id)"
+                  />
+                  <label
+                    class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
+                    :class="{
+                      'bg-sky-600 text-white': zoneActivite.activite.checked,
+                    }"
+                    :for="zone.id + '-' + zoneActivite.activite.id"
+                    >{{ zoneActivite.activite.libelle }}
+                  </label>
+                  <Input
+                    v-model.number="zoneActivite.activite.tarif"
+                    :default-value="defaultTarif"
+                    class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
+                    suffix="€"
+                  />
+                </div>
+              </div>
             </div>
-          </template>
+          </div>
         </div>
       </div>
     </Modal>
@@ -123,16 +147,19 @@ import { useCreneauStore } from '@stores/creneau.js'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
-import InputRadio from '@components/common/InputRadio.vue'
 import Input from '@components/common/Input.vue'
+import InputRadio from '@components/common/InputRadio.vue'
+import InputCheckbox from '@components/common/InputCheckbox.vue'
 import { getActiviteByZone } from '@api/activiteByZone'
+import { getActivites } from '../../api/activite.js'
 
 export default {
   components: {
     Button,
     Modal,
-    InputRadio,
     Input,
+    InputRadio,
+    InputCheckbox,
   },
   props: {
     isOpen: {
@@ -149,20 +176,17 @@ export default {
     return {
       typeCreneauList: [],
       parametres: [],
-      selectedZone: '',
-      startHourMinute: '',
-      endHourMinute: '',
-      activites: [],
+      zones: [],
+      // activites: [],
+      datepicked: '',
+      datepickerFormat: 'DD / MM / YYYY',
+      timeSeparator: ':',
+      defaultTarif: 0,
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
-    dayCreneau() {
-      return this.$dayjs(this.creneauStore.dateInfo.startStr).format(
-        'DD/MM/YYYY'
-      )
-    },
     modalTitle() {
       switch (this.typeAction) {
         case 'create':
@@ -176,23 +200,24 @@ export default {
     slotMinTimeNumber() {
       return Number(
         this.planningStore.slotMinTime
-          .split(this.creneauStore.timeSeparator)[0]
+          .split(this.timeSeparator)[0]
           .replace('0', '')
       )
     },
     slotMaxTimeNumber() {
       return Number(
         this.planningStore.slotMaxTime
-          .split(this.creneauStore.timeSeparator)[0]
+          .split(this.timeSeparator)[0]
           .replace('0', '')
       )
     },
     listStart() {
       let list = []
       for (let i = this.slotMinTimeNumber; i < this.slotMaxTimeNumber; i++) {
-        for (let y = 0; y < 55; y += 5) {
+        for (let y = 0; y < 59; y += 5) {
+          const hours = i.toString().length === 1 ? '0' + i : i
           const minutes = y.toString().length === 1 ? '0' + y : y
-          list.push(i + this.creneauStore.timeSeparator + minutes)
+          list.push(hours + this.timeSeparator + minutes)
         }
       }
       return list
@@ -200,84 +225,80 @@ export default {
     listEnd() {
       let list = []
       for (
-        let i = this.creneauStore.selectedCreneau.start.hour;
+        let i = this.creneauStore.heureDebut.split(this.timeSeparator)[0];
         i < this.slotMaxTimeNumber;
         i++
       ) {
-        for (let y = 5; y < 55; y += 5) {
+        for (let y = 0; y < 59; y += 5) {
+          const hours = i.toString().length === 1 ? '0' + i : i
           const minutes = y.toString().length === 1 ? '0' + y : y
-          list.push(i + this.creneauStore.timeSeparator + minutes)
+          list.push(hours + this.timeSeparator + minutes)
         }
       }
       return list
     },
   },
   watch: {
-    async selectedZone() {
-      this.activites = [
-        {
-          id: 3,
-          title: 'Futsal',
-          price: 80,
-          selected: false,
-        },
-        {
-          id: 4,
-          title: 'Basket',
-          price: 80,
-          selected: false,
-        },
-        {
-          id: 5,
-          title: 'Tennis',
-          price: 80,
-          selected: false,
-        },
-        {
-          id: 6,
-          title: 'Handball',
-          price: 80,
-          selected: false,
-        },
-      ]
+    datepicked(newDatepicked) {
+      this.creneauStore.date = this.$dayjs(
+        newDatepicked,
+        this.datepickerFormat
+      ).format('YYYY-MM-DD')
     },
   },
   async mounted() {
-    this.startHourMinute = this.creneauStore.getSelectedFormatedStart
-    this.endHourMinute = this.creneauStore.getSelectedFormatedEnd
-    this.zones = await getZones(
-      1,
-      '&typeZone.code=zone&fitArena=' + this.$route.params.id
+    this.datepicked = this.$dayjs(this.creneauStore.date).format(
+      this.datepickerFormat
     )
+    await this.fetchZones()
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
+    this.creneauStore.activites = []
   },
   methods: {
-    storeDateStart() {
-      this.creneauStore.selectedCreneau.start.hour = this.startHourMinute.split(
-        this.creneauStore.timeSeparator
-      )[0]
-      this.creneauStore.selectedCreneau.start.minute =
-        this.startHourMinute.split(this.creneauStore.timeSeparator)[1]
+    async fetchZones() {
+      this.zones = await getZones(
+        1,
+        '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      )
+      this.checkActivites()
     },
-    storeDateEnd() {
-      this.creneauStore.selectedCreneau.end.hour = this.endHourMinute.split(
-        this.creneauStore.timeSeparator
-      )[0]
-      this.creneauStore.selectedCreneau.end.minute = this.endHourMinute.split(
-        this.creneauStore.timeSeparator
-      )[1]
+    toggleActivite(activite, zoneId) {
+      if (activite.checked) {
+        activite = {
+          zoneId: zoneId, // will be deprecated for the next API
+          activiteId: activite.id,
+          tarif: activite.tarif || 0,
+        }
+        this.creneauStore.addActivite(activite)
+      } else {
+        this.creneauStore.dropActivite(activite.id)
+      }
+    },
+    checkActivites() {
+      if (this.typeAction === 'edit') {
+        this.zones.forEach((zone) => {
+          if (zone.id === this.creneauStore.zoneId[0])
+            zone.zoneActivites.forEach((zoneActivite) => {
+              this.creneauStore.activites.forEach((activite) => {
+                if (activite.activiteId === zoneActivite.activite.id)
+                  zoneActivite.activite.checked = true
+              })
+            })
+        })
+      }
     },
     submitCreneau() {
-      console.log(this.selectedZone)
-      console.log(this.activites)
-      // if (this.typeAction === 'create') {
-      //   this.creneauStore.addCreneau()
-      // }
-      // if (this.typeAction === 'edit') {
-      //   this.creneauStore.editCreneau()
-      // }
-      // this.$emit('closeModalCreneau')
+      if (this.typeAction === 'create') {
+        this.creneauStore.addCreneau()
+      }
+      if (this.typeAction === 'edit') {
+        this.creneauStore.editCreneau()
+      }
+      this.$emit('closeModalCreneau')
+    },
+    isZoneChecked(zoneId) {
+      return this.creneauStore.zoneId.includes(zoneId)
     },
   },
 }
@@ -285,5 +306,8 @@ export default {
 <style scoped>
 option {
   text-align: center;
+}
+.max-w-4xl {
+  max-width: 56rem;
 }
 </style>

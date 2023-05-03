@@ -8,10 +8,10 @@
             v-for="zone in zones"
             :key="zone.id"
             :label="zone.libelle"
-            type="checkbox"
+            type="secondary"
             :submit="false"
             :class="{ active: planningStore.isZoneActive(zone.id) }"
-            @click="clickFilter(zone.id)"
+            @click="filterByZone(zone.id)"
           />
         </template>
       </NavigationSection>
@@ -49,10 +49,10 @@
             class="m-0"
             @click="prev()"
           />
-          <div class="cursor-default px-4">
-            {{ currentDateStart }}
+          <div class="min-w-max cursor-default px-4">
+            {{ planningStore.getCurrentDateStart }}
             <template v-if="planningStore.currentViewName === 'day'">
-              - {{ currentDateEnd }}
+              - {{ planningStore.getCurrentDateEnd }}
             </template>
           </div>
           <Button
@@ -64,7 +64,7 @@
           />
           <Button
             class="cursor-default"
-            :label="'S' + currentWeek"
+            :label="'S' + planningStore.currentWeek"
             type="secondary"
             icon="next"
             :submit="false"
@@ -92,18 +92,6 @@ export default {
       type: Object || null,
       required: true,
     },
-    currentDateStart: {
-      type: String,
-      required: true,
-    },
-    currentDateEnd: {
-      type: String,
-      required: true,
-    },
-    currentWeek: {
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
@@ -114,11 +102,12 @@ export default {
     ...mapStores(usePlanningStore),
   },
   async mounted() {
-    this.zones = await getZones(
-      1,
-      '&typeZone.code=zone&fitArena=' + this.$route.params.id
-    )
+    await this.setZones()
     this.viewWeek()
+    await this.planningStore.fetch()
+    this.planningStore.$subscribe(async (mutation) => {
+      if (mutation.events.key !== 'creneaux') await this.planningStore.fetch()
+    })
   },
   methods: {
     today() {
@@ -130,7 +119,13 @@ export default {
     next() {
       this.calendarApi.next()
     },
-    clickFilter(zoneId) {
+    async setZones() {
+      this.zones = await getZones(
+        1,
+        '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      )
+    },
+    filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
         case 'timeGridWeek':
           this.planningStore.selectZone(zoneId)
@@ -152,20 +147,33 @@ export default {
       }
     },
     viewWeek() {
+      this.planningStore.filters.fit_arena = this.$route.params.id
+      this.planningStore.filters.duree = 7
+      this.planningStore.filters.zone = [this.zones[0].id] // select first zone
       this.calendarApi.changeView('timeGridWeek')
-      this.clickFilter(this.zones[0].id) // select first zone
       this.planningStore.currentViewName = 'day'
     },
     viewDay() {
+      this.planningStore.filters.duree = 1
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'week'
     },
   },
 }
 </script>
-<style>
+<style scopped lang="scss">
 .active {
   background-color: #0b83d9;
   color: white;
+}
+button {
+  @apply min-w-max;
+  &:hover {
+    @apply bg-sky-600 text-white;
+  }
+  &:active {
+    @apply relative;
+    top: 1px;
+  }
 }
 </style>

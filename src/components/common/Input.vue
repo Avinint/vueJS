@@ -2,7 +2,7 @@
   <div class="flex" :class="props.inline ? 'items-center' : 'flex-col'">
     <InputLabel :for="props.id">{{ label }}</InputLabel>
     <div class="w-full">
-      <input :readonly="props.readonly" :id="props.id" @input="inputValidation" :value="props.modelValue" :type="props.type" :required="props.required" :pattern="props.pattern" :minlength="props.minlength" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder">
+      <input :readonly="props.readonly" :id="props.id" @input="inputValidation" :value="props.modelValue || props.defaultValue" :type="props.type" :required="props.required" :pattern="props.pattern" :minlength="props.minlength" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder">
       <p v-html="error"></p>
     </div>
   </div>
@@ -18,6 +18,7 @@
     test: string
     readonly?: boolean
     modelValue: string
+    defaultValue: string
     label: string
     id?: string
     inline: boolean
