@@ -9,9 +9,7 @@
         <h2 class="pb-5 pt-2">
           {{ typeEquipement.libelle }}
         </h2>
-        <div
-          class="relative overflow-x-auto"
-        >
+        <div class="relative overflow-x-auto">
           <table
             v-for="(equipement, i) in typeEquipement.equipements"
             :key="i"
@@ -76,7 +74,7 @@
                   />
                 </td>
               </tr>
-              <tr >
+              <tr>
                 <td></td>
                 <td colspan="3">
                   <CardConfiguration>
@@ -193,7 +191,7 @@
           label="Adresse IP"
           :required="true"
           class="w-full"
-          pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+          :validation="[ipValidation]"
         />
       </div>
       <div class="flex items-center">
@@ -232,7 +230,7 @@
             <tr
               v-for="(equipementMode, i) in equipement.equipementModes"
               :key="i"
-              class="bg-white items-center"
+              class="items-center bg-white"
             >
               <td class="flex items-center justify-center p-3">
                 <Button
@@ -312,6 +310,7 @@ import {
   updateEquipements,
   patchEquipements,
 } from '../../api/equipement.js'
+import { isValid, ipValidation } from '@/validation.js'
 import { getTypeEquipements } from '../../api/typeEquipement.js'
 import { useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
@@ -335,6 +334,8 @@ const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
 const modal_title = ref('')
+
+const validation = ref({})
 
 const id_fa = useRoute().params.id
 
@@ -417,7 +418,7 @@ const mapApiToData = (equipementTemp) => {
 }
 
 const addEquipementConfiguration = () => {
-  const mode = {libelle: '', type: '', readonly: false }
+  const mode = { libelle: '', type: '', readonly: false }
   if (!equipement.value.hasOwnProperty('equipementModes'))
     equipement.value.equipementModes = []
   equipement.value.equipementModes.push(mode)
@@ -433,6 +434,8 @@ const editEquipementConfiguration = (i) => {
 }
 
 const saveEquipement = () => {
+  if (!isValid(validation)) return
+
   equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,

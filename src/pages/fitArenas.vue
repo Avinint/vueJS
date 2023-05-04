@@ -155,7 +155,7 @@
           :required="true"
           label="Code postal"
           class="w-full"
-          pattern="[0-9]{5}"
+          :validation="[zipValidation]"
         />
       </div>
       <div class="flex items-center">
@@ -168,42 +168,35 @@
           :required="true"
           label="Ville"
           class="w-full"
-          pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï-]{1,50}"
+          :validation="[cityValidation]"
         />
       </div>
-      <div v-if="address_selected" class="flex items-center">
-        <div class="flex w-1/2 items-center justify-between">
-          <label class="block w-1/2 text-sm font-medium text-gray-900"
-            >Latitude</label
-          >
-          <p class="text-sm text-blue-400">Format : 46.7897</p>
-        </div>
-        <input
+      <div class="flex items-center">
+        <InputDescription
+          v-if="address_selected"
           id="TfaLatitude"
           v-model="address_selected.latitude"
           :readonly="readonly"
           type="text"
-          class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           required
-          pattern="[0-9]{1,2}\.[0-9]{1,10}"
+          label="Latitude"
+          description="Format : 46.7897"
+          class="w-full"
+          :validation="[latitudeAndLongitudeValidation]"
         />
       </div>
       <div v-if="address_selected" class="flex items-center">
-        <div class="flex w-1/2 items-center justify-between">
-          <label class="block w-1/2 text-sm font-medium text-gray-900"
-            >Longitude</label
-          >
-          <p class="text-sm text-blue-400">Format : 46.7897</p>
-        </div>
-        <input
+        <InputDescription
           v-if="address_selected"
           id="TfaLongitude"
           v-model="address_selected.longitude"
           :readonly="readonly"
           type="text"
-          class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           required
-          pattern="[0-9]{1,2}\.[0-9]{1,10}"
+          label="Longitude"
+          description="Format : 46.7897"
+          class="w-full"
+          :validation="[latitudeAndLongitudeValidation]"
         />
       </div>
       <div class="flex items-center">
@@ -263,6 +256,7 @@ import Modal from '../components/common/Modal.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
+import InputDescription from '../components/common/InputDescription.vue'
 import { getAdresses } from '../api/address.js'
 import { getClients } from '../api/client.js'
 import {
@@ -271,6 +265,12 @@ import {
   postFitArenas,
   updateFitarenas,
 } from '../api/fit-arena.js'
+import {
+  isValid,
+  zipValidation,
+  cityValidation,
+  latitudeAndLongitudeValidation,
+} from '../validation.js'
 import { onMounted, ref } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -299,6 +299,7 @@ const addresses = ref([])
 const address = ref('')
 const address_selected = ref({})
 const modal_title = ref('')
+const validation = ref({})
 
 onMounted(async () => {
   fit_arenas.value = await getFitArenas()
@@ -321,6 +322,7 @@ const cancel = async () => {
   id_selected.value = ''
   address_selected.value = {}
   client_selected.value = {}
+  deleteFitArenaId.value = 0
 }
 
 const removeFa = (id) => {
@@ -377,6 +379,8 @@ const mapApiToData = (fitArena) => {
 }
 
 const saveFA = () => {
+  if (!isValid(validation)) return
+
   fit_arena.value = {
     client: 'api/clients/' + client_selected.value,
     commentaire: commentaire.value,
@@ -421,7 +425,7 @@ const updateFitArenaValidation = async () => {
 
 const addFitArenaValidation = async () => {
   try {
-    await postFitArenas(fit_arena)
+    await postFitArenas(fit_arena.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
