@@ -142,7 +142,7 @@
           label="Adresse IP"
           :required="true"
           class="w-full"
-          pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+          :validation="[ipValidation]"
         />
       </div>
       <div class="flex items-center">
@@ -202,6 +202,7 @@ import {
   postEquipements,
   updateEquipements,
 } from '../../api/equipement.js'
+import { isValid, ipValidation } from '@/validation.js'
 import { getTypeEquipements } from '../../api/typeEquipement.js'
 import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
@@ -224,6 +225,8 @@ const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
 const modal_title = ref('')
+
+const validation = ref({})
 
 const id_fa = useRoute().params.id
 
@@ -306,6 +309,8 @@ const mapApiToData = (equipementTemp) => {
 }
 
 const saveEquipement = async () => {
+  if (!isValid(validation)) return
+
   equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
