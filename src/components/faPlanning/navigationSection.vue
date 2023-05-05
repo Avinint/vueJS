@@ -1,14 +1,12 @@
 <template>
-  <div class="flex px-6">
-    <section class="flex flex-col">
-      <h3 class="nav-title pb-4 text-sm font-semibold text-black">
-        <slot name="title"></slot>
-      </h3>
-      <div class="flex items-center">
-        <slot name="content"></slot>
-      </div>
-    </section>
-  </div>
+  <section class="flex flex-col">
+    <h3 class="nav-title pb-4 text-sm font-semibold text-black">
+      <slot name="title"></slot>
+    </h3>
+    <div class="flex items-center justify-start">
+      <slot name="content"></slot>
+    </div>
+  </section>
 </template>
 
 <style scopped>

@@ -29,17 +29,17 @@ export const usePlanningStore = defineStore('planning', {
       return nbZone === 0 ? '' : `(${nbZone})`
     },
     getCurrentDateStart(state) {
-      return dayjs(state.currentDateStart).format('D MMMM')
+      return dayjs(state.currentDateStart).format('D MMM')
     },
     getCurrentDateEnd(state) {
-      return dayjs(state.currentDateEnd - 1).format('D MMMM YYYY')
+      return dayjs(state.currentDateEnd - 1).format('D MMM YYYY')
     },
     getDebutOfWeek(state) {
       const firstDayOfWeek = new Date(
-        state.currentDateStart.setDate(
-          state.currentDateStart.getDate() -
-            ((state.currentDateStart.getDay() + 6) % 7)
-        )
+          state.currentDateStart.setDate(
+              state.currentDateStart.getDate() -
+              ((state.currentDateStart.getDay() + 6) % 7)
+          )
       )
       firstDayOfWeek.setHours(0, 0, 0, 0)
       return Math.floor(firstDayOfWeek.getTime() / 1000)
@@ -53,26 +53,38 @@ export const usePlanningStore = defineStore('planning', {
   actions: {
     async fetch() {
       this.filters.debut =
-        this.currentViewName === 'day'
-          ? this.getDebutOfWeek
-          : this.getDebutOfDay
+          this.currentViewName === 'day'
+              ? this.getDebutOfWeek
+              : this.getDebutOfDay
       const response = await getPlanning(
-        this.filters.debut,
-        this.filters.fit_arena,
-        this.filters.duree,
-        this.filters.zone.join(',')
+          this.filters.debut,
+          this.filters.fit_arena,
+          this.filters.duree,
+          this.filters.zone.join(',')
       )
       this.pushCreneaux(response.creneaux)
     },
-    pushCreneaux(creneaux) {
-      this.creneaux = creneaux.map((creneau) => {
-        creneau.start = creneau.dateDebut
-        creneau.end = creneau.dateSortie
-        creneau.title = creneau.titre
-        creneau.idCreneau = creneau.id
-        creneau.resourceIds = creneau.activites.map((activite) => activite.id)
-        return creneau
+    pushCreneaux(newCreneaux) {
+      newCreneaux.forEach((newCreneau) => {
+        newCreneau.start = newCreneau.dateDebut
+        newCreneau.end = newCreneau.dateSortie
+        newCreneau.title = newCreneau.titre
+        newCreneau.idnewCreneau = newCreneau.id
+        newCreneau.resourceIds = newCreneau.zones
+        return newCreneau
       })
+      this.creneaux = [...this.creneaux, ...newCreneaux]
+    },
+    updateCreneaux(newCreneau) {
+      newCreneau.start = newCreneau.dateDebut
+      newCreneau.end = newCreneau.dateSortie
+      newCreneau.title = newCreneau.titre
+      newCreneau.idnewCreneau = newCreneau.id
+      newCreneau.resourceIds = newCreneau.zones
+      const index = this.creneaux.findIndex(
+          (creneau) => creneau.id === newCreneau.idnewCreneau
+      )
+      this.creneaux.splice(index, 1)
     },
     selectZone(newZone) {
       this.filters.zone = [newZone]
@@ -86,9 +98,9 @@ export const usePlanningStore = defineStore('planning', {
     },
     setDebut() {
       this.filter.debut =
-        this.currentViewName === 'week'
-          ? this.getDebutOfWeek()
-          : this.getDebutOfDay()
+          this.currentViewName === 'week'
+              ? this.getDebutOfWeek()
+              : this.getDebutOfDay()
     },
   },
 })

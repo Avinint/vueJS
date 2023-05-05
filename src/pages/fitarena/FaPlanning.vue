@@ -1,14 +1,14 @@
 <template>
   <div class="fa-planning">
     <PlanningNavigation
-      :calendar-api="calendarApi"
-      @filter-updated="planningStore.applyFilter"
+        :calendar-api="calendarApi"
+        @filter-updated="planningStore.applyFilter"
     />
     <modalCreneau
-      v-if="isModalCreneauOpen"
-      :is-open="isModalCreneauOpen"
-      :type-action="actionType"
-      @close-modal-creneau="isModalCreneauOpen = false"
+        v-if="isModalCreneauOpen"
+        :is-open="isModalCreneauOpen"
+        :action-type="actionType"
+        @close-modal-creneau="closeModalCreneau"
     />
     <FullCalendar ref="fullCalendar" :options="calendarOptions">
       <template #eventContent="arg">
@@ -24,11 +24,11 @@
             </div>
             <div class="flex">
               <span
-                v-if="arg.event.extendedProps.activites"
-                class="mr-2 fill-red-600"
+                  v-if="arg.event.extendedProps.activites"
+                  class="mr-2 fill-red-600"
               ></span>
               <span
-                class="text-2xs border-3 flex h-8 w-8 items-center justify-center rounded-full border-red-600 bg-white text-center leading-none"
+                  class="text-2xs border-3 flex h-8 w-8 items-center justify-center rounded-full border-red-600 bg-white text-center leading-none"
               >
                 Terrain<br />
                 1/3
@@ -50,10 +50,10 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
-import { getActivites } from '@api/activite.js'
 import { usePlanningStore } from '@stores/planning.js'
 import { useCreneauStore } from '@stores/creneau.js'
 import { mapStores } from 'pinia'
+import { getZones } from '@api/zone.js'
 
 export default {
   components: {
@@ -114,10 +114,10 @@ export default {
     this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
     // sync events from store/api
     this.$watch(
-      () => this.planningStore.creneaux,
-      (newCreneaux) => {
-        this.calendarOptions.events = newCreneaux
-      }
+        () => this.planningStore.creneaux,
+        (newCreneaux) => {
+          this.calendarOptions.events = newCreneaux
+        }
     )
   },
   mounted() {
@@ -125,66 +125,78 @@ export default {
     this.setRessources()
   },
   methods: {
+    // RESSOURCES are datas to create columns in day view
     async setRessources() {
-      const activites = await getActivites(this.$route.params.id)
-      // do not use map with vue3 var (Proxy type), it wont work, use forEach instead
-      activites.forEach(function (activite) {
-        activite.title = activite.libelle
+      const zones = await getZones(
+          // zones should be in a store (cause they are used also in navigation.vue)
+          1,
+          '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      )
+      this.calendarOptions.resources = zones.map((zone) => {
+        zone.title = zone.libelle // f-calendar need a title attribute
+        return zone
       })
-      this.calendarOptions.resources = activites
     },
     refreshDates(dateInfo) {
       this.planningStore.currentWeek = this.getWeekNumber(dateInfo.start)
       this.planningStore.currentDateStart = dateInfo.start
       this.planningStore.currentDateEnd = dateInfo.end
     },
+    sendCreneau(creneau) {
+      this.setSelectedCreneau(creneau)
+      this.isModalCreneauOpen = true
+    },
     eventClick(eventClickInfo) {
       this.actionType = 'edit'
-      this.setSelectedCreneau(eventClickInfo.event)
-      this.isModalCreneauOpen = true
+      this.sendCreneau(eventClickInfo.event)
     },
     select(selectionInfo) {
       this.actionType = 'create'
-      this.setSelectedCreneau(selectionInfo)
-      this.isModalCreneauOpen = true
+      this.sendCreneau(selectionInfo)
     },
     eventResizeOrDrag(info) {
-      this.creneauStore.editCreneau(info.event)
+      this.actionType = 'edit'
+      this.sendCreneau(info.event)
     },
     setSelectedCreneau(fullCalendarCreneau) {
       this.creneauStore.date = this.$dayjs(fullCalendarCreneau.start).format(
-        'YYYY-MM-DD'
+          'YYYY-MM-DD'
       ) // 2023-01-23
       this.creneauStore.heureDebut = this.$dayjs(
-        fullCalendarCreneau.start
+          fullCalendarCreneau.start
       ).format('HH:mm') // "14:30:00"
       this.creneauStore.heureFin = this.$dayjs(fullCalendarCreneau.end).format(
-        'HH:mm'
+          'HH:mm'
       ) // "14:30:00"
 
-      // if there's already some data in the 'creneau' :
+      // if there's already some data in the 'creneau' (edit creneau) :
       if (fullCalendarCreneau.extendedProps) {
+        this.creneauStore.id = fullCalendarCreneau.extendedProps.idnewCreneau
         this.creneauStore.creneauType = fullCalendarCreneau.extendedProps.type
         this.creneauStore.zoneId = fullCalendarCreneau.extendedProps.zones
         this.creneauStore.activites =
-          fullCalendarCreneau.extendedProps.activites.map((activite) => {
-            activite.activiteId = activite.id
-            activite.tarif = activite.prix
-            activite.zoneId = fullCalendarCreneau.extendedProps.zones[0]
-            delete activite.id
-            delete activite.prix
-            delete activite.libelle
-            delete activite.maxTerrain
-            return activite
-          })
+            fullCalendarCreneau.extendedProps.activites.map((activite) => {
+              activite.activiteId = activite.id
+              activite.tarif = activite.prix
+              activite.zoneId = fullCalendarCreneau.extendedProps.zones[0]
+              delete activite.id
+              delete activite.prix
+              delete activite.libelle
+              delete activite.maxTerrain
+              return activite
+            })
         this.creneauStore.titre = fullCalendarCreneau.extendedProps.titre
         this.creneauStore.dureeActivite =
-          fullCalendarCreneau.extendedProps.dureeActivite // 55
+            fullCalendarCreneau.extendedProps.dureeActivite // 55
         this.creneauStore.dureeInterCreneau =
-          fullCalendarCreneau.extendedProps.dureeInterCreneau // 5
+            fullCalendarCreneau.extendedProps.dureeInterCreneau // 5
       } else {
         this.creneauStore.zoneId = []
       }
+    },
+    closeModalCreneau() {
+      this.creneauStore.resetCreneau()
+      this.isModalCreneauOpen = false
     },
     getWeekNumber: function (date) {
       var d = new Date(date)
@@ -192,13 +204,13 @@ export default {
       d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
       var week1 = new Date(d.getFullYear(), 0, 4)
       return (
-        1 +
-        Math.round(
-          ((d.getTime() - week1.getTime()) / 86400000 -
-            3 +
-            ((week1.getDay() + 6) % 7)) /
-            7
-        )
+          1 +
+          Math.round(
+              ((d.getTime() - week1.getTime()) / 86400000 -
+                  3 +
+                  ((week1.getDay() + 6) % 7)) /
+              7
+          )
       )
     },
   },

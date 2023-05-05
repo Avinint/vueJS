@@ -1,7 +1,7 @@
 <template>
   <nav class="flex">
-    <section class="flex w-full justify-between pb-9">
-      <NavigationSection class="grow">
+    <section class="flex w-full justify-between">
+      <NavigationSection class="grow overflow-x-auto py-4">
         <template #title> Zone active </template>
         <template #content>
           <Button
@@ -15,7 +15,7 @@
           />
         </template>
       </NavigationSection>
-      <NavigationSection>
+      <NavigationSection class="justify-center px-4">
         <template #title> Affichage du planning </template>
         <template #content>
           <Button
@@ -33,12 +33,13 @@
             "
             type="secondary"
             icon=""
+            class="w-24"
             :submit="false"
             @click="toggleView()"
           />
         </template>
       </NavigationSection>
-      <NavigationSection>
+      <NavigationSection class="justify-center">
         <template #title>Période en cours</template>
         <template #content>
           <Button
@@ -49,7 +50,7 @@
             class="m-0"
             @click="prev()"
           />
-          <div class="min-w-max cursor-default px-4">
+          <div class="w-48 min-w-max cursor-default text-center">
             {{ planningStore.getCurrentDateStart }}
             <template v-if="planningStore.currentViewName === 'day'">
               - {{ planningStore.getCurrentDateEnd }}
@@ -63,7 +64,7 @@
             @click="next()"
           />
           <Button
-            class="cursor-default"
+            class="w-14 cursor-default text-center"
             :label="'S' + planningStore.currentWeek"
             type="secondary"
             icon="next"
@@ -166,7 +167,13 @@ export default {
   background-color: #0b83d9;
   color: white;
 }
+.max-w-1\/2 {
+  max-width: 50%;
+}
 button {
+  &:last-child {
+    @apply mr-0;
+  }
   @apply min-w-max;
   &:hover {
     @apply bg-sky-600 text-white;
