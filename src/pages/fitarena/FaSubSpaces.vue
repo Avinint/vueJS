@@ -253,7 +253,7 @@ const ajoutEquipementsMoto = ref()
 onMounted(async () => {
   subEspaces.value = await getZones(
     1,
-    '&typeZone.code=sous-espace&fitArena=' + props.id
+    '&typeZone.code=sous_espace&fitArena=' + props.id
   )
   espaceParents.value = await getZones(
     1,
@@ -287,7 +287,7 @@ const deleteSubspaceValidation = async (id) => {
   cancel()
   subEspaces.value = await getZones(
     1,
-    '&typeZone.code=sous-espace&fitArena=' + props.id
+    '&typeZone.code=sous_espace&fitArena=' + props.id
   )
   subEspace_modal.value = false
 }
@@ -326,12 +326,12 @@ const mapApiToData = async (espaceTemp) => {
 }
 
 const saveEspace = async () => {
-  const espaceTemp = await getTypeZone(1, '&code=sous-espace')
+  const espaceTemp = await getTypeZone(1, '&code=sous_espace')
 
   espTemp.value = {
     typeZone: '/api/type_zones/' + espaceTemp[0].id,
     fitArena: '/api/fit_arenas/' + props.id,
-    ordre: subEspace.value.ordre,
+    ordre: parseInt(subEspace.value.ordre),
     libelle: subEspace.value.libelle,
     actif: subEspace.value.actif == true ? subEspace.value.actif : false,
     idZoneParent: espace_selected.value,
@@ -346,7 +346,7 @@ const saveEspace = async () => {
 
 const updateSubspaceValidation = async () => {
   try {
-    await updateZones(espTemp, id_selected.value)
+    await updateZones(espTemp.value, id_selected.value)
     await linkedEquipements(
       ajoutEquipementsNume.value.typeEquipements,
       id_selected.value
@@ -365,7 +365,7 @@ const updateSubspaceValidation = async () => {
   cancel()
   subEspaces.value = await getZones(
     1,
-    '&typeZone.code=sous-espace&fitArena=' + props.id
+    '&typeZone.code=sous_espace&fitArena=' + props.id
   )
   espaceParents.value = await getZones(
     1,
@@ -376,7 +376,7 @@ const updateSubspaceValidation = async () => {
 
 const addSubspaceValidation = async () => {
   try {
-    const data = await postZones(espTemp)
+    const data = await postZones(espTemp.value)
     await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id)
     await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id)
     toast.success('Ajout effectué avec succès')
@@ -389,7 +389,7 @@ const addSubspaceValidation = async () => {
   cancel()
   subEspaces.value = await getZones(
     1,
-    '&typeZone.code=sous-espace&fitArena=' + props.id
+    '&typeZone.code=sous_espace&fitArena=' + props.id
   )
   espaceParents.value = await getZones(
     1,

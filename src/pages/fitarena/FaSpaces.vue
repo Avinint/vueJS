@@ -284,7 +284,7 @@ const saveEspace = async () => {
   espTemp.value = {
     typeZone: '/api/type_zones/' + espaceTemp[0].id,
     fitArena: '/api/fit_arenas/' + props.id,
-    ordre: espace.value.ordre,
+    ordre: parseInt(espace.value.ordre),
     libelle: espace.value.libelle,
     actif: espace.value.actif == true ? espace.value.actif : false,
   }
@@ -298,7 +298,7 @@ const saveEspace = async () => {
 
 const updateSpaceValidation = async () => {
   try {
-    await updateZones(espTemp, id_selected.value)
+    await updateZones(espTemp.value, id_selected.value)
     await linkedEquipements(
       ajoutEquipementsNume.value.typeEquipements,
       id_selected.value
@@ -324,7 +324,7 @@ const updateSpaceValidation = async () => {
 
 const addSpaceValidation = async () => {
   try {
-    const data = await postZones(espTemp)
+    const data = await postZones(espTemp.value)
     await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id)
     await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id)
     toast.success('Ajout effectué avec succès')

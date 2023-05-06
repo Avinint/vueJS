@@ -44,8 +44,8 @@
       </table>
     </div>
     <Button
-        id="TaddFitArena"
-        label="Ajouter une Fit Arena"
+        id="TaddOrganisme"
+        label="Ajouter un Organisme"
         icon="add"
         type="secondary"
         @click="addOrganisme"

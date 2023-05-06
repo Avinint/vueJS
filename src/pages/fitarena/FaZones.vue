@@ -240,7 +240,7 @@ onMounted(async () => {
   )
   espaceParents.value = await getZones(
     1,
-    '&typeZone.code=sous-espace&fitArena=' + props.id
+    '&typeZone.code=sous_espace&fitArena=' + props.id
   )
   typeZones.value = await getTypeZone()
 })
@@ -314,7 +314,7 @@ const saveEspace = async () => {
   espTemp.value = {
     typeZone: '/api/type_zones/' + espaceTemp[0].id,
     fitArena: '/api/fit_arenas/' + props.id,
-    ordre: subEspace.value.ordre,
+    ordre: parseInt(subEspace.value.ordre),
     libelle: subEspace.value.libelle,
     actif: subEspace.value.actif == true ? subEspace.value.actif : false,
     idZoneParent: espace_selected.value,
@@ -329,7 +329,7 @@ const saveEspace = async () => {
 
 const updateZoneValidation = async () => {
   try {
-    await updateZones(espTemp, id_selected.value)
+    await updateZones(espTemp.value, id_selected.value)
     await linkedEquipements(
       ajoutEquipementsNume.value.typeEquipements,
       id_selected.value
@@ -359,7 +359,7 @@ const updateZoneValidation = async () => {
 
 const addZoneValidation = async () => {
   try {
-    const data = await postZones(espTemp)
+    const data = await postZones(espTemp.value)
     await linkedEquipements(ajoutEquipementsNume.value.typeEquipements, data.id)
     await linkedEquipements(ajoutEquipementsMoto.value.typeEquipements, data.id)
     toast.success('Ajout effectué avec succès')

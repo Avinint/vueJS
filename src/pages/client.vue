@@ -447,7 +447,7 @@ const saveClient = () => {
 
 const updateClientValidation = async () => {
   try {
-    await updateClient(client, id_selected.value)
+    await updateClient(client.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -461,7 +461,7 @@ const updateClientValidation = async () => {
 
 const addClientValidation = async () => {
   try {
-    await postClient(client)
+    await postClient(client.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')

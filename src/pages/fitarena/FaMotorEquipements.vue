@@ -453,7 +453,7 @@ const saveEquipement = () => {
 
 const updateEquipmentValidation = async () => {
   try {
-    await updateEquipements(equipmentTemp, id_selected.value)
+    await updateEquipements(equipmentTemp.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
