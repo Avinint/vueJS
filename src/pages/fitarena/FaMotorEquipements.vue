@@ -343,7 +343,7 @@ onMounted(async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
+      '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
@@ -381,7 +381,7 @@ const deleteEquipmentValidation = async (id) => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise'
+      '&categoryTypeEquipement.code=motorise'
   )
   equipement_modal.value = false
 }
@@ -465,11 +465,11 @@ const updateEquipmentValidation = async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
+    '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
+      '&categoryTypeEquipement.code=motorise'
   )
 }
 
@@ -487,11 +487,11 @@ const addEquipmentValidation = async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
+      '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
+      '&categoryTypeEquipement.code=motorise'
   )
 }
 
