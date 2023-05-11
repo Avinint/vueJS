@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "local": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "cypress:open": "cypress open --env api_host=http://127.0.0.1:5173 --env host=http://localhost:5173",
