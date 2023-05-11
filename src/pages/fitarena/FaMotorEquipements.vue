@@ -156,18 +156,18 @@
           >Type d'équipement</label
         >
         <select
-          v-if="typeEquipements.length"
+          v-if="typeEquipementsSelects.length"
           id="TTypeActivite"
           v-model="equipement_selected"
           :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
-            v-for="(typeEquipement, i) in typeEquipements"
+            v-for="(typeEquipementsSelect, i) in typeEquipementsSelects"
             :key="i"
-            :value="typeEquipement.id"
+            :value="typeEquipementsSelect.id"
           >
-            {{ typeEquipement.libelle }}
+            {{ typeEquipementsSelect.libelle }}
           </option>
         </select>
       </div>
@@ -330,6 +330,8 @@ const readonly = ref(false)
 const id_selected = ref(0)
 const equipements = ref([])
 const typeEquipements = ref([])
+const typeEquipementsSelects = ref([])
+const typeEquipementsSelect = ref([])
 const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
@@ -347,7 +349,11 @@ onMounted(async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise'
+    '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=motorise'
   )
 })
 
@@ -381,6 +387,10 @@ const deleteEquipmentValidation = async (id) => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
       '&categoryTypeEquipement.code=motorise'
   )
   equipement_modal.value = false
@@ -469,6 +479,10 @@ const updateEquipmentValidation = async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
       '&categoryTypeEquipement.code=motorise'
   )
 }
@@ -491,6 +505,10 @@ const addEquipmentValidation = async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
       '&categoryTypeEquipement.code=motorise'
   )
 }

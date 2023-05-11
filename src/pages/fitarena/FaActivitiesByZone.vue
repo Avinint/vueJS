@@ -524,6 +524,7 @@ const saveSousZones = async (zoneId, activiteId) => {
           libelle,
           parametres,
           equipements,
+          fitArena: parseInt(props.id)
         })
       } else {
         await postConfigurationZoneActivite(id, activiteId, {

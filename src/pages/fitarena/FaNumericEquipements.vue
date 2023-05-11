@@ -114,11 +114,11 @@
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
-            v-for="(typeEquipement, i) in typeEquipements"
+            v-for="(typeEquipementsSelect, i) in typeEquipementsSelects"
             :key="i"
-            :value="typeEquipement.id"
+            :value="typeEquipementsSelect.id"
           >
-            {{ typeEquipement.libelle }}
+            {{ typeEquipementsSelect.libelle }}
           </option>
         </select>
       </div>
@@ -238,7 +238,11 @@ onMounted(async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique'
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=numerique'
   )
 })
 
@@ -272,7 +276,11 @@ const deleteEquipmentValidation = async (id) => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique'
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=numerique'
   )
   equipement_modal.value = false
 }
@@ -343,6 +351,10 @@ const updateEquipmentValidation = async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
       '&categoryTypeEquipement.code=numerique'
   )
 }
@@ -365,6 +377,10 @@ const addEquipmentValidation = async () => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
       '&categoryTypeEquipement.code=numerique'
   )
 }

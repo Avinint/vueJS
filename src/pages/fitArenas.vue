@@ -314,10 +314,10 @@ const addFa = () => {
 }
 
 const cancel = async () => {
-  name.value = []
+  name.value = ''
   commentaire.value = ''
-  complement.value = []
-  actif.value = []
+  complement.value = ''
+  actif.value = ''
   address.value = []
   id_selected.value = ''
   address_selected.value = {}
