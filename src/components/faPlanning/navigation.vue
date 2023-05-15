@@ -112,9 +112,11 @@ export default {
     },
     prev() {
       this.calendarApi.prev()
+      this.planningStore.fetch();
     },
     next() {
       this.calendarApi.next()
+      this.planningStore.fetch();
     },
     updateActivities() {
       this.planningStore.updateActivities();
