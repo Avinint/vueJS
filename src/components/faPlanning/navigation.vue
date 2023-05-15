@@ -1,7 +1,7 @@
 <template>
   <nav class="flex">
-    <section class="flex w-full justify-between pb-9">
-      <NavigationSection class="grow">
+    <section class="flex flex-wrap w-full gap-5 pb-9">
+      <NavigationSection>
         <template #title> Zone active </template>
         <template #content>
           <Button

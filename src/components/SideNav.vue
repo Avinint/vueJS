@@ -1,46 +1,49 @@
 <template>
-  <aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-64 h-full font-normal duration-75 lg:flex transition-width"
-    aria-label="Sidebar">
-    <div class="bg-red-600 h-14 flex items-center">
-      <router-link test="Thome" to="/" class="ml-2">
-        <img src="../assets/logo.png" class="h-5 ml-10" alt="logo">
-      </router-link>
-    </div>
-    <div class="h-full overflow-y-auto bg-white ">
-      <div v-for="(link, i) in links" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900 ">
-        <div class="flex items-center ml-10 px-1 py-2 w-full"
-          :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 text-sm'">
-          <svg @click="openSubLinks(i)" class="cursor-pointer h-8 w-8"
-            :class="link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"
-            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path fill-rule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clip-rule="evenodd" />
-          </svg>
-          <side-nav-item :icon="link.icon" :label="link.label" :path="link.path" :tag="link.tag" :id="'T' + link.path" />
-        </div>
-        <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.sub_links_open && link.sub_links.length"
-          class="w-full flex flex-col bg-gray-100">
-          <div class="flex w-full pl-3 pr-3">
-            <svg @click="openSubSubLinks(i, sub_i)" class="cursor-pointer h-8 w-8"
-              :class="sub_link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"
+  <div>
+    <aside id="logo-sidebar"
+      class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-64 h-full font-normal duration-75 lg:flex transition-width"
+      aria-label="Sidebar">
+      <div class="bg-red-600 h-14 flex items-center">
+        <router-link test="Thome" to="/" class="ml-2">
+          <img src="../assets/logo.png" class="h-5 ml-10" alt="logo">
+        </router-link>
+      </div>
+      <div class="h-full overflow-y-auto bg-white ">
+        <div v-for="(link, i) in links" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900 ">
+          <div class="flex items-center ml-10 px-1 py-2 w-full"
+            :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 text-sm'">
+            <svg @click="openSubLinks(i)" class="cursor-pointer h-8 w-8"
+              :class="link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"
               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path fill-rule="evenodd"
                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                 clip-rule="evenodd" />
             </svg>
-            <side-nav-item :icon="sub_link.icon" :label="sub_link.label" :path="sub_link.path" :tag="sub_link.tag" />
+            <side-nav-item :icon="link.icon" :label="link.label" :path="link.path" :tag="link.tag"
+              :id="'T' + link.path" />
           </div>
-          <div v-for="sub_sub_link in sub_link.sub_links" v-if="sub_link.sub_links_open && sub_link.sub_links.length"
-            class="w-full flex bg-gray-200 items-center pl-12 pr-3 py-2">
-            <side-nav-item :icon="sub_sub_link.icon" :label="sub_sub_link.label" :path="sub_sub_link.path"
-              :tag="sub_sub_link.tag" class="text-sm truncate" />
+          <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.sub_links_open && link.sub_links.length"
+            class="w-full flex flex-col bg-gray-100">
+            <div class="flex w-full pl-3 pr-3">
+              <svg @click="openSubSubLinks(i, sub_i)" class="cursor-pointer h-8 w-8"
+                :class="sub_link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+              <side-nav-item :icon="sub_link.icon" :label="sub_link.label" :path="sub_link.path" :tag="sub_link.tag" />
+            </div>
+            <div v-for="sub_sub_link in sub_link.sub_links" v-if="sub_link.sub_links_open && sub_link.sub_links.length"
+              class="w-full flex bg-gray-200 items-center pl-12 pr-3 py-2">
+              <side-nav-item :icon="sub_sub_link.icon" :label="sub_sub_link.label" :path="sub_sub_link.path"
+                :tag="sub_sub_link.tag" class="text-sm truncate" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </aside>
+    </aside>
+  </div>
 </template>
 
 <script setup lang="ts">
