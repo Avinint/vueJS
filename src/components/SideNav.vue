@@ -10,7 +10,7 @@
       </div>
       <div class="h-full overflow-y-auto bg-white ">
         <div v-for="(link, i) in links" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900 ">
-          <div class="flex items-center ml-10 px-1 py-2 w-full"
+          <div class="flex items-center pl-8 pr-1 py-2 w-full"
             :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 text-sm'">
             <svg @click="openSubLinks(i)" class="cursor-pointer h-8 w-8"
               :class="link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"
