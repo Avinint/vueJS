@@ -5,7 +5,7 @@ export const getPlanning = async (debut, fit_arena, duree, zone) => {
   const response = await $fetch(
     `${
       import.meta.env.VITE_API_URL
-    }/api/planning?debut=${debut}&fit_arena=${fit_arena}&duree=${duree}&zone=${zone}`,
+    }/api/planning?debut=${debut}&fit_arena=${fit_arena}&duree=${duree}&zones=[${zone}]`,
     {
       method: 'get',
       headers: {
