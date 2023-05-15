@@ -10,7 +10,7 @@
       v-if="isModalCreneauOpen"
       :is-open="isModalCreneauOpen"
       :type-action="actionType"
-      @close-modal-creneau="isModalCreneauOpen = false"
+      @close-modal-creneau="closeModal"
     />
     <div class="rounded-lg border border-gray-200 bg-white p-4 shadow space-y-3">
       <FullCalendar ref="fullCalendar" :options="calendarOptions">
@@ -129,6 +129,9 @@ export default {
     this.setRessources()
   },
   methods: {
+    async closeModal() {
+      this.isModalCreneauOpen = false;
+    },
     async setRessources() {
       await this.planningStore.fetchActivites(this.$route.params.id);
       this.calendarOptions.resources = this.planningStore.getActivites;

@@ -93,14 +93,15 @@ export const usePlanningStore = defineStore('planning', {
       this.activites = arr;
     },
     pushCreneaux(creneaux) {
-      this.creneaux = creneaux.map((creneau) => {
+      const created_creneaux = creneaux.map((creneau) => {
         creneau.start = creneau.dateDebut
         creneau.end = creneau.dateSortie
         creneau.title = creneau.titre
         creneau.idCreneau = creneau.id
         creneau.resourceIds = creneau.activites.map((activite) => activite.id)
         return creneau
-      })
+      });
+      this.creneaux = this.creneaux.concat(created_creneaux);
     },
     selectZone(newZone) {
       this.filters.zone = [newZone]
