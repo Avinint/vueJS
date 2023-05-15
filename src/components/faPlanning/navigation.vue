@@ -1,6 +1,6 @@
 <template>
-  <nav class="flex">
-    <section class="flex flex-wrap w-full gap-5 pb-9">
+  <nav class="flex rounded-lg border border-gray-200 bg-white p-4 shadow space-y-3">
+    <section class="flex flex-wrap w-full gap-5">
       <NavigationSection>
         <template #title> Zone active </template>
         <template #content>

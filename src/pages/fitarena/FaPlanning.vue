@@ -1,6 +1,7 @@
 <template>
   <div class="fa-planning">
     <PlanningNavigation
+      class="mb-6"
       :calendar-api="calendarApi"
       @filter-updated="applyFilter"
       @view-changed="viewChanged"
@@ -11,8 +12,9 @@
       :type-action="actionType"
       @close-modal-creneau="isModalCreneauOpen = false"
     />
-    <FullCalendar ref="fullCalendar" :options="calendarOptions">
-      <template #eventContent="arg">
+    <div class="rounded-lg border border-gray-200 bg-white p-4 shadow space-y-3">
+      <FullCalendar ref="fullCalendar" :options="calendarOptions">
+        <template #eventContent="arg">
         <div class="flex h-full items-center">
           <div class="h-full w-2 rounded-l-xl bg-red-600"></div>
           <div class="flex grow justify-between px-3 pr-3 text-xs text-black">
@@ -25,8 +27,8 @@
             </div>
             <div class="flex">
               <span
-                v-if="arg.event.extendedProps.activites"
-                class="mr-2 fill-red-600"
+              v-if="arg.event.extendedProps.activites"
+              class="mr-2 fill-red-600"
               ></span>
               <span
                 class="text-2xs border-3 flex h-8 w-8 items-center justify-center rounded-full border-red-600 bg-white text-center leading-none"
@@ -39,6 +41,7 @@
         </div>
       </template>
     </FullCalendar>
+  </div>
   </div>
 </template>
 
@@ -211,6 +214,9 @@ export default {
 </script>
 
 <style lang="scss">
+.fa-planning {
+  min-width: 1000px;
+}
 // TODROP
 .border-3 {
   border-width: 3px;

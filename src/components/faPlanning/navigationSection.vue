@@ -1,7 +1,7 @@
 <template>
-  <div class="flex px-6">
+  <div class="flex">
     <section class="flex flex-col">
-      <h3 class="nav-title pb-4 text-sm font-semibold text-black">
+      <h3 class="nav-title text-sm font-semibold text-black">
         <slot name="title"></slot>
       </h3>
       <div class="flex items-center">
