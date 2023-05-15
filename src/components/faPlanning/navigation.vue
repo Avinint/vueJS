@@ -105,9 +105,6 @@ export default {
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
-    this.planningStore.$subscribe(async (mutation) => {
-      if (mutation.events.key !== 'creneaux') await this.planningStore.fetch()
-    })
   },
   methods: {
     today() {
@@ -119,21 +116,25 @@ export default {
     next() {
       this.calendarApi.next()
     },
+    updateActivities() {
+      this.planningStore.updateActivities();
+    },
     async setZones() {
       this.zones = await getZones(
         1,
         '&typeZone.code=zone&fitArena=' + this.$route.params.id
       )
     },
-    filterByZone(zoneId) {
+    async filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
         case 'timeGridWeek':
           this.planningStore.selectZone(zoneId)
           break
-        case 'resourceTimeGridDay':
-          this.planningStore.toggleZone(zoneId)
-          break
-      }
+          case 'resourceTimeGridDay':
+            this.planningStore.toggleZone(zoneId)
+            break
+          }
+      await this.planningStore.fetch();
       this.$emit('filter-updated')
     },
     toggleView() {
@@ -145,6 +146,8 @@ export default {
           this.viewWeek()
           break
       }
+      this.planningStore.fetch();
+      this.$emit('view-changed')
     },
     viewWeek() {
       this.planningStore.filters.fit_arena = this.$route.params.id

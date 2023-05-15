@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { getPlanning } from '@api/planning.js'
 import dayjs from 'dayjs'
+import { getActivites } from '@api/activite.js'
 
 export const usePlanningStore = defineStore('planning', {
   state: () => ({
@@ -11,6 +12,7 @@ export const usePlanningStore = defineStore('planning', {
       duree: 0,
       zone: [],
     },
+    activites: [],
     currentViewName: 'week',
     currentDateStart: {},
     currentDateEnd: {},
@@ -49,6 +51,9 @@ export const usePlanningStore = defineStore('planning', {
       date.setHours(0, 0, 0, 0)
       return Math.floor(date.getTime() / 1000)
     },
+    getActivites(state) {
+      return state.activites;
+    }
   },
   actions: {
     async fetch() {
@@ -63,6 +68,29 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.zone.join(',')
       )
       this.pushCreneaux(response.creneaux)
+    },
+    async fetchActivites(id) {
+      const activites = await getActivites(id)
+      // do not use map with vue3 var (Proxy type), it wont work, use forEach instead
+      activites.forEach(function (activite) {
+        activite.title = activite.libelle
+      })
+
+      this.activites = activites;
+    },
+    async updateActivites() {
+      const activites = new Map();
+      const creneaux = [];
+      Object.assign(creneaux, this.creneaux);
+      creneaux.forEach(function (creneau) {
+        creneau.activites.forEach((activite) => {
+          activites.set(activite.id, { ...activite, title: activite.libelle });
+        })
+      })
+      const arr = Array.from(activites, function (entry) {
+        return entry[1];
+      });
+      this.activites = arr;
     },
     pushCreneaux(creneaux) {
       this.creneaux = creneaux.map((creneau) => {

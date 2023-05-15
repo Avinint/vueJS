@@ -2,7 +2,8 @@
   <div class="fa-planning">
     <PlanningNavigation
       :calendar-api="calendarApi"
-      @filter-updated="planningStore.applyFilter"
+      @filter-updated="applyFilter"
+      @view-changed="viewChanged"
     />
     <modalCreneau
       v-if="isModalCreneauOpen"
@@ -126,12 +127,16 @@ export default {
   },
   methods: {
     async setRessources() {
-      const activites = await getActivites(this.$route.params.id)
-      // do not use map with vue3 var (Proxy type), it wont work, use forEach instead
-      activites.forEach(function (activite) {
-        activite.title = activite.libelle
-      })
-      this.calendarOptions.resources = activites
+      await this.planningStore.fetchActivites(this.$route.params.id);
+      this.calendarOptions.resources = this.planningStore.getActivites;
+    },
+    async applyFilter() {
+      await this.planningStore.updateActivites(this.$route.params.id);
+      this.calendarOptions.resources = this.planningStore.getActivites;
+    },
+    async viewChanged() {
+      await this.planningStore.updateActivites(this.$route.params.id);
+      this.calendarOptions.resources = this.planningStore.getActivites;
     },
     refreshDates(dateInfo) {
       this.planningStore.currentWeek = this.getWeekNumber(dateInfo.start)
