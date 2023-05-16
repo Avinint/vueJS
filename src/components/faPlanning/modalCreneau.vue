@@ -126,6 +126,7 @@
                     v-model.number="zoneActivite.activite.tarif"
                     :default-value="defaultTarif"
                     class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
+                    :inline="true"
                     suffix="€"
                   />
                 </div>
@@ -170,6 +171,7 @@ export default {
       type: String,
       default: 'create',
     },
+    readonly: Boolean
   },
   emits: ['closeModalCreneau'],
   data() {
@@ -181,7 +183,7 @@ export default {
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
-      defaultTarif: 0,
+      defaultTarif: "0",
     }
   },
   computed: {
@@ -253,7 +255,9 @@ export default {
     await this.fetchZones()
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
-    this.creneauStore.activites = []
+    if (this.typeAction === 'create') {
+        this.creneauStore.activites = [];
+    }
   },
   methods: {
     async fetchZones() {
