@@ -33,7 +33,7 @@ export const useCreneauStore = defineStore('creneau', {
         dataToSend.activites.forEach((activite) => delete activite.zoneId)
         const resp = await postCreneau(dataToSend)
         const planningStore = usePlanningStore()
-        planningStore.pushCreneaux(resp.creneaux)
+        planningStore.addCreneaux(resp.creneaux)
       })
     },
     async editCreneau() {

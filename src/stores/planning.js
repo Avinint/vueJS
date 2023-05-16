@@ -30,6 +30,9 @@ export const usePlanningStore = defineStore('planning', {
       const nbZone = state.filters.zone.length
       return nbZone === 0 ? '' : `(${nbZone})`
     },
+    getActiveZones(state) {
+      return state.filters.zone;
+    },
     getCurrentDateStart(state) {
       return dayjs(state.currentDateStart).format('D MMMM')
     },
@@ -93,15 +96,17 @@ export const usePlanningStore = defineStore('planning', {
       this.activites = arr;
     },
     pushCreneaux(creneaux) {
-      const created_creneaux = creneaux.map((creneau) => {
+      this.creneaux = creneaux.map((creneau) => {
         creneau.start = creneau.dateDebut
         creneau.end = creneau.dateSortie
         creneau.title = creneau.titre
         creneau.idCreneau = creneau.id
-        creneau.resourceIds = creneau.activites.map((activite) => activite.id)
+        creneau.resourceIds = creneau.zones
         return creneau
       });
-      this.creneaux = this.creneaux.concat(created_creneaux);
+    },
+    addCreneaux(creneaux) {
+      this.creneaux = this.creneaux.concat(creneaux);
     },
     selectZone(newZone) {
       this.filters.zone = [newZone]

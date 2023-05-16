@@ -4,7 +4,6 @@
       class="mb-6"
       :calendar-api="calendarApi"
       @filter-updated="applyFilter"
-      @view-changed="viewChanged"
     />
     <modalCreneau
       v-if="isModalCreneauOpen"
@@ -58,6 +57,7 @@ import { getActivites } from '@api/activite.js'
 import { usePlanningStore } from '@stores/planning.js'
 import { useCreneauStore } from '@stores/creneau.js'
 import { mapStores } from 'pinia'
+import { getZones } from '@api/zone.js'
 
 export default {
   components: {
@@ -107,6 +107,7 @@ export default {
       calendarApi: {},
       isModalCreneauOpen: false,
       actionType: '',
+      zones: [],
     }
   },
   computed: {
@@ -124,25 +125,26 @@ export default {
       }
     )
   },
-  mounted() {
+  async mounted() {
     this.calendarApi = this.$refs.fullCalendar.getApi()
-    this.setRessources()
+    this.zones = await getZones(
+      1,
+      '&typeZone.code=zone&fitArena=' + this.$route.params.id
+    )
+    this.calendarOptions.resources = [{ id: this.zones[0].id, title: this.zones[0].libelle }];
   },
   methods: {
     async closeModal() {
       this.isModalCreneauOpen = false;
     },
-    async setRessources() {
-      await this.planningStore.fetchActivites(this.$route.params.id);
-      this.calendarOptions.resources = this.planningStore.getActivites;
-    },
     async applyFilter() {
-      await this.planningStore.updateActivites(this.$route.params.id);
-      this.calendarOptions.resources = this.planningStore.getActivites;
-    },
-    async viewChanged() {
-      await this.planningStore.updateActivites(this.$route.params.id);
-      this.calendarOptions.resources = this.planningStore.getActivites;
+      const zones = []
+      this.zones.forEach((zone) => {
+        if(this.planningStore.isZoneActive(zone.id)) {
+          zones.push({id: zone.id, title: zone.libelle });
+        }
+      });
+      this.calendarOptions.resources = zones;
     },
     refreshDates(dateInfo) {
       this.planningStore.currentWeek = this.getWeekNumber(dateInfo.start)
