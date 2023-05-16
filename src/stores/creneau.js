@@ -4,8 +4,9 @@ import { usePlanningStore } from '@stores/planning.js'
 
 export const useCreneauStore = defineStore('creneau', {
   state: () => ({
+    id: 0,
     creneauType: 0,
-    zoneId: [],
+    zoneId: 0,
     activites: [],
     titre: '',
     date: '',
@@ -23,24 +24,24 @@ export const useCreneauStore = defineStore('creneau', {
   actions: {
     async addCreneau() {
       this.formatCreneau()
-      // Post 1 creneau for each zone
       this.zoneId.forEach(async (id) => {
-        let dataToSend = { ...this.$state }
-        dataToSend.zoneId = id
-        dataToSend.activites = this.$state.activites.filter(
-          (activite) => activite.zoneId === id
-        )
-        dataToSend.activites.forEach((activite) => delete activite.zoneId)
-        const resp = await postCreneau(dataToSend)
-        const planningStore = usePlanningStore()
-        planningStore.addCreneaux(resp.creneaux)
+        let dataToSend = { ...this.$state };
+        dataToSend.zoneId = id;
+
+        const response = await postCreneau(dataToSend);
+
+        const planningStore = usePlanningStore();
+        planningStore.addCreneaux(response.creneaux);
       })
     },
     async editCreneau() {
       this.formatCreneau()
-      const id = 4
-      const resp = await updateCreneau(id, this.$state)
-      console.log(resp)
+      this.zoneId.forEach(async (id) => {
+        let dataToSend = { ...this.$state }
+
+        dataToSend.zoneId = id
+        await updateCreneau(this.id, dataToSend);
+      });
     },
     formatCreneau() {
       this.heureDebut += ':00'
@@ -58,6 +59,7 @@ export const useCreneauStore = defineStore('creneau', {
           storedActivite.activiteId === activite.activiteId &&
           storedActivite.zoneId === activite.zoneId
       )
+      console.log(activite);
       if (index === -1) this.activites.push(activite)
     },
     dropActivite(id) {

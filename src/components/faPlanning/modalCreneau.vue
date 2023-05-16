@@ -112,7 +112,6 @@
                     v-model="zoneActivite.activite.checked"
                     type="checkbox"
                     class="hidden"
-                    @change="toggleActivite(zoneActivite.activite, zone.id)"
                   />
                   <label
                     class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
@@ -123,7 +122,7 @@
                     >{{ zoneActivite.activite.libelle }}
                   </label>
                   <Input
-                    v-model.number="zoneActivite.activite.tarif"
+                    v-model="zoneActivite.activite.tarif"
                     :default-value="defaultTarif"
                     class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
                     :inline="true"
@@ -267,32 +266,39 @@ export default {
       )
       this.checkActivites()
     },
-    toggleActivite(activite, zoneId) {
-      if (activite.checked) {
-        activite = {
-          zoneId: zoneId, // will be deprecated for the next API
-          activiteId: activite.id,
-          tarif: activite.tarif || 0,
-        }
-        this.creneauStore.addActivite(activite)
-      } else {
-        this.creneauStore.dropActivite(activite.id)
-      }
+    updateActivites() {
+      this.creneauStore.activites = [];
+      this.zones.forEach(zone => {
+        zone.zoneActivites.forEach(zone_activite => {
+          if(zone_activite.activite.checked == true) {
+            this.creneauStore.addActivite({
+              activiteId: zone_activite.activite.id,
+              tarif: parseInt(zone_activite.activite.tarif)
+            });
+          }
+        });
+      });
     },
     checkActivites() {
       if (this.typeAction === 'edit') {
         this.zones.forEach((zone) => {
-          if (zone.id === this.creneauStore.zoneId[0])
             zone.zoneActivites.forEach((zoneActivite) => {
               this.creneauStore.activites.forEach((activite) => {
-                if (activite.activiteId === zoneActivite.activite.id)
-                  zoneActivite.activite.checked = true
+                if (activite.activiteId === zoneActivite.activite.id) {
+                  zoneActivite.activite.checked = true;
+                  zoneActivite.activite.tarif = activite.tarif;
+                }
               })
             })
         })
       }
     },
     submitCreneau() {
+      // Retreive activity data from the local references
+      // Before sending it to the API. This has to be done 
+      // This way because of the unsynchronized data.
+      this.updateActivites();
+
       if (this.typeAction === 'create') {
         this.creneauStore.addCreneau()
       }
