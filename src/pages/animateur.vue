@@ -224,11 +224,6 @@ const organismes = ref([])
 onMounted(async () => {
   organismes.value = await selectOrganismes()
   animateurs.value = await getAnimateurs()
-    alert(organismes.value[0].label)
-
-    for(const a of animateurs.value) {
-        console.log (!a.id)
-    }
 })
 
 const addAnimateur = () => {
