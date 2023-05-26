@@ -27,8 +27,8 @@
     valid: boolean
     required: boolean,
     pattern: string,
-    minlength: number,
-    maxlength: number
+    minlength?: number,
+    maxlength?: number
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -39,7 +39,7 @@
     inline: true,
     type: 'text',
     id: "",
-    validation: [],
+    validation: null,
     valid: true,
     required: false,
   })

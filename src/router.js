@@ -20,6 +20,7 @@ import FaOrganisme from './pages/fitarena/FaOrganisme.vue'
 
 
 import { useUserStore } from './stores/user.js'
+import Animateur from "@pages/animateur.vue";
 
 const routes = [
   {
@@ -274,6 +275,22 @@ const routes = [
         {
           link: 'clients',
           label: 'Clients',
+        },
+      ],
+    },
+  },
+  {
+    path: '/animateur',
+    component: Animateur,
+    meta: {
+      breadcrumbs: [
+        {
+          label: 'Animateur',
+          link: 'animateur',
+        },
+        {
+          label: 'Liste',
+          link: 'liste',
         },
       ],
     },
