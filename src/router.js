@@ -16,7 +16,7 @@ import FaActivities from './pages/fitarena/FaActivities.vue'
 import FaNumericEquipements from './pages/fitarena/FaNumericEquipements.vue'
 import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
 import FaPlanning from './pages/fitarena/FaPlanning.vue'
-import FaOrganisme from './pages/fitarena/FaOrganisme.vue'
+import FaOrganisme from './pages/FaOrganisme.vue'
 
 
 import { useUserStore } from './stores/user.js'
@@ -274,6 +274,20 @@ const routes = [
         {
           link: 'clients',
           label: 'Clients',
+        },
+      ],
+    },
+  },
+
+  {
+    path: '/organismes',
+    name: 'organismes',
+    component: FaOrganisme,
+    meta: {
+      breadcrumbs: [
+        {
+          link: 'organismes',
+          label: 'organisme',
         },
       ],
     },

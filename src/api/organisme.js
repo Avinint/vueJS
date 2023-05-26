@@ -14,10 +14,11 @@ export const getOrganismes = async (page = 1, query = '') => {
     }
   )
   if (response.status !== 200) throw response
+
   return response.json()
 }
 
-export const postOrganismes = async (fa) => {
+export const postOrganismes = async (organisme) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/organismes`,
     {
@@ -27,14 +28,14 @@ export const postOrganismes = async (fa) => {
         'Content-Type': 'application/ld+json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
-      body: JSON.stringify(fa),
+      body: JSON.stringify(organisme.value),
     }
   )
   if (response.status !== 201) throw response
   return response.json()
 }
 
-export const updateOrganismes = async (client, id) => {
+export const updateOrganismes = async (organisme, id) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/organismes/${id}`,
     {
@@ -45,7 +46,7 @@ export const updateOrganismes = async (client, id) => {
         'Content-Type': 'application/ld+json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
-      body: JSON.stringify(client),
+      body: JSON.stringify(organisme.value),
     }
   )
   if (response.status !== 200) throw response
