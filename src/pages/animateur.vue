@@ -10,8 +10,10 @@
         <tr>
           <th scope="col" class="px-6 py-3"></th>
           <th scope="col" class="px-6 py-3">Nom</th>
-          <th scope="col" class="px-6 py-3">Code postal</th>
-          <th scope="col" class="px-6 py-3">Ville</th>
+          <th scope="col" class="px-6 py-3">Prénom</th>
+          <th scope="col" class="px-6 py-3">E-mail</th>
+          <th scope="col" class="px-6 py-3">Téléphone</th>
+          <th scope="col" class="px-6 py-3">Titulaire carte</th>
           <th scope="col" class="px-6 py-3"></th>
         </tr>
         </thead>
@@ -40,7 +42,7 @@
           <td class="px-6 py-4">{{ animateur.titulaireCarte }}</td>
           <td class="px-6 py-4">{{ animateur.organismeId }}</td>
           <td class="px-6 py-4">
-            <Button label="Détails" type="secondary" @click="showOrganisme(i)" />
+            <Button label="Détails" type="secondary" @click="showAnimateur(i)" />
           </td>
         </tr>
         </tbody>
@@ -78,7 +80,7 @@
         </div>
         <div class="flex items-center">
           <Input
-              id="TanimNom"
+              id="TanimPrenom"
               v-model="prenom"
               :readonly="readonly"
               type="text"
@@ -89,7 +91,8 @@
         </div>
         <div class="flex items-center">
           <Input
-              id="TanimNom"
+              id="TanimMail"
+              v-model:valid="validation.email"
               v-model="email"
               :readonly="readonly"
               type="email"
@@ -100,10 +103,10 @@
         </div>
         <div class="flex items-center">
         <Input
-            id="TanimNom"
+            id="TanimTel"
             v-model="telephone"
             :readonly="readonly"
-            type="email"
+            type="text"
             label="Téléphone"
             :required="true"
             class="w-full"
@@ -118,11 +121,11 @@
             <select
                 v-if="organismes.length"
                 id="TSelectOrganisme"
-                v-model="animateur.organismeId"
+                v-model="organismeId"
                 class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 @change="selectionOrganisme"
             >
-              <option v-for="(organisme, i) in organismes" :key="i" :value="organisme">
+              <option v-for="(organisme, i) in organismes" :key="i" :value="organisme.id">
                 {{ organisme.label }}
               </option>
             </select>
@@ -213,6 +216,7 @@ const email = ref('')
 const telephone = ref('')
 const titulaireCarte = ref(false)
 const organismeId = ref(0)
+const organismeValue = ref([])
 
 const modal_title = ref('')
 let client = ref({})
@@ -338,7 +342,11 @@ const addAnimateurValidation = async () => {
   cancel()
   animateurs.value = await getAnimateurs()
 }
-
+//
+// watch(organismeValue,  (newVal, oldVal) =>
+// {
+//     organismeId.value = newVal.id;
+// })
 
 
 const removeFrom = (refArray, i)  => {
