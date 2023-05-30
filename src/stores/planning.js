@@ -31,7 +31,7 @@ export const usePlanningStore = defineStore('planning', {
       return nbZone === 0 ? '' : `(${nbZone})`
     },
     getActiveZones(state) {
-      return state.filters.zone;
+      return state.filters.zone
     },
     getCurrentDateStart(state) {
       return dayjs(state.currentDateStart).format('D MMMM')
@@ -55,8 +55,8 @@ export const usePlanningStore = defineStore('planning', {
       return Math.floor(date.getTime() / 1000)
     },
     getActivites(state) {
-      return state.activites;
-    }
+      return state.activites
+    },
   },
   actions: {
     async fetch() {
@@ -79,21 +79,21 @@ export const usePlanningStore = defineStore('planning', {
         activite.title = activite.libelle
       })
 
-      this.activites = activites;
+      this.activites = activites
     },
     async updateActivites() {
-      const activites = new Map();
-      const creneaux = [];
-      Object.assign(creneaux, this.creneaux);
+      const activites = new Map()
+      const creneaux = []
+      Object.assign(creneaux, this.creneaux)
       creneaux.forEach(function (creneau) {
         creneau.activites.forEach((activite) => {
-          activites.set(activite.id, { ...activite, title: activite.libelle });
+          activites.set(activite.id, { ...activite, title: activite.libelle })
         })
       })
       const arr = Array.from(activites, function (entry) {
-        return entry[1];
-      });
-      this.activites = arr;
+        return entry[1]
+      })
+      this.activites = arr
     },
     pushCreneaux(creneaux) {
       this.creneaux = creneaux.map((creneau) => {
@@ -103,10 +103,10 @@ export const usePlanningStore = defineStore('planning', {
         creneau.idCreneau = creneau.id
         creneau.resourceIds = creneau.zones
         return creneau
-      });
+      })
     },
     addCreneaux(creneaux) {
-      this.creneaux = this.creneaux.concat(creneaux);
+      this.creneaux = this.creneaux.concat(creneaux)
     },
     selectZone(newZone) {
       this.filters.zone = [newZone]
