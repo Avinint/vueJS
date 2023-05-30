@@ -25,13 +25,13 @@ export const useCreneauStore = defineStore('creneau', {
     async addCreneau() {
       this.formatCreneau()
       this.zoneId.forEach(async (id) => {
-        let dataToSend = { ...this.$state };
-        dataToSend.zoneId = id;
+        let dataToSend = { ...this.$state }
+        dataToSend.zoneId = id
 
-        const response = await postCreneau(dataToSend);
+        const response = await postCreneau(dataToSend)
 
-        const planningStore = usePlanningStore();
-        planningStore.addCreneaux(response.creneaux);
+        const planningStore = usePlanningStore()
+        planningStore.addCreneaux(response.creneaux)
       })
     },
     async editCreneau() {
@@ -40,8 +40,8 @@ export const useCreneauStore = defineStore('creneau', {
         let dataToSend = { ...this.$state }
 
         dataToSend.zoneId = id
-        await updateCreneau(this.id, dataToSend);
-      });
+        await updateCreneau(this.id, dataToSend)
+      })
     },
     formatCreneau() {
       this.heureDebut += ':00'
@@ -59,7 +59,6 @@ export const useCreneauStore = defineStore('creneau', {
           storedActivite.activiteId === activite.activiteId &&
           storedActivite.zoneId === activite.zoneId
       )
-      console.log(activite);
       if (index === -1) this.activites.push(activite)
     },
     dropActivite(id) {
