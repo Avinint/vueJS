@@ -100,10 +100,9 @@
             >
               {{ zone.libelle }}
             </label>
-            <div class="flex-col pt-10">
+            <div v-if="isZoneChecked(zone.id)" class="flex-col pt-10">
               <div
                 v-for="zoneActivite in zone.zoneActivites"
-                v-if="isZoneChecked(zone.id)"
                 :key="zone.id + '-' + zoneActivite.activite.id"
               >
                 <div class="my-4 mr-10 flex justify-between">
@@ -143,7 +142,7 @@ import Modal from '@components/common/Modal.vue'
 import Button from '@components/common/Button.vue'
 import { mapStores } from 'pinia'
 import { usePlanningStore } from '@stores/planning.js'
-import { useCreneauStore } from '@stores/creneau.js'
+import { useCreneauStore } from '@stores/creneau.ts'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
@@ -274,6 +273,7 @@ export default {
             this.creneauStore.addActivite({
               activiteId: zone_activite.activite.id,
               tarif: parseInt(zone_activite.activite.tarif),
+              zoneId: zone.id,
             })
           }
         })
