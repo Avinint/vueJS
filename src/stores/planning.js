@@ -97,16 +97,32 @@ export const usePlanningStore = defineStore('planning', {
     },
     pushCreneaux(creneaux) {
       this.creneaux = creneaux.map((creneau) => {
-        creneau.start = creneau.dateDebut
-        creneau.end = creneau.dateSortie
-        creneau.title = creneau.titre
-        creneau.idCreneau = creneau.id
-        creneau.resourceIds = creneau.zones
-        return creneau
+        return this.normalize(creneau)
       })
     },
+    normalize(creneau) {
+      creneau.start = creneau.dateDebut
+      creneau.end = creneau.dateSortie
+      creneau.title = creneau.titre
+      creneau.idCreneau = creneau.id
+      creneau.resourceIds = creneau.zones
+      return creneau
+    },
     addCreneaux(creneaux) {
-      this.creneaux = this.creneaux.concat(creneaux)
+      for (const creneau of creneaux) {
+        if (!this.updateExisting(creneau)) {
+          this.creneaux.push(creneau)
+        }
+      }
+    },
+    updateExisting(creneau) {
+      for (const index in this.creneaux) {
+        if (this.creneaux[index].id == creneau.id) {
+          this.creneaux[index] = this.normalize(creneau)
+          return true
+        }
+      }
+      return false
     },
     selectZone(newZone) {
       this.filters.zone = [newZone]
