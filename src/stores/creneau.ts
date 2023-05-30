@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
 import { postCreneau, updateCreneau } from '@api/planning'
 import { usePlanningStore } from '@stores/planning.js'
-import { default_creneau, makeCreneau } from '../services/planning/creneau_service'
+import {
+  default_creneau,
+  makeCreneau,
+} from '../services/planning/creneau_service'
 
 export const useCreneauStore = defineStore('creneau', {
   state: default_creneau,
@@ -9,12 +12,20 @@ export const useCreneauStore = defineStore('creneau', {
     async addCreneau() {
       this.formatCreneau()
       const planningStore = usePlanningStore()
+      let created_creneau = null;
 
-      this.zoneId.forEach(async (zone_id: number) => {
+      for(let i = 0; i < this.zoneId.length; i++) {
+        const zone_id = this.zoneId[i];
         const creneau = makeCreneau(zone_id, this.$state)
-        const response = await postCreneau(creneau)
-        planningStore.addCreneaux(response.creneaux)
-      })
+        if (i == 0) {
+          const response = await postCreneau(creneau)
+          created_creneau = response.creneaux[0];
+          continue;
+        }
+        await updateCreneau(created_creneau.id, creneau);
+      }
+
+      planningStore.addCreneaux(created_creneau);
     },
     async editCreneau() {
       this.formatCreneau()
