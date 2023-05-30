@@ -1,28 +1,16 @@
 import { defineStore } from 'pinia'
 import { getPlanning } from '@api/planning.js'
-import dayjs from 'dayjs'
+import * as dayjs from 'dayjs'
 import { getActivites } from '@api/activite.js'
+import { default_planning } from '../services/planning/planning_service'
 
 export const usePlanningStore = defineStore('planning', {
-  state: () => ({
-    creneaux: [],
-    filters: {
-      debut: 0,
-      fit_arena: 0,
-      duree: 0,
-      zone: [],
-    },
-    activites: [],
-    currentViewName: 'week',
-    currentDateStart: {},
-    currentDateEnd: {},
-    currentWeek: 0,
-    slotMinTime: '07:00',
-    slotMaxTime: '22:00',
-  }),
+  state: () => {
+    return default_planning
+  },
   getters: {
     isZoneActive(state) {
-      return (id) => {
+      return (id: number) => {
         return state.filters.zone.includes(id)
       }
     },
@@ -72,7 +60,7 @@ export const usePlanningStore = defineStore('planning', {
       )
       this.pushCreneaux(response.creneaux)
     },
-    async fetchActivites(id) {
+    async fetchActivites(id: number) {
       const activites = await getActivites(id)
       // do not use map with vue3 var (Proxy type), it wont work, use forEach instead
       activites.forEach(function (activite) {
@@ -109,6 +97,7 @@ export const usePlanningStore = defineStore('planning', {
       return creneau
     },
     addCreneaux(creneaux) {
+      console.log(creneaux);
       for (const creneau of creneaux) {
         if (!this.updateExisting(creneau)) {
           this.creneaux.push(creneau)

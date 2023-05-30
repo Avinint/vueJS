@@ -141,7 +141,7 @@
 import Modal from '@components/common/Modal.vue'
 import Button from '@components/common/Button.vue'
 import { mapStores } from 'pinia'
-import { usePlanningStore } from '@stores/planning.js'
+import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'

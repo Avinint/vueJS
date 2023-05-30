@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { postCreneau, updateCreneau } from '@api/planning'
-import { usePlanningStore } from '@stores/planning.js'
+import { usePlanningStore } from '@stores/planning'
 import {
   default_creneau,
   makeCreneau,
@@ -25,7 +25,7 @@ export const useCreneauStore = defineStore('creneau', {
         await updateCreneau(created_creneau.id, creneau);
       }
 
-      planningStore.addCreneaux(created_creneau);
+      planningStore.addCreneaux([created_creneau]);
     },
     async editCreneau() {
       this.formatCreneau()

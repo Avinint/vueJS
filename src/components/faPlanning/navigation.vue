@@ -1,6 +1,8 @@
 <template>
-  <nav class="flex rounded-lg border border-gray-200 bg-white p-4 shadow space-y-3">
-    <section class="flex flex-wrap w-full gap-5">
+  <nav
+    class="flex space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+  >
+    <section class="flex w-full flex-wrap gap-5">
       <NavigationSection>
         <template #title> Zone active </template>
         <template #content>
@@ -79,7 +81,7 @@
 import Button from '@components/common/Button.vue'
 import { getZones } from '@api/zone.js'
 import NavigationSection from '@components/faPlanning/navigationSection.vue'
-import { usePlanningStore } from '@stores/planning.js'
+import { usePlanningStore } from '@stores/planning.ts'
 import { mapStores } from 'pinia'
 
 export default {
@@ -112,14 +114,14 @@ export default {
     },
     prev() {
       this.calendarApi.prev()
-      this.planningStore.fetch();
+      this.planningStore.fetch()
     },
     next() {
       this.calendarApi.next()
-      this.planningStore.fetch();
+      this.planningStore.fetch()
     },
     updateActivities() {
-      this.planningStore.updateActivities();
+      this.planningStore.updateActivities()
     },
     async setZones() {
       this.zones = await getZones(
@@ -132,11 +134,11 @@ export default {
         case 'timeGridWeek':
           this.planningStore.selectZone(zoneId)
           break
-          case 'resourceTimeGridDay':
-            this.planningStore.toggleZone(zoneId)
-            break
-          }
-      await this.planningStore.fetch();
+        case 'resourceTimeGridDay':
+          this.planningStore.toggleZone(zoneId)
+          break
+      }
+      await this.planningStore.fetch()
       this.$emit('filter-updated')
     },
     toggleView() {
@@ -148,7 +150,7 @@ export default {
           this.viewWeek()
           break
       }
-      this.planningStore.fetch();
+      this.planningStore.fetch()
       this.$emit('view-changed')
     },
     viewWeek() {

@@ -24,3 +24,22 @@ type Activite = {
     maxTerrain: number;
     prix: number;
 }
+
+type PlanningFilters = {
+    debut: number;
+    fit_arena: number;
+    duree: number;
+    zone: number[];
+}
+
+type Planning = {
+  creneaux: Creneau[];
+  filters: PlanningFilters; 
+  activites: Activite[],
+  currentViewName: string,
+  currentDateStart: any,    // TODO: Find a proper type
+  currentDateEnd: any,      // TODO: Find a proper type
+  currentWeek: number,
+  slotMinTime: string,
+  slotMaxTime: string,
+}

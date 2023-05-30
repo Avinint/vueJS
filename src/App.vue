@@ -32,9 +32,9 @@ const route = useRoute()
 }
 
 .main-content {
-    display: table-cell;
-    max-width: 100vw;
-    overflow: hidden;
+  display: table-cell;
+  max-width: 100vw;
+  overflow: hidden;
 }
 
 @media screen and (min-width: 1024px) {
@@ -48,6 +48,4 @@ const route = useRoute()
     max-width: calc(100vw - 16rem);
   }
 }
-
-
 </style>
