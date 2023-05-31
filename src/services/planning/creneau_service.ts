@@ -35,7 +35,7 @@ export const default_creneau = (): Creneau => ({
   date: '',
   heureDebut: '', // "14:30:00"
   heureFin: '', // "14:30:00"
-  dureeActivite: 0, // 55
+  dureeActivite: 55, // 55
   dureeInterCreneau: 5,
   description: '',
   organisme: 0,

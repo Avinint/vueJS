@@ -12,20 +12,16 @@ export const useCreneauStore = defineStore('creneau', {
     async addCreneau() {
       this.formatCreneau()
       const planningStore = usePlanningStore()
-      let created_creneau = null;
+      let created_creneaux = []
 
-      for(let i = 0; i < this.zoneId.length; i++) {
-        const zone_id = this.zoneId[i];
+      for (let i = 0; i < this.zoneId.length; i++) {
+        const zone_id = this.zoneId[i]
         const creneau = makeCreneau(zone_id, this.$state)
-        if (i == 0) {
-          const response = await postCreneau(creneau)
-          created_creneau = response.creneaux[0];
-          continue;
-        }
-        await updateCreneau(created_creneau.id, creneau);
+        const response = await postCreneau(creneau)
+        created_creneaux = created_creneaux.concat(response.creneaux)
       }
 
-      planningStore.addCreneaux([created_creneau]);
+      planningStore.addCreneaux(created_creneaux)
     },
     async editCreneau() {
       this.formatCreneau()
@@ -40,12 +36,6 @@ export const useCreneauStore = defineStore('creneau', {
     formatCreneau() {
       this.heureDebut += ':00'
       this.heureFin += ':00'
-      const minuteDebut =
-        this.heureDebut.split(':')[0] * 60 +
-        Number(this.heureDebut.split(':')[1])
-      const minuteFin =
-        this.heureFin.split(':')[0] * 60 + Number(this.heureFin.split(':')[1])
-      this.dureeActivite = minuteFin - minuteDebut
     },
     addActivite(activite: Activite) {
       const index = this.activites.findIndex(

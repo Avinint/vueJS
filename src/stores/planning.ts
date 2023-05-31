@@ -93,14 +93,13 @@ export const usePlanningStore = defineStore('planning', {
       creneau.end = creneau.dateSortie
       creneau.title = creneau.titre
       creneau.idCreneau = creneau.id
-      creneau.resourceIds = creneau.zones
+      creneau.resourceIds = creneau.zones;
       return creneau
     },
     addCreneaux(creneaux) {
-      console.log(creneaux);
       for (const creneau of creneaux) {
         if (!this.updateExisting(creneau)) {
-          this.creneaux.push(creneau)
+          this.creneaux.push(this.normalize(creneau))
         }
       }
     },
