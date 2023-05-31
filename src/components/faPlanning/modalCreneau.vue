@@ -85,52 +85,54 @@
           Activités
         </label>
         <div class="flex overflow-x-scroll py-3">
-          <div v-for="zone in zones" :key="zone.id" class="w-80 flex-col">
-            <input
+          <template v-for="zone in zones">
+            <div v-if="isZoneEditable(zone)" class="w-80 flex-col">
+              <input
               :id="zone.id"
               v-model="creneauStore.zoneId"
               type="checkbox"
               :value="zone.id"
               class="hidden"
-            />
-            <label
-              class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
-              :class="{ 'bg-sky-600 text-white': isZoneChecked(zone.id) }"
-              :for="zone.id"
-            >
-              {{ zone.libelle }}
-            </label>
-            <div v-if="isZoneChecked(zone.id)" class="flex-col pt-10">
-              <div
+              />
+              <label
+                class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
+                :class="{ 'bg-sky-600 text-white': isZoneChecked(zone.id) }"
+                :for="zone.id"
+                >
+                {{ zone.libelle }}
+              </label>
+              <div v-if="isZoneChecked(zone.id)" class="flex-col pt-10">
+                <div
                 v-for="zoneActivite in zone.zoneActivites"
                 :key="zone.id + '-' + zoneActivite.activite.id"
-              >
-                <div class="my-4 mr-10 flex justify-between">
-                  <input
+                >
+                  <div class="my-4 mr-10 flex justify-between">
+                    <input
                     :id="zone.id + '-' + zoneActivite.activite.id"
                     v-model="zoneActivite.activite.checked"
                     type="checkbox"
                     class="hidden"
-                  />
-                  <label
+                    />
+                    <label
                     class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
                     :class="{
                       'bg-sky-600 text-white': zoneActivite.activite.checked,
                     }"
-                    :for="zone.id + '-' + zoneActivite.activite.id"
-                    >{{ zoneActivite.activite.libelle }}
-                  </label>
-                  <Input
+                      :for="zone.id + '-' + zoneActivite.activite.id"
+                      >{{ zoneActivite.activite.libelle }}
+                    </label>
+                    <Input
                     v-model="zoneActivite.activite.tarif"
                     :default-value="defaultTarif"
                     class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
                     :inline="true"
                     suffix="€"
-                  />
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </Modal>
@@ -258,6 +260,14 @@ export default {
     }
   },
   methods: {
+    isZoneEditable(zone) {
+      if(this.typeAction == 'create')
+        return true;
+
+      console.log(zone.id)
+      console.log(this.creneauStore.zoneId);
+      return this.creneauStore.zoneId.includes(zone.id);
+    },
     async fetchZones() {
       this.zones = await getZones(
         1,
