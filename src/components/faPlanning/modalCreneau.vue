@@ -18,14 +18,23 @@
           required
         />
       </div>
-      <div class="w-96">
+      <div class="flex gap-3">
         <Input
           v-model="creneauStore.titre"
           :inline="false"
           :required="true"
           label="Ajouter un titre à votre créneau"
+          class="grow"
           placeholder="Ajouter un titre à votre créneau"
           type="text"
+        />
+        <Select
+          v-if="creneauStore.creneauType == 2"
+          v-model="creneauStore.organisme"
+          :required="true"
+          label="Organisme"
+          class="grow"
+          :options="creneauStore.getOrganismes()" 
         />
       </div>
       <div class="flex w-full">
@@ -154,6 +163,9 @@ import { getZones } from '@api/zone'
 import Input from '@components/common/Input.vue'
 import InputRadio from '@components/common/InputRadio.vue'
 import InputCheckbox from '@components/common/InputCheckbox.vue'
+import Select from '@components/common/Select.vue'
+import { getActiviteByZone } from '@api/activiteByZone'
+import { getActivites } from '../../api/activite.js'
 
 export default {
   components: {
@@ -162,6 +174,7 @@ export default {
     Input,
     InputRadio,
     InputCheckbox,
+    Select,
   },
   props: {
     isOpen: {
