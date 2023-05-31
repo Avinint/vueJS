@@ -19,8 +19,12 @@ export const useCreneauStore = defineStore('creneau', {
         const creneau = makeCreneau(zone_id, this.$state)
         const response = await postCreneau(creneau)
 
-        if(planningStore.currentViewName === 'day' && zone_id == planningStore.filters.zone[0])
+        if(planningStore.currentViewName === 'day') {
+          if(zone_id == planningStore.filters.zone[0])
+            created_creneaux = created_creneaux.concat(response.creneaux)
+        } else {
           created_creneaux = created_creneaux.concat(response.creneaux)
+        }
       }
 
       planningStore.addCreneaux(created_creneaux)
