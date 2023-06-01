@@ -280,7 +280,7 @@ const routes = [
     },
   },
   {
-    path: '/animateur',
+    path: '/animateurs',
     component: Animateur,
     meta: {
       breadcrumbs: [
