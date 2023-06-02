@@ -23,12 +23,12 @@
     id?: string
     inline: boolean
     type: string
-    validation?: ((val: any) => boolean | string)[]
+    validation?: ((val: any) => unknown | boolean | string) | null[]
     valid: boolean
     required: boolean,
     pattern: string,
-    minlength: number,
-    maxlength: number
+    minlength?: number,
+    maxlength?: number
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -39,7 +39,7 @@
     inline: true,
     type: 'text',
     id: "",
-    validation: [],
+    validation:  [],
     valid: true,
     required: false,
   })
@@ -53,14 +53,16 @@
     const val = $event.target.value
     error.value = ""
     emits('update:valid', true)
-    props.validation.forEach(func => {
-      try {
-        func(val)
-      } catch (e) {
-        error.value += e + "<br>"
-        emits('update:valid', false)
+      if ( Array.isArray(props.validation)) {
+          props.validation.forEach(func => {
+              try {
+                  func(val)
+              } catch (e) {
+                  error.value += e + "<br>"
+                  emits('update:valid', false)
+              }
+          })
       }
-    })
     emits('update:modelValue', val)
   }
 

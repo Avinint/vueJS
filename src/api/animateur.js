@@ -1,27 +1,9 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
 
-
-export const selectOrganismes = async () => {
-    const response = await $fetch(
-      `${import.meta.env.VITE_API_URL}/api/select/organismes`,
-      {
-          method: 'get',
-          headers: {
-              ...defaultHeaders,
-              'Content-Type': 'application/ld+json',
-              Authorization: 'Bearer ' + localStorage.getItem('token'),
-          },
-      }
-    )
-
-    if (response.status !== 200) throw response
-    return response.json()
-}
-
-export const getOrganismes = async (page = 1, query = '') => {
+export const getAnimateurs = async (page = 1, query = '') => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/organismes?page=${page}${query}`,
+    `${import.meta.env.VITE_API_URL}/api/animateurs?page=${page}${query}`,
     {
       method: 'get',
       headers: {
@@ -31,14 +13,15 @@ export const getOrganismes = async (page = 1, query = '') => {
       },
     }
   )
+
   if (response.status !== 200) throw response
 
   return response.json()
 }
 
-export const postOrganismes = async (organisme) => {
+export const postAnimateur = async (animateur) => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/organismes`,
+    `${import.meta.env.VITE_API_URL}/api/animateur`,
     {
       method: 'post',
       headers: {
@@ -46,16 +29,16 @@ export const postOrganismes = async (organisme) => {
         'Content-Type': 'application/ld+json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
-      body: JSON.stringify(organisme.value),
+      body: JSON.stringify(animateur.value),
     }
   )
   if (response.status !== 201) throw response
   return response.json()
 }
 
-export const updateOrganismes = async (organisme, id) => {
+export const putAnimateur = async (animateur, id) => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/organismes/${id}`,
+    `${import.meta.env.VITE_API_URL}/api/animateur/${id}`,
     {
       method: 'put',
       headers: {
@@ -64,16 +47,16 @@ export const updateOrganismes = async (organisme, id) => {
         'Content-Type': 'application/ld+json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
-      body: JSON.stringify(organisme.value),
+      body: JSON.stringify(animateur.value),
     }
   )
   if (response.status !== 200) throw response
   return response.json()
 }
 
-export const deleteOrganismes = async (id) => {
+export const deleteAnimateur = async (id) => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/organismes/${id}`,
+    `${import.meta.env.VITE_API_URL}/api/animateur/${id}`,
     {
       method: 'delete',
       headers: {
