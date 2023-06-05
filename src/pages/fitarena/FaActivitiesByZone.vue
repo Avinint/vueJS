@@ -284,15 +284,15 @@ onMounted(async () => {
     '&categoryTypeEquipement.code=numerique'
   )
   parametre_config_equipements_motorises.value = (
-    await getParametres(1, '&code=config-des-equipements-motorises')
+    await getParametres(1, '&code=config_des_equipements_motorises')
   ).shift()
   parametre_mode_ecran_interface_video_scoring.value = (
     await getParametres(
       1,
-      '&code=mode-d-ecran-geant-et-d-interface-de-video-et-scoring'
+      '&code=mode_d_ecran_geant_et_d_interface_de_video_et_scoring'
     )
   ).shift()
-  let data = await getTypeZone(1, '&code=sous-zone')
+  let data = await getTypeZone(1, '&code=sous_zone')
   id_type_sous_zone.value = data[0]?.id
   await fetchSousZoneParametres()
   await fetchZoneEquipements()
@@ -524,6 +524,7 @@ const saveSousZones = async (zoneId, activiteId) => {
           libelle,
           parametres,
           equipements,
+          fitArena: parseInt(props.id)
         })
       } else {
         await postConfigurationZoneActivite(id, activiteId, {
@@ -549,10 +550,10 @@ const removeSousZone = async (index) => {
 // TODO: en passant par 1 store, on pourra déporter ça directement vers le composant paramSousZone
 const fetchSousZoneParametres = async () => {
   const parametreNombreParticipantsMax = (
-    await getParametres(1, '&code=nombre-de-participants-max')
+    await getParametres(1, '&code=nombre_de_participants_max')
   ).shift()
   const parametreNombreParticipantsConseille = (
-    await getParametres(1, '&code=nombre-de-participants-conseille')
+    await getParametres(1, '&code=nombre_de_participants_conseille')
   ).shift()
 
   sousZoneParametres.value = {
@@ -577,7 +578,7 @@ const fetchZoneEquipements = async () => {
       await getEquipementsByZone(
         1,
         zone.id,
-        '&equipement.typeEquipement.code[]=ecran-geant&equipement.typeEquipement.code[]=ecran-attente&equipement.typeEquipement.code[]=ecran-accueil'
+        '&equipement.typeEquipement.code[]=ecran_geant&equipement.typeEquipement.code[]=ecran_attente&equipement.typeEquipement.code[]=ecran_accueil'
       )
     ).map((elt) => {
       return elt.equipement

@@ -329,7 +329,7 @@ const saveActivite = () => {
   actTemp.value = {
     typeActivite: '/api/type_activites/' + activite_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
-    ordre: activite.value.ordre,
+    ordre: parseInt(activite.value.ordre),
     libelle: activite.value.libelle,
     description: activite.value.description,
     actif: activite.value.actif == true ? activite.value.actif : false,
@@ -364,7 +364,7 @@ const updateActivityValidation = async () => {
 
 const addActivityValidation = async () => {
   try {
-    await postActivites(actTemp)
+    await postActivites(actTemp.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')

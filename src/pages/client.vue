@@ -149,7 +149,7 @@
                 label="Code Postal"
                 class="w-full"
                 :required="true"
-                pattern="[0-9]{5}"
+                :validation="[zipValidation]"
               />
             </div>
             <div class="flex items-center">
@@ -162,7 +162,7 @@
                 label="Ville"
                 class="w-full"
                 :required="true"
-                pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï-]{1,50}"
+                :validation="[cityValidation]"
               />
             </div>
           </div>
@@ -225,7 +225,7 @@
                 :type="'text'"
                 label="Numéro de téléphone"
                 class="w-full"
-                pattern="[0-9]{10}"
+                :validation="[phoneValidation]"
               />
             </div>
             <div class="flex items-center">
@@ -353,7 +353,13 @@ import {
   updateClient,
 } from '../api/client.js'
 import { getAdresses } from '../api/address.js'
-import { emailValidation, isValid } from '../validation.js'
+import {
+  emailValidation,
+  isValid,
+  zipValidation,
+  cityValidation,
+  phoneValidation,
+} from '../validation.js'
 import { onMounted, ref } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -441,7 +447,7 @@ const saveClient = () => {
 
 const updateClientValidation = async () => {
   try {
-    await updateClient(client, id_selected.value)
+    await updateClient(client.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -455,7 +461,7 @@ const updateClientValidation = async () => {
 
 const addClientValidation = async () => {
   try {
-    await postClient(client)
+    await postClient(client.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')

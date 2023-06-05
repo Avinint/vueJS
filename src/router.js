@@ -16,8 +16,11 @@ import FaActivities from './pages/fitarena/FaActivities.vue'
 import FaNumericEquipements from './pages/fitarena/FaNumericEquipements.vue'
 import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
 import FaPlanning from './pages/fitarena/FaPlanning.vue'
+import FaOrganisme from './pages/FaOrganisme.vue'
+
 
 import { useUserStore } from './stores/user.js'
+import Animateur from "@pages/animateur.vue";
 
 const routes = [
   {
@@ -245,6 +248,22 @@ const routes = [
           ],
         },
       },
+      {
+        path: 'organismes',
+        component: FaOrganisme,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
+            {
+              label: 'Fit Arena - Dijon',
+              link: 'fitarena/',
+            },
+          ],
+        },
+      },
     ],
   },
   {
@@ -256,6 +275,35 @@ const routes = [
         {
           link: 'clients',
           label: 'Clients',
+        },
+      ],
+    },
+  },
+  {
+    path: '/animateurs',
+    component: Animateur,
+    meta: {
+      breadcrumbs: [
+        {
+          label: 'Animateur',
+          link: 'animateur',
+        },
+        {
+          label: 'Liste',
+          link: 'liste',
+        }
+      ]
+    }
+  },
+  {
+    path: '/organismes',
+    name: 'organismes',
+    component: FaOrganisme,
+    meta: {
+      breadcrumbs: [
+        {
+          link: 'organismes',
+          label: 'organisme',
         },
       ],
     },

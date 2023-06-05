@@ -168,6 +168,10 @@ onMounted(async () => {
         {
           label: 'Affichage web',
           path: `/fitarena/${fa.id}/web`
+        },
+        {
+          label: 'Organisme',
+          path: `/fitarena/${fa.id}/organismes`
         }
       ]
     }

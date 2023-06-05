@@ -177,13 +177,13 @@ export default {
       d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
       var week1 = new Date(d.getFullYear(), 0, 4)
       return (
-        1 +
-        Math.round(
-          ((d.getTime() - week1.getTime()) / 86400000 -
-            3 +
-            ((week1.getDay() + 6) % 7)) /
-            7
-        )
+          1 +
+          Math.round(
+              ((d.getTime() - week1.getTime()) / 86400000 -
+                  3 +
+                  ((week1.getDay() + 6) % 7)) /
+              7
+          )
       )
     },
   },

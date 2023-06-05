@@ -17,7 +17,7 @@
           />
         </template>
       </NavigationSection>
-      <NavigationSection>
+      <NavigationSection class="justify-center px-4">
         <template #title> Affichage du planning </template>
         <template #content>
           <Button
@@ -35,12 +35,13 @@
             "
             type="secondary"
             icon=""
+            class="w-24"
             :submit="false"
             @click="toggleView()"
           />
         </template>
       </NavigationSection>
-      <NavigationSection>
+      <NavigationSection class="justify-center">
         <template #title>Période en cours</template>
         <template #content>
           <Button

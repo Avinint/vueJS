@@ -1,26 +1,21 @@
 <template>
   <Card>
     <h1>équipements motorisés de la fit arena</h1>
-    <div v-for="(typeEquip, i) of typeEquipements" :key="i">
+    <div v-for="(typeEquipement, i) in typeEquipements" :key="i">
       <div
-        v-if="typeEquip.equipements.length"
-        :key="i"
+        v-if="typeEquipement.equipements.length"
         class="m-5 border border-gray-200 p-4"
       >
-        <h2 v-if="typeEquip.equipements.length" class="pb-5 pt-2">
-          {{ typeEquip.libelle }}
+        <h2 class="pb-5 pt-2">
+          {{ typeEquipement.libelle }}
         </h2>
-        <div
-          v-if="typeEquip.equipements.length"
-          class="relative overflow-x-auto"
-        >
+        <div class="relative overflow-x-auto">
           <table
-            v-for="(equipementTemp, i) in typeEquip.equipements"
+            v-for="(equipement, i) in typeEquipement.equipements"
             :key="i"
             class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
           >
             <thead
-              v-if="i == 0"
               class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
             >
               <tr>
@@ -28,17 +23,6 @@
                 <th scope="col" class="px-6 py-3">Actif</th>
                 <th scope="col" class="px-6 py-3">Libellé</th>
                 <th scope="col" class="px-6 py-3">Adresse IP</th>
-              </tr>
-            </thead>
-            <thead
-              v-if="i > 0"
-              class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
-            >
-              <tr>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3"></th>
               </tr>
             </thead>
             <tbody>
@@ -49,14 +33,14 @@
                     borderless
                     icon="delete"
                     type="secondary"
-                    @click="removeEquipement(equipementTemp.id)"
+                    @click="removeEquipement(equipement.id)"
                   />
                   <Button
                     test="TeditClient"
                     borderless
                     icon="edit"
                     type="secondary"
-                    @click="editEquipement(equipementTemp.id)"
+                    @click="editEquipement(equipement.id)"
                   />
                 </td>
                 <td class="w-1/12 px-6 py-4">
@@ -64,11 +48,11 @@
                     class="relative inline-flex cursor-pointer items-center"
                   >
                     <input
-                      v-model="equipementTemp.statut"
+                      v-model="equipement.statut"
                       type="checkbox"
                       value="true"
                       class="peer sr-only"
-                      @change="modifieEquipement(equipementTemp)"
+                      @change="modifieEquipement(equipement)"
                     />
                     <div
                       class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-green-800"
@@ -79,24 +63,24 @@
                   </label>
                 </td>
                 <td class="w-1/2 max-w-xs truncate break-all px-6 py-4">
-                  {{ equipementTemp.libelle }}
+                  {{ equipement.libelle }}
                 </td>
-                <td class="w-2/12 px-6 py-4">{{ equipementTemp.ip }}</td>
+                <td class="w-2/12 px-6 py-4">{{ equipement.ip }}</td>
                 <td class="w-1/12 px-6 py-4">
                   <Button
                     label="Détails"
                     type="secondary"
-                    @click="showEquipement(equipementTemp.id)"
+                    @click="showEquipement(equipement.id)"
                   />
                 </td>
               </tr>
-              <tr v-if="equipementTemp.equipementModes.length">
+              <tr>
                 <td></td>
                 <td colspan="3">
                   <CardConfiguration>
                     <h3 class="pl-10 pt-2">Configuration</h3>
                     <table
-                      v-if="equipementTemp.equipementModes.length"
+                      v-if="equipement.equipementModes.length"
                       class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
                     >
                       <thead>
@@ -110,7 +94,7 @@
                         <tr
                           v-for="(
                             equipementMode, i
-                          ) in equipementTemp.equipementModes"
+                          ) in equipement.equipementModes"
                           :key="i"
                           class="bg-white"
                         >
@@ -172,18 +156,18 @@
           >Type d'équipement</label
         >
         <select
-          v-if="typeEquipements.length"
+          v-if="typeEquipementsSelects.length"
           id="TTypeActivite"
           v-model="equipement_selected"
           :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
-            v-for="(typeEquipement, i) in typeEquipements"
+            v-for="(typeEquipementsSelect, i) in typeEquipementsSelects"
             :key="i"
-            :value="typeEquipement.id"
+            :value="typeEquipementsSelect.id"
           >
-            {{ typeEquipement.libelle }}
+            {{ typeEquipementsSelect.libelle }}
           </option>
         </select>
       </div>
@@ -207,7 +191,7 @@
           label="Adresse IP"
           :required="true"
           class="w-full"
-          pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+          :validation="[ipValidation]"
         />
       </div>
       <div class="flex items-center">
@@ -246,7 +230,7 @@
             <tr
               v-for="(equipementMode, i) in equipement.equipementModes"
               :key="i"
-              class="bg-white"
+              class="items-center bg-white"
             >
               <td class="flex items-center justify-center p-3">
                 <Button
@@ -254,20 +238,20 @@
                   borderless
                   icon="delete"
                   type="secondary"
-                  @click="removeEquipementConfiguration(equipementMode.id)"
+                  @click="removeEquipementConfiguration(i)"
                 />
                 <Button
                   test="TeditClient"
                   borderless
                   icon="edit"
                   type="secondary"
-                  @click="editEquipementConfiguration(equipementMode.id)"
+                  @click="editEquipementConfiguration(i)"
                 />
               </td>
               <td class="px-6 py-4">
                 <Input
-                  v-model="equipementMode.mode.libelle"
-                  :readonly="equipementMode.mode.readonly"
+                  v-model="equipementMode.libelle"
+                  :readonly="equipementMode.readonly"
                 />
               </td>
               <td class="px-6 py-4">
@@ -326,6 +310,7 @@ import {
   updateEquipements,
   patchEquipements,
 } from '../../api/equipement.js'
+import { isValid, ipValidation } from '@/validation.js'
 import { getTypeEquipements } from '../../api/typeEquipement.js'
 import { useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
@@ -345,10 +330,14 @@ const readonly = ref(false)
 const id_selected = ref(0)
 const equipements = ref([])
 const typeEquipements = ref([])
+const typeEquipementsSelects = ref([])
+const typeEquipementsSelect = ref([])
 const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
 const modal_title = ref('')
+
+const validation = ref({})
 
 const id_fa = useRoute().params.id
 
@@ -356,11 +345,15 @@ onMounted(async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
+      '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
+    '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=motorise'
   )
 })
 
@@ -394,7 +387,11 @@ const deleteEquipmentValidation = async (id) => {
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise'
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=motorise'
   )
   equipement_modal.value = false
 }
@@ -432,14 +429,23 @@ const mapApiToData = (equipementTemp) => {
 
 const addEquipementConfiguration = () => {
   const mode = { libelle: '', type: '', readonly: false }
+  if (!equipement.value.hasOwnProperty('equipementModes'))
+    equipement.value.equipementModes = []
   equipement.value.equipementModes.push(mode)
 }
 
-const removeEquipementConfiguration = () => {}
+const removeEquipementConfiguration = (i) => {
+  delete equipement.value.equipementModes[i]
+}
 
-const editEquipementConfiguration = () => {}
+const editEquipementConfiguration = (i) => {
+  let equipementMode = equipement.value.equipementModes[i]
+  equipementMode.readonly = false
+}
 
 const saveEquipement = () => {
+  if (!isValid(validation)) return
+
   equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
@@ -457,7 +463,7 @@ const saveEquipement = () => {
 
 const updateEquipmentValidation = async () => {
   try {
-    await updateEquipements(equipmentTemp, id_selected.value)
+    await updateEquipements(equipmentTemp.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -469,17 +475,21 @@ const updateEquipmentValidation = async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
+    '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=motorise'
   )
 }
 
 const addEquipmentValidation = async () => {
   try {
-    await postEquipements(equipmentTemp)
+    await postEquipements(equipmentTemp.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -491,11 +501,15 @@ const addEquipmentValidation = async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
+      '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + id_fa
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=motorise'
   )
 }
 

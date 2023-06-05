@@ -107,18 +107,17 @@
           >Type d'équipement</label
         >
         <select
-          v-if="typeEquipements.length"
           id="TTypeActivite"
           v-model="equipement_selected"
           :disabled="readonly == true ? true : false"
           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
           <option
-            v-for="(typeEquipement, i) in typeEquipements"
+            v-for="(typeEquipementsSelect, i) in typeEquipementsSelects"
             :key="i"
-            :value="typeEquipement.id"
+            :value="typeEquipementsSelect.id"
           >
-            {{ typeEquipement.libelle }}
+            {{ typeEquipementsSelect.libelle }}
           </option>
         </select>
       </div>
@@ -142,7 +141,7 @@
           label="Adresse IP"
           :required="true"
           class="w-full"
-          pattern="[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+          :validation="[ipValidation]"
         />
       </div>
       <div class="flex items-center">
@@ -202,6 +201,7 @@ import {
   postEquipements,
   updateEquipements,
 } from '../../api/equipement.js'
+import { isValid, ipValidation } from '@/validation.js'
 import { getTypeEquipements } from '../../api/typeEquipement.js'
 import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
@@ -220,10 +220,14 @@ const readonly = ref(false)
 const id_selected = ref(0)
 const equipements = ref([])
 const typeEquipements = ref([])
+const typeEquipementsSelects = ref([])
 const typeEquipement = ref({})
+const typeEquipementsSelect = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
 const modal_title = ref('')
+
+const validation = ref({})
 
 const id_fa = useRoute().params.id
 
@@ -231,11 +235,16 @@ onMounted(async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique'
+      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + id_fa
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=numerique'
   )
 })
 
@@ -265,11 +274,15 @@ const deleteEquipmentValidation = async (id) => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique'
+      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique'
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=numerique'
   )
   equipement_modal.value = false
 }
@@ -306,6 +319,8 @@ const mapApiToData = (equipementTemp) => {
 }
 
 const saveEquipement = async () => {
+  if (!isValid(validation)) return
+
   equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
     fitArena: '/api/fit_arenas/' + props.id,
@@ -322,7 +337,7 @@ const saveEquipement = async () => {
 
 const updateEquipmentValidation = async () => {
   try {
-    await updateEquipements(equipmentTemp, id_selected.value)
+    await updateEquipements(equipmentTemp.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -334,17 +349,21 @@ const updateEquipmentValidation = async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique'
+      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + id_fa
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=numerique'
   )
 }
 
 const addEquipmentValidation = async () => {
   try {
-    await postEquipements(equipmentTemp)
+    await postEquipements(equipmentTemp.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -356,11 +375,15 @@ const addEquipmentValidation = async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique'
+      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ id_fa
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-    '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + id_fa
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
+  )
+  typeEquipementsSelects.value = await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=numerique'
   )
 }
 

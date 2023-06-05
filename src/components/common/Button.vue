@@ -1,5 +1,5 @@
 <template>
-  <button :class="[type, icon_placement, borderless]" :type="submit ? 'submit' : undefined" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
+  <button :class="[type, icon_placement, borderless]" :type="submit ? 'submit' : 'button'" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
     <div v-if="icon" v-html="icon"></div>
     <div v-if="props.label">
       {{props.label}}

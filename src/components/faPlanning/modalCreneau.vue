@@ -167,9 +167,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    typeAction: {
+    actionType: {
       type: String,
-      default: 'create',
+      default: '',
     },
     readonly: Boolean,
   },
@@ -183,14 +183,14 @@ export default {
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
-      defaultTarif: '0',
+      defaultTarif: 20,
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
     modalTitle() {
-      switch (this.typeAction) {
+      switch (this.actionType) {
         case 'create':
           return 'Création de creneau'
         case 'edit':
@@ -238,6 +238,18 @@ export default {
         }
       }
       return list
+    },
+    isZoneChecked() {
+      return (zoneId) => this.creneauStore.zoneId.includes(zoneId)
+    },
+    isOneZoneChecked() {
+      return this.creneauStore.zoneId.length > 0
+    },
+    isNotOrganismeOrMaintenance() {
+      return (
+        this.creneauStore.creneauType !== 2 &&
+        this.creneauStore.creneauType !== 4
+      )
     },
   },
   watch: {
