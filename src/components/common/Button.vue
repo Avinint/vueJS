@@ -1,5 +1,5 @@
 <template>
-  <button :class="[type, icon_placement, borderless]" :type="submit" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
+  <button :class="[type, icon_placement, borderless]" :type="submit ? 'submit' : 'button'" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
     <div v-if="icon" v-html="icon"></div>
     <div v-if="props.label">
       {{props.label}}
@@ -8,16 +8,6 @@
 </template>
 
 <script setup lang="ts">
-
-  interface Props {
-    label?: string
-    icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | '',
-    type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
-    icon_placement?: 'right' | 'left'| '',
-    borderless?: boolean
-    submit: boolean
-  }
-
 
   const ICON = {
     add: '<svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.44271 12.6665H9.69271V9.20817H13.1719V7.95817H9.69271V4.33317H8.44271V7.95817H4.83854V9.20817H8.44271V12.6665ZM9.00521 16.8332C7.86632 16.8332 6.78993 16.6144 5.77604 16.1769C4.76215 15.7394 3.87674 15.1422 3.11979 14.3853C2.36285 13.6283 1.76562 12.7429 1.32812 11.729C0.890625 10.7151 0.671875 9.63178 0.671875 8.479C0.671875 7.34012 0.890625 6.26373 1.32812 5.24984C1.76562 4.23595 2.36285 3.354 3.11979 2.604C3.87674 1.854 4.76215 1.26025 5.77604 0.822754C6.78993 0.385254 7.87326 0.166504 9.02604 0.166504C10.1649 0.166504 11.2413 0.385254 12.2552 0.822754C13.2691 1.26025 14.151 1.854 14.901 2.604C15.651 3.354 16.2448 4.23595 16.6823 5.24984C17.1198 6.26373 17.3385 7.34706 17.3385 8.49984C17.3385 9.63873 17.1198 10.7151 16.6823 11.729C16.2448 12.7429 15.651 13.6283 14.901 14.3853C14.151 15.1422 13.2691 15.7394 12.2552 16.1769C11.2413 16.6144 10.158 16.8332 9.00521 16.8332ZM9.02604 15.5832C10.9844 15.5832 12.651 14.8922 14.026 13.5103C15.401 12.1283 16.0885 10.4512 16.0885 8.479C16.0885 6.52067 15.401 4.854 14.026 3.479C12.651 2.104 10.9774 1.4165 9.00521 1.4165C7.04688 1.4165 5.37674 2.104 3.99479 3.479C2.61285 4.854 1.92188 6.52762 1.92188 8.49984C1.92188 10.4582 2.61285 12.1283 3.99479 13.5103C5.37674 14.8922 7.05382 15.5832 9.02604 15.5832Z" fill="black"/></svg>',
@@ -39,17 +29,17 @@
     '': 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white'
   }
 
-  const props = withDefaults(defineProps<Props>(), {
-    label: '',
-    icon: '',
-    icon_placement: 'right',
-    type: '',
-    borderless: false,
-    submit: false
-  })
+  const props = defineProps<{
+    label?: string,
+    icon_placement?: string
+    icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | '',
+    type?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
+    borderless?: Boolean,
+    submit?: Boolean,
+  }>();
 
-  const icon = ICON[props.icon]
-  const type = TYPE[props.type]
+  const icon = ICON[props.icon ?? '']
+  const type = TYPE[props.type ?? '']
   const submit = props.submit ? 'submit' : 'button'
   const borderless = props.borderless ? '' : 'border'
   const icon_placement = props.icon_placement === 'left' ? 'row-reverse' : ''

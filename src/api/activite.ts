@@ -1,7 +1,7 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
 
-export const getActivites = async (fitArenaId, page = 1, query = '') => {
+export async function getActivites(fitArenaId: number, page = 1, query = ''): Promise<Activite[]> {
   const response = await $fetch(
     `${
       import.meta.env.VITE_API_URL

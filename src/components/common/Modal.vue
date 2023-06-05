@@ -1,8 +1,7 @@
 <template>
   <div tabindex="-1" aria-hidden="true"
     class="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full backdrop-blur bg-black/50 flex items-center justify-center">
-    <div :class="'relative max-h-full w-4/12 max-w-'+props.size">
-
+    <div :class="'relative max-h-full w-300 max-w-'+props.size">
       <div class="relative bg-white rounded-lg shadow p-4">
         <div class="flex items-start justify-between p-4 border-b rounded-t">
           <h3 class="text-xl font-semibold text-gray-900">
@@ -39,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { withDefaults } from "vue"
 import Button from './Button.vue'
 
 interface Props {
