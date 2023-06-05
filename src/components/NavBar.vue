@@ -1,10 +1,9 @@
 <template>
-  <div>
     <nav
-      class="fixed z-10 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+      class="navbar fixed z-10 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
     >
       <div class="flex h-14 items-center">
-        <div class="flex w-10/12 justify-between px-4">
+        <div class="flex w-full justify-between px-4">
           <breadcrumbs :items="route.meta.breadcrumbs" />
           <Button
             test="Tlogout"
@@ -18,7 +17,6 @@
         </div>
       </div>
     </nav>
-  </div>
 </template>
 
 <script lang="ts" setup>
@@ -38,3 +36,9 @@ const logout = () => {
   router.push('/login')
 }
 </script>
+
+<style scoped>
+.navbar {
+  width: inherit;
+}
+</style>

@@ -241,7 +241,7 @@ import { getParametres } from '../../api/parametre.js'
 import { getTypeZone } from '../../api/typeZone.js'
 import { getParametreZoneActivites } from '../../api/parametreZoneActivite.js'
 import { getEquipementsByZone } from '../../api/equipement.js'
-import { getActivites } from '../../api/activite.js'
+import { getActivites } from '../../api/activite.ts'
 import { postSousZone } from '../../api/sousZone.js'
 import { postConfigurationZoneActivite } from '../../api/configuration.js'
 
