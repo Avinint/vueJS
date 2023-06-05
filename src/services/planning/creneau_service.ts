@@ -29,12 +29,15 @@ export function makeCreneau(zone_id: number, state_data: Creneau): Creneau {
 export const default_creneau = (): Creneau => ({
   id: 0,
   creneauType: 0,
-  zoneId: 0,
   activites: [],
   titre: '',
   date: '',
   heureDebut: '', // "14:30:00"
   heureFin: '', // "14:30:00"
+  dateSortie: '',
+  dateDebut: '',
+  dateFinCreneau: '',
+  zones: [],
   dureeActivite: 55, // 55
   dureeInterCreneau: 5,
   description: '',
@@ -43,4 +46,5 @@ export const default_creneau = (): Creneau => ({
   niveauPratique: 0,
   tarifHoraire: 0,
   nbParticipants: 0,
+  mode: null,
 });

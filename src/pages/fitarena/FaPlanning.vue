@@ -120,7 +120,7 @@ export default {
     this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
     // sync events from store/api
     this.$watch(
-      () => this.planningStore.creneaux,
+      () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
         this.calendarOptions.events = newCreneaux
       }
@@ -161,6 +161,7 @@ export default {
     },
     select(selectionInfo) {
       this.actionType = 'create'
+      this.creneauStore.setDefault()
       this.setSelectedCreneau(selectionInfo)
       this.isModalCreneauOpen = true
     },
@@ -168,37 +169,7 @@ export default {
       this.creneauStore.editCreneau(info.event)
     },
     setSelectedCreneau(fullCalendarCreneau) {
-      this.creneauStore.id = parseInt(fullCalendarCreneau.id)
-
-      this.creneauStore.date = this.$dayjs(fullCalendarCreneau.start).format(
-        'YYYY-MM-DD'
-      ) // 2023-01-23
-      this.creneauStore.heureDebut = this.$dayjs(
-        fullCalendarCreneau.start
-      ).format('HH:mm') // "14:30:00"
-      this.creneauStore.heureFin = this.$dayjs(fullCalendarCreneau.end).format(
-        'HH:mm'
-      ) // "14:30:00"
-
-      // if there's already some data in the 'creneau' :
-      if (fullCalendarCreneau.extendedProps) {
-        this.creneauStore.creneauType = fullCalendarCreneau.extendedProps.type
-        this.creneauStore.zoneId = fullCalendarCreneau.extendedProps.zones
-        this.creneauStore.activites =
-          fullCalendarCreneau.extendedProps.activites.map((activite) => {
-            activite.activiteId = activite.id
-            activite.tarif = activite.prix
-            return activite
-          })
-
-        this.creneauStore.titre = fullCalendarCreneau.extendedProps.titre
-        this.creneauStore.dureeActivite =
-          fullCalendarCreneau.extendedProps.dureeActivite // 55
-        this.creneauStore.dureeInterCreneau =
-          fullCalendarCreneau.extendedProps.dureeInterCreneau // 5
-      } else {
-        this.creneauStore.zoneId = []
-      }
+      this.creneauStore.setCreneau(fullCalendarCreneau)
     },
     getWeekNumber: function (date) {
       var d = new Date(date)

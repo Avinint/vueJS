@@ -1,11 +1,11 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
 
-export const getPlanning = async (debut, fit_arena, duree, zone) => {
+export async function getPlanning(debut: number, fit_arena: number, duree: number, zone: string): Promise<Planning> {
+  const api_url = import.meta.env.VITE_API_URL
+
   const response = await $fetch(
-    `${
-      import.meta.env.VITE_API_URL
-    }/api/planning?debut=${debut}&fit_arena=${fit_arena}&duree=${duree}&zones=[${zone}]`,
+    `${api_url}/api/planning?debut=${debut}&fit_arena=${fit_arena}&duree=${duree}&zones=[${zone}]`,
     {
       method: 'get',
       headers: {
@@ -35,7 +35,7 @@ export const postCreneau = async (data) => {
 
 export const updateCreneau = async (id, data) => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/creneau/${id}`,
+    `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
     {
       method: 'put',
       headers: {

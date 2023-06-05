@@ -1,10 +1,12 @@
 {
+    "extends": "@vue/tsconfig/tsconfig.json",
     "compilerOptions": {
         "baseUrl": "src",
         "paths": {
             "@api/*": ["api/*"],
             "@stores/*": ["stores/*"],
             "@services/*": ["services/*"]
-        }
-    }
+        },
+    },
+    "exclude": ["node_modules", "dist"]
 }

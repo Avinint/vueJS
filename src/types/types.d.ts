@@ -2,9 +2,11 @@ type Creneau = {
     id?: number;
     activites: Activite[];
     creneauType: number;
-    zoneId: number;
     titre: string;
     date: string;
+    dateDebut: string,
+    dateSortie: string,
+    dateFinCreneau: string,
     heureDebut: string, // "14:30:00;
     heureFin: string, // "14:30:00;
     dureeActivite: number, // 5;
@@ -15,6 +17,8 @@ type Creneau = {
     niveauPratique: number;
     tarifHoraire: number;
     nbParticipants: number;
+    zones: number[];
+    mode: string | null;
 }
 
 type Activite = {
@@ -42,4 +46,13 @@ type Planning = {
   currentWeek: number,
   slotMinTime: string,
   slotMaxTime: string,
+}
+
+type CalendarEvent = {
+    id: number,
+    start: string,
+    end: string,
+    title: string,
+    resourceIds: number[],
+    extendedProps?: any
 }
