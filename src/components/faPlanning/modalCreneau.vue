@@ -28,13 +28,13 @@
           placeholder="Ajouter un titre à votre créneau"
           type="text"
         />
-        <Select
+        <InputSelect
           v-if="creneauStore.creneauType == 2"
           v-model="creneauStore.organisme"
           :required="true"
           label="Organisme"
           class="grow"
-          :options="creneauStore.getOrganismes()"
+          :options="getOrganismesOptions"
         />
       </div>
       <div class="flex w-full">
@@ -154,11 +154,13 @@ import Button from '@components/common/Button.vue'
 import { mapStores } from 'pinia'
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
+import { useOrganismeStore } from '@stores/organisme.ts'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
 import Input from '@components/common/Input.vue'
 import InputRadio from '@components/common/InputRadio.vue'
+import InputSelect from '@components/common/Select.vue'
 import InputCheckbox from '@components/common/InputCheckbox.vue'
 import { getActiviteByZone } from '@api/activiteByZone'
 import { getActivites } from '@api/activite'
@@ -170,7 +172,7 @@ export default {
     Input,
     InputRadio,
     InputCheckbox,
-    Select,
+    InputSelect,
   },
   props: {
     isOpen: {
@@ -199,6 +201,7 @@ export default {
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
+    ...mapStores(useOrganismeStore),
     modalTitle() {
       switch (this.typeAction) {
         case 'create':
@@ -208,6 +211,14 @@ export default {
         default:
           return 'Modifier un creneau'
       }
+    },
+    getOrganismesOptions() {
+      return this.organismeStore.organismes.map((organisme) => {
+        return {
+          id: organisme.id,
+          label: organisme.libelle,
+        }
+      })
     },
     slotMinTimeNumber() {
       return Number(
@@ -272,6 +283,7 @@ export default {
       this.datepickerFormat
     )
     await this.fetchZones()
+    await this.organismeStore.fetchOrganismes()
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
     if (this.typeAction === 'create') {

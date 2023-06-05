@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { postCreneau, updateCreneau } from '@api/planning'
 import { usePlanningStore } from '@stores/planning'
+import { getOrganismes } from '@api/organisme'
 import {
   default_creneau,
   makeCreneauEditContract,
@@ -83,3 +84,4 @@ export const useCreneauStore = defineStore('creneau', {
     },
   },
 })
+

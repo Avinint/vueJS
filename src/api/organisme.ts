@@ -1,23 +1,87 @@
-export async function getOrganismes(client_id: number): Promise<Organisme[]> {
+import { defaultHeaders } from './api.js'
+import $fetch from './refreshToken.js'
 
-	// TODO: Call WS /api/creneau/client/{clientId}/organismes to retreive data from the API
+export const selectOrganismes = async () => {
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/select/organismes`,
+    {
+      method: 'get',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    }
+  )
 
-  return [
+  if (response.status !== 200) throw response
+  return response.json()
+}
+
+export async function getOrganismes(page = 1, query = ''): Promise<Organisme[]> {
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/organismes?page=${page}${query}`,
     {
-      id: 1,
-      libelle: 'Organisme 1',
-    },
+      method: 'get',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    }
+  )
+  if (response.status !== 200) throw response
+
+  return response.json()
+}
+
+export const postOrganismes = async (organisme) => {
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/organismes`,
     {
-      id: 2,
-      libelle: 'Organisme 2',
-    },
+      method: 'post',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+      body: JSON.stringify(organisme.value),
+    }
+  )
+  if (response.status !== 201) throw response
+  return response.json()
+}
+
+export const updateOrganismes = async (organisme, id) => {
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/organismes/${id}`,
     {
-      id: 3,
-      libelle: 'Organisme 3',
-    },
+      method: 'put',
+      headers: {
+        ...defaultHeaders,
+        // 'Content-Type': 'application/merge-patch+json',
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+      body: JSON.stringify(organisme.value),
+    }
+  )
+  if (response.status !== 200) throw response
+  return response.json()
+}
+
+export const deleteOrganismes = async (id) => {
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/organismes/${id}`,
     {
-      id: 4,
-      libelle: 'Organisme 4',
-    },
-  ]
+      method: 'delete',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/merge-patch+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    }
+  )
+  if (response.status !== 204) throw response
+  return {}
 }
