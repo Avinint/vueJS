@@ -1,11 +1,11 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders } from './api'
 import $fetch from './refreshToken.js'
 
-export const getPlanning = async (debut, fit_arena, duree, zone) => {
+export async function getPlanning(debut: number, fit_arena: number, duree: number, zone: string): Promise<Planning> {
+  const api_url = import.meta.env.VITE_API_URL
+
   const response = await $fetch(
-    `${
-      import.meta.env.VITE_API_URL
-    }/api/planning?debut=${debut}&fit_arena=${fit_arena}&duree=${duree}&zone=${zone}`,
+    `${api_url}/api/planning?debut=${debut}&fit_arena=${fit_arena}&duree=${duree}&zones=[${zone}]`,
     {
       method: 'get',
       headers: {
@@ -19,7 +19,7 @@ export const getPlanning = async (debut, fit_arena, duree, zone) => {
   return response.json()
 }
 
-export const postCreneau = async (data) => {
+export async function postCreneau(contract: CreneauEditContract): Promise<CreneauEditResponse> {
   const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/creneau`, {
     method: 'post',
     headers: {
@@ -27,31 +27,30 @@ export const postCreneau = async (data) => {
       'Content-Type': 'application/ld+json',
       Authorization: 'Bearer ' + localStorage.getItem('token'),
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(contract),
   })
   if (response.status !== 201) throw response
   return response.json()
 }
 
-export const updateCreneau = async (id, data) => {
+export async function updateCreneau(id: number, contract: CreneauEditContract): Promise<CreneauEditResponse> {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/creneau/${id}`,
+    `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
     {
       method: 'put',
       headers: {
         ...defaultHeaders,
-        // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(contract),
     }
   )
   if (response.status !== 200) throw response
   return response.json()
 }
 
-export const deleteCreneau = async (id) => {
+export const deleteCreneau = async (id: number): Promise<void> => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/creneau/${id}`,
     {
@@ -64,5 +63,4 @@ export const deleteCreneau = async (id) => {
     }
   )
   if (response.status !== 204) throw response
-  return {}
 }

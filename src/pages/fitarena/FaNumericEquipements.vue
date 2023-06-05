@@ -107,7 +107,6 @@
           >Type d'équipement</label
         >
         <select
-          v-if="typeEquipements.length"
           id="TTypeActivite"
           v-model="equipement_selected"
           :disabled="readonly == true ? true : false"
@@ -221,7 +220,9 @@ const readonly = ref(false)
 const id_selected = ref(0)
 const equipements = ref([])
 const typeEquipements = ref([])
+const typeEquipementsSelects = ref([])
 const typeEquipement = ref({})
+const typeEquipementsSelect = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
 const modal_title = ref('')
@@ -240,6 +241,7 @@ onMounted(async () => {
     1,
       '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ id_fa
   )
+
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
       '&categoryTypeEquipement.code=numerique'

@@ -80,62 +80,59 @@
       <div class="relative rounded-lg border border-gray-300 p-4">
         <label class="block text-sm font-bold text-gray-900"> Zones </label>
         <label
-          v-if="isOneZoneChecked && isNotOrganismeOrMaintenance"
           class="absolute top-32 mb-2 block text-sm font-bold text-gray-900"
         >
           Activités
         </label>
         <div class="flex overflow-x-scroll py-3">
-          <div v-for="zone in zones" :key="zone.id" class="w-80 flex-col">
-            <input
-              :id="zone.id"
-              v-model="creneauStore.zoneId"
-              type="checkbox"
-              :value="zone.id"
-              class="hidden"
-            />
-            <label
-              class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
-              :class="{ 'bg-sky-600 text-white': isZoneChecked(zone.id) }"
-              :for="zone.id"
-              @click="checkAllActivites(zone)"
-            >
-              {{ zone.libelle }}
-            </label>
-            <div
-              v-if="isZoneChecked(zone.id) && isNotOrganismeOrMaintenance"
-              class="flex-col pt-10"
-            >
-              <div
-                v-for="zoneActivite in zone.zoneActivites"
-                :key="zone.id + '-' + zoneActivite.activite.id"
+          <template v-for="zone in zones">
+            <div v-if="isZoneEditable(zone)" :key="zone" class="w-80 flex-col">
+              <input
+                :id="zone.id"
+                v-model="creneauStore.zones"
+                type="checkbox"
+                :value="zone.id"
+                class="hidden"
+              />
+              <label
+                class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
+                :class="{ 'bg-sky-600 text-white': isZoneChecked(zone.id) }"
+                :for="zone.id"
               >
-                <div class="my-4 mr-10 flex justify-between">
-                  <input
-                    :id="zone.id + '-' + zoneActivite.activite.id"
-                    v-model="zoneActivite.activite.checked"
-                    type="checkbox"
-                    class="hidden"
-                    @change="toggleActivite(zoneActivite.activite, zone.id)"
-                  />
-                  <label
-                    class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
-                    :class="{
-                      'bg-sky-600 text-white': zoneActivite.activite.checked,
-                    }"
-                    :for="zone.id + '-' + zoneActivite.activite.id"
-                    >{{ zoneActivite.activite.libelle }}
-                  </label>
-                  <Input
-                    v-model.number="zoneActivite.activite.tarif"
-                    :default-value="defaultTarif"
-                    class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
-                    suffix="€"
-                  />
+                {{ zone.libelle }}
+              </label>
+              <div v-if="isZoneChecked(zone.id)" class="flex-col pt-10">
+                <div
+                  v-for="zoneActivite in zone.zoneActivites"
+                  :key="zone.id + '-' + zoneActivite.activite.id"
+                >
+                  <div class="my-4 mr-10 flex justify-between">
+                    <input
+                      :id="zone.id + '-' + zoneActivite.activite.id"
+                      v-model="zoneActivite.activite.checked"
+                      type="checkbox"
+                      class="hidden"
+                    />
+                    <label
+                      class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
+                      :class="{
+                        'bg-sky-600 text-white': zoneActivite.activite.checked,
+                      }"
+                      :for="zone.id + '-' + zoneActivite.activite.id"
+                      >{{ zoneActivite.activite.libelle }}
+                    </label>
+                    <Input
+                      v-model="zoneActivite.activite.tarif"
+                      :default-value="defaultTarif"
+                      class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
+                      :inline="true"
+                      suffix="€"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </Modal>
@@ -146,14 +143,16 @@
 import Modal from '@components/common/Modal.vue'
 import Button from '@components/common/Button.vue'
 import { mapStores } from 'pinia'
-import { usePlanningStore } from '@stores/planning'
-import { useCreneauStore } from '@stores/creneau'
-import { getTypeCreneau } from '@api/typeCreneau'
+import { usePlanningStore } from '@stores/planning.ts'
+import { useCreneauStore } from '@stores/creneau.ts'
+import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
 import Input from '@components/common/Input.vue'
 import InputRadio from '@components/common/InputRadio.vue'
 import InputCheckbox from '@components/common/InputCheckbox.vue'
+import { getActiviteByZone } from '@api/activiteByZone'
+import { getActivites } from '@api/activite'
 
 export default {
   components: {
@@ -168,10 +167,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    actionType: {
+    typeAction: {
       type: String,
       default: '',
     },
+    readonly: Boolean,
   },
   emits: ['closeModalCreneau'],
   data() {
@@ -183,14 +183,14 @@ export default {
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
-      defaultTarif: 20,
+      defaultTarif: '20',
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
     modalTitle() {
-      switch (this.actionType) {
+      switch (this.typeAction) {
         case 'create':
           return 'Création de creneau'
         case 'edit':
@@ -239,11 +239,8 @@ export default {
       }
       return list
     },
-    isZoneChecked() {
-      return (zoneId) => this.creneauStore.zoneId.includes(zoneId)
-    },
     isOneZoneChecked() {
-      return this.creneauStore.zoneId.length > 0
+      return this.creneauStore.zones.length > 0
     },
     isNotOrganismeOrMaintenance() {
       return (
@@ -265,61 +262,69 @@ export default {
       this.datepickerFormat
     )
     await this.fetchZones()
-    this.presetCreneauStored()
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
+    if (this.typeAction === 'create') {
+      this.creneauStore.activites = []
+    }
   },
   methods: {
+    isZoneEditable(zone) {
+      if (this.typeAction == 'create') return true
+
+      return this.creneauStore.zones.includes(zone.id)
+    },
     async fetchZones() {
       this.zones = await getZones(
         1,
         '&typeZone.code=zone&fitArena=' + this.$route.params.id
       )
-      if (this.actionType === 'edit') {
-        this.zones = this.zones.filter((zone) =>
-          this.creneauStore.zoneId.includes(zone.id)
-        )
-      }
+      this.checkActivites()
     },
-    toggleActivite(activite, zoneId) {
-      if (activite.checked) {
-        activite = {
-          zoneId: zoneId, // will be deprecated for the next API
-          activiteId: activite.id,
-          tarif: activite.tarif || this.defaultTarif,
-        }
-        this.creneauStore.addActivite(activite)
-      } else {
-        this.creneauStore.dropActivite(activite.id)
-      }
-    },
-    presetCreneauStored() {
-      if (this.actionType === 'edit') {
-        // do not use map on reactive data with vue3 (Proxy type), it wont work, use forEach instead
-        this.zones.forEach((zone) => {
-          if (zone.id === this.creneauStore.zoneId[0])
-            zone.zoneActivites.forEach((zoneActivite) => {
-              this.creneauStore.activites.forEach((activite) => {
-                if (activite.activiteId === zoneActivite.activite.id)
-                  zoneActivite.activite.checked = true
-              })
+    updateActivites() {
+      this.creneauStore.activites = []
+      this.zones.forEach((zone) => {
+        zone.zoneActivites.forEach((zone_activite) => {
+          if (zone_activite.activite.checked == true) {
+            this.creneauStore.addActivite({
+              activiteId: zone_activite.activite.id,
+              tarif: parseInt(zone_activite.activite.tarif),
+              zoneId: zone.id,
             })
+          }
         })
-      }
-      if (this.actionType === 'create') {
-        this.creneauStore.creneauType = 1 // creneau "Grand Public" by default
-        this.creneauStore.activites = []
+      })
+    },
+    checkActivites() {
+      if (this.typeAction === 'edit') {
+        this.zones.forEach((zone) => {
+          zone.zoneActivites.forEach((zoneActivite) => {
+            this.creneauStore.activites.forEach((activite) => {
+              if (activite.activiteId === zoneActivite.activite.id) {
+                zoneActivite.activite.checked = true
+                zoneActivite.activite.tarif = activite.tarif
+              }
+            })
+          })
+        })
       }
     },
     submitCreneau() {
-      this.creneauStore.sendCreneau(this.actionType)
+      // Retreive activity data from the local references
+      // Before sending it to the API. This has to be done
+      // This way because of the unsynchronized data.
+      this.updateActivites()
+
+      if (this.typeAction === 'create') {
+        this.creneauStore.addCreneau()
+      }
+      if (this.typeAction === 'edit') {
+        this.creneauStore.editCreneau()
+      }
       this.$emit('closeModalCreneau')
     },
-    checkAllActivites(zone) {
-      zone.zoneActivites.forEach((zoneActivite) => {
-        zoneActivite.activite.checked = true
-        this.toggleActivite(zoneActivite.activite, zone.id)
-      })
+    isZoneChecked(zoneId) {
+      return this.creneauStore.zones.includes(zoneId)
     },
   },
 }

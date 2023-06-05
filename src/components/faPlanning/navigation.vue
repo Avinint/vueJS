@@ -1,7 +1,9 @@
 <template>
-  <nav class="flex">
-    <section class="flex w-full justify-between">
-      <NavigationSection class="grow overflow-x-auto py-4">
+  <nav
+    class="flex space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+  >
+    <section class="flex w-full flex-wrap gap-5">
+      <NavigationSection>
         <template #title> Zone active </template>
         <template #content>
           <Button
@@ -50,7 +52,7 @@
             class="m-0"
             @click="prev()"
           />
-          <div class="w-48 min-w-max cursor-default text-center">
+          <div class="min-w-max cursor-default px-4">
             {{ planningStore.getCurrentDateStart }}
             <template v-if="planningStore.currentViewName === 'day'">
               - {{ planningStore.getCurrentDateEnd }}
@@ -64,7 +66,7 @@
             @click="next()"
           />
           <Button
-            class="w-14 cursor-default text-center"
+            class="cursor-default"
             :label="'S' + planningStore.currentWeek"
             type="secondary"
             icon="next"
@@ -80,7 +82,7 @@
 import Button from '@components/common/Button.vue'
 import { getZones } from '@api/zone.js'
 import NavigationSection from '@components/faPlanning/navigationSection.vue'
-import { usePlanningStore } from '@stores/planning.js'
+import { usePlanningStore } from '@stores/planning.ts'
 import { mapStores } from 'pinia'
 
 export default {
@@ -106,9 +108,6 @@ export default {
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
-    this.planningStore.$subscribe(async (mutation) => {
-      if (mutation.events.key !== 'creneaux') await this.planningStore.fetch()
-    })
   },
   methods: {
     today() {
@@ -116,9 +115,14 @@ export default {
     },
     prev() {
       this.calendarApi.prev()
+      this.planningStore.fetch()
     },
     next() {
       this.calendarApi.next()
+      this.planningStore.fetch()
+    },
+    updateActivities() {
+      this.planningStore.updateActivities()
     },
     async setZones() {
       this.zones = await getZones(
@@ -126,7 +130,7 @@ export default {
         '&typeZone.code=zone&fitArena=' + this.$route.params.id
       )
     },
-    filterByZone(zoneId) {
+    async filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
         case 'timeGridWeek':
           this.planningStore.selectZone(zoneId)
@@ -135,6 +139,7 @@ export default {
           this.planningStore.toggleZone(zoneId)
           break
       }
+      await this.planningStore.fetch()
       this.$emit('filter-updated')
     },
     toggleView() {
@@ -146,6 +151,8 @@ export default {
           this.viewWeek()
           break
       }
+      this.planningStore.fetch()
+      this.$emit('view-changed')
     },
     viewWeek() {
       this.planningStore.filters.fit_arena = this.$route.params.id
@@ -167,13 +174,7 @@ export default {
   background-color: #0b83d9;
   color: white;
 }
-.max-w-1\/2 {
-  max-width: 50%;
-}
 button {
-  &:last-child {
-    @apply mr-0;
-  }
   @apply min-w-max;
   &:hover {
     @apply bg-sky-600 text-white;

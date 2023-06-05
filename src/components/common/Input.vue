@@ -1,72 +1,68 @@
 <template>
-  <div class="flex" :class="props.inline ? 'items-center' : 'flex-col'">
-    <InputLabel :for="props.id">{{ label }}</InputLabel>
+  <div class="flex" :class="inline ? 'items-center' : 'flex-col'">
+    <InputLabel :for="id">{{ label }}</InputLabel>
     <div class="w-full">
-      <input :readonly="props.readonly" :id="props.id" @input="inputValidation" :value="props.modelValue || props.defaultValue" :type="props.type" :required="props.required" :pattern="props.pattern" :minlength="props.minlength" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" :placeholder="props.placeholder">
+      <input
+        :readonly="readonly"
+        :id="id"
+        @input="inputValidation"
+        :value="modelValue || defaultValue"
+        :type="type"
+        :required="required"
+        :pattern="pattern"
+        :minlength="minLength"
+        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+        :placeholder="placeholder"
+      />
       <p v-html="error"></p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import InputLabel from './InputLabel.vue'
+import { computed, ref } from 'vue'
 
-  import InputLabel from './InputLabel.vue'
-  import {computed, ref, withDefaults} from "vue"
+const props = defineProps<{
+  modelValue?: string,
+  defaultValue?: string,
+  placeholder?: string,
+  test?: string,
+  label?: string,
+  readonly?: boolean,
+  inline?: boolean,
+  pattern?: string,
+  minLength?: number,
+  maxLength?: number,
+  type?: string,
+  id?: string,
+  validation?: Function[],
+  valid?: boolean,
+  required?: boolean,
+}>()
 
-  interface Props {
-    placeholder: string
-    test: string
-    readonly?: boolean
-    modelValue: string
-    defaultValue: string
-    label: string
-    id?: string
-    inline: boolean
-    type: string
-    validation?: ((val: any) => unknown | boolean | string) | null[]
-    valid: boolean
-    required: boolean,
-    pattern: string,
-    minlength?: number,
-    maxlength?: number
-  }
+const emits = defineEmits<{
+  (e: 'update:modelValue', text: string): void
+  (e: 'update:valid', valid: boolean): void
+}>()
 
-  const props = withDefaults(defineProps<Props>(), {
-    placeholder: "",
-    test: "",
-    label: "",
-    readonly: false,
-    inline: true,
-    type: 'text',
-    id: "",
-    validation:  [],
-    valid: true,
-    required: false,
-  })
-
-  const emits = defineEmits<{
-    (e: 'update:modelValue', text: string): void
-    (e: 'update:valid', valid: boolean): void
-  }>()
-
-  const inputValidation = ($event) => {
-    const val = $event.target.value
-    error.value = ""
-    emits('update:valid', true)
-      if ( Array.isArray(props.validation)) {
-          props.validation.forEach(func => {
-              try {
-                  func(val)
-              } catch (e) {
-                  error.value += e + "<br>"
-                  emits('update:valid', false)
-              }
-          })
+const inputValidation = ($event: any) => {
+  const val = $event.target.value
+  error.value = ''
+  emits('update:valid', true)
+  if (props.validation) {
+    props.validation.forEach((func: Function) => {
+      try {
+        func(val)
+      } catch (e) {
+        error.value += e + '<br>'
+        emits('update:valid', false)
       }
-    emits('update:modelValue', val)
+    })
   }
+  emits('update:modelValue', val)
+}
 
-  const label = computed(() => props.label)
-  const error = ref("")
-
+const label = computed(() => props.label)
+const error = ref('')
 </script>
