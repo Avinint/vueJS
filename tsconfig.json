@@ -7,6 +7,7 @@
             "@stores/*": ["stores/*"],
             "@services/*": ["services/*"]
         },
+        "allowJs": true
     },
     "exclude": ["node_modules", "dist"]
 }

@@ -86,10 +86,10 @@
         </label>
         <div class="flex overflow-x-scroll py-3">
           <template v-for="zone in zones">
-            <div v-if="isZoneEditable(zone)" class="w-80 flex-col">
+            <div v-if="isZoneEditable(zone)" :key="zone" class="w-80 flex-col">
               <input
                 :id="zone.id"
-                v-model="creneauStore.zoneId"
+                v-model="creneauStore.zones"
                 type="checkbox"
                 :value="zone.id"
                 class="hidden"
@@ -167,7 +167,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    actionType: {
+    typeAction: {
       type: String,
       default: '',
     },
@@ -183,14 +183,14 @@ export default {
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
-      defaultTarif: 20,
+      defaultTarif: '20',
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
     modalTitle() {
-      switch (this.actionType) {
+      switch (this.typeAction) {
         case 'create':
           return 'Création de creneau'
         case 'edit':
@@ -239,11 +239,8 @@ export default {
       }
       return list
     },
-    isZoneChecked() {
-      return (zoneId) => this.creneauStore.zoneId.includes(zoneId)
-    },
     isOneZoneChecked() {
-      return this.creneauStore.zoneId.length > 0
+      return this.creneauStore.zones.length > 0
     },
     isNotOrganismeOrMaintenance() {
       return (

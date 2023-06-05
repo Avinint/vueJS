@@ -18,12 +18,56 @@ type Creneau = {
     tarifHoraire: number;
     nbParticipants: number;
     zones: number[];
+    zoneId?: number;
     mode: string | null;
+}
+
+type Creneau = {
+    id: number;
+    dateDebut: string;
+    dateSortie: string;
+    dateFinCreneau: string;
+    titre: string;
+    description: string;
+    activites: string[];
+    type: number;
+    remplissage: number;
+    organismeId: number;
+    zones: string[];
+    dureeActivite:  number;
+    dureeInterCreneau:  number;
+    animateurLabelliseId:  number;
+    tarifHoraire:  number;
+    nbParticipants:  number;
+    niveauPratiqueId: number;
+}
+
+// POST // PUT
+type CreneauEditContract = {
+    creneauType: number,
+    zoneId: number,
+    activites: { activiteId: number, tarif: number }[],
+    titre: string,
+    date: string,
+    heureDebut: string,
+    heureFin: string,
+    dureeActivite: number,
+    dureeInterCreneau: number,
+    description: string,
+    organisme: number,
+    animateurLabellise: number,
+    niveauPratique: number,
+    tarifHoraire: number,
+    nbParticipants: number,
+}
+
+type CreneauEditResponse = {
+    creneaux: Creneau[];
 }
 
 type Activite = {
     activiteId: number;
-    zoneId: number;
+    zoneId?: number;
     libelle: string;
     maxTerrain: number;
     prix: number;

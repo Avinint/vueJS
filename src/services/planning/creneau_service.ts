@@ -1,29 +1,40 @@
 /**
- * Generate a creneau object type from a Creneau store state object and a zone id.
- * Remove the activities that are not in the given zone_id, and set the zoneId of the
+ * Generate a creneau edit contract that is properly typed to be used by the API
+ * Only retreive the activities that are in the given zone_id, and set the zoneId of the
  * Creneau.
  *
  * @param zone_id The zone ID that is used to clean the object
- * @param state_data The state that come from the store
- * @returns A copy of the given state data **not a reference.**
+ * @param creneau Creneau data
  */
-export function makeCreneau(zone_id: number, state_data: Creneau): Creneau {
-  const copy = { ...state_data }
+export function makeCreneauEditContract(zone_id: number, creneau: Creneau): CreneauEditContract {
 
-  copy.zoneId = zone_id
-  const activites = []
-
-  for (const index in copy.activites) {
-    const activite = copy.activites[index]
-    if (activite.zoneId == zone_id) {
-      delete activite.zoneId
-      activites.push(activite)
-      continue
+  const activities = [];
+  for(const activity of creneau.activites) {
+    if(activity.zoneId === zone_id) {
+      activities.push({
+        activiteId: activity.activiteId,
+        tarif: activity.prix,
+      });
     }
   }
 
-  copy.activites = activites
-  return copy
+  return {
+    activites: activities,
+    titre: creneau.titre,
+    animateurLabellise: creneau.animateurLabellise,
+    creneauType: creneau.creneauType,
+    date: creneau.date,
+    description: creneau.description,
+    dureeActivite: creneau.dureeActivite,
+    dureeInterCreneau: creneau.dureeInterCreneau,
+    heureDebut: `${creneau.heureDebut}:00`,
+    heureFin: `${creneau.heureFin}:00`,
+    nbParticipants: creneau.nbParticipants,
+    niveauPratique: creneau.niveauPratique,
+    organisme: creneau.organisme,
+    tarifHoraire: creneau.tarifHoraire,
+    zoneId: zone_id,
+  }
 }
 
 export const default_creneau = (): Creneau => ({
