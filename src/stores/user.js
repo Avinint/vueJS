@@ -19,6 +19,9 @@ export const useUserStore = defineStore('user', () => {
   const username = computed(
     () => parseJwt(token_in_storage.value)?.username ?? ''
   )
+
+  const roles = computed(() => parseJwt(token_in_storage.value)?.roles ?? [])
+  const isAdmin = computed(() => roles.value.includes('admin') ?? false)
   const connected = computed(() => Math.floor(Date.now() / 1000) < exp?.value)
 
   async function login(login, pass) {
@@ -42,5 +45,5 @@ export const useUserStore = defineStore('user', () => {
     refresh_token_in_storage.value = ''
   }
 
-  return { login, logout, iat, exp, username, connected, setCredential }
+  return { login, logout, iat, exp, username, isAdmin, connected, setCredential }
 })
