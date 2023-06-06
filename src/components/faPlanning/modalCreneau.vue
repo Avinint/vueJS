@@ -122,7 +122,10 @@
                   v-for="zoneActivite in zone.zoneActivites"
                   :key="zone.id + '-' + zoneActivite.activite.id"
                 >
-                  <div class="my-4 mr-10 flex justify-between">
+                  <div
+                    v-if="zoneActivite.actif"
+                    class="my-4 mr-10 flex justify-between"
+                  >
                     <input
                       :id="zone.id + '-' + zoneActivite.activite.id"
                       v-model="zoneActivite.activite.checked"

@@ -37,6 +37,7 @@ export const useCreneauStore = defineStore('creneau', {
         this.titre = creneau.extendedProps.titre
         this.dureeActivite = creneau.extendedProps.dureeActivite // 55
         this.dureeInterCreneau = creneau.extendedProps.dureeInterCreneau // 5
+        this.organisme = creneau.extendedProps.organismeId;
       } else {
         this.zones = []
       }
