@@ -19,7 +19,7 @@ export async function getPlanning(debut: number, fit_arena: number, duree: numbe
   return response.json()
 }
 
-export async function postCreneau(contract: CreneauEditContract): Promise<CreneauEditResponse> {
+export async function postCreneau(contract: CreneauEditContract | CreneauOGEditContract): Promise<CreneauEditResponse> {
   const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/creneau`, {
     method: 'post',
     headers: {
@@ -33,7 +33,7 @@ export async function postCreneau(contract: CreneauEditContract): Promise<Crenea
   return response.json()
 }
 
-export async function updateCreneau(id: number, contract: CreneauEditContract): Promise<CreneauEditResponse> {
+export async function updateCreneau(id: number, contract: CreneauEditContract | CreneauOGEditContract): Promise<CreneauEditResponse> {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
     {

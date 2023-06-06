@@ -7,45 +7,51 @@
         <thead
           class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
         >
-        <tr>
-          <th scope="col" class="px-6 py-3"></th>
-          <th scope="col" class="px-6 py-3">Nom</th>
-          <th scope="col" class="px-6 py-3">Prénom</th>
-          <th scope="col" class="px-6 py-3">E-mail</th>
-          <th scope="col" class="px-6 py-3">Téléphone</th>
-          <th scope="col" class="px-6 py-3">Titulaire carte</th>
-          <th scope="col" class="px-6 py-3">Organisme</th>
-          <th scope="col" class="px-6 py-3"></th>
-        </tr>
+          <tr>
+            <th scope="col" class="px-6 py-3"></th>
+            <th scope="col" class="px-6 py-3">Nom</th>
+            <th scope="col" class="px-6 py-3">Prénom</th>
+            <th scope="col" class="px-6 py-3">E-mail</th>
+            <th scope="col" class="px-6 py-3">Téléphone</th>
+            <th scope="col" class="px-6 py-3">Titulaire carte</th>
+            <th scope="col" class="px-6 py-3">Organisme</th>
+            <th scope="col" class="px-6 py-3"></th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(animateur, i) in animateurs" :key="i" class="bg-white">
-          <td class="flex items-center justify-center p-3">
-            <Button
-              test="TdeleteClient"
-              borderless
-              icon="delete"
-              type="secondary"
-              @click="removeAnimateur(animateur.id)"
-            />
-            <Button
-              test="TeditClient"
-              borderless
-              icon="edit"
-              type="secondary"
-              @click="editAnimateur(i)"
-            />
-          </td>
-          <td class="px-6 py-4">{{ animateur.nom }}</td>
-          <td class="px-6 py-4">{{ animateur.prenom }}</td>
-          <td class="px-6 py-4">{{ animateur.email }}</td>
-          <td class="px-6 py-4">{{ animateur.telephone }}</td>
-          <td class="px-6 py-4">{{ animateur.titulaireCarte ? 'oui' : 'non' }}</td>
-          <td class="px-6 py-4">{{ animateur.organisme.libelle }}</td>
-          <td class="px-6 py-4">
-            <Button label="Détails" type="secondary" @click="showAnimateur(i)"/>
-          </td>
-        </tr>
+          <tr v-for="(animateur, i) in animateurs" :key="i" class="bg-white">
+            <td class="flex items-center justify-center p-3">
+              <Button
+                test="TdeleteClient"
+                borderless
+                icon="delete"
+                type="secondary"
+                @click="removeAnimateur(animateur.id)"
+              />
+              <Button
+                test="TeditClient"
+                borderless
+                icon="edit"
+                type="secondary"
+                @click="editAnimateur(i)"
+              />
+            </td>
+            <td class="px-6 py-4">{{ animateur.nom }}</td>
+            <td class="px-6 py-4">{{ animateur.prenom }}</td>
+            <td class="px-6 py-4">{{ animateur.email }}</td>
+            <td class="px-6 py-4">{{ animateur.telephone }}</td>
+            <td class="px-6 py-4">
+              {{ animateur.titulaireCarte ? 'oui' : 'non' }}
+            </td>
+            <td class="px-6 py-4">{{ animateur.organisme.libelle }}</td>
+            <td class="px-6 py-4">
+              <Button
+                label="Détails"
+                type="secondary"
+                @click="showAnimateur(i)"
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -112,9 +118,9 @@
             class="w-full"
           />
         </div>
-        <div class="flex items-center" v-if="!id_selected">
+        <div v-if="!id_selected" class="flex items-center">
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Organisme</label
+            >Organisme</label
           >
           <div v-if="!readonly" class="flex items-center">
             <div class="mr-1.5 block"></div>
@@ -125,18 +131,21 @@
               class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               @change="selectionOrganisme"
             >
-              <option v-for="(organisme, i) in organismes" :key="i" :value="organisme.id">
+              <option
+                v-for="(organisme, i) in organismes"
+                :key="i"
+                :value="organisme.id"
+              >
                 {{ organisme.label }}
               </option>
             </select>
           </div>
-
         </div>
 
         <div class="flex items-center">
-        <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
-        >Titulaire carte :</span
-        >
+          <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
+            >Titulaire carte :</span
+          >
           <label class="relative inline-flex cursor-pointer items-center">
             <input
               v-model="titulaireCarte"
@@ -160,11 +169,9 @@
           @click="carteActive.actif = true"
         />
       </Card>
-      <Card class="w-full space-y-2" v-if="carteActive.actif === true">
-
+      <Card v-if="carteActive.actif === true" class="w-full space-y-2">
         <h3>Carte d'accès</h3>
         <div class="flex items-center">
-
           <Input
             id="TcarteCodePin"
             v-model="carteActive.codePin"
@@ -177,17 +184,19 @@
             class="w-full"
           />
           &nbsp;
-          <Button @click="desactiverCarte"
-                  v-if="!readonly"
-                  icon="cross"
-                  type="danger"
-                  id="TdesactivationCarteAcces"/>
-
+          <Button
+            v-if="!readonly"
+            id="TdesactivationCarteAcces"
+            icon="cross"
+            type="danger"
+            @click="desactiverCarte"
+          />
         </div>
         <div v-if="carteActive?.qrCode" class="flex items-center">
-
-
-          <img alt="qr code" :src="'data:image/jpeg;base64,' + carteActive.qrCode"/>
+          <img
+            alt="qr code"
+            :src="'data:image/jpeg;base64,' + carteActive.qrCode"
+          />
         </div>
       </Card>
     </Modal>
@@ -203,12 +212,20 @@
   </form>
 
   <form @submit.prevent="updateAnimateur()">
-    <ValidationModal v-if="modaleConfirmation === 'edit'" type="edit" @cancel="modaleConfirmation = false">
+    <ValidationModal
+      v-if="modaleConfirmation === 'edit'"
+      type="edit"
+      @cancel="modaleConfirmation = false"
+    >
     </ValidationModal>
   </form>
 
   <form @submit.prevent="addAnimateur()">
-    <ValidationModal v-if="modaleConfirmation === 'add'" type="add" @cancel="modaleConfirmation = false">
+    <ValidationModal
+      v-if="modaleConfirmation === 'add'"
+      type="add"
+      @cancel="modaleConfirmation = false"
+    >
     </ValidationModal>
   </form>
 </template>
@@ -226,16 +243,14 @@ import {
   postAnimateur,
   putAnimateur,
 } from '../api/animateur.js'
-import {
-  selectOrganismes
-} from '../api/organisme.js'
-import { onMounted, reactive, ref, watch, } from 'vue'
+import { selectOrganismes } from '../api/organisme.ts'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-import { isValid, emailValidation } from "@/validation.js";
+import { isValid, emailValidation } from '@/validation.js'
 
-const modaleConfirmation = ref(false);
+const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
 const readonly = ref(false)
 
@@ -292,8 +307,8 @@ const desactiverCarte = () => {
 }
 
 const cancel = () => {
-  reset();
-  afficherFormulaire.value = false;
+  reset()
+  afficherFormulaire.value = false
 }
 
 const removeAnimateur = (id) => {
@@ -305,9 +320,9 @@ const removeAnimateur = (id) => {
 const removeAnimateurValidation = async (id) => {
   try {
     await deleteAnimateur(deleteAnimateurId.value)
-    toast.success("Suppression effectuée avec succès")
+    toast.success('Suppression effectuée avec succès')
   } catch (e) {
-    toast.error("Une erreur est survenue")
+    toast.error('Une erreur est survenue')
   }
   modaleConfirmation.value = false
   deleteAnimateurId.value = 0
@@ -319,7 +334,7 @@ const editAnimateur = (i) => {
   mapApiToData(animateur)
   afficherFormulaire.value = true
   readonly.value = false
-  modal_title.value = "Modifier un animateur"
+  modal_title.value = 'Modifier un animateur'
 }
 
 const showAnimateur = async (i) => {
@@ -340,11 +355,9 @@ const mapApiToData = (animateur) => {
   for (const prop in animateur.carteActive) {
     carteActive.value[prop] = animateur.carteActive[prop]
   }
-
 }
 
 const hydrateAnimateur = () => {
-
   if (!isValid(validation)) return
 
   animateur.value = {
@@ -353,11 +366,11 @@ const hydrateAnimateur = () => {
     email: email.value,
     telephone: telephone.value,
     titulaireCarte: titulaireCarte.value,
-    carteActive: ref(carteActive)
+    carteActive: ref(carteActive),
   }
 
   if (animateur.value.carteActive.active) {
-    animateur.value.titulaireCarte = true;
+    animateur.value.titulaireCarte = true
   }
 
   if (id_selected.value) {
@@ -372,10 +385,8 @@ const updateAnimateur = async () => {
   try {
     await putAnimateur(animateur, id_selected.value)
     toast.success('Modification effectuée avec succès')
-
   } catch (e) {
     toast.error('Une erreur est survenue')
-
   }
 
   modaleConfirmation.value = false
@@ -403,8 +414,9 @@ const addAnimateur = async () => {
 //     organismeId.value = newVal.id;
 // })
 
-
 const removeFrom = (refArray, i) => {
-  refArray.value = refArray.value.slice(0, i).concat(refArray.value.slice(i + 1));
+  refArray.value = refArray.value
+    .slice(0, i)
+    .concat(refArray.value.slice(i + 1))
 }
 </script>
