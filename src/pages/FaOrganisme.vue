@@ -192,10 +192,21 @@
               pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
           />
         </div>
+          <div v-if="isAdmin && !readonly" class="flex items-center">
+              <label for="TclientSelect" class="mb-2 block w-1/2 text-sm font-medium text-gray-900">Client :</label>
+              <select
+                  v-if="clients.length"
+                  id="TclientSelect"
+                  v-model="client"
+                  class=" w-full block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              >
+                  <option v-for="client in clients" :key="i" :value="`/api/clients/${client.id}`">
+                      {{ client.nom }}
+                  </option>
+              </select>
+        </div>
         <div class="flex items-center">
-        <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
-        >Actif :</span
-        >
+              <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900">Actif :</span>
           <label class="relative inline-flex cursor-pointer items-center">
             <input
                 v-model="actif"
@@ -315,6 +326,9 @@ import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { isValid, emailValidation } from "@/validation.js";
+import { selectClients } from "@api/client.js";
+import { useUserStore } from "@/stores/user.js";
+const { isAdmin } = useUserStore();
 
 const modaleConfirmation = ref(false);
 const afficherFormulaire = ref(false)
@@ -336,14 +350,17 @@ const addresses = ref([])
 const address = ref('')
 const address_selected = ref({})
 const modal_title = ref('')
-let client = ref({})
+const client = ref({})
+const clients = ref([])
 const validation = ref({})
 
 const gestionnairesOrganisme = ref([])
 
 onMounted(async () => {
   organismes.value = await getOrganismes()
-  console.log(organismes.value.gestionnaireOrganismes)
+    if (isAdmin) {
+        clients.value = await selectClients();
+    }
 })
 
 const addOrganisme = () => {
@@ -406,6 +423,7 @@ const showOrganisme = async (i) => {
 const mapApiToData = (organisme) => {
   name.value = organisme.libelle
   actif.value = organisme.actif
+  client.value = organisme.client
   gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
   address_selected.value = {
     address: organisme.adresse.adresse,
@@ -427,10 +445,9 @@ const saveOrganisme = () => {
 
   if (!isValid(validation)) return
   organisme.value = {
-    ordre: 1,
     libelle: name.value,
     actif: actif.value,
-
+    client: client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
 
     adresse: {
