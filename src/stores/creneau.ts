@@ -5,6 +5,7 @@ import { getOrganismes } from '@api/organisme'
 import {
   default_creneau,
   makeCreneauEditContract,
+  makeCreneauOGEditContract,
 } from '../services/planning/creneau_service'
 import dayjs from 'dayjs'
 
@@ -59,11 +60,39 @@ export const useCreneauStore = defineStore('creneau', {
 
       planningStore.addCreneaux(created_creneaux)
     },
+    async addCreneauOrganisme() {
+      const planningStore = usePlanningStore();
+      let created_creneaux: Creneau[] = [];
+
+      for(let i = 0; i < this.zones.length; i++) {
+        const zone_id = this.zones[i];
+        const contract = makeCreneauOGEditContract(zone_id, this.$state);
+        const response = await postCreneau(contract);
+
+        if (planningStore.currentViewName === 'day') {
+          if (zone_id == planningStore.filters.zone[0])
+            created_creneaux = created_creneaux.concat(response.creneaux)
+        } else {
+          created_creneaux = created_creneaux.concat(response.creneaux)
+        }
+      }
+      
+      planningStore.addCreneaux(created_creneaux)
+    },
     async editCreneau() {
       const planningStore = usePlanningStore()
 
       this.zones.forEach(async (id: number) => {
         const contract = makeCreneauEditContract(id, this)
+        const response = await updateCreneau(this.id!, contract)
+        planningStore.addCreneaux(response.creneaux)
+      })
+    },
+    async editCreneauOrganisme() {
+      const planningStore = usePlanningStore()
+
+      this.zones.forEach(async (id: number) => {
+        const contract = makeCreneauOGEditContract(id, this)
         const response = await updateCreneau(this.id!, contract)
         planningStore.addCreneaux(response.creneaux)
       })

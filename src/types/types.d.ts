@@ -22,6 +22,19 @@ type Creneau = {
     mode: string | null;
 }
 
+type CreneauOGEditContract = {
+    creneauType: 2;
+    zoneId: number;
+    titre: string;
+    date: string;
+    heureDebut: string;
+    heureFin: string;
+    dureeActivite: number;
+    dureeInterCreneau: number;
+    description: string;
+    organisme: number;
+}
+
 // POST // PUT
 type CreneauEditContract = {
     creneauType: number,
@@ -43,6 +56,12 @@ type CreneauEditContract = {
 
 type CreneauEditResponse = {
     creneaux: Creneau[];
+}
+
+enum CreneauType {
+    GP = 1, 
+    OG = 2, 
+    AC = 3,
 }
 
 type Activite = {
