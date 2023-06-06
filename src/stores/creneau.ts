@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { postCreneau, updateCreneau } from '@api/planning'
+import { deleteCreneau, postCreneau, updateCreneau } from '@api/planning'
 import { usePlanningStore } from '@stores/planning'
 import { getOrganismes } from '@api/organisme'
 import {
@@ -112,6 +112,13 @@ export const useCreneauStore = defineStore('creneau', {
       )
       if (index !== -1) this.activites.splice(index, 1)
     },
+    async delete() {
+      if(this.id) {
+        await deleteCreneau(this.id);
+        const planning_store = usePlanningStore();
+        planning_store.removeCreneau(this.id);
+      }
+    }
   },
 })
 

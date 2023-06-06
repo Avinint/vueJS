@@ -52,7 +52,7 @@ export async function updateCreneau(id: number, contract: CreneauEditContract | 
 
 export const deleteCreneau = async (id: number): Promise<void> => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/creneau/${id}`,
+    `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
     {
       method: 'delete',
       headers: {
