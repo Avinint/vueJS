@@ -27,7 +27,7 @@
           </h3>
           <Button
             test="TcloseModal"
-            type="secondary"
+            couleur="secondary"
             icon="cross"
             borderless
             @click="emit('cancel', $event)"
@@ -39,7 +39,7 @@
         <div v-else-if="props.type == 'edit'" class="space-y-6 p-6">
           <slot>Voulez-vous valider la modification ?</slot>
         </div>
-        <div v-else-if="props.type == 'add'" class="space-y-6 p-6">
+        <div v-else-if="props.type === 'add'" class="space-y-6 p-6">
           <slot>Voulez-vous valider l'ajout ?</slot>
         </div>
         <div
@@ -55,7 +55,7 @@
           <Button
             test="TcancelModal"
             label="Annuler"
-            type="secondary"
+            couleur="secondary"
             @click="emit('cancel', $event)"
           />
         </div>

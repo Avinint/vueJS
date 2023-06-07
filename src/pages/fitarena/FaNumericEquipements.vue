@@ -39,14 +39,14 @@
                     test="TdeleteClient"
                     borderless
                     icon="delete"
-                    type="secondary"
+                    couleur="secondary"
                     @click="removeEquipement(equipementTemp.id)"
                   />
                   <Button
                     test="TeditClient"
                     borderless
                     icon="edit"
-                    type="secondary"
+                    couleur="secondary"
                     @click="editEquipement(equipementTemp.id)"
                   />
                 </td>
@@ -76,7 +76,7 @@
                 <td class="w-1/12 px-6 py-4">
                   <Button
                     label="Détails"
-                    type="secondary"
+                    couleur="secondary"
                     @click="showEquipement(equipementTemp.id)"
                   />
                 </td>
@@ -90,7 +90,7 @@
       id="TaddEquipementNumerique"
       label="Ajouter un équipement numérique"
       icon="add"
-      type="secondary"
+      couleur="secondary"
       @click="addEquipement"
     />
   </Card>

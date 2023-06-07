@@ -25,14 +25,14 @@
                     test="TdeleteClient"
                     borderless
                     icon="delete"
-                    type="secondary"
+                    couleur="secondary"
                     @click="removeActiviteZone(zoneFit.id, act.activite.id)"
                   />
                   <Button
                     test="TeditClient"
                     borderless
                     icon="edit"
-                    type="secondary"
+                    couleur="secondary"
                     @click="editActiviteZone(act.id)"
                   />
                 </td>
@@ -60,7 +60,7 @@
                 <td class="px-6 py-4">
                   <Button
                     label="Détails"
-                    type="secondary"
+                    couleur="secondary"
                     @click="showActiviteZone(act.id)"
                   />
                 </td>
@@ -72,7 +72,7 @@
           id="TaddActivite"
           label="Ajouter une Activité"
           icon="add"
-          type="secondary"
+          couleur="secondary"
           @click="addActiviteZone(zoneIdx)"
         />
       </Card>
@@ -178,7 +178,7 @@
                   v-if="!readonly"
                   borderless
                   icon="delete"
-                  type="secondary"
+                  couleur="secondary"
                   @click="removeSousZone(idx)"
                 />
               </div>

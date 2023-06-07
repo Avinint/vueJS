@@ -33,8 +33,8 @@
         <tr v-for="user in users" :key="user.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
           <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
             <td class="flex justify-center items-center p-3">
-              <Button test="TdeleteActivities" borderless icon="delete" type="secondary" @click="supprimer(user)"/>
-              <Button test="TeditActivites" borderless icon="edit" type="secondary" @click="editer(user)"/>
+              <Button test="TdeleteActivities" borderless icon="delete" couleur="secondary" @click="supprimer(user)"/>
+              <Button test="TeditActivites" borderless icon="edit" couleur="secondary" @click="editer(user)"/>
             </td>
           </th>
           <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -66,7 +66,7 @@
           </td>
           <td class="px-4 py-4">
             <div class="inline-flex rounded-md shadow-sm " role="group">
-              <Button label="Détails" type="secondary" @click="consulter(user)"/>
+              <Button label="Détails" couleur="secondary" @click="consulter(user)"/>
             </div>
           </td>
         </tr>
@@ -74,8 +74,8 @@
       </table>
       <div class="sm:flex">
         <div class="flex items-center space-x-2">
-          <Button label="Ajouter un utilisateur" type="secondary" icon="add" @click="ajouter()"/>
-          <Button label="Exporter" type="secondary" icon="export" @click="ajouter()"/>
+          <Button label="Ajouter un utilisateur" couleur="secondary" icon="add" @click="ajouter()"/>
+          <Button label="Exporter" couleur="secondary" icon="export" @click="ajouter()"/>
         </div>
       </div>
     </Card>

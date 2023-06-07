@@ -7,7 +7,7 @@
           <h3 class="text-xl font-semibold text-gray-900">
             {{ props.title }}
           </h3>
-          <Button test='TcloseModal' @click="emit('cancel', $event)" type="secondary" icon="cross" borderless />
+          <Button test='TcloseModal' @click="emit('cancel', $event)" couleur="secondary" icon="cross" borderless />
         </div>
         <div class="p-6 space-y-6">
           <slot></slot>
@@ -16,20 +16,20 @@
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
             class="bg-red-600 hover:bg-red-800" />
-          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary" />
+          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" />
         </div>
 
         <div v-if="props.type === 'visualiser'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button class="ml-auto mr-0" test='TcancelModal' @click="emit('cancel', $event)" label="Annuler"
-            type="secondary" />
+            couleur="secondary" />
         </div>
 
         <div v-if="props.type === 'alert'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-          <Button test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer" type="submit"
+          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
             class="bg-red-600 w-x hover:bg-red-800" />
-          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary" />
+          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" />
         </div>
       </div>
 

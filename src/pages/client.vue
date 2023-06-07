@@ -21,14 +21,14 @@
                 test="TdeleteClient"
                 borderless
                 icon="delete"
-                type="secondary"
+                couleur="secondary"
                 @click="removeClient(client.id)"
               />
               <Button
                 test="TeditClient"
                 borderless
                 icon="edit"
-                type="secondary"
+                couleur="secondary"
                 @click="editClient(i)"
               />
             </td>
@@ -36,7 +36,7 @@
             <td class="px-6 py-4">{{ client.adresse.codePostal }}</td>
             <td class="px-6 py-4">{{ client.adresse.ville }}</td>
             <td class="px-6 py-4">
-              <Button label="Détails" type="secondary" @click="showClient(i)" />
+              <Button label="Détails" couleur="secondary" @click="showClient(i)" />
             </td>
           </tr>
         </tbody>
@@ -48,7 +48,7 @@
       label="Ajouter un client"
       icon="add"
       icon_placement="right"
-      type="secondary"
+      couleur="secondary"
       @click="addClient"
     />
 
@@ -183,7 +183,7 @@
               v-if="!readonly && i !== 0"
               class="absolute right-2 top-2 border-0"
               icon="delete"
-              type="secondary"
+              couleur="secondary"
               size="s"
               @click="removeExploitReferent(i)"
             />
@@ -246,7 +246,7 @@
             id="TaddRefExploit"
             label="Ajouter un référent d'exploitation supplémentaire"
             icon="add"
-            type="secondary"
+            couleur="secondary"
             @click="exploit_referents.push({})"
           />
         </Card>
@@ -263,7 +263,7 @@
               v-if="!readonly && i !== 0"
               class="absolute right-2 top-2 border-0"
               icon="delete"
-              type="secondary"
+              couleur="secondary"
               size="s"
               @click="removeCommunityManager(i)"
             />
@@ -308,7 +308,7 @@
             id="TaddComManager"
             label="Ajouter un compte supplémentaire"
             icon="add"
-            type="secondary"
+            couleur="secondary"
             @click="community_managers.push({})"
           />
         </Card>
