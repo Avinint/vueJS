@@ -86,6 +86,32 @@
           </div>
         </div>
       </div>
+      <FAButton
+        v-if="creneauStore.creneauType == 1"
+        label="Paramètres avancés"
+        type="secondary"
+        @click="advanced_options = !advanced_options"
+      />
+      <div v-if="advanced_options" class="flex gap-5">
+        <FAInput
+          v-model="creneauStore.dureeActivite"
+          :inline="false"
+          :required="true"
+          label="Durée d'un créneau"
+          class="grow"
+          placeholder="55"
+          type="text"
+        />
+        <FAInput
+          v-model="creneauStore.dureeInterCreneau"
+          :inline="false"
+          :required="true"
+          label="Durée d'inter créneau"
+          class="grow"
+          placeholder="5"
+          type="text"
+        />
+      </div>
       <div
         v-if="creneauStore.creneauType != 0"
         class="relative rounded-lg border border-gray-300 p-4"
@@ -170,6 +196,7 @@ import { getZones } from '@api/zone'
 import InputRadio from '@components/common/InputRadio.vue'
 import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
+import FAButton from '@components/common/Button.vue'
 
 export default {
   components: {
@@ -177,6 +204,7 @@ export default {
     InputRadio,
     InputSelect,
     FAInput,
+    FAButton,
   },
   props: {
     isOpen: {
@@ -200,6 +228,7 @@ export default {
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
       defaultTarif: '20',
+      advanced_options: false,
     }
   },
   computed: {
