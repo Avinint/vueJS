@@ -88,6 +88,13 @@ export const usePlanningStore = defineStore('planning', {
         }
       }
     },
+    removeCreneau(id: number) {
+      for(let i = 0; i < this.creneaux.length; i++) {
+        if(this.creneaux[i].id == id) {
+          this.creneaux.splice(i, 1);
+        }
+      }
+    },
     updateExisting(creneau: Creneau) {
       for (const index in this.creneaux) {
         if (this.creneaux[index].id == creneau.id) {

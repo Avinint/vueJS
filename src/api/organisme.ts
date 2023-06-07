@@ -1,25 +1,24 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
 
-
 export const selectOrganismes = async () => {
-    const response = await $fetch(
-      `${import.meta.env.VITE_API_URL}/api/select/organismes`,
-      {
-          method: 'get',
-          headers: {
-              ...defaultHeaders,
-              'Content-Type': 'application/ld+json',
-              Authorization: 'Bearer ' + localStorage.getItem('token'),
-          },
-      }
-    )
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/select/organismes`,
+    {
+      method: 'get',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    }
+  )
 
-    if (response.status !== 200) throw response
-    return response.json()
+  if (response.status !== 200) throw response
+  return response.json()
 }
 
-export const getOrganismes = async (page = 1, query = '') => {
+export async function getOrganismes(page = 1, query = ''): Promise<Organisme[]> {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/organismes?page=${page}${query}`,
     {

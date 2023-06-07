@@ -22,24 +22,17 @@ type Creneau = {
     mode: string | null;
 }
 
-type Creneau = {
-    id: number;
-    dateDebut: string;
-    dateSortie: string;
-    dateFinCreneau: string;
+type CreneauOGEditContract = {
+    creneauType: 2;
+    zoneId: number;
     titre: string;
+    date: string;
+    heureDebut: string;
+    heureFin: string;
+    dureeActivite: number;
+    dureeInterCreneau: number;
     description: string;
-    activites: string[];
-    type: number;
-    remplissage: number;
-    organismeId: number;
-    zones: string[];
-    dureeActivite:  number;
-    dureeInterCreneau:  number;
-    animateurLabelliseId:  number;
-    tarifHoraire:  number;
-    nbParticipants:  number;
-    niveauPratiqueId: number;
+    organisme: number;
 }
 
 // POST // PUT
@@ -63,6 +56,12 @@ type CreneauEditContract = {
 
 type CreneauEditResponse = {
     creneaux: Creneau[];
+}
+
+enum CreneauType {
+    GP = 1, 
+    OG = 2, 
+    AC = 3,
 }
 
 type Activite = {
@@ -90,6 +89,11 @@ type Planning = {
   currentWeek: number,
   slotMinTime: string,
   slotMaxTime: string,
+}
+
+type Organisme = {
+    id: number,
+    libelle: string,
 }
 
 type CalendarEvent = {

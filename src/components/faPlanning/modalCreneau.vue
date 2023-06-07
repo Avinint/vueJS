@@ -5,7 +5,9 @@
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modalTitle"
       size="4xl"
+      :delete_button="typeAction === 'edit'"
       @cancel="$emit('closeModalCreneau')"
+      @delete="delete_creneau"
     >
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Veuillez sélectionner le type créneau.
@@ -18,17 +20,26 @@
           required
         />
       </div>
-      <div class="w-96">
-        <Input
+      <div v-if="creneauStore.creneauType != 0" class="flex gap-3">
+        <FAInput
           v-model="creneauStore.titre"
           :inline="false"
           :required="true"
           label="Ajouter un titre à votre créneau"
+          class="grow"
           placeholder="Ajouter un titre à votre créneau"
           type="text"
         />
+        <InputSelect
+          v-if="creneauStore.creneauType == 2"
+          v-model="creneauStore.organisme"
+          :required="true"
+          label="Organisme"
+          class="grow"
+          :options="getOrganismesOptions"
+        />
       </div>
-      <div class="flex w-full">
+      <div v-if="creneauStore.creneauType != 0" class="flex w-full">
         <!-- TODO: update to https://www.vue-tailwind.com/docs/datepicker -->
         <div>
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
@@ -77,9 +88,39 @@
           </div>
         </div>
       </div>
-      <div class="relative rounded-lg border border-gray-300 p-4">
+      <FAButton
+        v-if="creneauStore.creneauType == 1"
+        label="Paramètres avancés"
+        type="secondary"
+        @click="advanced_options = !advanced_options"
+      />
+      <div v-if="advanced_options" class="flex gap-5">
+        <FAInput
+          v-model="creneauStore.dureeActivite"
+          :inline="false"
+          :required="true"
+          label="Durée d'un créneau"
+          class="grow"
+          placeholder="55"
+          type="text"
+        />
+        <FAInput
+          v-model="creneauStore.dureeInterCreneau"
+          :inline="false"
+          :required="true"
+          label="Durée d'inter créneau"
+          class="grow"
+          placeholder="5"
+          type="text"
+        />
+      </div>
+      <div
+        v-if="creneauStore.creneauType != 0"
+        class="relative rounded-lg border border-gray-300 p-4"
+      >
         <label class="block text-sm font-bold text-gray-900"> Zones </label>
         <label
+          v-if="creneauStore.creneauType != 2 && creneauStore.zones.length > 0"
           class="absolute top-32 mb-2 block text-sm font-bold text-gray-900"
         >
           Activités
@@ -101,12 +142,18 @@
               >
                 {{ zone.libelle }}
               </label>
-              <div v-if="isZoneChecked(zone.id)" class="flex-col pt-10">
+              <div
+                v-if="isZoneChecked(zone.id) && creneauStore.creneauType != 2"
+                class="flex-col pt-10"
+              >
                 <div
                   v-for="zoneActivite in zone.zoneActivites"
                   :key="zone.id + '-' + zoneActivite.activite.id"
                 >
-                  <div class="my-4 mr-10 flex justify-between">
+                  <div
+                    v-if="zoneActivite.actif"
+                    class="my-4 mr-10 flex justify-between"
+                  >
                     <input
                       :id="zone.id + '-' + zoneActivite.activite.id"
                       v-model="zoneActivite.activite.checked"
@@ -121,7 +168,7 @@
                       :for="zone.id + '-' + zoneActivite.activite.id"
                       >{{ zoneActivite.activite.libelle }}
                     </label>
-                    <Input
+                    <FAInput
                       v-model="zoneActivite.activite.tarif"
                       :default-value="defaultTarif"
                       class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
@@ -141,26 +188,25 @@
 
 <script>
 import Modal from '@components/common/Modal.vue'
-import Button from '@components/common/Button.vue'
 import { mapStores } from 'pinia'
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
+import { useOrganismeStore } from '@stores/organisme.ts'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
-import Input from '@components/common/Input.vue'
 import InputRadio from '@components/common/InputRadio.vue'
-import InputCheckbox from '@components/common/InputCheckbox.vue'
-import { getActiviteByZone } from '@api/activiteByZone'
-import { getActivites } from '@api/activite'
+import InputSelect from '@components/common/Select.vue'
+import FAInput from '@components/common/Input.vue'
+import FAButton from '@components/common/Button.vue'
 
 export default {
   components: {
-    Button,
     Modal,
-    Input,
     InputRadio,
-    InputCheckbox,
+    InputSelect,
+    FAInput,
+    FAButton,
   },
   props: {
     isOpen: {
@@ -184,11 +230,13 @@ export default {
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
       defaultTarif: '20',
+      advanced_options: false,
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
+    ...mapStores(useOrganismeStore),
     modalTitle() {
       switch (this.typeAction) {
         case 'create':
@@ -198,6 +246,14 @@ export default {
         default:
           return 'Modifier un creneau'
       }
+    },
+    getOrganismesOptions() {
+      return this.organismeStore.organismes.map((organisme) => {
+        return {
+          id: organisme.id,
+          label: organisme.libelle,
+        }
+      })
     },
     slotMinTimeNumber() {
       return Number(
@@ -262,6 +318,7 @@ export default {
       this.datepickerFormat
     )
     await this.fetchZones()
+    await this.organismeStore.fetchOrganismes()
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
     if (this.typeAction === 'create') {
@@ -269,6 +326,12 @@ export default {
     }
   },
   methods: {
+    delete_creneau() {
+      if(confirm('Souhaitez vous vraiment supprimer le créneau ?')) {
+        this.creneauStore.delete();
+        this.$emit('closeModalCreneau')
+      }
+    },
     isZoneEditable(zone) {
       if (this.typeAction == 'create') return true
 
@@ -310,17 +373,28 @@ export default {
       }
     },
     submitCreneau() {
-      // Retreive activity data from the local references
-      // Before sending it to the API. This has to be done
-      // This way because of the unsynchronized data.
-      this.updateActivites()
+      const type_creneau = this.creneauStore.creneauType
 
-      if (this.typeAction === 'create') {
-        this.creneauStore.addCreneau()
+      // (REFACTORING)
+      switch (type_creneau) {
+        case 1:
+          // Retreive activity data from the local references
+          // Before sending it to the API. This has to be done
+          // This way because of the unsynchronized data.
+          this.updateActivites()
+
+          if (this.typeAction === 'create') {
+            this.creneauStore.addCreneau()
+          } else this.creneauStore.editCreneau()
+          break
+
+        case 2:
+          if (this.typeAction === 'create') {
+            this.creneauStore.addCreneauOrganisme()
+          } else this.creneauStore.editCreneauOrganisme()
+          break
       }
-      if (this.typeAction === 'edit') {
-        this.creneauStore.editCreneau()
-      }
+
       this.$emit('closeModalCreneau')
     },
     isZoneChecked(zoneId) {
