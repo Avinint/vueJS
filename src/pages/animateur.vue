@@ -25,14 +25,14 @@
                 test="TdeleteClient"
                 borderless
                 icon="delete"
-                type="secondary"
+                couleur="secondary"
                 @click="removeAnimateur(animateur.id)"
               />
               <Button
                 test="TeditClient"
                 borderless
                 icon="edit"
-                type="secondary"
+                couleur="secondary"
                 @click="editAnimateur(i)"
               />
             </td>
@@ -47,7 +47,7 @@
             <td class="px-6 py-4">
               <Button
                 label="Détails"
-                type="secondary"
+                couleur="secondary"
                 @click="showAnimateur(i)"
               />
             </td>
@@ -59,7 +59,7 @@
       id="TaddAnimateur"
       label="Ajouter un Animateur"
       icon="add"
-      type="secondary"
+      couleur="secondary"
       @click="createAnimateur"
     />
   </Card>
@@ -165,7 +165,7 @@
           id="TeditionCarteAcces"
           label="Ajouter une carte d'accès"
           icon="add"
-          type="secondary"
+          couleur="secondary"
           @click="carteActive.actif = true"
         />
       </Card>
@@ -188,7 +188,7 @@
             v-if="!readonly"
             id="TdesactivationCarteAcces"
             icon="cross"
-            type="danger"
+            couleur="danger"
             @click="desactiverCarte"
           />
         </div>

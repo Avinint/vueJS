@@ -8,8 +8,8 @@
             {{ props.title }}
           </h3>
           <div class="flex align-center">
-            <Button v-if="delete_button" test='TcloseModal' @click="emit('delete')" type="danger" borderless label="Supprimer le créneau"/>
-            <Button test='TcloseModal' @click="emit('cancel', $event)" type="secondary" icon="cross" borderless />
+            <Button v-if="delete_button" test='TcloseModal' @click="emit('delete')" couleur="danger" borderless label="Supprimer le créneau"/>
+            <Button test='TcloseModal' @click="emit('cancel', $event)" couleur="secondary" icon="cross" borderless />
           </div>
         </div>
         <div class="p-6 space-y-6">
@@ -19,20 +19,20 @@
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
             class="bg-red-600 hover:bg-red-800" />
-          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary" />
+          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" />
         </div>
 
         <div v-if="props.type === 'visualiser'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button class="ml-auto mr-0" test='TcancelModal' @click="emit('cancel', $event)" label="Annuler"
-            type="secondary" />
+            couleur="secondary" />
         </div>
 
         <div v-if="props.type === 'alert'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-          <Button test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer" type="submit"
+          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
             class="bg-red-600 w-x hover:bg-red-800" />
-          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary" />
+          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" />
         </div>
       </div>
 
@@ -47,7 +47,7 @@ type Props = {
   title: string
   type: 'classic' | 'alert' | 'visualiser'
   size: '2xl' | '3xl' | '5xl'
-  delete_button: boolean,
+  delete_button?: boolean,
 }
 
 const emit = defineEmits(['confirm', 'cancel', 'delete'])

@@ -23,7 +23,7 @@
             <div class="flex">
               <Button
                 label="Détails"
-                type="secondary"
+                couleur="secondary"
                 class="mr-4"
                 @click="detailsEquipement(typeIdx, equipementIdx)"
               />
@@ -31,7 +31,7 @@
                 v-if="!readonly"
                 borderless
                 icon="delete"
-                type="secondary"
+                couleur="secondary"
                 @click.prevent="
                   removeEquipementFromZone(typeIdx, equipementIdx)
                 "

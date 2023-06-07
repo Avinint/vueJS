@@ -32,14 +32,14 @@
                     test="TdeleteClient"
                     borderless
                     icon="delete"
-                    type="secondary"
+                    couleur="secondary"
                     @click="removeEquipement(equipement.id)"
                   />
                   <Button
                     test="TeditClient"
                     borderless
                     icon="edit"
-                    type="secondary"
+                    couleur="secondary"
                     @click="editEquipement(equipement.id)"
                   />
                 </td>
@@ -69,7 +69,7 @@
                 <td class="w-1/12 px-6 py-4">
                   <Button
                     label="Détails"
-                    type="secondary"
+                    couleur="secondary"
                     @click="showEquipement(equipement.id)"
                   />
                 </td>
@@ -140,7 +140,8 @@
       id="TaddEquipementNumerique"
       label="Ajouter un équipement motorisé"
       icon="add"
-      type="secondary"
+
+      couleur="secondary"
       @click="addEquipement"
     />
   </Card>
@@ -237,14 +238,15 @@
                   test="TdeleteClient"
                   borderless
                   icon="delete"
-                  type="secondary"
+                  couleur="secondary"
+
                   @click="removeEquipementConfiguration(i)"
                 />
                 <Button
                   test="TeditClient"
                   borderless
                   icon="edit"
-                  type="secondary"
+                  couleur="secondary"
                   @click="editEquipementConfiguration(i)"
                 />
               </td>
@@ -268,7 +270,7 @@
           id="TaddConfiguration"
           label="Ajouter une configuration"
           icon="add"
-          type="secondary"
+          couleur="secondary"
           @click="addEquipementConfiguration"
         />
       </CardConfiguration>

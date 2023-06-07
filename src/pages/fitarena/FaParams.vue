@@ -15,7 +15,7 @@
             test="TeditSlot"
             borderless
             icon="edit"
-            type="secondary"
+            couleur="secondary"
             @click="setCancelBooking"
           />
           <Button
@@ -23,7 +23,7 @@
             test="TeditSlot"
             borderless
             icon="cross"
-            type="secondary"
+            couleur="secondary"
             @click="setCancelBooking"
           />
         </div>
@@ -48,7 +48,7 @@
     <h1>Condition de visualisation des créneaux</h1>
     {{ visualisation_creneaux }}
     <div class="flex items-center space-x-2">
-      <Button icon="edit" type="secondary" borderless></Button>
+      <Button icon="edit" couleur="secondary" borderless></Button>
       <div class="flex items-center">
         <div class="mr-2">Actif</div>
         <Switch />
@@ -57,13 +57,13 @@
         Nombre de jours visibles pour la réservation de créneaux par les
         utilisateurs Grand Public
       </div>
-      <Button label="Détails" type="secondary" />
+      <Button label="Détails" couleur="secondary" />
     </div>
     <Button
       class="font-bold font-black"
       label="Ajouter une condition de visualisation des créneaux"
       icon="add"
-      type="secondary"
+      couleur="secondary"
     />
     <Modal v-if="false"> </Modal>
   </Card>

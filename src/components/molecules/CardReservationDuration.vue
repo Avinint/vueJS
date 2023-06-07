@@ -8,7 +8,7 @@
             test="TeditSlot"
             borderless
             icon="edit"
-            type="secondary"
+            couleur="secondary"
             class="pl-0"
             @click="editDurationSlot()"
           />
@@ -24,7 +24,7 @@
             test="TeditInterslot"
             borderless
             icon="edit"
-            type="secondary"
+            couleur="secondary"
             class="pl-0"
             @click="editDurationInterslot(i)"
           />

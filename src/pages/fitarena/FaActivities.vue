@@ -21,14 +21,14 @@
                 test="TdeleteClient"
                 borderless
                 icon="delete"
-                type="secondary"
+                couleur="secondary"
                 @click="removeActivite(act.id)"
               />
               <Button
                 test="TeditClient"
                 borderless
                 icon="edit"
-                type="secondary"
+                couleur="secondary"
                 @click="editActivite(i)"
               />
             </td>
@@ -55,7 +55,7 @@
             <td class="px-6 py-4">
               <Button
                 label="Détails"
-                type="secondary"
+                couleur="secondary"
                 @click="showActivite(i)"
               />
             </td>
@@ -67,7 +67,7 @@
       id="TaddActivite"
       label="Ajouter une activité"
       icon="add"
-      type="secondary"
+      couleur="secondary"
       @click="addActivite"
     />
   </Card>

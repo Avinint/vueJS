@@ -1,13 +1,13 @@
 <template>
-    <Button v-if="!new_sous_zone && !readonly" label="Ajouter une Sous-zone" icon="add" type="secondary" @click="addSousZone()" id="TaddSousZone"/>
+    <Button v-if="!new_sous_zone && !readonly" label="Ajouter une Sous-zone" icon="add" couleur="secondary" @click="addSousZone()" id="TaddSousZone"/>
 
     <div v-if="new_sous_zone" class="border border-gray-300 rounded-md p-4">
     <div>
         <Input v-model="new_sous_zone_libelle" label="Nom de la sous-zone" type="text" id="new_sous_zone_libelle" />
     </div>
     <div class="text-center mt-4">
-        <Button label="Valider" icon="" class="mr-4" type="secondary" @click="validSousZone()"></Button>
-        <Button label="Annuler" icon="" class="" type="secondary" @click="new_sous_zone = false"></Button>
+        <Button label="Valider" icon="" class="mr-4" couleur="secondary" @click="validSousZone()"></Button>
+        <Button label="Annuler" icon="" class="" couleur="secondary" @click="new_sous_zone = false"></Button>
     </div>
     </div>
 </template>

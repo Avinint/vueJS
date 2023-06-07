@@ -13,7 +13,7 @@
               test="TdeleteConditionReservation"
               borderless
               icon="delete"
-              type="secondary"
+              couleur="secondary"
               class="pl-0 pr-2"
               @click="removeConditionReservation(i)"
             />
@@ -21,7 +21,7 @@
               test="TeditConditionReservation"
               borderless
               icon="edit"
-              type="secondary"
+              couleur="secondary"
               @click="editConditionReservation(i)"
             />
           </div>
@@ -60,7 +60,7 @@
       label="Ajouter une condition de réservation des créneaux"
       class="font-bold text-black"
       icon="add"
-      type="secondary"
+      couleur="secondary"
       @click="addConditionReservation"
     />
   </Card>
