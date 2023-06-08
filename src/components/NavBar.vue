@@ -4,7 +4,7 @@
     >
       <div class="flex h-14 items-center">
         <div class="flex w-full justify-between px-4">
-          <breadcrumbs :items="route.meta.breadcrumbs" />
+          <!--<breadcrumbs :items="route.meta.breadcrumbs" />-->
           <Button
             test="Tlogout"
             icon="logout"
