@@ -1,14 +1,14 @@
 <template>
   <router-link
-    :to="props.path"
+    :to="path"
     class="flex w-full items-center justify-between"
   >
-    <div v-if="props.icon" class="text-red-600" v-html="props.icon"></div>
-    <span class="ml-3 flex-1 whitespace-nowrap">{{ props.label }}</span>
+    <div v-if="icon" class="text-red-600" v-html="icon"></div>
+    <span class="ml-3 flex-1 whitespace-nowrap">{{ label }}</span>
     <span
-      v-if="props.tag"
+      v-if="tag"
       class="ml-3 inline-flex items-center justify-center rounded-full bg-gray-200 px-2 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-      >{{ props.tag }}</span
+      >{{ tag }}</span
     >
   </router-link>
 </template>
