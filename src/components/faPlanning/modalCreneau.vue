@@ -91,7 +91,7 @@
       <FAButton
         v-if="creneauStore.creneauType == 1"
         label="Paramètres avancés"
-        type="secondary"
+        couleur="secondary"
         @click="advanced_options = !advanced_options"
       />
       <div v-if="advanced_options" class="flex gap-5">
@@ -102,7 +102,7 @@
           label="Durée d'un créneau"
           class="grow"
           placeholder="55"
-          type="text"
+          type="number"
         />
         <FAInput
           v-model="creneauStore.dureeInterCreneau"
@@ -111,7 +111,7 @@
           label="Durée d'inter créneau"
           class="grow"
           placeholder="5"
-          type="text"
+          type="number"
         />
       </div>
       <div
