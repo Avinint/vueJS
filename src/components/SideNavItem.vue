@@ -7,7 +7,7 @@
     <span class="ml-3 flex-1 whitespace-nowrap">{{ label }}</span>
     <span
       v-if="tag"
-      class="ml-3 inline-flex items-center justify-center rounded-full bg-gray-200 px-2 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+      class="ml-3 inline-flex items-center justify-center rounded-full w-5 px-1 text-sm font-medium bg-red-500 text-white"
       >{{ tag }}</span
     >
   </router-link>

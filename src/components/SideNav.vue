@@ -9,9 +9,9 @@
         </router-link>
       </div>
       <div class="h-full overflow-y-auto bg-white ">
-        <div v-for="(link, i) in links" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900 ">
+        <div v-for="(link, i) in links" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900">
           <div class="flex items-center pl-8 pr-1 py-2 w-full"
-            :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 text-sm'">
+            :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 -ml-14 text-sm'">
             <svg @click="openSubLinks(i)" class="cursor-pointer h-8 w-8"
               :class="link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"
               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -22,25 +22,28 @@
             <side-nav-item :icon="link.icon" :label="link.label" :path="link.path" :tag="link.tag"
               :id="'T' + link.path" />
           </div>
-          <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.sub_links_open && link.sub_links.length"
-               class="flex flex-col items-center text-base font-normal text-gray-900">
-            <div class="flex items-center pl-8 pr-1 py-2 w-full hover:bg-gray-100 text-sm">
+          <div class="w-full bg-gray-100">
+            <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.sub_links_open && link.sub_links.length"
+                 class="flex flex-col items-center text-base font-normal text-gray-900">
+              <div class="flex items-center pl-8 pr-1 py-2 w-full hover:bg-gray-100 text-sm">
 
-<!--              <svg @click="openSubSubLinks(i, sub_i)" class="cursor-pointer h-8 w-8"-->
-<!--                :class="sub_link.sub_links_open ? 'rotate-90 stroke-red-600' : ''" v-if="link.sub_links"-->
-<!--                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">-->
-<!--                <path fill-rule="evenodd"-->
-<!--                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"-->
-<!--                  clip-rule="evenodd" />-->
-<!--              </svg>-->
-              <side-nav-item :icon="cityIcone" :label="sub_link.label" :path="sub_link.path" :tag="sub_link.tag" />
-            </div>
-            <div v-for="sub_sub_link in sub_link.sub_links" v-if=" sub_link.sub_link && sub_link.sub_links_open && sub_link.sub_links.length"
-              class="w-full flex text-left bg-gray-200 items-center pl-12 pr-3 py-2">
-              <side-nav-item :icon="sub_sub_link.icon" :label="sub_sub_link.label" :path="sub_sub_link.path"
-                :tag="sub_sub_link.tag" class="text-sm truncate" />
+                <svg @click="openSubSubLinks(i, sub_i)" v-if="sub_link.sub_links" class="cursor-pointer h-8 w-8"
+                     :class="sub_link.sub_links_open ? 'rotate-90 stroke-red-600' : ''"
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd" />
+                </svg>
+                <side-nav-item :icon="cityIcone" :label="sub_link.label" :path="sub_link.path" :tag="sub_link.tag" />
+              </div>
+              <div v-for="sub_sub_link in sub_link.sub_links" v-if=" sub_link.sub_links && sub_link.sub_links_open && sub_link.sub_links.length"
+                   class="w-full flex text-left bg-gray-200 items-center pl-12 pr-3 py-2">
+                <side-nav-item :icon="sub_sub_link.icon" :label="sub_sub_link.label" :path="sub_sub_link.path"
+                               :tag="sub_sub_link.tag" class="text-sm truncate" />
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </aside>
@@ -54,6 +57,8 @@ import { onMounted, reactive, ref } from "vue"
 // import { getFitArenas } from '../api/fit-arena'
 import Link from '../types/Link'
 import { getMenu } from "@api/menu";
+import { useUserStore } from "@/stores/user.js";
+const { isAdmin, isGestCo, isGestOrg } = useUserStore();
 
 const fas = ref([])
 const fitArenaLinks = ref([])
@@ -111,108 +116,162 @@ const openSubSubLinks = (i, sub_i) => {
 
 onMounted(async () => {
 
-  const { clients, fitarenas, organismes } = await (await getMenu()).menu;
+  const { clients, fitarenas, organismes }   = await (await getMenu()).menu;
 
-  clientLinks.value = clients.map((cli) => {
-    return {
-      label:  cli.libelle,
-      path: '/clients/' + cli.id,
-      sub_links: [
-        {
-          label: 'Utilisateurs',
-          path: `/fitarena/${cli.id}/utilisateurs`
-        },
-        {
-          label: 'Organismes',
-          path: `/fitarena/${cli.id}/organismes`
-        }
-      ]
-    }
-  })
+  if (isAdmin || isGestCo) {
+    clientLinks.value = clients.map((cli) => {
 
+      return {
+        label: cli.libelle,
+        path: '/clients/' + cli.id,
+        icon: homeIcone,
+        sub_links: [
+          {
+            label: 'Utilisateurs',
+            path: `/client/${cli.id}/utilisateurs`
+          },
+          {
+            label: 'Demandes en attente',
+            tag: cli.options.organisme_demande_attente,
+            path: ''
+          },
+          {
+            label: 'Organismes',
+            path: `/organismes`,
+          },
+        ]
+      }
+    })
+  }
+
+if (isGestOrg) {
   organismeLinks.value = organismes.map((org) => {
     return {
-      label:  org.libelle,
+      label: org.libelle,
       path: '/organismes/' + org.id,
+      icon: homeIcone,
       sub_links: [
         {
-          label: 'Utilisateurs',
-          path: `/fitarena/${cli.id}/utilisateurs`
+          label: 'Mon planning fit Arena 1',
+          path: `/organisme/${org.id}/planning1`,
         },
         {
-          label: 'Organismes',
-          path: `/fitarena/${cli.id}/organismes`
-        }
+          label: 'Mon planning fit Arena 2',
+          path: `/organisme/${org.id}/planning2`,
+        },
+        {
+          label: 'Mes Adhérents',
+          path: `/organisme/${org.id}/adherents`
+        },
+        {
+          label: "Mes groupes d'adhérents",
+          path: `/organisme/${org.id}/groupes-adherents`
+        },
+        // {
+        //   label: 'Demande de créneaux',
+        //   path: `/organisme/${org.id}/creneau/`
+        // },
+        {
+          label: 'Animateurs',
+          path: `/organisme/${org.id}/animateurs`
+        },
       ]
     }
   })
+}
 
-  console.log(fitarenas)
-  // console.log(clients)
- // const fit_arenas = await getFitArenas()
- //  console.log(fit_arenas)
   fitArenaLinks.value = fitarenas.map((fa) => {
+
+    const subLinksGestionnaire = [
+      {
+        label: 'Supervision',
+        path: `/fitarena/${fa.id}/supervision`,
+        tag: 1
+      },
+      {
+        label: 'Planning des réservations',
+        path: `/fitarena/${fa.id}/planning-reservations`,
+        tag: 1
+      },
+
+      {
+        label: 'Liste des réservations',
+        path: `/fitarena/${fa.id}/reservations`,
+        tag: 1
+      },
+      {
+        label: 'Statistiques',
+        path: `/fitarena/${fa.id}/statistiques`,
+        tag: 1
+      },
+      {
+        label: 'Configuration de la Fit Arena',
+        path: `/fitarena/${fa.id}/configuration`
+      },
+
+      {
+        label: 'Les paiements',
+        path: `/fitarena/${fa.id}/paiements`,
+        tag: 1
+      },
+    ]
+
+    const subLinksAdmin = [
+      {
+        label: 'Planning d\'ouverture',
+        path: `/fitarena/${fa.id}/planning`,
+      },
+      {
+        label: 'Activités',
+        path: `/fitarena/${fa.id}/activites`
+      },
+      {
+        label: 'Equipements motorisés',
+        path: `/fitarena/${fa.id}/equipements-motorises`
+      },
+      {
+        label: 'Equipements numériques',
+        path: `/fitarena/${fa.id}/equipements-numeriques`
+      },
+      {
+        label: 'Espaces',
+        path: `/fitarena/${fa.id}/espaces`
+      },
+      {
+        label: 'Sous-espaces',
+        path: `/fitarena/${fa.id}/sous-espaces`
+      },
+      {
+        label: 'Zones',
+        path: `/fitarena/${fa.id}/zones`
+      },
+      {
+        label: 'Activités par zone',
+        path: `/fitarena/${fa.id}/activites-par-zone`
+      },
+      {
+        label: 'Paramètres de la Fit Arena',
+        path: `/fitarena/${fa.id}/params`
+      },
+    ]
+
     return {
       label: fa.libelle,
       path: '/fitarena/' + fa.id,
       icon: homeIcone,
-      sub_links: [
-        {
-          label: 'Planning d\'ouverture',
-          path: `/fitarena/${fa.id}/planning`,
-          tag: '0'
-        },
-        {
-          label: 'Activités',
-          path: `/fitarena/${fa.id}/activites`
-        },
-        {
-          label: 'Equipements motorisés',
-          path: `/fitarena/${fa.id}/equipements-motorises`
-        },
-        {
-          label: 'Equipements numériques',
-          path: `/fitarena/${fa.id}/equipements-numeriques`
-        },
-        {
-          label: 'Espaces',
-          path: `/fitarena/${fa.id}/espaces`
-        },
-        {
-          label: 'Sous-espaces',
-          path: `/fitarena/${fa.id}/sous-espaces`
-        },
-        {
-          label: 'Zones',
-          path: `/fitarena/${fa.id}/zones`
-        },
-        {
-          label: 'Activités par zone',
-          path: `/fitarena/${fa.id}/activites-par-zone`
-        },
-        {
-          label: 'Configuration de la Fit Arena',
-          path: `/fitarena/${fa.id}/params`
-        },
-        {
-          label: 'Affichage web',
-          path: `/fitarena/${fa.id}/web`
-        },
-        // {
-        //   label: 'Organisme',
-        //   path: `/fitarena/${fa.id}/organismes`
-        // }
-      ]
+      sub_links: isAdmin ? subLinksAdmin : subLinksGestionnaire
     }
   })
-
-  console.log(fitArenaLinks.value)
 
   if (fitArenaLinks.value.length) {
     links.push({
       label: 'Fit Arena',
       path: '',
       divider: true,
+    },
+        {
+      label: 'Fit Arenas',
+      path: '/fitarena',
     })
 
     for (const faLink of fitArenaLinks.value) {
@@ -220,9 +279,41 @@ onMounted(async () => {
     }
   }
 
-  console.log(links)
+  if (clientLinks.value.length) {
+    links.push(
+      {
+        label: 'Espace client',
+        path: '',
+        divider: true,
+      },
+      {
+        label: 'Clients',
+        path: '/clients',
+      }
+    )
+
+    for (const cliLink of clientLinks.value) {
+      links.push(cliLink)
+    }
+  }
+
+  if (organismeLinks.value.length) {
+
+    if (isGestOrg) {
+      links.push({
+        label: 'Espace organisme',
+        path: '/organismes',
+        divider: true,
+      })
+
+      for (const orgLink of organismeLinks.value) {
+        links.push(orgLink)
+      }
+    }
+
+  } else {
+
+  }
 })
-
-
 
 </script>
