@@ -18,7 +18,7 @@
         <tbody>
           <tr v-for="(organisme, i) in organismes" :key="i" class="bg-white">
             <td class="flex items-center justify-center p-3">
-              <Button
+              <Button v-if="isAdmin || isGestCo"
                 test="TdeleteClient"
                 borderless
                 icon="delete"
@@ -47,7 +47,7 @@
         </tbody>
       </table>
     </div>
-    <Button
+    <Button v-if="isAdmin || isGestCo"
       id="TaddOrganisme"
       label="Ajouter un Organisme"
       icon="add"
@@ -339,7 +339,7 @@ import 'vue3-toastify/dist/index.css'
 import { isValid, emailValidation } from "@/validation.js";
 import { selectClients } from "@api/client.js";
 import { useUserStore } from "@/stores/user.js";
-const { isAdmin } = useUserStore();
+const { isAdmin, isGestCo } = useUserStore();
 
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
