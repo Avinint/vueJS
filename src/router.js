@@ -248,22 +248,8 @@ const routes = [
           ],
         },
       },
-      {
-        path: 'organismes',
-        component: FaOrganisme,
-        meta: {
-          breadcrumbs: [
-            {
-              label: 'Fit Arena',
-              link: 'fitarena',
-            },
-            {
-              label: 'Fit Arena - Dijon',
-              link: 'fitarena/',
-            },
-          ],
-        },
-      },
+
+
     ],
   },
   {
@@ -308,6 +294,35 @@ const routes = [
       ],
     },
   },
+
+  {
+    path: '/clients/:id',
+    props: true,
+    name: 'client',
+    component: FaOrganisme,
+    meta: {
+      breadcrumbs: [],
+    },
+    children: [
+      {
+        path: 'organismes',
+        name: 'organismes_par_client',
+        component: FaOrganisme,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'organismes',
+              link: 'organismes',
+            },
+            {
+              label: 'organismes',
+              link: 'organismes',
+            },
+          ],
+        },
+      },
+    ]
+  }
 ]
 
 const router = createRouter({

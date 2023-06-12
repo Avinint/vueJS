@@ -130,7 +130,8 @@ onMounted(async () => {
         sub_links: [
           {
             label: 'Utilisateurs',
-            path: `/client/${cli.id}/utilisateurs`
+            path: '/users'
+            // path: `/client/${cli.id}/utilisateurs`
           },
           {
             label: 'Demandes en attente',
@@ -139,7 +140,7 @@ onMounted(async () => {
           },
           {
             label: 'Organismes',
-            path: `/organismes`,
+            path: `/clients/${cli.id}/organismes`,
           },
         ]
       }

@@ -329,10 +329,12 @@ import { getAdresses } from '../api/address.js'
 import {
   deleteOrganismes,
   getOrganismes,
+  getOrganismesParClient,
   postOrganismes,
   updateOrganismes,
 } from '../api/organisme.ts'
 import { onMounted, reactive, ref, watch } from 'vue'
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -341,6 +343,7 @@ import { selectClients } from "@api/client.js";
 import { useUserStore } from "@/stores/user.js";
 const { isAdmin, isGestCo } = useUserStore();
 
+const route = useRoute()
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
 const readonly = ref(false)
@@ -367,11 +370,23 @@ const validation = ref({})
 
 const gestionnairesOrganisme = ref([])
 
+onBeforeRouteUpdate(async (to, from) => {
+  // only fetch the user if the id changed as maybe only the query or the hash changed
+  if (to.params.id !== from.params.id) {
+    organismes.value = await getOrganismesParClient(route.params.id)
+  }
+})
+
 onMounted(async () => {
-  organismes.value = await getOrganismes()
-    if (isAdmin) {
-        clients.value = await selectClients();
-    }
+  if (route.name === 'organismes') {
+    organismes.value = await getOrganismes()
+  } else {
+    organismes.value = await getOrganismesParClient(route.params.id)
+  }
+
+  if (isAdmin) {
+    clients.value = await selectClients();
+  }
 })
 
 const addOrganisme = () => {
