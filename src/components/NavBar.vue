@@ -3,8 +3,8 @@
       class="navbar fixed z-10 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
     >
       <div class="flex h-14 items-end">
-        <div class="flex w-full justify-between px-4">
-          <!--<breadcrumbs :items="route.meta.breadcrumbs" />-->
+        <div class="flex w-full justify-between px-4 pb-2">
+          <breadcrumbs :items="route.meta.breadcrumbs" />
           <Button
             test="Tlogout"
             icon="logout"

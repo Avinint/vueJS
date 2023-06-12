@@ -80,10 +80,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -96,10 +96,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -113,10 +113,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -129,10 +129,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -145,10 +145,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -161,10 +161,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -177,10 +177,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -193,10 +193,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -209,10 +209,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -225,10 +225,10 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
@@ -241,16 +241,14 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            {
-              label: 'Fit Arena - Dijon',
+            /**{
+              label: '',
               link: 'fitarena/',
-            },
+            },**/
           ],
         },
       },
-
-
-    ],
+    ] ,
   },
   {
     path: '/clients',
