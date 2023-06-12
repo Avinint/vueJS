@@ -100,7 +100,7 @@
           label="Durée d'un créneau"
           class="grow"
           placeholder="55"
-          type="text"
+          type="number"
         />
         <FAInput
           v-model="creneauStore.dureeInterCreneau"
@@ -109,7 +109,7 @@
           label="Durée d'inter créneau"
           class="grow"
           placeholder="5"
-          type="text"
+          type="number"
         />
       </div>
       <div
