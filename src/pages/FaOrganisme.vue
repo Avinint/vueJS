@@ -22,14 +22,14 @@
                 test="TdeleteClient"
                 borderless
                 icon="delete"
-                type="secondary"
+                couleur="secondary"
                 @click="removeOrganisme(organisme.id)"
               />
               <Button
                 test="TeditClient"
                 borderless
                 icon="edit"
-                type="secondary"
+                couleur="secondary"
                 @click="editOrganisme(i)"
               />
             </td>
@@ -39,7 +39,7 @@
             <td class="px-6 py-4">
               <Button
                 label="Détails"
-                type="secondary"
+                couleur="secondary"
                 @click="showOrganisme(i)"
               />
             </td>
@@ -51,7 +51,7 @@
       id="TaddOrganisme"
       label="Ajouter un Organisme"
       icon="add"
-      type="secondary"
+      couleur="secondary"
       @click="addOrganisme"
     />
   </Card>
@@ -238,7 +238,7 @@
             id="Grr"
             class="absolute right-2 top-2 border-0"
             icon="delete"
-            type="secondary"
+            couleur="secondary"
             size="s"
             @click="removeManager(i)"
           />
@@ -284,7 +284,7 @@
           id="TaddOrgaManager"
           label="Ajouter un compte gestionnaire"
           icon="add"
-          type="secondary"
+          couleur="secondary"
           @click="gestionnairesOrganisme.push({})"
         />
       </Card>

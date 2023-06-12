@@ -23,14 +23,14 @@
                 test="TdeleteClient"
                 borderless
                 icon="delete"
-                type="secondary"
+                couleur="secondary"
                 @click="removeEspace(esp.id)"
               />
               <Button
                 test="TeditClient"
                 borderless
                 icon="edit"
-                type="secondary"
+                couleur="secondary"
                 @click="editEspace(i)"
               />
             </td>
@@ -54,7 +54,7 @@
             <td class="px-6 py-4">{{ esp.libelle }}</td>
             <td class="px-6 py-4">{{ esp.ordre }}</td>
             <td class="px-6 py-4">
-              <Button label="Détails" type="secondary" @click="showEspace(i)" />
+              <Button label="Détails" couleur="secondary" @click="showEspace(i)" />
             </td>
           </tr>
         </tbody>
@@ -63,7 +63,7 @@
     <Button
       id="TaddEspace"
       label="Ajouter un espace"
-      type="secondary"
+      couleur="secondary"
       icon="add"
       @click="addEspace"
     />

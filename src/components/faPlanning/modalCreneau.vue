@@ -5,7 +5,9 @@
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modalTitle"
       size="4xl"
+      :delete_button="typeAction === 'edit'"
       @cancel="$emit('closeModalCreneau')"
+      @delete="delete_creneau"
     >
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Veuillez sélectionner le type créneau.
@@ -324,6 +326,12 @@ export default {
     }
   },
   methods: {
+    delete_creneau() {
+      if(confirm('Souhaitez vous vraiment supprimer le créneau ?')) {
+        this.creneauStore.delete();
+        this.$emit('closeModalCreneau')
+      }
+    },
     isZoneEditable(zone) {
       if (this.typeAction == 'create') return true
 

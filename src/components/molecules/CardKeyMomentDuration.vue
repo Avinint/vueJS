@@ -42,14 +42,14 @@
             test="TeditKeyMoment"
             borderless
             icon="edit"
-            type="secondary"
+            couleur="secondary"
             @click="editKeyMomentDuration(i)"
           />
           <Button
             test="TdeleteKeyMoment"
             borderless
             icon="delete"
-            type="secondary"
+            couleur="secondary"
             class="flex justify-end"
             @click="removeKeyMomentDuration(i)"
           />
@@ -75,7 +75,7 @@
       label="Ajouter une durée de temps fort spécifique à une activité"
       class="font-bold text-black"
       icon="add"
-      type="secondary"
+      couleur="secondary"
       @click="addKeyMomentDurationForAnActivity"
     />
   </Card>

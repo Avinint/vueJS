@@ -22,14 +22,14 @@
                 test="TdeleteClient"
                 borderless
                 icon="delete"
-                type="secondary"
+                couleur="secondary"
                 @click="removeFa(fit_arena.id)"
               />
               <Button
                 test="TeditClient"
                 borderless
                 icon="edit"
-                type="secondary"
+                couleur="secondary"
                 @click="editFa(i)"
               />
             </td>
@@ -37,7 +37,7 @@
             <td class="px-6 py-4">{{ fit_arena.adresse.codePostal }}</td>
             <td class="px-6 py-4">{{ fit_arena.adresse.ville }}</td>
             <td class="px-6 py-4">
-              <Button label="Détails" type="secondary" @click="showFa(i)" />
+              <Button label="Détails" couleur="secondary" @click="showFa(i)" />
             </td>
           </tr>
         </tbody>
@@ -47,7 +47,7 @@
       id="TaddFitArena"
       label="Ajouter une Fit Arena"
       icon="add"
-      type="secondary"
+      couleur="secondary"
       @click="addFa"
     />
   </Card>

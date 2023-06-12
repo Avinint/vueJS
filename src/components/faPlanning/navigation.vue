@@ -10,7 +10,7 @@
             v-for="zone in zones"
             :key="zone.id"
             :label="zone.libelle"
-            type="secondary"
+            couleur="secondary"
             :submit="false"
             :class="{ active: planningStore.isZoneActive(zone.id) }"
             @click="filterByZone(zone.id)"
@@ -22,7 +22,7 @@
         <template #content>
           <Button
             label="Aujourd'hui"
-            type="secondary"
+            couleur="secondary"
             icon=""
             :submit="false"
             @click="today()"
@@ -33,7 +33,7 @@
                 ? 'Journée >'
                 : 'Semaine >'
             "
-            type="secondary"
+            couleur="secondary"
             icon=""
             class="w-24"
             :submit="false"
@@ -46,7 +46,7 @@
         <template #content>
           <Button
             label="<"
-            type="secondary"
+            couleur="secondary"
             icon="prev"
             :submit="false"
             class="m-0"
@@ -60,7 +60,7 @@
           </div>
           <Button
             label=">"
-            type="secondary"
+            couleur="secondary"
             icon="next"
             :submit="false"
             @click="next()"
@@ -68,7 +68,7 @@
           <Button
             class="cursor-default"
             :label="'S' + planningStore.currentWeek"
-            type="secondary"
+            couleur="secondary"
             icon="next"
             :submit="false"
           />
