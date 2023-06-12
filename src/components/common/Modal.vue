@@ -15,7 +15,7 @@
         <div v-if="props.type === 'classic'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
-            class="bg-red-600 hover:bg-red-800" />
+            class="bg-red-600 hover:bg-red-800" type="submit"/>
           <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" type="secondary" />
         </div>
 
