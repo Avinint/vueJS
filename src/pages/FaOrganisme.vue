@@ -334,7 +334,7 @@ import {
   updateOrganismes,
 } from '../api/organisme.ts'
 import { onMounted, reactive, ref, watch } from 'vue'
-import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
