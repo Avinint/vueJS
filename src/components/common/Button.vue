@@ -1,5 +1,5 @@
 <template>
-  <button :class="[type, icon_placement, borderless]" :type="submit ? 'submit' : 'button'" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
+  <button :class="[type_class, icon_placement, borderless]" :type="type === 'submit' ? 'submit' : 'button'" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
     <div v-if="icon" v-html="icon"></div>
     <div v-if="props.label">
       {{props.label}}
@@ -22,6 +22,7 @@
 
   const TYPE = {
     info: 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white',
+    submit: 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white',
     danger: 'bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 text-white',
     warning: 'bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 text-white',
     success: 'bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 text-white',
@@ -39,8 +40,7 @@
   }>();
 
   const icon = ICON[props.icon ?? '']
-  const type = TYPE[props.type ?? '']
-  const submit = props.submit ? 'submit' : 'button'
+  const type_class = props.type ? TYPE[props.type] : TYPE[''];
   const borderless = props.borderless ? '' : 'border'
   const icon_placement = props.icon_placement === 'left' ? 'row-reverse' : ''
 
