@@ -91,7 +91,7 @@
       <FAButton
         v-if="creneauStore.creneauType == 1"
         label="Paramètres avancés"
-        type="secondary"
+        couleur="secondary"
         @click="advanced_options = !advanced_options"
       />
       <div v-if="advanced_options" class="flex gap-5">
