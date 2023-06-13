@@ -1,12 +1,17 @@
 <template>
-  <ModalBottom>
+  <ModalBottom @close="open = false" v-if="open">
     <template #title>
       <div class="flex w-full items-center justify-between">
         <div class="modal-seance-title">
-          <h2>TITLE</h2>
-          <h2>DATE</h2>
+          <h2>{{ creneau_store.titre }}</h2>
+          <h2>{{ creneau_store.heureDebut }} - {{ creneau_store.heureFin }}</h2>
         </div>
-        <Button couleur="danger" borderless label="Ajouter une séance" @click="new_seance"/>
+        <Button
+          couleur="danger"
+          borderless
+          label="Ajouter une séance"
+          @click="new_seance"
+        />
       </div>
     </template>
     <template #content>
@@ -26,17 +31,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(seance, i) in seances" :key="i" class="bg-white">
-              <td class="px-6 py-4">{{ `${seance.debut} - ${seance.fin}` }}</td>
-              <td class="px-6 py-4">{{ seance.animateurs.join(', ') }}</td>
-              <td class="px-6 py-4">{{ seance.groupes.join(', ') }}</td>
+            <tr
+              v-for="(seance, i) in creneau_store.seances"
+              :key="i"
+              class="bg-white"
+            >
+              <td class="px-6 py-4">{{ getSeanceHours(seance) }}</td>
+              <td class="px-6 py-4">{{ getSeanceAnimateurs(seance) }}</td>
+              <td class="px-6 py-4">Aucun</td>
               <td class="px-6 py-4">QR CODE</td>
               <td class="px-6 py-4">MODIFIER</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <EditSeance ref="edit_seance" :mode="edit_mode"/>
+      <EditSeance ref="edit_seance" :mode="edit_mode" />
     </template>
   </ModalBottom>
 </template>
@@ -45,25 +54,46 @@
 import ModalBottom from '@components/common/ModalBottom.vue'
 import EditSeance from '@components/faPlanning/EditSeance.vue'
 import Button from '@components/common/Button.vue'
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue'
+import { getDateStringHour } from '../../services/date_service'
+import { useCreneauStore } from '@stores/creneau'
+import { useSeanceStore } from '@stores/seance'
+import { useRoute } from 'vue-router'
 
-const edit_mode = ref<"create" | "edit">("create");
-const edit_seance = ref<InstanceType<typeof EditSeance>>();
+defineExpose({ open_modal, close_modal })
 
-const seances = [
-  {
-    debut: '10:00',
-    fin: '11:00',
-    animateurs: ['Loïc', 'Quentin'],
-    groupes: ['U12', 'U14'],
-    QR: '',
-  },
-]
+const edit_mode = ref<'create' | 'edit'>('create')
+const edit_seance = ref<InstanceType<typeof EditSeance>>()
+const open = ref(false)
+const creneau_store = useCreneauStore()
+const seance_store = useSeanceStore()
+const route = useRoute();
 
 function new_seance() {
-    if(edit_seance.value) {
-        edit_seance.value.open_panel();
-    }
+  if (edit_seance.value) {
+    seance_store.setDefault()
+    edit_seance.value.open_panel()
+  }
+}
+
+function open_modal() {
+  open.value = true
+  creneau_store.fetchSeances()
+  seance_store.fetchAnimateurs(route.params.id_org as any);
+}
+
+function close_modal() {
+  open.value = false
+}
+
+function getSeanceHours(seance: Seance): string {
+  return `${getDateStringHour(seance.dateHeureDebut)} - ${getDateStringHour(
+    seance.dateHeureFin
+  )}`
+}
+
+function getSeanceAnimateurs(seance: Seance): string {
+  return seance.animateurs.map((a) => `${a.nom} ${a.prenom}`).join(', ')
 }
 </script>
 

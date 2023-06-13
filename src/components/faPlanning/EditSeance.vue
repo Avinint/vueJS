@@ -9,6 +9,7 @@
       <label class="label-text"> Plage horaire de la seance </label>
       <div class="flex">
         <select
+          v-model="seance_store.data.dateHeureDebut"
           required
           class="h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
@@ -22,6 +23,7 @@
         </select>
         <div class="px-4 py-2">à</div>
         <select
+          v-model="seance_store.data.dateHeureFin"
           required
           class="h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
         >
@@ -71,11 +73,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(animateur, i) in animateurs" :key="i" class="bg-white">
-            <td class="px-6 py-4"><Switch/></td>
-            <td class="px-6 py-4">{{ animateur.lastname }}</td>
-            <td class="px-6 py-4">{{ animateur.firstname }}</td>
-            <td class="px-6 py-4">{{ animateur.phone }}</td>
+          <tr v-for="(animateur, i) in seance_store.getAnimateurs" :key="i" class="bg-white">
+            <td class="px-6 py-4"><Switch :model-value="animateur.organisateur"/></td>
+            <td class="px-6 py-4">{{ animateur.nom }}</td>
+            <td class="px-6 py-4">{{ animateur.prenom }}</td>
+            <td class="px-6 py-4">{{ animateur.telephone }}</td>
             <td class="px-6 py-4">{{ animateur.email }}</td>
           </tr>
         </tbody>
@@ -91,6 +93,7 @@
 <script setup lang="ts">
 import Button from '@components/common/Button.vue'
 import Switch from '@components/common/Switch.vue';
+import { useSeanceStore } from '@stores/seance';
 import { ref } from 'vue'
 
 defineProps<{
@@ -99,6 +102,7 @@ defineProps<{
 
 const container = ref<HTMLElement>();
 const is_open = ref(false)
+const seance_store = useSeanceStore();
 defineExpose({ open_panel, close_panel })
 
 const groupes = [

@@ -82,4 +82,5 @@ export const default_creneau = (): Creneau => ({
   tarifHoraire: 0,
   nbParticipants: 0,
   mode: null,
+  seances: [],
 });

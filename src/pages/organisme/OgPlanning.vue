@@ -1,6 +1,6 @@
 <template>
   <div class="fa-planning">
-    <ModalSeance/>
+    <ModalSeance ref="modal"/>
     <PlanningNavigation v-if="calendar_api" class="mb-6" :calendar-api="calendar_api" />
     <div
       class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
@@ -27,6 +27,8 @@ import { getWeekNumber } from '../../services/date_service'
 import type { EventSourceInput } from '@fullcalendar/core'
 import Event from '@components/faPlanning/Event.vue'
 import ModalSeance from '@components/faPlanning/ModalSeance.vue'
+import type { EventClickArg } from '@fullcalendar/core'
+import type { EventImpl } from '@fullcalendar/core/internal'
 
 const planning_store = usePlanningStore()
 const creneau_store = useCreneauStore()
@@ -35,11 +37,11 @@ const calendar_options = reactive({
   editable: false,
   datesSet: refreshDates,
   eventClick: eventClick,
-  select: select,
 });
 
 const calendar_api = ref()
 const calendar = ref<InstanceType<typeof FullCalendar>>()
+const modal = ref<InstanceType<typeof ModalSeance>>();
 const zones = ref<Zone[]>([])
 const route = useRoute()
 
@@ -69,11 +71,12 @@ function refreshDates(dateInfo: any) {
   planning_store.currentDateEnd = dateInfo.end
 }
 
-function eventClick(eventClickInfo) {}
-
-function select(selectionInfo) {}
-
-function setSelectedCreneau(fullCalendarCreneau) {}
+function eventClick(eventClickInfo: EventClickArg) {  
+  creneau_store.setCreneau(eventClickInfo.event as any) // TODO: improve typing
+  if(modal.value) {
+    modal.value.open_modal();
+  }
+}
 </script>
 
 <style scoped>

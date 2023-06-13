@@ -8,6 +8,7 @@ import {
   makeCreneauOGEditContract,
 } from '../services/planning/creneau_service'
 import dayjs from 'dayjs'
+import { getCreneauSeances } from '@api/seance'
 
 export const useCreneauStore = defineStore('creneau', {
   state: default_creneau,
@@ -117,6 +118,11 @@ export const useCreneauStore = defineStore('creneau', {
         await deleteCreneau(this.id);
         const planning_store = usePlanningStore();
         planning_store.removeCreneau(this.id);
+      }
+    },
+    async fetchSeances() {
+      if(this.id) {
+        this.seances = await getCreneauSeances(this.id);
       }
     }
   },

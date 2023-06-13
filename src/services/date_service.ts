@@ -1,3 +1,9 @@
+export function f0(number: number) {
+  if(number < 10)
+    return `0${number}`;
+  return number;
+}
+
 export function getCreneauDuration(
   start_time: string,
   end_time: string
@@ -21,4 +27,9 @@ export function getWeekNumber(date: string) {
         7
     )
   )
+}
+
+export function getDateStringHour(date_string: string): string {
+  const date = new Date(date_string);
+  return `${f0(date.getHours())}:${f0(date.getMinutes())}`;
 }

@@ -21,6 +21,7 @@ type Creneau = {
     zones: number[];
     zoneId?: number;
     mode: string | null;
+    seances: Seance[];
 }
 
 type Zone = {
@@ -109,4 +110,34 @@ type CalendarEvent = {
     title: string,
     resourceIds: number[],
     extendedProps?: any
+}
+
+type Participant = {
+    id: number,
+    idUser: number,
+    nom: string,
+    prenom: string,
+    organisateur: boolean,
+    statut: string,
+}
+
+type Animateur = {
+    id: number,
+    idUser: number,
+    nom: string,
+    prenom: string,
+    organisateur: boolean,
+    statut: string,
+    email: string,
+    telephone: string,
+    titulaireCarte: boolean,
+}
+
+type Seance = {
+    id: number,
+    dateHeureDebut: string,
+    dateHeureFin: string,
+    type: string,
+    participants: Participant[],
+    animateurs: Animateur[],
 }
