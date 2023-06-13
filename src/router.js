@@ -265,6 +265,7 @@ const routes = [
   },
   {
     path: '/animateurs',
+    name: 'animateurs_global',
     component: Animateur,
     meta: {
       breadcrumbs: [
@@ -297,7 +298,7 @@ const routes = [
     path: '/clients/:id',
     props: true,
     name: 'client',
-    component: FaOrganisme,
+    component: Client,
     meta: {
       breadcrumbs: [],
     },
@@ -320,7 +321,24 @@ const routes = [
         },
       },
     ]
-  }
+  },
+  {
+    path: '/organismes/:id/animateurs',
+    name: 'animateursParOrganisme',
+    component: Animateur,
+    meta: {
+      breadcrumbs: [
+        // {
+        //   label: 'Animateur',
+        //   link: 'animateur',
+        // },
+        // {
+        //   label: 'Liste',
+        //   link: 'liste',
+        // }
+      ],
+    },
+  },
 ]
 
 const router = createRouter({

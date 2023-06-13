@@ -371,8 +371,8 @@ const validation = ref({})
 const gestionnairesOrganisme = ref([])
 
 onBeforeRouteUpdate(async (to, from) => {
-  // only fetch the user if the id changed as maybe only the query or the hash changed
-  if (to.params.id !== from.params.id) {
+  // on recharge le composant si l'id change
+  if ((to.params?.id ?? false) && to.params.id !== from.params.id) {
     organismes.value = await getOrganismesParClient(route.params.id)
   }
 })

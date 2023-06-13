@@ -40,7 +40,6 @@ import { computed } from 'vue'
     borderless?: Boolean,
     submit?: boolean,
   }>();
-  console.log(props.submit)
 
   const icon = ICON[props.icon ?? '']
   const couleur = TYPE[props.couleur ?? '']

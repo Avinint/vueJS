@@ -156,19 +156,19 @@ onMounted(async () => {
         sub_links: [
           {
             label: 'Mon planning fit Arena 1',
-            path: `/organisme/${org.id}/planning1`,
+            path: `/organismes/${org.id}/planning1`,
           },
           {
             label: 'Mon planning fit Arena 2',
-            path: `/organisme/${org.id}/planning2`,
+            path: `/organismes/${org.id}/planning2`,
           },
           {
             label: 'Mes Adhérents',
-            path: `/organisme/${org.id}/adherents`
+            path: `/organismes/${org.id}/adherents`
           },
           {
             label: "Mes groupes d'adhérents",
-            path: `/organisme/${org.id}/groupes-adherents`
+            path: `/organismes/${org.id}/groupes-adherents`
           },
           // {
           //   label: 'Demande de créneaux',
@@ -176,7 +176,7 @@ onMounted(async () => {
           // },
           {
             label: 'Animateurs',
-            path: `/organisme/${org.id}/animateurs`
+            path: `/organismes/${org.id}/animateurs`
           },
         ]
       }
