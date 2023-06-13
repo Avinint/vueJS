@@ -1,5 +1,6 @@
 <template>
   <div class="fa-planning">
+    <ModalSeance/>
     <PlanningNavigation v-if="calendar_api" class="mb-6" :calendar-api="calendar_api" />
     <div
       class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
@@ -25,6 +26,7 @@ import { useRoute } from 'vue-router'
 import { getWeekNumber } from '../../services/date_service'
 import type { EventSourceInput } from '@fullcalendar/core'
 import Event from '@components/faPlanning/Event.vue'
+import ModalSeance from '@components/faPlanning/ModalSeance.vue'
 
 const planning_store = usePlanningStore()
 const creneau_store = useCreneauStore()
@@ -74,4 +76,5 @@ function select(selectionInfo) {}
 function setSelectedCreneau(fullCalendarCreneau) {}
 </script>
 
-<style></style>
+<style scoped>
+</style>

@@ -1,0 +1,33 @@
+<template>
+  <div class="modal-bottom bg-white border-b drop-shadow-xl">
+      <div class="flex justify-between items-center border-b h-16">
+        <slot name="title"/>
+        <Button test='TcloseModal' @click="emit('close', $event)" couleur="secondary" icon="cross" borderless />
+    </div>
+    <div class="p-4">
+        <slot name="content"/>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import Button from './Button.vue';
+const emit = defineEmits(['close'])
+
+</script>
+
+<style scoped>
+.modal-bottom {
+    position: fixed;
+    z-index: 100;
+    bottom: 0;
+    border-radius: 8px 8px 0px 0px;
+    width: 100%;
+    max-width: calc(100vw - 288px);
+}
+
+.modal-bottom-title {
+    height: 60px;
+    border-bottom: 1px solid gray;
+}
+</style>
