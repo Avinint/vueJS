@@ -2,6 +2,7 @@ type Creneau = {
     id?: number;
     activites: Activite[];
     creneauType: number;
+    type: number;
     titre: string;
     date: string;
     dateDebut: string,
@@ -20,6 +21,11 @@ type Creneau = {
     zones: number[];
     zoneId?: number;
     mode: string | null;
+}
+
+type Zone = {
+    id: number,
+    libelle: string,
 }
 
 type CreneauOGEditContract = {
