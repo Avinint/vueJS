@@ -277,6 +277,25 @@
               :validation="[emailValidation]"
             />
           </div>
+          <div class="flex items-center">
+            <Input
+              id="TcodePin"
+              v-model="gestionnaire.codePin"
+              :readonly="readonly"
+              pattern="\d{6}"
+              label="Code pin carte d'accès"
+              class="w-full"
+              max-length="6"
+              min-length="6"
+              :required="false"
+            />
+          </div>
+          <div v-if="gestionnaire.qrCode" class="flex items-center">
+            <img
+              alt="qr code"
+              :src="'data:image/jpeg;base64,' + gestionnaire.qrCode"
+            />
+          </div>
         </Card>
 
         <Button
