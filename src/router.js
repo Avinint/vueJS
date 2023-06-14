@@ -293,34 +293,23 @@ const routes = [
       ],
     },
   },
-
   {
-    path: '/clients/:id',
+    path: '/clients/:id/organismes',
     props: true,
-    name: 'client',
-    component: Client,
+    name: 'organismes_par_client',
+    component: FaOrganisme,
     meta: {
-      breadcrumbs: [],
-    },
-    children: [
-      {
-        path: 'organismes',
-        name: 'organismes_par_client',
-        component: FaOrganisme,
-        meta: {
-          breadcrumbs: [
-            {
-              label: 'organismes',
-              link: 'organismes',
-            },
-            {
-              label: 'organismes',
-              link: 'organismes',
-            },
-          ],
+      breadcrumbs: [
+        {
+          label: 'Organismes',
+          link: 'organismes',
         },
-      },
-    ]
+        {
+          label: 'Liste',
+          link: '',
+        },
+      ],
+    }
   },
   {
     path: '/organismes/:id/animateurs',
