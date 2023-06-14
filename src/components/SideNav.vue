@@ -118,9 +118,9 @@ const openSubSubLinks = (i, sub_i) => {
 
 onMounted(async () => {
 
-  const {clients, fitarenas, organismes} = await (await getMenu()).menu;
+  const {clients = false, fitarenas = false, organismes = false} = await (await getMenu()).menu;
 
-  if (isAdmin || isGestCo) {
+  if (clients) {
     clientLinks.value = clients.map((cli) => {
 
       return {
@@ -147,7 +147,7 @@ onMounted(async () => {
     })
   }
 
-  if (isGestOrg) {
+  if (isGestOrg && organismes) {
     organismeLinks.value = organismes.map((org) => {
       return {
         label: org.libelle,
@@ -181,7 +181,9 @@ onMounted(async () => {
         ]
       }
     })
-  } else {
+  }
+
+  if (fitarenas) {
     fitArenaLinks.value = fitarenas.map((fa) => {
 
       const subLinksGestionnaire = [
@@ -264,45 +266,41 @@ onMounted(async () => {
         sub_links: isAdmin ? subLinksAdmin : subLinksGestionnaire
       }
     })
+  }
 
-    if (fitArenaLinks.value.length) {
-      links.push({
-          label: 'Fit Arena',
-          path: '',
-          divider: true,
-        },
-        {
-          label: 'Fit Arenas',
-          path: '/fitarena',
-        })
+  if (fitArenaLinks.value.length) {
+    links.push({
+        label: 'Fit Arena',
+        path: '',
+        divider: true,
+      },
+      {
+        label: 'Fit Arenas',
+        path: '/fitarena',
+      })
 
-      for (const faLink of fitArenaLinks.value) {
-        links.push(faLink)
-      }
-    }
-
-    if (clientLinks.value.length) {
-      links.push(
-        {
-          label: 'Espace client',
-          path: '',
-          divider: true,
-        },
-        {
-          label: 'Clients',
-          path: '/clients',
-        }
-      )
-
-      for (const cliLink of clientLinks.value) {
-        links.push(cliLink)
-      }
+    for (const faLink of fitArenaLinks.value) {
+      links.push(faLink)
     }
   }
 
+  if (clientLinks.value.length) {
+    links.push(
+      {
+        label: 'Espace client',
+        path: '',
+        divider: true,
+      },
+      {
+        label: 'Clients',
+        path: '/clients',
+      }
+    )
 
-
-
+    for (const cliLink of clientLinks.value) {
+      links.push(cliLink)
+    }
+  }
 
   if (organismeLinks.value.length) {
     if (isGestOrg) {
@@ -320,8 +318,6 @@ onMounted(async () => {
         links.push(orgLink)
       }
     }
-
-  } else {
 
   }
 })
