@@ -129,7 +129,7 @@
           <template v-for="zone in zones">
             <div v-if="isZoneEditable(zone)" :key="zone" class="w-80 flex-col">
               <input
-                :id="zone.id"
+                :id="zone.code"
                 v-model="creneauStore.zones"
                 type="checkbox"
                 :value="zone.id"
