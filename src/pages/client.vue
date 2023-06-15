@@ -295,7 +295,6 @@
                 v-model="community_manager.email"
                 v-model:valid="validation.email2"
                 :readonly="readonly"
-                :type="'text'"
                 label="Email"
                 class="w-full"
                 :required="true"
@@ -319,7 +318,7 @@
             <div v-if="community_manager.qrCode" class="flex items-center">
               <img
                 alt="qr code"
-                :src="'data:image/jpeg;base64,' + community_manager.qrCode"
+                :src="community_manager.qrCode"
               />
             </div>
           </Card>
