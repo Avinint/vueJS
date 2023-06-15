@@ -1,6 +1,6 @@
 <template>
   <Card class="space-y-3">
-    <h1>Organisme</h1>
+    <h1>Organismes</h1>
 
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
