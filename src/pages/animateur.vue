@@ -195,7 +195,7 @@
         <div v-if="carteActive?.qrCode" class="flex items-center">
           <img
             alt="qr code"
-            :src="'data:image/jpeg;base64,' + carteActive.qrCode"
+            :src="carteActive.qrCode"
           />
         </div>
       </Card>

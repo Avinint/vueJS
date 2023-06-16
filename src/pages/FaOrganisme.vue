@@ -293,9 +293,10 @@
           <div v-if="gestionnaire.qrCode" class="flex items-center">
             <img
               alt="qr code"
-              :src="'data:image/jpeg;base64,' + gestionnaire.qrCode"
+              :src="gestionnaire.qrCode"
             />
           </div>
+
         </Card>
 
         <Button
