@@ -295,11 +295,30 @@
                 v-model="community_manager.email"
                 v-model:valid="validation.email2"
                 :readonly="readonly"
-                :type="'text'"
                 label="Email"
                 class="w-full"
                 :required="true"
                 :validation="[emailValidation]"
+              />
+            </div>
+            <div class="flex items-center">
+              <Input
+                id="TcodePin"
+                v-model="community_manager.codePin"
+                :readonly="readonly"
+                type="text"
+                pattern="\d{6}"
+                label="Code pin carte d'accès"
+                class="w-full"
+                max-length="6"
+                min-length="6"
+                :required="false"
+              />
+            </div>
+            <div v-if="community_manager.qrCode" class="flex items-center">
+              <img
+                alt="qr code"
+                :src="community_manager.qrCode"
               />
             </div>
           </Card>
@@ -393,6 +412,8 @@ const community_managers = ref([])
 
 const validation = ref({})
 
+
+
 onMounted(async () => {
   try {
     clients.value = await getClients(1)
@@ -476,6 +497,8 @@ const addClientValidation = async () => {
 const cancel = async () => {
   address.value = []
   complement.value = ''
+  community_managers.value = []
+
 }
 
 const addressSelect = () => {
@@ -500,7 +523,7 @@ const addClient = () => {
   exploit_referents.value = [
     { nom: '', prenom: '', fonction: '', telephone: '', email: '' },
   ]
-  community_managers.value = [{ nom: '', prenom: '', email: '' }]
+  community_managers.value = [{ nom: '', prenom: '', email: '', codePin: null}]
   address_selected.value = {}
   id_selected.value = ''
   cancel()
@@ -534,6 +557,11 @@ const mapApiToData = (client) => {
   complement.value = address_selected.value.complement
   id_selected.value = client.id
   address.value = address_selected.value.address
+
+  // for (const gestionnaire in community_managers.value)
+  //   for (const prop in gestionnaire.carteActive) {
+  //     carteActive.value[prop] = gestionnaire.carteActive[prop]
+  //   }
 }
 
 const removeClient = (id) => {
