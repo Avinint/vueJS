@@ -6,8 +6,19 @@ export const selectOrganismes = async () => {
 }
 
 export async function getOrganismes(page = 1, query = ''): Promise<Organisme[]> {
-
-  return await get(`${import.meta.env.VITE_API_URL}/api/organismes?page=${page}${query}`)
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/organismes?page=${page}${query}`,
+    {
+      method: 'get',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      }
+    }
+  )
+  if (response.status !== 200) throw response
+  return response.json()
 }
 
 export async function getOrganismesParClient(id: number): Promise<Organisme[]> {
