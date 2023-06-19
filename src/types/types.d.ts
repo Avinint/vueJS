@@ -2,6 +2,7 @@ type Creneau = {
     id?: number;
     activites: Activite[];
     creneauType: number;
+    type: number;
     titre: string;
     date: string;
     dateDebut: string,
@@ -20,6 +21,12 @@ type Creneau = {
     zones: number[];
     zoneId?: number;
     mode: string | null;
+    seances: Seance[];
+}
+
+type Zone = {
+    id: number,
+    libelle: string,
 }
 
 type CreneauOGEditContract = {
@@ -54,8 +61,21 @@ type CreneauEditContract = {
     nbParticipants: number,
 }
 
+type SeanceEditContract = {
+    dateHeureDebut: string;
+    dateHeureFin: string;
+    idCreneau: number;
+    animateurs: { id: number }[];
+}
+
 type CreneauEditResponse = {
     creneaux: Creneau[];
+}
+
+type SeanceEditResponse = {
+    idReservationParent: number;
+    reservation: Seance;
+    qrCode: string;
 }
 
 enum CreneauType {
@@ -103,4 +123,35 @@ type CalendarEvent = {
     title: string,
     resourceIds: number[],
     extendedProps?: any
+}
+
+type Participant = {
+    id: number,
+    idUser: number,
+    nom: string,
+    prenom: string,
+    organisateur: boolean,
+    statut: string,
+}
+
+type Animateur = {
+    id: number,
+    idUser: number,
+    nom: string,
+    prenom: string,
+    organisateur: boolean,
+    statut: string,
+    email: string,
+    telephone: string,
+    titulaireCarte: boolean,
+}
+
+type Seance = {
+    id: number,
+    dateHeureDebut: string,
+    dateHeureFin: string,
+    type: string,
+    participants: Participant[],
+    animateurs: Animateur[],
+    selected_animateurs: number[],
 }

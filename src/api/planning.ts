@@ -1,25 +1,39 @@
 import { defaultHeaders } from './api'
 import $fetch from './refreshToken.js'
 
-export async function getPlanning(debut: number, fit_arena: number, duree: number, zone: string): Promise<Planning> {
+export async function getPlanning(
+  debut: number,
+  fit_arena: number,
+  duree: number,
+  zone: string,
+  organisme?: number
+): Promise<Planning> {
   const api_url = import.meta.env.VITE_API_URL
 
-  const response = await $fetch(
-    `${api_url}/api/planning?debut=${debut}&fit_arena=${fit_arena}&duree=${duree}&zones=[${zone}]`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    }
-  )
+  const url = new URL(`${api_url}/api/planning`)
+  url.searchParams.append('debut', debut.toString())
+  url.searchParams.append('fit_arena', fit_arena.toString())
+  url.searchParams.append('duree', duree.toString())
+  url.searchParams.append('zones', `[${zone}]`)
+
+  if(organisme)
+    url.searchParams.append('organisme', organisme.toString());
+
+  const response = await $fetch(url.toString(), {
+    method: 'get',
+    headers: {
+      ...defaultHeaders,
+      'Content-Type': 'application/ld+json',
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+  })
   if (response.status !== 200) throw response
   return response.json()
 }
 
-export async function postCreneau(contract: CreneauEditContract | CreneauOGEditContract): Promise<CreneauEditResponse> {
+export async function postCreneau(
+  contract: CreneauEditContract | CreneauOGEditContract
+): Promise<CreneauEditResponse> {
   const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/creneau`, {
     method: 'post',
     headers: {
@@ -33,7 +47,10 @@ export async function postCreneau(contract: CreneauEditContract | CreneauOGEditC
   return response.json()
 }
 
-export async function updateCreneau(id: number, contract: CreneauEditContract | CreneauOGEditContract): Promise<CreneauEditResponse> {
+export async function updateCreneau(
+  id: number,
+  contract: CreneauEditContract | CreneauOGEditContract
+): Promise<CreneauEditResponse> {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
     {

@@ -17,10 +17,10 @@ import FaNumericEquipements from './pages/fitarena/FaNumericEquipements.vue'
 import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
 import FaPlanning from './pages/fitarena/FaPlanning.vue'
 import FaOrganisme from './pages/FaOrganisme.vue'
-
+import OgPlanning from './pages/organisme/OgPlanning.vue'
 
 import { useUserStore } from './stores/user.js'
-import Animateur from "@pages/animateur.vue";
+import Animateur from '@pages/animateur.vue'
 
 const routes = [
   {
@@ -276,9 +276,9 @@ const routes = [
         {
           label: 'Liste',
           link: 'liste',
-        }
-      ]
-    }
+        },
+      ],
+    },
   },
   {
     path: '/organismes',
@@ -292,6 +292,29 @@ const routes = [
         },
       ],
     },
+  },
+  {
+    path: '/organismes/:org_id',
+    props: true,
+    name: 'Organismes',
+    component: FitArena,
+    meta: {
+      breadcrumbs: [],
+    },
+    children: [
+      {
+        path: 'planning/:id',
+        component: OgPlanning,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
+          ],
+        },
+      },
+    ],
   },
   {
     path: '/clients/:id/organismes',

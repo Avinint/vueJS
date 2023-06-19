@@ -243,7 +243,7 @@ import {
   getAnimateurs, getAnimateursParOrganisme,
   postAnimateur,
   putAnimateur,
-} from '../api/animateur.js'
+} from '../api/animateur.ts'
 import { selectOrganismes } from '../api/organisme.ts'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'

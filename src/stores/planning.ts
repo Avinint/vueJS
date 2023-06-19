@@ -2,12 +2,13 @@ import { defineStore } from 'pinia'
 import { getPlanning } from '@api/planning'
 import dayjs from 'dayjs'
 import { getActivites } from '@api/activite'
-import { default_planning, parseCreneauToEvent } from '../services/planning/planning_service'
-import { Calendar, type CalendarOptions, type EventSourceInput } from '@fullcalendar/core'
-import type { EventImpl } from '@fullcalendar/core/internal'
+import {
+  default_planning,
+  parseCreneauToEvent,
+} from '../services/planning/planning_service'
 
 export const usePlanningStore = defineStore('planning', {
-  state: () => (default_planning),
+  state: () => default_planning,
   getters: {
     isZoneActive(state) {
       return (id: number) => {
@@ -46,12 +47,24 @@ export const usePlanningStore = defineStore('planning', {
       return state.activites
     },
     getCreneauxEvents(state): CalendarEvent[] {
-      return state.creneaux.map(creneau => parseCreneauToEvent(creneau));
-    }
+      return state.creneaux.map((creneau) => parseCreneauToEvent(creneau))
+    },
+    getCreneauxOrganismesEvents(state): CalendarEvent[] {
+      const output: CalendarEvent[] = [];
+      for(const creneau of state.creneaux) {
+        if(creneau.type == 2) {
+          output.push(parseCreneauToEvent(creneau));
+        }
+      }
+      return output;
+    },
   },
   actions: {
     async fetch() {
-      const debut = this.currentViewName === 'day' ? this.getDebutOfWeek : this.getDebutOfDay
+      const debut =
+        this.currentViewName === 'day'
+          ? this.getDebutOfWeek
+          : this.getDebutOfDay
 
       const response = await getPlanning(
         debut,
@@ -59,6 +72,22 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.duree,
         this.filters.zone.join(',')
       )
+      this.pushCreneaux(response.creneaux)
+    },
+    async fetchPlanningOrganisme(organisme_id: number) {
+      const debut =
+        this.currentViewName === 'day'
+          ? this.getDebutOfWeek
+          : this.getDebutOfDay
+
+      const response = await getPlanning(
+        debut,
+        this.filters.fit_arena,
+        this.filters.duree,
+        this.filters.zone.join(','),
+        organisme_id
+      )
+
       this.pushCreneaux(response.creneaux)
     },
     async fetchActivites(id: number) {
@@ -70,7 +99,10 @@ export const usePlanningStore = defineStore('planning', {
       Object.assign(creneaux, this.creneaux)
       creneaux.forEach(function (creneau) {
         creneau.activites.forEach((activite) => {
-          activites.set(activite.activiteId, { ...activite, title: activite.libelle })
+          activites.set(activite.activiteId, {
+            ...activite,
+            title: activite.libelle,
+          })
         })
       })
       const arr = Array.from(activites, function (entry) {
@@ -79,7 +111,7 @@ export const usePlanningStore = defineStore('planning', {
       this.activites = arr
     },
     pushCreneaux(creneaux: Creneau[]) {
-      this.creneaux = creneaux;
+      this.creneaux = creneaux
     },
     addCreneaux(creneaux: Creneau[]) {
       for (const creneau of creneaux) {
@@ -89,9 +121,9 @@ export const usePlanningStore = defineStore('planning', {
       }
     },
     removeCreneau(id: number) {
-      for(let i = 0; i < this.creneaux.length; i++) {
-        if(this.creneaux[i].id == id) {
-          this.creneaux.splice(i, 1);
+      for (let i = 0; i < this.creneaux.length; i++) {
+        if (this.creneaux[i].id == id) {
+          this.creneaux.splice(i, 1)
         }
       }
     },

@@ -63,6 +63,7 @@ export function makeCreneauOGEditContract(zone_id: number, creneau: Creneau): Cr
 export const default_creneau = (): Creneau => ({
   id: 0,
   creneauType: 0,
+  type: 0,
   activites: [],
   titre: '',
   date: '',
@@ -81,4 +82,5 @@ export const default_creneau = (): Creneau => ({
   tarifHoraire: 0,
   nbParticipants: 0,
   mode: null,
+  seances: [],
 });

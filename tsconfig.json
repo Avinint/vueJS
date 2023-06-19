@@ -1,11 +1,12 @@
 {
     "extends": "@vue/tsconfig/tsconfig.json",
     "compilerOptions": {
-        "baseUrl": "src",
+        "baseUrl": "./src",
         "paths": {
             "@api/*": ["api/*"],
             "@stores/*": ["stores/*"],
-            "@services/*": ["services/*"]
+            "@services/*": ["services/*"],
+            "@components/*": ["components/*"],
         },
         "allowJs": true
     },
