@@ -1,7 +1,7 @@
 import { getAnimateursOrganisme } from '@api/animateur'
 import { default_seance, parseSeance } from '../services/planning/seance_service'
 import { defineStore } from 'pinia'
-import { postSeance, putSeance } from '@api/seance'
+import { deleteSeance, postSeance, putSeance } from '@api/seance'
 import { useCreneauStore } from './creneau'
 import { getDateStringHour } from '../services/date_service'
 
@@ -42,6 +42,15 @@ export const useSeanceStore = defineStore('seance', {
         }
       }
     },
+    removeSeance(seance_id: number) {
+      const creneau_store = useCreneauStore();
+      for(const index in creneau_store.seances) {
+        const seance = creneau_store.seances[index];
+        if(seance.id == seance_id) {
+          creneau_store.seances.splice(parseInt(index), 1);
+        }
+      }
+    },
     async fetchAnimateurs(id_organisme: number) {
       this.animateurs = await getAnimateursOrganisme(id_organisme);
       this.selected_animateurs = this.animateurs.map(() => {return false});
@@ -59,6 +68,13 @@ export const useSeanceStore = defineStore('seance', {
         const seance = parseSeance(creneau_store.getId, this.animateurs, this.selected_animateurs, this.data);
         const response = await putSeance(this.data.id, seance);
         this.updateSeance(this.data.id, response)
+      }
+    },
+    async delete() {
+      const creneau_store = useCreneauStore();
+      if(creneau_store.id) {
+        await deleteSeance(this.data.id);
+        this.removeSeance(this.data.id);
       }
     },
     load(seance: Seance) {

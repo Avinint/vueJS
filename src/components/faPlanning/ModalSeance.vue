@@ -28,6 +28,7 @@
               <th scope="col" class="px-6 py-3">Groupe(s)</th>
               <th scope="col" class="px-6 py-3">QR code de séance</th>
               <th scope="col" class="px-6 py-3">Modifier la séance</th>
+              <th scope="col" class="px-6 py-3">Supprimer la séance</th>
             </tr>
           </thead>
           <tbody>
@@ -40,7 +41,23 @@
               <td class="px-6 py-4">{{ getSeanceAnimateurs(seance) }}</td>
               <td class="px-6 py-4">Aucun</td>
               <td class="px-6 py-4">QR CODE</td>
-              <td class="px-6 py-4"><Button v-if="seance.type === 'animateur'" label="MODIFIER" couleur="secondary" @click="modify_seance(seance)"/></td>
+              <td class="px-6 py-4">
+                <Button
+                  v-if="seance.type === 'animateur'"
+                  label="MODIFIER"
+                  couleur="secondary"
+                  @click="modify_seance(seance)"
+                />
+              </td>
+              <td class="px-6 py-4">
+                <Button
+                  v-if="seance.type === 'animateur'"
+                  @click="delete_seance(seance)"
+                  couleur="danger"
+                  borderless
+                  icon="delete"
+                />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -67,30 +84,37 @@ const edit_seance = ref<InstanceType<typeof EditSeance>>()
 const open = ref(false)
 const creneau_store = useCreneauStore()
 const seance_store = useSeanceStore()
-const route = useRoute();
+const route = useRoute()
 
 function new_seance() {
   if (edit_seance.value) {
-    edit_mode.value = "create";
+    edit_mode.value = 'create'
     seance_store.setDefault()
-    seance_store.data.dateHeureDebut = creneau_store.heureDebut;
-    seance_store.data.dateHeureFin = creneau_store.heureFin;
-    edit_seance.value.open_panel();
+    seance_store.data.dateHeureDebut = creneau_store.heureDebut
+    seance_store.data.dateHeureFin = creneau_store.heureFin
+    edit_seance.value.open_panel()
   }
 }
 
 function modify_seance(seance: Seance) {
-  if(edit_seance.value) {
-    edit_mode.value = "edit";
+  if (edit_seance.value) {
+    edit_mode.value = 'edit'
+    seance_store.load(seance)
+    edit_seance.value.open_panel()
+  }
+}
+
+function delete_seance(seance: Seance) {
+  if(confirm("Souhaitez vous supprimer la séance ?")) {
     seance_store.load(seance);
-    edit_seance.value.open_panel();
+    seance_store.delete();
   }
 }
 
 function open_modal() {
   open.value = true
   creneau_store.fetchSeances()
-  seance_store.fetchAnimateurs(route.params.id_org as any);
+  seance_store.fetchAnimateurs(route.params.id_org as any)
 }
 
 function close_modal() {
