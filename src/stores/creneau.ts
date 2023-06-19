@@ -124,6 +124,7 @@ export const useCreneauStore = defineStore('creneau', {
       }
     },
     async fetchSeances() {
+      this.seances = [];
       if(this.id) {
         this.seances = await getCreneauSeances(this.id);
       }

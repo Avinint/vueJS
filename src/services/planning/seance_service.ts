@@ -8,12 +8,12 @@ export const default_seance: Seance = {
     dateHeureFin: '00:00',
 }
 
-export function parseSeance(id_creneau: number, animateurs: Animateur[], seance: Seance): SeanceEditContract {
+export function parseSeance(id_creneau: number, animateurs: Animateur[], selected_animateurs: boolean[], seance: Seance): SeanceEditContract {
 
     const output_animateurs = [];
     for(const index in animateurs) {
         const animateur = animateurs[index];
-        if(seance.selected_animateurs[index]) {
+        if(selected_animateurs[index]) {
             output_animateurs.push({id: animateur.id});
         } 
     }

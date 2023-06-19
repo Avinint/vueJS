@@ -88,6 +88,9 @@ async function validate() {
   if(props.mode === 'create') {
     is_open.value = false;
     await seance_store.post();
+  } else if(props.mode === 'edit') {
+    is_open.value = false;
+    await seance_store.put();
   }
 }
 

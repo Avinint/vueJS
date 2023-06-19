@@ -1,8 +1,9 @@
 import { getAnimateursOrganisme } from '@api/animateur'
 import { default_seance, parseSeance } from '../services/planning/seance_service'
 import { defineStore } from 'pinia'
-import { postSeance } from '@api/seance'
+import { postSeance, putSeance } from '@api/seance'
 import { useCreneauStore } from './creneau'
+import { getDateStringHour } from '../services/date_service'
 
 type SeanceStoreState = {
   animateurs: Animateur[],
@@ -22,6 +23,25 @@ export const useSeanceStore = defineStore('seance', {
     getFin: (state) => state.data.dateHeureFin,
   },
   actions: {
+    getAnimateur(id: number) {
+      for(const animateur of this.animateurs) {
+        if(animateur.id == id)
+          return animateur;
+      }
+      throw "Animateur not found.";
+    },
+    updateSeance(seance_id: number, updated_seance: Seance) {
+      const creneau_store = useCreneauStore();
+      for(let index in creneau_store.seances) {
+        const seance = creneau_store.seances[index];
+        if(seance.id == seance_id) {
+          updated_seance.animateurs = updated_seance.animateurs.map(e => this.getAnimateur(e.id));
+          updated_seance.type = "animateur";
+          updated_seance.id = seance_id;
+          creneau_store.seances[index] = updated_seance; 
+        }
+      }
+    },
     async fetchAnimateurs(id_organisme: number) {
       this.animateurs = await getAnimateursOrganisme(id_organisme);
       this.selected_animateurs = this.animateurs.map(() => {return false});
@@ -29,9 +49,38 @@ export const useSeanceStore = defineStore('seance', {
     async post() {
       const creneau_store = useCreneauStore();
       if(creneau_store.id) {
-        const response = await postSeance(parseSeance(creneau_store.getId, this.animateurs, this.data));
+        const response = await postSeance(parseSeance(creneau_store.getId, this.animateurs, this.selected_animateurs, this.data));
         creneau_store.seances.push(response.reservation);
       }
+    },
+    async put() {
+      const creneau_store = useCreneauStore();
+      if(creneau_store.id) {
+        const seance = parseSeance(creneau_store.getId, this.animateurs, this.selected_animateurs, this.data);
+        const response = await putSeance(this.data.id, seance);
+        this.updateSeance(this.data.id, response)
+      }
+    },
+    load(seance: Seance) {
+      
+      for(const index in this.animateurs) {
+        const animateur = this.animateurs[index]; 
+        let found = false;
+        for(const seance_animateur of seance.animateurs) {
+          if(seance_animateur.id == animateur.id) {
+            this.selected_animateurs[index] = true;
+            found = true;
+          }
+        }
+        if(!found)
+        this.selected_animateurs[index] = false;
+      }
+
+      this.data = {
+        ...seance,
+        dateHeureDebut: getDateStringHour(seance.dateHeureDebut),
+        dateHeureFin: getDateStringHour(seance.dateHeureFin),
+      };
     },
     setDefault() {
       this.data = default_seance

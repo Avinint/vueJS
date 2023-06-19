@@ -40,7 +40,7 @@
               <td class="px-6 py-4">{{ getSeanceAnimateurs(seance) }}</td>
               <td class="px-6 py-4">Aucun</td>
               <td class="px-6 py-4">QR CODE</td>
-              <td class="px-6 py-4">MODIFIER</td>
+              <td class="px-6 py-4"><Button v-if="seance.type === 'animateur'" label="MODIFIER" couleur="secondary" @click="modify_seance(seance)"/></td>
             </tr>
           </tbody>
         </table>
@@ -71,10 +71,19 @@ const route = useRoute();
 
 function new_seance() {
   if (edit_seance.value) {
+    edit_mode.value = "create";
     seance_store.setDefault()
     seance_store.data.dateHeureDebut = creneau_store.heureDebut;
     seance_store.data.dateHeureFin = creneau_store.heureFin;
-    edit_seance.value.open_panel()
+    edit_seance.value.open_panel();
+  }
+}
+
+function modify_seance(seance: Seance) {
+  if(edit_seance.value) {
+    edit_mode.value = "edit";
+    seance_store.load(seance);
+    edit_seance.value.open_panel();
   }
 }
 
