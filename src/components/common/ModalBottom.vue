@@ -30,4 +30,10 @@ const emit = defineEmits(['close'])
     height: 60px;
     border-bottom: 1px solid gray;
 }
+
+@media screen and (max-width: 1024px) {
+  .modal-bottom {
+    max-width: calc(100vw - 32px);
+  }
+}
 </style>

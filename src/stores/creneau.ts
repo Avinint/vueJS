@@ -12,6 +12,9 @@ import { getCreneauSeances } from '@api/seance'
 
 export const useCreneauStore = defineStore('creneau', {
   state: default_creneau,
+  getters: {
+    getId: (state) => parseInt(state.id?.toString() || '0')
+  },
   actions: {
     setDefault() {
       this.$state = default_creneau()

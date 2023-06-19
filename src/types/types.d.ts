@@ -61,8 +61,21 @@ type CreneauEditContract = {
     nbParticipants: number,
 }
 
+type SeanceEditContract = {
+    dateHeureDebut: string;
+    dateHeureFin: string;
+    idCreneau: number;
+    animateurs: { id: number }[];
+}
+
 type CreneauEditResponse = {
     creneaux: Creneau[];
+}
+
+type SeanceEditResponse = {
+    idReservationParent: number;
+    reservation: Seance;
+    qrCode: string;
 }
 
 enum CreneauType {
@@ -140,4 +153,5 @@ type Seance = {
     type: string,
     participants: Participant[],
     animateurs: Animateur[],
+    selected_animateurs: number[],
 }

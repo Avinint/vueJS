@@ -56,36 +56,10 @@
         </tbody>
       </table>
     </div>
-    <div class="mb-8">
-      <label class="label-text"
-        >Ajouter des animateur(s) à la séance</label
-      >
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-        <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-100 dark:text-gray-700"
-        >
-          <tr>
-            <th scope="col" class="px-6 py-3">Statut</th>
-            <th scope="col" class="px-6 py-3">Nom</th>
-            <th scope="col" class="px-6 py-3">Prénom</th>
-            <th scope="col" class="px-6 py-3">Numéro de téléphone</th>
-            <th scope="col" class="px-6 py-3">Adresse email</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(animateur, i) in seance_store.getAnimateurs" :key="i" class="bg-white">
-            <td class="px-6 py-4"><Switch :model-value="animateur.organisateur"/></td>
-            <td class="px-6 py-4">{{ animateur.nom }}</td>
-            <td class="px-6 py-4">{{ animateur.prenom }}</td>
-            <td class="px-6 py-4">{{ animateur.telephone }}</td>
-            <td class="px-6 py-4">{{ animateur.email }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ListAnimateurs class="mb-8"/>
     <div class="flex justify-end">
       <Button @click="close_panel" couleur="secondary" label="Annuler" />
-      <Button couleur="danger" label="Valider" />
+      <Button couleur="danger" label="Valider" @click="validate" />
     </div>
   </div>
 </template>
@@ -95,8 +69,9 @@ import Button from '@components/common/Button.vue'
 import Switch from '@components/common/Switch.vue';
 import { useSeanceStore } from '@stores/seance';
 import { ref } from 'vue'
+import ListAnimateurs from './ListAnimateurs.vue';
 
-defineProps<{
+const props = defineProps<{
   mode: 'edit' | 'create'
 }>()
 
@@ -108,15 +83,13 @@ defineExpose({ open_panel, close_panel })
 const groupes = [
   { status: true, name: 'U10' },
 ]
-const animateurs = [
-  {
-    status: true,
-    firstname: 'Loïc',
-    lastname: 'Bertholet',
-    phone: '016489031',
-    email: 'kevin@orange.fr',
-  },
-]
+
+async function validate() {
+  if(props.mode === 'create') {
+    is_open.value = false;
+    await seance_store.post();
+  }
+}
 
 function open_panel() {
   is_open.value = true

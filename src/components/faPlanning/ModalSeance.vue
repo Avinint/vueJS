@@ -72,6 +72,8 @@ const route = useRoute();
 function new_seance() {
   if (edit_seance.value) {
     seance_store.setDefault()
+    seance_store.data.dateHeureDebut = creneau_store.heureDebut;
+    seance_store.data.dateHeureFin = creneau_store.heureFin;
     edit_seance.value.open_panel()
   }
 }

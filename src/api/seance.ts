@@ -17,3 +17,21 @@ export async function getCreneauSeances(id_creneau: number, page = 1): Promise<S
   if (response.status !== 200) throw response
   return response.json()
 }
+
+export async function postSeance(contract: SeanceEditContract): Promise<SeanceEditResponse> {
+  const api_url = import.meta.env.VITE_API_URL;
+  const url = new URL(`${api_url}/api/seances`);
+  
+  const response = await $fetch(url.toString(), {
+    method: 'post',
+    body: JSON.stringify(contract),
+    headers: {
+      ...defaultHeaders,
+      'Content-Type': 'application/ld+json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    }
+  })
+
+  if(response.status !== 201) throw response;
+  return response.json();
+}
