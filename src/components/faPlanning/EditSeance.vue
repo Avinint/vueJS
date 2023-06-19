@@ -50,13 +50,13 @@
         </thead>
         <tbody>
           <tr v-for="(groupe, i) in groupes" :key="i" class="bg-white">
-            <td class="px-6 py-4"><Switch/></td>
+            <td class="px-6 py-4"><Switch v-model="temporary_model"/></td>
             <td class="px-6 py-4">{{ groupe.name }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <ListAnimateurs class="mb-8"/>
+    <ListAnimateurs/>
     <div class="flex justify-end">
       <Button @click="close_panel" couleur="secondary" label="Annuler" />
       <Button couleur="danger" label="Valider" @click="validate" />
@@ -71,6 +71,7 @@ import { useSeanceStore } from '@stores/seance';
 import { ref } from 'vue'
 import ListAnimateurs from './ListAnimateurs.vue';
 
+const temporary_model = ref(false);
 const props = defineProps<{
   mode: 'edit' | 'create'
 }>()
