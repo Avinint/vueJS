@@ -11,6 +11,7 @@
         :required="required"
         :pattern="pattern"
         :minlength="minLength"
+        :maxlength="maxLength"
         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         :placeholder="placeholder"
       />
@@ -24,7 +25,7 @@ import InputLabel from './InputLabel.vue'
 import { computed, ref } from 'vue'
 
 const props = defineProps<{
-  modelValue?: string,
+  modelValue?: string | number,
   defaultValue?: string,
   placeholder?: string,
   test?: string,
@@ -42,7 +43,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', text: string): void
+  (e: 'update:modelValue', text: string | number): void
   (e: 'update:valid', valid: boolean): void
 }>()
 
@@ -60,7 +61,9 @@ const inputValidation = ($event: any) => {
       }
     })
   }
-  emits('update:modelValue', val)
+  if(typeof(props.modelValue) === 'number')
+    emits('update:modelValue', parseInt(val));
+  else emits('update:modelValue', val)
 }
 
 const label = computed(() => props.label)

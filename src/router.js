@@ -248,23 +248,7 @@ const routes = [
           ],
         },
       },
-      {
-        path: 'organismes',
-        component: FaOrganisme,
-        meta: {
-          breadcrumbs: [
-            {
-              label: 'Fit Arena',
-              link: 'fitarena',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
-      },
-    ],
+    ] ,
   },
   {
     path: '/clients',
@@ -281,6 +265,7 @@ const routes = [
   },
   {
     path: '/animateurs',
+    name: 'animateurs_global',
     component: Animateur,
     meta: {
       breadcrumbs: [
@@ -326,14 +311,45 @@ const routes = [
               label: 'Fit Arena',
               link: 'fitarena',
             },
-            /**{
-                  label: '',
-                  link: 'fitarena/',
-                },**/
           ],
         },
       },
     ],
+  },
+  {
+    path: '/clients/:id/organismes',
+    props: true,
+    name: 'organismes_par_client',
+    component: FaOrganisme,
+    meta: {
+      breadcrumbs: [
+        {
+          label: 'Organismes',
+          link: 'organismes',
+        },
+        {
+          label: 'Liste',
+          link: '',
+        },
+      ],
+    }
+  },
+  {
+    path: '/organismes/:id/animateurs',
+    name: 'animateursParOrganisme',
+    component: Animateur,
+    meta: {
+      breadcrumbs: [
+        // {
+        //   label: 'Animateur',
+        //   link: 'animateur',
+        // },
+        // {
+        //   label: 'Liste',
+        //   link: 'liste',
+        // }
+      ],
+    },
   },
 ]
 

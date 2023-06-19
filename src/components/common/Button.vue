@@ -24,6 +24,7 @@ import { computed } from 'vue'
 
   const TYPE = {
     info: 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white',
+    submit: 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white',
     danger: 'bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 text-white',
     warning: 'bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 text-white',
     success: 'bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 text-white',

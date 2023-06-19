@@ -1,22 +1,12 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
 
 export const getAnimateurs = async (page = 1, query = '') => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/animateurs?page=${page}${query}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    }
-  )
+  return await get (`${import.meta.env.VITE_API_URL}/api/animateurs?page=${page}${query}`);
+}
 
-  if (response.status !== 200) throw response
-
-  return response.json()
+export const getAnimateursParOrganisme = async (id, page = 1, query = '') => {
+  return await get (`${import.meta.env.VITE_API_URL}/api/organismes/${id}/animateurs?page=${page}${query}`);
 }
 
 export const postAnimateur = async (animateur) => {

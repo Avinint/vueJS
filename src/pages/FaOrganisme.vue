@@ -1,6 +1,6 @@
 <template>
   <Card class="space-y-3">
-    <h1>Organisme</h1>
+    <h1>Organismes</h1>
 
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -18,7 +18,7 @@
         <tbody>
           <tr v-for="(organisme, i) in organismes" :key="i" class="bg-white">
             <td class="flex items-center justify-center p-3">
-              <Button
+              <Button v-if="isAdmin || isGestCo"
                 test="TdeleteClient"
                 borderless
                 icon="delete"
@@ -47,7 +47,7 @@
         </tbody>
       </table>
     </div>
-    <Button
+    <Button v-if="isAdmin || isGestCo"
       id="TaddOrganisme"
       label="Ajouter un Organisme"
       icon="add"
@@ -277,6 +277,26 @@
               :validation="[emailValidation]"
             />
           </div>
+          <div class="flex items-center">
+            <Input
+              id="TcodePin"
+              v-model="gestionnaire.codePin"
+              :readonly="readonly"
+              pattern="\d{6}"
+              label="Code pin carte d'accès"
+              class="w-full"
+              max-length="6"
+              min-length="6"
+              :required="false"
+            />
+          </div>
+          <div v-if="gestionnaire.qrCode" class="flex items-center">
+            <img
+              alt="qr code"
+              :src="gestionnaire.qrCode"
+            />
+          </div>
+
         </Card>
 
         <Button
@@ -329,18 +349,21 @@ import { getAdresses } from '../api/address.js'
 import {
   deleteOrganismes,
   getOrganismes,
+  getOrganismesParClient,
   postOrganismes,
   updateOrganismes,
 } from '../api/organisme.ts'
 import { onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { isValid, emailValidation } from "@/validation.js";
 import { selectClients } from "@api/client.js";
 import { useUserStore } from "@/stores/user.js";
-const { isAdmin } = useUserStore();
+const { isAdmin, isGestCo } = useUserStore();
 
+const route = useRoute()
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
 const readonly = ref(false)
@@ -367,11 +390,23 @@ const validation = ref({})
 
 const gestionnairesOrganisme = ref([])
 
+onBeforeRouteUpdate(async (to, from) => {
+  // on recharge le composant si l'id change
+  if ((to.params?.id ?? false) && to.params.id !== from.params.id) {
+    organismes.value = await getOrganismesParClient(route.params.id)
+  }
+})
+
 onMounted(async () => {
-  organismes.value = await getOrganismes()
-    if (isAdmin) {
-        clients.value = await selectClients();
-    }
+  if (route.name === 'organismes') {
+    organismes.value = await getOrganismes()
+  } else {
+    organismes.value = await getOrganismesParClient(route.params.id)
+  }
+
+  if (isAdmin) {
+    clients.value = await selectClients();
+  }
 })
 
 const addOrganisme = () => {

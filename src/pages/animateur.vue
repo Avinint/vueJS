@@ -7,51 +7,51 @@
         <thead
           class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
         >
-          <tr>
-            <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">Nom</th>
-            <th scope="col" class="px-6 py-3">Prénom</th>
-            <th scope="col" class="px-6 py-3">E-mail</th>
-            <th scope="col" class="px-6 py-3">Téléphone</th>
-            <th scope="col" class="px-6 py-3">Titulaire carte</th>
-            <th scope="col" class="px-6 py-3">Organisme</th>
-            <th scope="col" class="px-6 py-3"></th>
-          </tr>
+        <tr>
+          <th scope="col" class="px-6 py-3"></th>
+          <th scope="col" class="px-6 py-3">Nom</th>
+          <th scope="col" class="px-6 py-3">Prénom</th>
+          <th scope="col" class="px-6 py-3">E-mail</th>
+          <th scope="col" class="px-6 py-3">Téléphone</th>
+          <th scope="col" class="px-6 py-3">Titulaire carte</th>
+          <th scope="col" class="px-6 py-3">Organisme</th>
+          <th scope="col" class="px-6 py-3"></th>
+        </tr>
         </thead>
         <tbody>
-          <tr v-for="(animateur, i) in animateurs" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
-              <Button
-                test="TdeleteClient"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeAnimateur(animateur.id)"
-              />
-              <Button
-                test="TeditClient"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editAnimateur(i)"
-              />
-            </td>
-            <td class="px-6 py-4">{{ animateur.nom }}</td>
-            <td class="px-6 py-4">{{ animateur.prenom }}</td>
-            <td class="px-6 py-4">{{ animateur.email }}</td>
-            <td class="px-6 py-4">{{ animateur.telephone }}</td>
-            <td class="px-6 py-4">
-              {{ animateur.titulaireCarte ? 'oui' : 'non' }}
-            </td>
-            <td class="px-6 py-4">{{ animateur.organisme.libelle }}</td>
-            <td class="px-6 py-4">
-              <Button
-                label="Détails"
-                couleur="secondary"
-                @click="showAnimateur(i)"
-              />
-            </td>
-          </tr>
+        <tr v-for="(animateur, i) in animateurs" :key="i" class="bg-white">
+          <td class="flex items-center justify-center p-3">
+            <Button
+              test="TdeleteClient"
+              borderless
+              icon="delete"
+              couleur="secondary"
+              @click="removeAnimateur(animateur.id)"
+            />
+            <Button
+              test="TeditClient"
+              borderless
+              icon="edit"
+              couleur="secondary"
+              @click="editAnimateur(i)"
+            />
+          </td>
+          <td class="px-6 py-4">{{ animateur.nom }}</td>
+          <td class="px-6 py-4">{{ animateur.prenom }}</td>
+          <td class="px-6 py-4">{{ animateur.email }}</td>
+          <td class="px-6 py-4">{{ animateur.telephone }}</td>
+          <td class="px-6 py-4">
+            {{ animateur.titulaireCarte ? 'oui' : 'non' }}
+          </td>
+          <td class="px-6 py-4">{{ animateur.organisme.libelle }}</td>
+          <td class="px-6 py-4">
+            <Button
+              label="Détails"
+              couleur="secondary"
+              @click="showAnimateur(i)"
+            />
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -118,9 +118,9 @@
             class="w-full"
           />
         </div>
-        <div v-if="!id_selected" class="flex items-center">
+        <div v-if="false && !id_selected" class="flex items-center">
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-            >Organisme</label
+          >Organisme</label
           >
           <div v-if="!readonly" class="flex items-center">
             <div class="mr-1.5 block"></div>
@@ -144,7 +144,7 @@
 
         <div class="flex items-center">
           <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
-            >Titulaire carte :</span
+          >Titulaire carte :</span
           >
           <label class="relative inline-flex cursor-pointer items-center">
             <input
@@ -195,7 +195,7 @@
         <div v-if="carteActive?.qrCode" class="flex items-center">
           <img
             alt="qr code"
-            :src="'data:image/jpeg;base64,' + carteActive.qrCode"
+            :src="carteActive.qrCode"
           />
         </div>
       </Card>
@@ -237,9 +237,10 @@ import ValidationModal from '../components/common/ValidationModal.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
 import { getAdresses } from '../api/address.js'
+import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import {
   deleteAnimateur,
-  getAnimateurs,
+  getAnimateurs, getAnimateursParOrganisme,
   postAnimateur,
   putAnimateur,
 } from '../api/animateur.ts'
@@ -276,9 +277,13 @@ let client = ref({})
 const validation = ref({})
 const organismes = ref([])
 
+
+const route = useRoute()
 onMounted(async () => {
   organismes.value = await selectOrganismes()
-  animateurs.value = await getAnimateurs()
+  organismeId.value = route.params?.id
+
+  animateurs.value = organismeId.value ? await getAnimateursParOrganisme(organismeId.value) : await getAnimateurs()
 })
 
 const createAnimateur = () => {
@@ -416,7 +421,7 @@ const addAnimateur = async () => {
 
 const removeFrom = (refArray, i) => {
   refArray.value = refArray.value
-    .slice(0, i)
-    .concat(refArray.value.slice(i + 1))
+  .slice(0, i)
+  .concat(refArray.value.slice(i + 1))
 }
 </script>
