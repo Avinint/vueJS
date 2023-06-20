@@ -169,7 +169,7 @@ export default {
   },
 }
 </script>
-<style scopped lang="scss">
+<style scoped lang="scss">
 .active {
   background-color: #0b83d9;
   color: white;
