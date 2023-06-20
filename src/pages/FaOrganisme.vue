@@ -29,6 +29,7 @@
               label="Nom"
               :required="true"
               class="w-full"
+              inline
             />
           </div>
           <div class="flex items-center">
@@ -93,6 +94,7 @@
               :type="'text'"
               label="Complément"
               class="w-full"
+              inline
             />
           </div>
           <div class="flex items-center">
@@ -106,6 +108,7 @@
               label="Code postal"
               class="w-full"
               pattern="[0-9]{5}"
+              inline
             />
           </div>
           <div class="flex items-center">
@@ -119,38 +122,31 @@
               label="Ville"
               class="w-full"
               pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï -]{1,50}"
+              inline
             />
           </div>
-          <div v-if="address_selected" class="flex items-center">
-            <div class="flex w-1/2 items-center justify-between">
-              <label class="block w-1/2 text-sm font-medium text-gray-900"
-                >Latitude</label
-              >
-              <p class="text-sm text-blue-400">Format : 46.7897</p>
-            </div>
-            <input
-              id="TfaLatitude"
+          <div v-if="address_selected">
+            <Input
+              inline
+              label="Latitude"
               v-model="address_selected.latitude"
               :readonly="readonly"
               type="text"
-              class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              class="w-full"
               pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
+              placeholder="46.7897"
             />
           </div>
-          <div v-if="address_selected" class="flex items-center">
-            <div class="flex w-1/2 items-center justify-between">
-              <label class="block w-1/2 text-sm font-medium text-gray-900"
-                >Longitude</label
-              >
-              <p class="text-sm text-blue-400">Format : 46.7897</p>
-            </div>
-            <input
+          <div v-if="address_selected">
+            <Input
               v-if="address_selected"
               id="TfaLongitude"
               v-model="address_selected.longitude"
               :readonly="readonly"
               type="text"
-              class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              label="Longitude"
+              inline
+              class="w-full"
               pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
             />
           </div>
