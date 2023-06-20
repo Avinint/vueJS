@@ -36,13 +36,13 @@ import Button from '@components/common/Button.vue';
 import Card from '@components/common/Card.vue'
 import Input from '@components/common/Input.vue';
 import LabelText from '@components/common/LabelText.vue'
-import Table, { type FaTableColumnData } from '@components/common/Table.vue'
+import Table, { type FaTableColumnData, type FaTableRow } from '@components/common/Table.vue'
 
 defineProps<{
   entity: string;
   plural: string;
-  columns: FaTableColumnData[];
-  data: string[];
+  columns: FaTableColumnData<any>[];
+  data: FaTableRow<any>[];
   canCreate?: boolean;
 }>()
 

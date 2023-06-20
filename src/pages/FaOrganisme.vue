@@ -4,7 +4,7 @@
       entity="organisme"
       plural="organismes"
       :columns="crud_columns"
-      :data="organismes"
+      :data="getTableData()"
       :can-create="isAdmin || isGestCo"
       @entity:new="addOrganisme"
       @entity:edit="editOrganisme"
@@ -332,6 +332,16 @@ const crud_columns = [
   { data: (e) => e.adresse.ville, label: 'Ville' },
 ];
 
+function getTableData() {
+  return organismes.value.map(organisme => {
+    return {
+      data: organisme,
+      editable: true,
+      removable: true,
+    }
+  })
+}
+
 const route = useRoute()
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
@@ -384,16 +394,6 @@ const addOrganisme = () => {
   afficherFormulaire.value = true
   readonly.value = false
   modal_title.value = 'Ajouter un Organisme'
-}
-
-function getTableData() {
-  return organismes.value.map((organisme) => {
-    return {
-      nom: organisme.libelle,
-      code_postal: organisme.adresse.codePostal,
-      ville: organisme.adresse.ville,
-    }
-  })
 }
 
 const reset = async () => {
