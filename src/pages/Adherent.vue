@@ -26,7 +26,7 @@
           <td class="px-6 py-4">{{ adherent.dateAdhesion }}</td>
           <td class="px-6 py-4">{{ adherent.dateFinAdhesion }}</td>
           <td class="px-6 py-4">
-            {{ adherent.groupes.slice(0, 2) }}
+            {{ adherent.groupes.slice(0, 2).map(g => g.libelle).join(', ') }}
             <span v-if="adherent.groupes.length > 2"> + {{ adherent.groupes.length - 2 }}</span>
           </td>
           <td class="flex items-center justify-center p-3">
@@ -514,7 +514,6 @@ const mapApiToData = (adherent) => {
 
 const saveAdherent = () => {
   if (!isValid(validation)) return
-  console.log(groupes.value)
   adherent.value = {
     nom: nom.value,
     prenom: prenom.value,

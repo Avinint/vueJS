@@ -29,6 +29,7 @@ export const deleteAdherent = async (id) => {
 }
 
 export const selectGroupes = async (organismeId) =>
+    // TODO : Mock up,  remplacer tout ce code par un vrai appel api : ligne commentée ci dessous
   await new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve([
@@ -38,6 +39,6 @@ export const selectGroupes = async (organismeId) =>
       ]);
     }, 300);
   })
-  // await get(`${import.meta.env.VITE_API_URL}/api/groupes/${id}/adherents?page=${page}${query}`)
+  // await get(`${import.meta.env.VITE_API_URL}/api/groupes/${id}/adherents`)
 
 
