@@ -22,7 +22,8 @@ export const postAnimateur = async (animateur) => {
       body: JSON.stringify(animateur.value),
     }
   )
-  if (response.status !== 201) throw response
+
+  if (response.status !== 201) throw response.json()
   return response.json()
 }
 
