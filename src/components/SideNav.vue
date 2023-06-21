@@ -149,19 +149,21 @@ onMounted(async () => {
 
   if (isGestOrg && organismes) {
     organismeLinks.value = organismes.map((org) => {
+
+      let planningSubLinks = []
+      for (const fit of org.options.fitArenas) {
+        planningSubLinks.push({
+          label: `Planning ` + fit.libelle.substring(0, 20) + (fit.libelle.length > 20 ? '...' : ''),
+          path: `/fitArena/${fit.id}/planning`
+        })
+      }
+
       return {
         label: org.libelle,
         path: '/organismes/' + org.id,
         icon: homeIcone,
         sub_links: [
-          {
-            label: 'Mon planning fit Arena 1',
-            path: `/organismes/${org.id}/planning1`,
-          },
-          {
-            label: 'Mon planning fit Arena 2',
-            path: `/organismes/${org.id}/planning2`,
-          },
+            ...planningSubLinks,
           {
             label: 'Mes Adhérents',
             path: `/organismes/${org.id}/adherents`
@@ -175,7 +177,7 @@ onMounted(async () => {
           //   path: `/organisme/${org.id}/creneau/`
           // },
           {
-            label: 'Animateurs',
+            label: 'Mes Animateurs',
             path: `/organismes/${org.id}/animateurs`
           },
         ]
@@ -187,37 +189,37 @@ onMounted(async () => {
     fitArenaLinks.value = fitarenas.map((fa) => {
 
       const subLinksGestionnaire = [
+        // {
+        //   label: 'Supervision',
+        //   path: `/fitarena/${fa.id}/supervision`,
+        //   tag: 1
+        // },
         {
-          label: 'Supervision',
-          path: `/fitarena/${fa.id}/supervision`,
-          tag: 1
-        },
-        {
-          label: 'Planning des réservations',
-          path: `/fitarena/${fa.id}/planning-reservations`,
+          label: 'Planning d\'ouverture',
+          path: `/fitarena/${fa.id}/planning`,
           tag: 1
         },
 
-        {
-          label: 'Liste des réservations',
-          path: `/fitarena/${fa.id}/reservations`,
-          tag: 1
-        },
-        {
-          label: 'Statistiques',
-          path: `/fitarena/${fa.id}/statistiques`,
-          tag: 1
-        },
-        {
-          label: 'Configuration de la Fit Arena',
-          path: `/fitarena/${fa.id}/configuration`
-        },
+        // {
+        //   label: 'Liste des réservations',
+        //   path: `/fitarena/${fa.id}/reservations`,
+        //   tag: 1
+        // },
+        // {
+        //   label: 'Statistiques',
+        //   path: `/fitarena/${fa.id}/statistiques`,
+        //   tag: 1
+        // },
+        // {
+        //   label: 'Configuration de la Fit Arena',
+        //   path: `/fitarena/${fa.id}/configuration`
+        // },
 
-        {
-          label: 'Les paiements',
-          path: `/fitarena/${fa.id}/paiements`,
-          tag: 1
-        },
+        // {
+        //   label: 'Les paiements',
+        //   path: `/fitarena/${fa.id}/paiements`,
+        //   tag: 1
+        // },
       ]
 
       const subLinksAdmin = [
@@ -273,11 +275,14 @@ onMounted(async () => {
         label: 'Fit Arena',
         path: '',
         divider: true,
-      },
-      {
+      })
+
+    if (isAdmin) {
+      links.push({
         label: 'Fit Arenas',
         path: '/fitarena',
       })
+    }
 
     for (const faLink of fitArenaLinks.value) {
       links.push(faLink)
@@ -290,12 +295,14 @@ onMounted(async () => {
         label: 'Espace client',
         path: '',
         divider: true,
-      },
-      {
+      })
+
+    if (isAdmin) {
+      links.push({
         label: 'Clients',
         path: '/clients',
-      }
-    )
+      })
+    }
 
     for (const cliLink of clientLinks.value) {
       links.push(cliLink)
@@ -308,10 +315,6 @@ onMounted(async () => {
         label: 'Espace organisme',
         path: '',
         divider: true,
-      },
-      {
-        label: 'Organismes',
-        path: '/organismes',
       })
 
       for (const orgLink of organismeLinks.value) {
