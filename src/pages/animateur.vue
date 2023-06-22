@@ -281,7 +281,7 @@ const organismes = ref([])
 const route = useRoute()
 onMounted(async () => {
   organismes.value = await selectOrganismes()
-  organismeId.value = route.params?.id
+  organismeId.value = route.params?.id ? parseInt(route.params?.id) : null
 
   animateurs.value = organismeId.value ? await getAnimateursParOrganisme(organismeId.value) : await getAnimateurs()
 })
@@ -404,8 +404,9 @@ const addAnimateur = async () => {
   try {
     await postAnimateur(animateur)
     toast.success('Ajout effectué avec succès')
-  } catch (e) {
-    toast.error('Une erreur est survenue')
+  } catch (e)   {
+    const message = (await e).detail
+    toast.error(message)
   }
 
   modaleConfirmation.value = false

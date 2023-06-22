@@ -21,6 +21,7 @@ import OgPlanning from './pages/organisme/OgPlanning.vue'
 
 import { useUserStore } from './stores/user.js'
 import Animateur from '@pages/animateur.vue'
+import Adherent from '@pages/Adherent.vue'
 
 const routes = [
   {
@@ -338,6 +339,23 @@ const routes = [
     path: '/organismes/:id/animateurs',
     name: 'animateursParOrganisme',
     component: Animateur,
+    meta: {
+      breadcrumbs: [
+        // {
+        //   label: 'Animateur',
+        //   link: 'animateur',
+        // },
+        // {
+        //   label: 'Liste',
+        //   link: 'liste',
+        // }
+      ],
+    },
+  },
+  {
+    path: '/organismes/:id/adherents',
+    name: 'adherentsParOrganisme',
+    component:  Adherent,
     meta: {
       breadcrumbs: [
         // {
