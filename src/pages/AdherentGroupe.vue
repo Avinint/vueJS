@@ -29,10 +29,10 @@
         <tr v-for="(adherent, i) in  groupe.adherents" :key="i" class="bg-white">
 
           <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.nom }}</td>
-          <td class="px-6 py-4">{{ adherent.dateNaissance }}</td>
+          <td class="px-6 py-4">{{ afficherDate(adherent.dateNaissance) }}</td>
           <td class="px-6 py-4">{{ adherent.numeroAdherent }}</td>
-          <td class="px-6 py-4">{{ adherent.dateAdhesion }}</td>
-          <td class="px-6 py-4">{{ adherent.dateFinAdhesion }}</td>
+          <td class="px-6 py-4">{{ afficherDate(adherent.dateAdhesion) }}</td>
+          <td class="px-6 py-4">{{ afficherDate(adherent.dateFinAdhesion) }}</td>
           <td class="px-6 py-4" v-if="adherent.groupes">
             {{ adherent.groupes.slice(0, 2).map(g => g.libelle).join(', ') }}
             <span v-if="adherent.groupes.length > 2"> + {{ adherent.groupes.length - 2 }}</span>
@@ -342,6 +342,7 @@ import {
   phoneValidation
 } from '@/validation.js'
 
+
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
 const readonly = ref(false)
@@ -355,6 +356,8 @@ const formatter = {
   date: import.meta.env.VITE_DATE_FORMAT,
   month: 'MMM'
 }
+const dateFormatFr = import.meta.env.VITE_DATE_FORMAT_FR
+const dateFormatBdd = import.meta.env.VITE_DATE_FORMAT_BDD
 
 const adherents = ref([])
 
@@ -402,6 +405,8 @@ onMounted(async () => {
   }
 
 })
+
+const afficherDate = (date) => dayjs(date).format(dateFormatFr)
 
 const create = () => {
   reset()
