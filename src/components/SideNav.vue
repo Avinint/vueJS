@@ -154,9 +154,10 @@ onMounted(async () => {
       for (const fit of org.options.fitArenas) {
         planningSubLinks.push({
           label: `Mon planning ` + fit.libelle.substring(0, 20) + (fit.libelle.length > 20 ? '...' : ''),
-          path: `/fitArena/${fit.id}/planning`
+          path: `/organismes/${org.id}/planning/${fit.id}`
         })
       }
+      http://fit-arena.demo.doing.fr/organismes/5/planning/1
 
       return {
         label: org.libelle,
