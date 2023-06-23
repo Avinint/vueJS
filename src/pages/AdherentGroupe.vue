@@ -1,12 +1,21 @@
 <template>
   <Card class="space-y-3">
-    <h1> Mes Adhérents</h1>
+    <h1> Mes groupes d'Adhérents</h1>
 
-    <div class="relative overflow-x-auto">
+    <div class="relative overflow-x-auto" v-for="groupe in groupes" :key="groupe">
       <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
         <thead
           class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
         >
+        <tr>
+          <td>
+            <nav>
+              <div>
+                {{ groupe.libelle }}
+              </div>
+            </nav>
+          </td>
+        </tr>
         <tr>
           <th scope="col" class="px-6 py-3">Nom et prénom</th>
           <th scope="col" class="px-6 py-3">Date de naissance</th>
@@ -14,50 +23,35 @@
           <th scope="col" class="px-6 py-3">Date d'adhésion</th>
           <th scope="col" class="px-6 py-3">Date de fin d'adhésion</th>
           <th scope="col" class="px-6 py-3">Groupe(s)</th>
-          <th scope="col" class="px-6 py-3"></th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(adherent, i) in  adherents" :key="i" class="bg-white">
+        <tr v-for="(adherent, i) in  groupe.adherents" :key="i" class="bg-white">
 
           <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.nom }}</td>
           <td class="px-6 py-4">{{ afficherDate(adherent.dateNaissance) }}</td>
           <td class="px-6 py-4">{{ adherent.numeroAdherent }}</td>
           <td class="px-6 py-4">{{ afficherDate(adherent.dateAdhesion) }}</td>
           <td class="px-6 py-4">{{ afficherDate(adherent.dateFinAdhesion) }}</td>
-          <td class="px-6 py-4">
+          <td class="px-6 py-4" v-if="adherent.groupes">
             {{ adherent.groupes.slice(0, 2).map(g => g.libelle).join(', ') }}
             <span v-if="adherent.groupes.length > 2"> + {{ adherent.groupes.length - 2 }}</span>
           </td>
-          <td class="flex items-center justify-center p-3">
-            <Button
-              test="TeditClient"
-              borderless
-              icon="edit"
-              couleur="secondary"
-              @click="editAdherent(adherent)"
-            />
-            <Button
-              test="TdeleteClient"
-              borderless
-              icon="delete"
-              couleur="secondary"
-              @click="removeAdherent(adherent.id)"
-            />
-          </td>
+          <td v-else class="px-6 py-4"></td>
+
         </tr>
         </tbody>
       </table>
     </div>
     <Button
-      id="TaddAdherent"
-      label="Ajouter un Adhérent"
+      id="TaddGroupe"
+      label="Ajouter un Groupe"
       icon="add"
       couleur="secondary"
-      @click="createAdherent"
+      @click="create"
     />
   </Card>
-  <form @submit.prevent="saveAdherent">
+  <form @submit.prevent="save">
     <Modal
       v-if="afficherFormulaire"
       :type="readonly ? 'visualiser' : 'classic'"
@@ -122,7 +116,8 @@
             v-model="numero"
             :readonly="readonly"
             type="text"
-            label="Numéro d'adhérent"
+            label="Numéro"
+            :required="true"
             class="w-full"
           />
         </div>
@@ -134,6 +129,7 @@
             :readonly="readonly"
             type="text"
             label="Licence"
+            :required="true"
             class="w-full"
           />
         </div>
@@ -141,7 +137,7 @@
         <div class="flex items-center">
           <div class="mr-1.5 w-half block"><label for="TadhDateAdhesion">Date d'adhésion</label></div>
           <div class="w-half">
-            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateAdhesion" :disabled="readonly"  :formatter="formatter" as-single />
+            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateAdhesion" :disabled="readonly"  :formatter="formatter" as-single required />
           </div>
         </div>
 
@@ -205,16 +201,18 @@
                 class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                 data-dropdown-toggle="dropdown"
                 placeholder="Rue, ville, ..."
+                required
             />
           </div>
         </div>
         <div v-if="!readonly" class="flex items-center">
           <div class="mr-1.5 block w-1/2"></div>
           <select
-              v-if="address && address.length"
+              v-if="address.length"
               id="TclientSelectAdresse"
               v-model="address_selected"
               class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              required
               @change="addressSelect"
           >
             <option
@@ -245,6 +243,7 @@
               :type="'text'"
               label="Code Postal"
               class="w-full"
+              :required="true"
               :validation="[zipValidation]"
           />
         </div>
@@ -257,6 +256,7 @@
               :type="'text'"
               label="Ville"
               class="w-full"
+              :required="true"
               :validation="[cityValidation]"
           />
         </div>
@@ -288,7 +288,7 @@
     </Modal>
   </form>
 
-  <form @submit.prevent="removeAdherentValidation()">
+  <form @submit.prevent="removeValidation()">
     <ValidationModal
       v-if="modaleConfirmation === 'delete'"
       type="delete"
@@ -297,7 +297,7 @@
     </ValidationModal>
   </form>
 
-  <form @submit.prevent="updateAdherent()">
+  <form @submit.prevent="update()">
     <ValidationModal
       v-if="modaleConfirmation === 'edit'"
       type="edit"
@@ -306,7 +306,7 @@
     </ValidationModal>
   </form>
 
-  <form @submit.prevent="addAdherent()">
+  <form @submit.prevent="add()">
     <ValidationModal
       v-if="modaleConfirmation === 'add'"
       type="add"
@@ -327,13 +327,9 @@ import Input from '../components/common/Input.vue'
 import { getAdresses } from '../api/address.js'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import {
-  deleteAdherent,
-  getAdherentsParOrganisme,
-  postAdherent,
-  putAdherent,
-  selectGroupes
-} from '../api/adherent.js'
-import { selectOrganismes } from '../api/organisme.ts'
+  fetchGroupes
+} from '../api/groupe.js'
+
 import { onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -346,6 +342,7 @@ import {
   phoneValidation
 } from '@/validation.js'
 
+
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
 const readonly = ref(false)
@@ -355,13 +352,12 @@ const genres = [
   { code: 'f', libelle: 'Femme' },
 ]
 
-const dateFormatFr = import.meta.env.VITE_DATE_FORMAT_FR
-const dateFormatBdd = import.meta.env.VITE_DATE_FORMAT_BDD
-
 const formatter = {
-  date: dateFormatFr,
+  date: import.meta.env.VITE_DATE_FORMAT,
   month: 'MMM'
 }
+const dateFormatFr = import.meta.env.VITE_DATE_FORMAT_FR
+const dateFormatBdd = import.meta.env.VITE_DATE_FORMAT_BDD
 
 const adherents = ref([])
 
@@ -393,40 +389,30 @@ const telephone = ref('')
 const titulaireCarte = ref(false)
 const organismeId = ref(0)
 const organisme = ref({})
-const carteActive = ref({ codePin: null, actif: false })
+
 const modal_title = ref('')
 const client = ref({})
 const validation = ref({})
 const organismes = ref([])
-const listeGroupes = ref([])
 
 
 const route = useRoute()
 onMounted(async () => {
   organismeId.value = parseInt(route.params?.id)
   if (organismeId.value > 0) {
-    adherents.value = await getAdherentsParOrganisme(organismeId.value)
-    listeGroupes.value = await selectGroupes(organismeId.value)
+    groupes.value = await fetchGroupes(organismeId.value)
+    console.log(groupes.value)
   }
-
 
 })
 
-const startFrom = (value) => {
-  let date;
-  if (value === null || value.length === 0) {
-    return dayjs().date(1);
-  }
+const afficherDate = (date) => dayjs(date).format(dateFormatFr)
 
-  return dayjs(value[0], dateFormatFr).date(1);
-}
-
-
-const createAdherent = () => {
+const create = () => {
   reset()
   afficherFormulaire.value = true
   readonly.value = false
-  modal_title.value = 'Ajouter un Adhérent'
+  modal_title.value = 'Ajouter un Groupe'
 }
 
 const reset = async () => {
@@ -451,13 +437,13 @@ const cancel = () => {
   afficherFormulaire.value = false
 }
 
-const removeAdherent = (id) => {
+const remove = (id) => {
   deleteAdherentId.value = id
   modaleConfirmation.value = 'delete'
   // delete_modal.value = true
 }
 
-const removeAdherentValidation = async (id) => {
+const removeValidation = async (id) => {
   try {
     await deleteAdherent(deleteAdherentId.value)
     toast.success('Suppression effectuée avec succès')
@@ -469,14 +455,14 @@ const removeAdherentValidation = async (id) => {
   adherents.value = await getAdherentsParOrganisme(organismeId.value)
 }
 
-const editAdherent = (adherent) => {
+const edit = (adherent) => {
   mapApiToData(adherent)
   afficherFormulaire.value = true
   readonly.value = false
   modal_title.value = 'Modifier un adhérent'
 }
 
-const showAdherent = async (i) => {
+const show = async (i) => {
   const adherent = adherents.value[i]
   mapApiToData(adherent)
   afficherFormulaire.value = true
@@ -493,7 +479,7 @@ const mapApiToData = (adherent) => {
   telephone.value = adherent.telephone
   genre.value = adherent.genre
   id_selected.value = adherent.id
-  address_selected.value =  adherent.adresse ? {
+  address_selected.value = {
     address: adherent.adresse.adresse,
     postcode: adherent.adresse.codePostal,
     complement: adherent.adresse.complement,
@@ -502,37 +488,31 @@ const mapApiToData = (adherent) => {
     citycode: adherent.adresse.codeInsee,
     latitude: adherent.adresse.latitude,
     longitude: adherent.adresse.longitude,
-  } : null
-
-  address.value = address_selected.value?.address
-  complement.value = address_selected.value?.complement
-  dateNaissance.value = [dayjs(adherent.dateNaissance).format(dateFormatFr)]
-  dateAdhesion.value = [dayjs(adherent.dateAdhesion).format(dateFormatFr)]
-  dateFinAdhesion.value = [dayjs(adherent.dateFinAdhesion).format(dateFormatFr)]
+  }
+  address.value = address_selected.value.address
+  complement.value = address_selected.value.complement
+  dateNaissance.value = [dayjs(adherent.dateNaissance).format('DD/MM/YYYY')]
+  dateAdhesion.value = [dayjs(adherent.dateAdhesion).format('DD/MM/YYYY')]
+  dateFinAdhesion.value = [dayjs(adherent.dateFinAdhesion).format('DD/MM/YYYY')]
   groupes.value = adherent.groupes
 }
 
-const afficherDate = (date) => dayjs(date).format(dateFormatFr)
-
-const saveAdherent = () => {
+const save = () => {
   if (!isValid(validation)) return
-
-  const adresseSaisie = Object.keys(address_selected.value).length
-
   adherent.value = {
     nom: nom.value,
     prenom: prenom.value,
     mail: email.value,
     telephone: telephone.value,
-    dateNaissance:dateNaissance.value.length ?  dayjs(dateNaissance.value[0], dateFormatFr).format(dateFormatBdd) : null,
-    dateAdhesion: dateAdhesion.value.length ? dayjs(dateAdhesion.value[0], dateFormatFr).format(dateFormatBdd) : null,
-    dateFinAdhesion: dateFinAdhesion.value.length ? dayjs(dateFinAdhesion.value[0], dateFormatFr).format(dateFormatBdd) : null,
+    dateNaissance:dateNaissance.value.length ?  dayjs(dateNaissance.value[0], 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
+    dateAdhesion: dateAdhesion.value.length ? dayjs(dateAdhesion.value[0], 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
+    dateFinAdhesion: dateFinAdhesion.value.length ? dayjs(dateFinAdhesion.value[0], 'DD/MM/YYYY').format('YYYY-MM-DD') : null,
     idOrganisme: organismeId.value,
     genre: genre.value,
     groupes: groupes.value,
     numeroAdherent: numero.value,
     licence: licence.value,
-    adresse: adresseSaisie ? {
+    adresse: {
       adresse: address_selected.value.label,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
@@ -540,12 +520,11 @@ const saveAdherent = () => {
       codeInsee: '' + address_selected.value.citycode,
       latitude: '' + address_selected.value.latitude,
       longitude: '' + address_selected.value.longitude,
-      numeroDepartement: '' + address_selected.value.context?.split(',')[0],
-      nomDepartement: '' + address_selected.value.context?.split(',')[1],
+      numeroDepartement: '' + address_selected.value.context.split(',')[0],
+      nomDepartement: '' + address_selected.value.context.split(',')[1],
       complement: complement.value,
-    } : null
+    },
   }
-
 
   if (id_selected.value) {
     modaleConfirmation.value = 'edit'
@@ -554,7 +533,7 @@ const saveAdherent = () => {
   }
 }
 
-const updateAdherent = async () => {
+const update = async () => {
   try {
     await putAdherent(adherent, id_selected.value)
     toast.success('Modification effectuée avec succès')
@@ -568,7 +547,7 @@ const updateAdherent = async () => {
   adherents.value = await getAdherentsParOrganisme(organismeId.value)
 }
 
-const addAdherent = async () => {
+const add = async () => {
   try {
     await postAdherent(adherent)
     toast.success('Ajout effectué avec succès')

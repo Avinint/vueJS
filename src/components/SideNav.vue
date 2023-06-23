@@ -170,7 +170,7 @@ onMounted(async () => {
           },
           {
             label: "Mes groupes d'adhérents",
-            path: `/organismes/${org.id}/groupes-adherents`
+            path: `/organismes/${org.id}/groupes`
           },
           // {
           //   label: 'Demande de créneaux',
