@@ -153,7 +153,7 @@ onMounted(async () => {
       let planningSubLinks = []
       for (const fit of org.options.fitArenas) {
         planningSubLinks.push({
-          label: `Planning ` + fit.libelle.substring(0, 20) + (fit.libelle.length > 20 ? '...' : ''),
+          label: `Mon planning ` + fit.libelle.substring(0, 20) + (fit.libelle.length > 20 ? '...' : ''),
           path: `/fitArena/${fit.id}/planning`
         })
       }
@@ -165,7 +165,7 @@ onMounted(async () => {
         sub_links: [
             ...planningSubLinks,
           {
-            label: 'Mes Adhérents',
+            label: 'Mes adhérents',
             path: `/organismes/${org.id}/adherents`
           },
           {
@@ -177,7 +177,7 @@ onMounted(async () => {
           //   path: `/organisme/${org.id}/creneau/`
           // },
           {
-            label: 'Mes Animateurs',
+            label: 'Mes animateurs',
             path: `/organismes/${org.id}/animateurs`
           },
         ]
