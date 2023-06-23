@@ -157,7 +157,6 @@ onMounted(async () => {
           path: `/organismes/${org.id}/planning/${fit.id}`
         })
       }
-      http://fit-arena.demo.doing.fr/organismes/5/planning/1
 
       return {
         label: org.libelle,
