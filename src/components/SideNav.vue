@@ -128,16 +128,16 @@ onMounted(async () => {
         path: '/clients/' + cli.id,
         icon: homeIcone,
         sub_links: [
-          {
-            label: 'Utilisateurs',
-            path: '/users'
-            // path: `/client/${cli.id}/utilisateurs`
-          },
-          {
-            label: 'Demandes en attente',
-            tag: cli.options.organisme_demande_attente,
-            path: ''
-          },
+          // {
+          //   label: 'Utilisateurs',
+          //   path: '/users'
+          //   // path: `/client/${cli.id}/utilisateurs`
+          // },
+          // {
+          //   label: 'Demandes en attente',
+          //   tag: cli.options.organisme_demande_attente,
+          //   path: ''
+          // },
           {
             label: 'Organismes',
             path: `/clients/${cli.id}/organismes`,
