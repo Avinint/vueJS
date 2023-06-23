@@ -195,7 +195,7 @@
         <div v-if="carteActive?.qrCode" class="flex items-center">
           <img
             alt="qr code"
-            :src="'data:image/jpeg;base64,' + carteActive.qrCode"
+            :src="carteActive.qrCode"
           />
         </div>
       </Card>
@@ -243,7 +243,7 @@ import {
   getAnimateurs, getAnimateursParOrganisme,
   postAnimateur,
   putAnimateur,
-} from '../api/animateur.js'
+} from '../api/animateur.ts'
 import { selectOrganismes } from '../api/organisme.ts'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
@@ -281,7 +281,7 @@ const organismes = ref([])
 const route = useRoute()
 onMounted(async () => {
   organismes.value = await selectOrganismes()
-  organismeId.value = route.params?.id
+  organismeId.value = route.params?.id ? parseInt(route.params?.id) : null
 
   animateurs.value = organismeId.value ? await getAnimateursParOrganisme(organismeId.value) : await getAnimateurs()
 })
@@ -404,8 +404,9 @@ const addAnimateur = async () => {
   try {
     await postAnimateur(animateur)
     toast.success('Ajout effectué avec succès')
-  } catch (e) {
-    toast.error('Une erreur est survenue')
+  } catch (e)   {
+    const message = (await e).detail
+    toast.error(message)
   }
 
   modaleConfirmation.value = false

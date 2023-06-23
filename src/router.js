@@ -17,10 +17,12 @@ import FaNumericEquipements from './pages/fitarena/FaNumericEquipements.vue'
 import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
 import FaPlanning from './pages/fitarena/FaPlanning.vue'
 import FaOrganisme from './pages/FaOrganisme.vue'
-
+import OgPlanning from './pages/organisme/OgPlanning.vue'
 
 import { useUserStore } from './stores/user.js'
-import Animateur from "@pages/animateur.vue";
+import Animateur from '@pages/animateur.vue'
+import Adherent from '@pages/Adherent.vue'
+import AdherentGroupe from "@pages/AdherentGroupe.vue";
 
 const routes = [
   {
@@ -276,9 +278,9 @@ const routes = [
         {
           label: 'Liste',
           link: 'liste',
-        }
-      ]
-    }
+        },
+      ],
+    },
   },
   {
     path: '/organismes',
@@ -292,6 +294,29 @@ const routes = [
         },
       ],
     },
+  },
+  {
+    path: '/organismes/:org_id',
+    props: true,
+    name: 'Organismes',
+    component: FitArena,
+    meta: {
+      breadcrumbs: [],
+    },
+    children: [
+      {
+        path: 'planning/:id',
+        component: OgPlanning,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
+          ],
+        },
+      },
+    ],
   },
   {
     path: '/clients/:id/organismes',
@@ -315,6 +340,41 @@ const routes = [
     path: '/organismes/:id/animateurs',
     name: 'animateursParOrganisme',
     component: Animateur,
+    meta: {
+      breadcrumbs: [
+        // {
+        //   label: 'Animateur',
+        //   link: 'animateur',
+        // },
+        // {
+        //   label: 'Liste',
+        //   link: 'liste',
+        // }
+      ],
+    },
+  },
+  {
+    path: '/organismes/:id/groupes',
+    name: 'groupesParOrganisme',
+    component:  AdherentGroupe,
+    meta: {
+      breadcrumbs: [
+        // {
+        //   label: 'Animateur',
+        //   link: 'animateur',
+        // },
+        // {
+        //   label: 'Liste',
+        //   link: 'liste',
+        // }
+      ],
+    },
+  },
+
+  {
+    path: '/organismes/:id/adherents',
+    name: 'groupes',
+    component:  Adherent,
     meta: {
       breadcrumbs: [
         // {
