@@ -1,63 +1,24 @@
 <template>
   <ModalBottom ref="container" @close="close_panel" v-if="is_open">
     <template #title>
-        <h3 class="ml-4 text-xl text-red-600">{{ mode == 'create' ? 'NOUVELLE SÉANCE' : 'MODIFIER LA SÉANCE' }}</h3>
+      <h3 class="ml-4 text-xl text-red-600">
+        {{ mode == 'create' ? 'NOUVELLE SÉANCE' : 'MODIFIER LA SÉANCE' }}
+      </h3>
     </template>
     <template #content>
       <BorderContainer>
-        <div class="mb-8">
-          <LabelText text="Plage horaire de la séance"/>
-          <div class="flex">
-            <select
-              v-model="seance_store.data.dateHeureDebut"
-              required
-              class="h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            >
-              <option
-                v-for="(creneauHoraire, i) in listStart()"
-                :key="i"
-                :value="creneauHoraire"
-              >
-                {{ creneauHoraire }}
-              </option>
-            </select>
-            <div class="px-4 py-2">à</div>
-            <select
-              v-model="seance_store.data.dateHeureFin"
-              required
-              class="h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            >
-              <option
-                v-for="(creneauHoraire, i) in listEnd()"
-                :key="i"
-                :value="creneauHoraire"
-              >
-                {{ creneauHoraire }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <div class="mb-8">
-          <LabelText text="Ajouter des groupe(s) à la séance"/>
-          <table
-            class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
-          >
-            <thead
-              class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-100 dark:text-gray-700"
-            >
-              <tr>
-                <th scope="col" class="px-6 py-3">Statut</th>
-                <th scope="col" class="px-6 py-3">Groupe</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(groupe, i) in groupes" :key="i" class="bg-white">
-                <td class="px-6 py-4"><Switch v-model="temporary_model" /></td>
-                <td class="px-6 py-4">{{ groupe.name }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <LabelText text="Plage horaire de la séance" />
+        <TimeRange
+          class="mb-8"
+          v-model:start_time="seance_store.data.dateHeureDebut"
+          v-model:end_time="seance_store.data.dateHeureFin"
+        />
+        <LabelText text="Ajouter des groupe(s) à la séance" />
+        <Table :data="groupes" :columns="groupes_column_data" class="mb-8">
+          <template #col-0="{ index }">
+            <Switch />
+          </template>
+        </Table>
         <ListAnimateurs />
         <div class="flex justify-end">
           <Button
@@ -82,8 +43,12 @@ import ListAnimateurs from './ListAnimateurs.vue'
 import ModalBottom from '@components/common/ModalBottom.vue'
 import BorderContainer from '@components/common/BorderContainer.vue'
 import LabelText from '@components/common/LabelText.vue'
+import Table, {
+  type FaTableColumnData,
+  type FaTableRow,
+} from '@components/common/Table.vue'
+import TimeRange from '@components/molecules/TimeRange.vue'
 
-const temporary_model = ref(false)
 const props = defineProps<{
   mode: 'edit' | 'create'
 }>()
@@ -93,7 +58,13 @@ const is_open = ref(false)
 const seance_store = useSeanceStore()
 defineExpose({ open_panel, close_panel })
 
-const groupes = [{ status: true, name: 'U10' }]
+const groupes: FaTableRow<Groupe>[] = [
+  { data: { statut: true, groupe: 'U10' }, editable: true, removable: true },
+]
+const groupes_column_data: FaTableColumnData<Groupe>[] = [
+  { label: 'Statut' },
+  { label: 'Groupe', data: (e: Groupe) => e.groupe },
+]
 
 async function validate() {
   if (props.mode === 'create') {
@@ -112,30 +83,6 @@ function open_panel() {
 
 function close_panel() {
   is_open.value = false
-}
-
-function listStart() {
-  let list = []
-  for (let i = 0; i < 21; i++) {
-    for (let y = 0; y < 59; y += 5) {
-      const hours = i.toString().length === 1 ? '0' + i : i
-      const minutes = y.toString().length === 1 ? '0' + y : y
-      list.push(hours + ':' + minutes)
-    }
-  }
-  return list
-}
-
-function listEnd() {
-  let list = []
-  for (let i = 0; i < 21; i++) {
-    for (let y = 0; y < 59; y += 5) {
-      const hours = i.toString().length === 1 ? '0' + i : i
-      const minutes = y.toString().length === 1 ? '0' + y : y
-      list.push(hours + ':' + minutes)
-    }
-  }
-  return list
 }
 </script>
 

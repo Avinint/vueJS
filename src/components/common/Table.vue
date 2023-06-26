@@ -15,12 +15,12 @@
       <th v-if="removable"></th>
     </thead>
     <tbody>
-      <tr v-for="item in data" class="h-10 border-x border-b border-gray-50 text-sm text-gray-700">
+      <tr v-for="(item, index) in data" class="h-10 border-x border-b border-gray-50 text-sm text-gray-700">
         <td v-if="selectable" class="h-10 flex justify-center items-center"><input type="checkbox"/></td>
-        <template v-for="column, key in columns">
+        <template v-for="(column, key) in columns">
           <td v-if="column.data">{{ column.data(item.data) }}</td>
           <td v-else>
-            <slot :name="`col-${key}`" :item="item.data" :index="key"/>
+            <slot :name="`col-${key}`" :item="item.data" :index="index"/>
           </td>
         </template>
         <td v-if="editable && item.editable">

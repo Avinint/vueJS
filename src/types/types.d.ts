@@ -159,3 +159,8 @@ type Seance = {
     animateurs: Animateur[],
     selected_animateurs: number[],
 }
+
+type Groupe = {
+    statut: boolean,
+    groupe: string,
+}

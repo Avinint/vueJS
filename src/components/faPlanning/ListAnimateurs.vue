@@ -18,7 +18,7 @@ import { useSeanceStore } from '@stores/seance'
 import { ref } from 'vue'
 
 const column_data: FaTableColumnData<Animateur>[] = [
-  { label: 'Status' },
+  { label: 'Statut' },
   { label: 'Nom', data: (e: Animateur) => e.nom },
   { label: 'Prénom', data: (e: Animateur) => e.prenom },
   { label: 'Numéro de téléphone', data: (e: Animateur) => e.telephone },
