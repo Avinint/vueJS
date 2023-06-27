@@ -21,7 +21,7 @@
 import { ref } from 'vue';
 
 interface Props {
-  modelValue: boolean
+  modelValue?: boolean
   readonly?: boolean
 }
 

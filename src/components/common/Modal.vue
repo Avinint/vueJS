@@ -45,7 +45,7 @@ import Button from './Button.vue'
 
 type Props = {
   title: string
-  type: 'classic' | 'alert' | 'visualiser'
+  type: 'classic' | 'alert' | 'visualiser' | 'none'
   size: '2xl' | '3xl' | '5xl'
   delete_button?: boolean,
 }

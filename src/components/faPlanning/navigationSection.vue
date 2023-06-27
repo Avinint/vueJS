@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<style scopped>
+<style scoped>
 button {
   @apply mr-4;
 }
