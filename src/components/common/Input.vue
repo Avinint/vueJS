@@ -1,6 +1,6 @@
 <template>
   <div class="flex" :class="inline ? 'items-center' : 'flex-col'">
-    <InputLabel :for="id">{{ label }}</InputLabel>
+    <InputLabel v-if="label" :for="id">{{ label }}</InputLabel>
     <div class="w-full">
       <input
         :readonly="readonly"

@@ -1,48 +1,15 @@
 <template>
   <Card class="space-y-3">
     <h1> Mes groupes d'Adhérents</h1>
-
-    <div class="relative overflow-x-auto" v-for="groupe in groupes" :key="groupe">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-        <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
-        >
-        <tr>
-          <td>
-            <nav>
-              <div>
-                {{ groupe.libelle }}
-              </div>
-            </nav>
-          </td>
-        </tr>
-        <tr>
-          <th scope="col" class="px-6 py-3">Nom et prénom</th>
-          <th scope="col" class="px-6 py-3">Date de naissance</th>
-          <th scope="col" class="px-6 py-3">Numéro d'adhérent</th>
-          <th scope="col" class="px-6 py-3">Date d'adhésion</th>
-          <th scope="col" class="px-6 py-3">Date de fin d'adhésion</th>
-          <th scope="col" class="px-6 py-3">Groupe(s)</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(adherent, i) in  groupe.adherents" :key="i" class="bg-white">
-
-          <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.nom }}</td>
-          <td class="px-6 py-4">{{ afficherDate(adherent.dateNaissance) }}</td>
-          <td class="px-6 py-4">{{ adherent.numeroAdherent }}</td>
-          <td class="px-6 py-4">{{ afficherDate(adherent.dateAdhesion) }}</td>
-          <td class="px-6 py-4">{{ afficherDate(adherent.dateFinAdhesion) }}</td>
-          <td class="px-6 py-4" v-if="adherent.groupes">
-            {{ adherent.groupes.slice(0, 2).map(g => g.libelle).join(', ') }}
-            <span v-if="adherent.groupes.length > 2"> + {{ adherent.groupes.length - 2 }}</span>
-          </td>
-          <td v-else class="px-6 py-4"></td>
-
-        </tr>
-        </tbody>
-      </table>
-    </div>
+    <Card :shadow="false" class="overflow-hidden" v-for="(groupe, key) in groupes" :key="key">
+      <div class="flex items-center gap-4 mb-4">
+        <LabelText :text="groupe.libelle"/>
+        <Input placeholder="Rechercher"/>
+        <Button couleur="secondary" label="Filtrer" />
+        <Button couleur="secondary" label="Modifier le groupe" />
+      </div>
+      <Table :columns="table_columns" :data="getGroupTableData(groupe)"/>
+    </Card>
     <Button
       id="TaddGroupe"
       label="Ajouter un Groupe"
@@ -288,9 +255,9 @@
     </Modal>
   </form>
 
-  <form @submit.prevent="removeValidation()">
+  <form @submit.prevent="removeValidation(0)">
     <ValidationModal
-      v-if="modaleConfirmation === 'delete'"
+      v-if="modaleConfirmation"
       type="delete"
       @cancel="modaleConfirmation = false"
     >
@@ -299,7 +266,7 @@
 
   <form @submit.prevent="update()">
     <ValidationModal
-      v-if="modaleConfirmation === 'edit'"
+      v-if="modaleConfirmation"
       type="edit"
       @cancel="modaleConfirmation = false"
     >
@@ -308,7 +275,7 @@
 
   <form @submit.prevent="add()">
     <ValidationModal
-      v-if="modaleConfirmation === 'add'"
+      v-if="modaleConfirmation"
       type="add"
       @cancel="modaleConfirmation = false"
     >
@@ -316,7 +283,7 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import dayjs from 'dayjs'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 import Card from '../components/common/Card.vue'
@@ -341,7 +308,30 @@ import {
   cityValidation,
   phoneValidation
 } from '@/validation.js'
+import Table, { type FaTableColumnData } from '../components/common/Table.vue'
+import { deleteAdherent, getAdherentsParOrganisme, postAdherent, putAdherent } from '@api/adherent'
+import { getDateDMY } from '../services/date_service'
+import type { FaTableRow } from '../components/common/Table.vue'
+import LabelText from '@components/common/LabelText.vue'
 
+const table_columns: FaTableColumnData<Adherent>[] = [
+  {label: 'Nom et Prénom', data: e => `${e.nom} ${e.prenom}`},
+  {label: 'Date de naissance', data: e => getDateDMY(e.dateNaissance)},
+  {label: "Numéro d'adhérent", data: e => e.numeroAdherent},
+  {label: "Date d'adhésion", data: e => getDateDMY(e.dateAdhesion)},
+  {label: "Date de fin d'adhésion", data: e => getDateDMY(e.dateFinAdhesion)},
+  {label: "Groupes", data: e => e.groupes.map(g => g.libelle).join(', ')}
+]
+
+function getGroupTableData(groupe: Groupe): FaTableRow<Adherent>[] {
+  return groupe.adherents.map(adherent => {
+    return {
+      data: adherent,
+      editable: false,
+      removable: false,
+    }
+  })
+}
 
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
@@ -360,6 +350,7 @@ const dateFormatFr = import.meta.env.VITE_DATE_FORMAT_FR
 const dateFormatBdd = import.meta.env.VITE_DATE_FORMAT_BDD
 
 const adherents = ref([])
+const mode = ref<'add' | 'edit' | 'delete'>('add');
 
 const delete_modal = ref(false)
 const deleteAdherentId = ref(0)
@@ -370,18 +361,18 @@ const add_modal = ref(false)
 const id_selected = ref(0)
 const nom = ref('')
 const prenom = ref('')
-const dateNaissance = ref([])
+const dateNaissance = ref<string>("")
 const genre = ref('nr')
 
-const numero = ref(null)
-const licence = ref(null)
-const dateAdhesion = ref([])
-const dateFinAdhesion = ref([])
-const groupes = ref([])
+const numero = ref("")
+const licence = ref("")
+const dateAdhesion = ref("")
+const dateFinAdhesion = ref("")
+const groupes = ref<Groupe[]>([])
 
-const addresses = ref([])
+const addresses = ref<any[]>([])
 const address = ref('')
-const address_selected = ref({})
+const address_selected = ref<any>({})
 const complement = ref('')
 
 const email = ref('')
@@ -392,13 +383,13 @@ const organisme = ref({})
 
 const modal_title = ref('')
 const client = ref({})
-const validation = ref({})
+const validation = ref<any>({})
 const organismes = ref([])
 
 
 const route = useRoute()
 onMounted(async () => {
-  organismeId.value = parseInt(route.params?.id)
+  organismeId.value = parseInt(route.params?.id as string)
   if (organismeId.value > 0) {
     groupes.value = await fetchGroupes(organismeId.value)
     console.log(groupes.value)
@@ -406,7 +397,7 @@ onMounted(async () => {
 
 })
 
-const afficherDate = (date) => dayjs(date).format(dateFormatFr)
+const afficherDate = (date: Date) => dayjs(date).format(dateFormatFr)
 
 const create = () => {
   reset()
@@ -421,9 +412,9 @@ const reset = async () => {
   email.value = ''
   telephone.value = ''
   id_selected.value = 0
-  numero.value = null
-  licence.value = null
-  dateNaissance.value = []
+  numero.value = ""
+  licence.value = ""
+  dateNaissance.value = ""
   address.value = '',
   address_selected.value = {}
 }
@@ -437,13 +428,13 @@ const cancel = () => {
   afficherFormulaire.value = false
 }
 
-const remove = (id) => {
+const remove = (id: number) => {
   deleteAdherentId.value = id
-  modaleConfirmation.value = 'delete'
+  modaleConfirmation.value = false
   // delete_modal.value = true
 }
 
-const removeValidation = async (id) => {
+const removeValidation = async (id: number) => {
   try {
     await deleteAdherent(deleteAdherentId.value)
     toast.success('Suppression effectuée avec succès')
@@ -455,14 +446,15 @@ const removeValidation = async (id) => {
   adherents.value = await getAdherentsParOrganisme(organismeId.value)
 }
 
-const edit = (adherent) => {
+// TODO: Fix typing
+const edit = (adherent: any) => {
   mapApiToData(adherent)
   afficherFormulaire.value = true
   readonly.value = false
   modal_title.value = 'Modifier un adhérent'
 }
 
-const show = async (i) => {
+const show = async (i: number) => {
   const adherent = adherents.value[i]
   mapApiToData(adherent)
   afficherFormulaire.value = true
@@ -470,7 +462,8 @@ const show = async (i) => {
   modal_title.value = "Informations de l'adhérent"
 }
 
-const mapApiToData = (adherent) => {
+// TODO: Fix typing
+const mapApiToData = (adherent: any) => {
   nom.value = adherent.nom
   prenom.value = adherent.prenom
   numero.value =adherent.numeroAdherent
@@ -491,9 +484,9 @@ const mapApiToData = (adherent) => {
   }
   address.value = address_selected.value.address
   complement.value = address_selected.value.complement
-  dateNaissance.value = [dayjs(adherent.dateNaissance).format('DD/MM/YYYY')]
-  dateAdhesion.value = [dayjs(adherent.dateAdhesion).format('DD/MM/YYYY')]
-  dateFinAdhesion.value = [dayjs(adherent.dateFinAdhesion).format('DD/MM/YYYY')]
+  dateNaissance.value = dayjs(adherent.dateNaissance).format('DD/MM/YYYY')
+  dateAdhesion.value = dayjs(adherent.dateAdhesion).format('DD/MM/YYYY')
+  dateFinAdhesion.value = dayjs(adherent.dateFinAdhesion).format('DD/MM/YYYY')
   groupes.value = adherent.groupes
 }
 
@@ -527,9 +520,9 @@ const save = () => {
   }
 
   if (id_selected.value) {
-    modaleConfirmation.value = 'edit'
+    modaleConfirmation.value = false
   } else {
-    modaleConfirmation.value = 'add'
+    modaleConfirmation.value = false
   }
 }
 
