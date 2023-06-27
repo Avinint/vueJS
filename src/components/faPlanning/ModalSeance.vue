@@ -11,60 +11,36 @@
           borderless
           label="Ajouter une séance"
           @click="new_seance"
+          class="mr-4"
         />
       </div>
     </template>
     <template #content>
       <div class="relative">
-        <table
-          class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
+        <Table
+          :columns="table_columns"
+          :data="getTableData()"
+          editable
+          removable
+          selectable
+          @entity:edit="modify_seance"
+          @entity:remove="delete_seance"
         >
-          <thead
-            class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-100 dark:text-gray-700"
-          >
-            <tr>
-              <th scope="col" class="px-6 py-3">Horaire</th>
-              <th scope="col" class="px-6 py-3">Animateur(s)</th>
-              <th scope="col" class="px-6 py-3">Groupe(s)</th>
-              <th scope="col" class="px-6 py-3">QR code de séance</th>
-              <th scope="col" class="px-6 py-3">Modifier la séance</th>
-              <th scope="col" class="px-6 py-3">Supprimer la séance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(seance, i) in creneau_store.seances"
-              :key="i"
-              class="bg-white"
-            >
-              <td class="px-6 py-4">{{ getSeanceHours(seance) }}</td>
-              <td class="px-6 py-4">{{ getSeanceAnimateurs(seance) }}</td>
-              <td class="px-6 py-4">Aucun</td>
-              <td class="px-6 py-4">QR CODE</td>
-              <td class="px-6 py-4">
-                <Button
-                  v-if="seance.type === 'animateur'"
-                  label="MODIFIER"
-                  couleur="secondary"
-                  @click="modify_seance(seance)"
-                />
-              </td>
-              <td class="px-6 py-4">
-                <Button
-                  v-if="seance.type === 'animateur'"
-                  @click="delete_seance(seance)"
-                  couleur="danger"
-                  borderless
-                  icon="delete"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <template #col-3="{item}" 
+            ><Button
+              v-if="item.type === 'animateur'"
+              class="text-sm"
+              label="Voir le QR Code"
+              couleur="secondary"
+              @click="show_qrcode(item)"
+          />
+        </template>
+        </Table>
       </div>
-      <EditSeance ref="edit_seance" :mode="edit_mode" />
     </template>
   </ModalBottom>
+  <EditSeance ref="edit_seance" :mode="edit_mode" />
+  <ModalQRCode ref="modal_qrcode"/>
 </template>
 
 <script setup lang="ts">
@@ -76,15 +52,45 @@ import { getDateStringHour } from '../../services/date_service'
 import { useCreneauStore } from '@stores/creneau'
 import { useSeanceStore } from '@stores/seance'
 import { useRoute } from 'vue-router'
+import CrudList from '@components/molecules/CrudList.vue'
+import type { FaTableColumnData, FaTableRow } from '@components/common/Table.vue'
+import { getAnimateurs } from '@api/animateur'
+import Table from '@components/common/Table.vue'
+import ModalQRCode from './ModalQRCode.vue'
 
 defineExpose({ open_modal, close_modal })
 
+const table_columns: FaTableColumnData<Seance>[] = [
+  { label: 'Horaire', data: (e: Seance) => getSeanceHours(e) },
+  { label: 'Animateur(s)', data: (e: Seance) => getSeanceAnimateurs(e) },
+  { label: 'Groupe(s)', data: (_: Seance) => 'Aucun' },
+  { label: 'QR Code de séance' },
+]
+
+function getTableData(): FaTableRow<Seance>[] {
+  return creneau_store.seances.map(seance => {
+    return {
+      data: seance,
+      editable: seance.type === 'animateur',
+      removable: seance.type === 'animateur',
+    }
+  });
+}
+
 const edit_mode = ref<'create' | 'edit'>('create')
 const edit_seance = ref<InstanceType<typeof EditSeance>>()
+const modal_qrcode = ref<InstanceType<typeof ModalQRCode>>()
 const open = ref(false)
 const creneau_store = useCreneauStore()
 const seance_store = useSeanceStore()
 const route = useRoute()
+
+function show_qrcode(seance: Seance) {
+  if(modal_qrcode.value) {
+    modal_qrcode.value.setSeance(seance);
+    modal_qrcode.value.open();
+  }
+}
 
 function new_seance() {
   if (edit_seance.value) {
@@ -105,9 +111,9 @@ function modify_seance(seance: Seance) {
 }
 
 function delete_seance(seance: Seance) {
-  if(confirm("Souhaitez vous supprimer la séance ?")) {
-    seance_store.load(seance);
-    seance_store.delete();
+  if (confirm('Souhaitez vous supprimer la séance ?')) {
+    seance_store.load(seance)
+    seance_store.delete()
   }
 }
 
@@ -128,6 +134,7 @@ function getSeanceHours(seance: Seance): string {
 }
 
 function getSeanceAnimateurs(seance: Seance): string {
+  if (seance.animateurs.length == 0) return 'Aucun'
   return seance.animateurs.map((a) => `${a.nom} ${a.prenom}`).join(', ')
 }
 </script>
