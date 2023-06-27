@@ -160,7 +160,26 @@ type Seance = {
     selected_animateurs: number[],
 }
 
+type Adherent = {
+   id: number,
+   nom: string,
+   prenom: string,
+   dateNaissance: string,
+   numeroAdherent: string,
+   dateAdhesion: string,
+   dateFinAdhesion: string,
+   groupes: Groupe[]
+   adresse: any, // TODO: type entity 
+   email: string,
+   telephone: string,
+   licence: string,
+   genre: string,
+}
+
 type Groupe = {
     statut: boolean,
     groupe: string,
+    libelle: string,
+    animateurs: Animateur[],
+    adherents: Adherent[],
 }

@@ -15,7 +15,6 @@ defineProps<{
   text-transform: uppercase;
   color: #161616;
   display: block;
-  margin-bottom: 16px;
 }
 .label-text::before {
   content: "";
