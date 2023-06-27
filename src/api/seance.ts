@@ -69,3 +69,19 @@ export async function deleteSeance(seance_id: number): Promise<void> {
   if(response.status !== 204) throw response;
   return;
 }
+
+export async function getQRCode(seance_id: number): Promise<QRCodeResponse> {
+  const api_url = import.meta.env.VITE_API_URL;
+  const url = new URL(`${api_url}/api/qrcode/seance/${seance_id}`);
+  const response = await $fetch(url.toString(), {
+    method: 'get',
+    headers: {
+      ...defaultHeaders,
+      'Content-Type': 'application/ld+json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    }
+  })
+
+  if(response.status !== 200) throw response;
+  return response.json();
+}

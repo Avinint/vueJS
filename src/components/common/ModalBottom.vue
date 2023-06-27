@@ -1,8 +1,8 @@
 <template>
-  <div class="modal-bottom bg-white border-b drop-shadow-xl">
+  <div class="modal-bottom bg-white border-b">
       <div class="flex justify-between items-center border-b h-16">
         <slot name="title"/>
-        <Button test='TcloseModal' @click="emit('close', $event)" couleur="secondary" icon="cross" borderless />
+        <Button class="mr-4" test='TcloseModal' @click="emit('close', $event)" couleur="secondary" icon="cross" borderless />
     </div>
     <div class="p-4">
         <slot name="content"/>
@@ -24,6 +24,7 @@ const emit = defineEmits(['close'])
     border-radius: 8px 8px 0px 0px;
     width: 100%;
     max-width: calc(100vw - 288px);
+    box-shadow: 0px 0px 15px rgb(99, 99, 99);
 }
 
 .modal-bottom-title {

@@ -78,6 +78,10 @@ type SeanceEditResponse = {
     qrCode: string;
 }
 
+type QRCodeResponse = {
+  qrcode: string
+}
+
 enum CreneauType {
     GP = 1, 
     OG = 2, 
@@ -154,4 +158,9 @@ type Seance = {
     participants: Participant[],
     animateurs: Animateur[],
     selected_animateurs: number[],
+}
+
+type Groupe = {
+    statut: boolean,
+    groupe: string,
 }
