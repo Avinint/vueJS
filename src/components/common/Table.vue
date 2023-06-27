@@ -1,13 +1,13 @@
 <template>
   <table class="w-full text-left">
     <colgroup>
-      <col v-if="selectable" style="width: 60px" />
+      <col :style="{width: selectable ? '60px' : '20px'}" />
       <col v-for="_ in columns" />
       <col v-if="editable" style="width: 75px" />
       <col v-if="removable" style="width: 75px" />
     </colgroup>
     <thead class="h-10 text-sm w-full bg-gray-50 text-gray-700">
-      <th v-if="selectable"></th>
+      <th></th>
       <th v-for="column in columns" :key="column.label">
         {{ column.label }}
       </th>
@@ -16,7 +16,9 @@
     </thead>
     <tbody>
       <tr v-for="(item, index) in data" class="h-10 border-x border-b border-gray-50 text-sm text-gray-700">
-        <td v-if="selectable" class="h-10 flex justify-center items-center"><input type="checkbox"/></td>
+        <td class="h-10 flex justify-center items-center">
+          <input v-if="selectable" type="checkbox"/>
+        </td>
         <template v-for="(column, key) in columns">
           <td v-if="column.data">{{ column.data(item.data) }}</td>
           <td v-else>
