@@ -12,7 +12,7 @@ const extractAddress = (result) => {
 }
 
 export const getAdresses = async (address) => {
-  if (address.length < 3) return []
+  if (address && address.length < 3) return []
   const response = await fetch(`${api_gouv}/search/?q=${address}&limit=15"`)
   return extractAddress(await response.json())
 }
