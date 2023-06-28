@@ -352,7 +352,6 @@ const clients = ref([])
 const validation = ref({})
 const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
-
 onBeforeRouteUpdate(async (to, from) => {
   // on recharge le composant si l'id change
   if ((to.params?.id ?? false) && to.params.id !== from.params.id) {
@@ -432,7 +431,7 @@ const mapApiToData = (organisme) => {
 
   name.value = organisme.libelle
   actif.value = organisme.actif
-  client.value = idClient
+  client.value = idClient.value
   gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
   address_selected.value = {
     address: organisme.adresse.adresse,
@@ -455,9 +454,8 @@ const saveOrganisme = () => {
   organisme.value = {
     libelle: name.value,
     actif: actif.value,
-    client: client.value,
+    client: 'api/clients/' + client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
-
     adresse: {
       adresse: address_selected.value.label,
       complement: complement.value,
