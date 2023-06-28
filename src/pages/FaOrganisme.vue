@@ -350,7 +350,7 @@ const modal_title = ref('')
 const client = ref({})
 const clients = ref([])
 const validation = ref({})
-
+const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
 onBeforeRouteUpdate(async (to, from) => {
@@ -429,9 +429,10 @@ const showOrganisme = async (i) => {
 }
 
 const mapApiToData = (organisme) => {
+
   name.value = organisme.libelle
   actif.value = organisme.actif
-  client.value = organisme.client
+  client.value = idClient
   gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
   address_selected.value = {
     address: organisme.adresse.adresse,
