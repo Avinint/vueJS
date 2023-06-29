@@ -58,6 +58,9 @@ export const usePlanningStore = defineStore('planning', {
       }
       return output;
     },
+    getOrganismeEvents(state) {
+      return state.idOrganisme
+    }
   },
   actions: {
     async fetch() {
@@ -70,7 +73,9 @@ export const usePlanningStore = defineStore('planning', {
         debut,
         this.filters.fit_arena,
         this.filters.duree,
-        this.filters.zone.join(',')
+        this.filters.zone.join(','),
+          this.filters.organisme,
+
       )
       this.pushCreneaux(response.creneaux)
     },

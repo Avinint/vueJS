@@ -156,6 +156,7 @@ export default {
     },
     viewWeek() {
       this.planningStore.filters.fit_arena = this.$route.params.id
+      this.planningStore.filters.organisme = (this.$route.params.org_id) ? this.$route.params.org_id : null
       this.planningStore.filters.duree = 7
       this.planningStore.filters.zone = [this.zones[0].id] // select first zone
       this.calendarApi.changeView('timeGridWeek')

@@ -83,8 +83,8 @@ type QRCodeResponse = {
 }
 
 enum CreneauType {
-    GP = 1, 
-    OG = 2, 
+    GP = 1,
+    OG = 2,
     AC = 3,
 }
 
@@ -101,11 +101,12 @@ type PlanningFilters = {
     fit_arena: number;
     duree: number;
     zone: number[];
+    organisme: number;
 }
 
 type Planning = {
   creneaux: Creneau[];
-  filters: PlanningFilters; 
+  filters: PlanningFilters;
   activites: Activite[],
   currentViewName: string,
   currentDateStart: any,    // TODO: Find a proper type
@@ -169,7 +170,7 @@ type Adherent = {
    dateAdhesion: string,
    dateFinAdhesion: string,
    groupes: Groupe[]
-   adresse: any, // TODO: type entity 
+   adresse: any, // TODO: type entity
    email: string,
    telephone: string,
    licence: string,

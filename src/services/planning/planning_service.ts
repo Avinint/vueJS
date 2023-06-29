@@ -13,6 +13,7 @@ export const default_planning: Planning = {
     fit_arena: 0,
     duree: 0,
     zone: [],
+    organisme: 0,
   },
   activites: [],
   currentViewName: 'week',
@@ -21,6 +22,7 @@ export const default_planning: Planning = {
   currentWeek: 0,
   slotMinTime: '00:00',
   slotMaxTime: '23:59',
+
 }
 
 export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
