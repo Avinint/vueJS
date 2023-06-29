@@ -22,6 +22,7 @@ export function parseSeance(id_creneau: number, animateurs: Animateur[], selecte
         idCreneau: id_creneau,
         dateHeureDebut: seance.dateHeureDebut,
         dateHeureFin: seance.dateHeureFin,
-        animateurs: output_animateurs,
+	animateurs: output_animateurs,
+	groupes:[]
     }
 }

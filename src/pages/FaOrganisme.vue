@@ -450,11 +450,12 @@ const mapApiToData = (organisme) => {
 }
 
 const saveOrganisme = () => {
-  if (!isValid(validation)) return
+console.log(idClient.value)  
+if (!isValid(validation)) return
   organisme.value = {
     libelle: name.value,
     actif: actif.value,
-    client: 'api/clients/' + client.value,
+    client: 'api/clients/' + idClient.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
     adresse: {
       adresse: address_selected.value.label,

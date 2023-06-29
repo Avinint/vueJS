@@ -20,12 +20,12 @@
           v-if="event.extendedProps.activites"
           class="mr-2 fill-red-600"
         ></span>
-        <span
+        <!-- span
           class="text-2xs border-3 flex h-8 w-8 items-center justify-center rounded-full border-red-600 bg-white text-center leading-none"
         >
           Terrain<br />
           1/3
-        </span>
+        </span-->
       </div>
     </div>
   </div>
