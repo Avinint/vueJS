@@ -29,7 +29,7 @@ export const updateClient = async (client, id) => {
       headers: {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
-        'Content-Type': 'application/ld+json',
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
       body: JSON.stringify(client),

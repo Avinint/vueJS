@@ -1,4 +1,4 @@
-import { getOrganismes } from "@api/organisme";
+import { getOrganismesSelect } from "@api/organisme";
 import { defineStore } from "pinia";
 
 type OrganismeStoreState = {
@@ -16,8 +16,8 @@ export const useOrganismeStore = defineStore('organisme', {
         getOrganisme: (state) => state.organisme,
     },
     actions: {
-        async fetchOrganismes(page = 0, query = '') {
-            getOrganismes(page, query).then(data => {
+    async fetchOrganismes(page = 0, query = '') {
+            getOrganismesSelect(page, query).then(data => {
                 this.organismes = data;
             });
         },

@@ -24,7 +24,7 @@
         <FAInput
           v-model="creneauStore.titre"
           :inline="false"
-          :required="true"
+          :required="false"
           label="Ajouter un titre à votre créneau"
           class="grow"
           placeholder="Ajouter un titre à votre créneau"

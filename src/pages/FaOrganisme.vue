@@ -350,7 +350,7 @@ const modal_title = ref('')
 const client = ref({})
 const clients = ref([])
 const validation = ref({})
-
+const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
 watch(() => route.params, async () => {
@@ -429,9 +429,10 @@ const showOrganisme = async (i) => {
 }
 
 const mapApiToData = (organisme) => {
+
   name.value = organisme.libelle
   actif.value = organisme.actif
-  client.value = organisme.client
+  client.value = idClient.value
   gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
   address_selected.value = {
     address: organisme.adresse.adresse,
@@ -450,13 +451,13 @@ const mapApiToData = (organisme) => {
 }
 
 const saveOrganisme = () => {
-  if (!isValid(validation)) return
+console.log(idClient.value)  
+if (!isValid(validation)) return
   organisme.value = {
     libelle: name.value,
     actif: actif.value,
-    client: client.value,
+    client: 'api/clients/' + idClient.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
-
     adresse: {
       adresse: address_selected.value.label,
       complement: complement.value,

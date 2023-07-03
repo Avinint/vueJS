@@ -321,6 +321,15 @@
                 :src="community_manager.qrCode"
               />
             </div>
+            <div>
+              <Button
+                  id="TImprimeComManager"
+                  label="Imprimer la carte"
+                  icon="print"
+                  couleur="primary"
+                  @click=""
+              />
+            </div>
           </Card>
           <Button
             v-if="!readonly"

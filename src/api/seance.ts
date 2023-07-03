@@ -10,7 +10,7 @@ export async function getCreneauSeances(id_creneau: number, page = 1): Promise<S
     method: 'get',
     headers: {
       ...defaultHeaders,
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
       Authorization: 'Bearer ' + localStorage.getItem('token'),
     },
   })
@@ -27,7 +27,7 @@ export async function postSeance(contract: SeanceEditContract): Promise<SeanceEd
     body: JSON.stringify(contract),
     headers: {
       ...defaultHeaders,
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     }
   })
@@ -45,7 +45,7 @@ export async function putSeance(seance_id: number, contract: SeanceEditContract)
     body: JSON.stringify(contract),
     headers: {
       ...defaultHeaders,
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     }
   })
@@ -61,7 +61,7 @@ export async function deleteSeance(seance_id: number): Promise<void> {
     method: 'delete',
     headers: {
       ...defaultHeaders,
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     }
   })
@@ -77,7 +77,7 @@ export async function getQRCode(seance_id: number): Promise<QRCodeResponse> {
     method: 'get',
     headers: {
       ...defaultHeaders,
-      'Content-Type': 'application/ld+json',
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     }
   })

@@ -12,7 +12,23 @@ export async function getOrganismes(page = 1, query = ''): Promise<Organisme[]> 
       method: 'get',
       headers: {
         ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      }
+    }
+  )
+  if (response.status !== 200) throw response
+  return response.json()
+}
+
+export async function getOrganismesSelect(page = 1, query = ''): Promise<Organisme[]> {
+  const response = await $fetch(
+  `${import.meta.env.VITE_API_URL}/api/select/organismes?${query}`,
+    {
+      method: 'get',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       }
     }
@@ -33,7 +49,7 @@ export const postOrganismes = async (organisme) => {
       method: 'post',
       headers: {
         ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
       body: JSON.stringify(organisme.value),
@@ -51,7 +67,7 @@ export const updateOrganismes = async (organisme, id) => {
       headers: {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
-        'Content-Type': 'application/ld+json',
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
       body: JSON.stringify(organisme.value),
@@ -68,7 +84,7 @@ export const deleteOrganismes = async (id) => {
       method: 'delete',
       headers: {
         ...defaultHeaders,
-        'Content-Type': 'application/merge-patch+json',
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
       },
     }
