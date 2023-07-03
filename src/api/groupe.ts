@@ -24,6 +24,24 @@ export async function postGroup(groupe: GroupeEditContract): Promise<Groupe> {
   return response.json()
 }
 
+export async function putGroup(id: number, contract: GroupeEditContract): Promise<Groupe> {
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/groupes/${id}`,
+    {
+      method: 'put',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+      body: JSON.stringify(contract),
+    }
+  )
+
+  if (response.status !== 200) throw response.json()
+  return response.json()
+}
+
 export async function deleteGroup(groupe_id: number) {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/groupes/${groupe_id}`,

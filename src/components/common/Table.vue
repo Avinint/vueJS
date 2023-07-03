@@ -54,7 +54,7 @@
         </td>
       </tr>
       <tr class="nodata" v-else>
-        <p>Aucune donnée</p>
+        <p class="text-sm">Aucune donnée.</p>
       </tr>
     </tbody>
   </table>
@@ -115,12 +115,15 @@ function updateSelected(e: Event, item: FaTableRow<any>) {
 
 <style scoped>
 .nodata {
-  height: 1.5rem;
+  height: 3rem;
+  position: relative;
 }
 
 .nodata p {
   position: absolute;
   left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .table-checkbox {

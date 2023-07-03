@@ -62,7 +62,12 @@
       </form>
       <template v-if="!create">
         <LabelText class="mb-4 mt-4" text="ADHÉRENTS DU GROUPE" />
-        <Table :columns="table_columns" :data="adherents_groupe" removable @entity:remove="removeAdherent"/>
+        <Table
+          :columns="table_columns"
+          :data="adherents_groupe"
+          removable
+          @entity:remove="removeAdherent"
+        />
       </template>
     </Card>
     <Card v-if="!create" :shadow="false" class="overflow-hidden">
@@ -71,12 +76,16 @@
         <Input placeholder="Rechercher" />
         <Button couleur="secondary" label="Filtrer" />
       </div>
-      <div class="flex items-center gap-4 mb-4">
-        <p class="text-sm border px-3 py-2 text-blue-300 font-bold rounded-lg" v-if="selected_adherents.length > 0">{{ `${selected_adherents.length} éléments` }}</p>
+      <div v-if="selected_adherents.length > 0" class="mb-4 flex items-center gap-4">
+        <p
+          class="rounded-lg border px-3 py-2 text-sm font-bold text-blue-300"
+        >
+          {{ `${selected_adherents.length} éléments` }}
+        </p>
         <Button
-        couleur="secondary"
-        label="Ajouter au groupe"
-        @click="addAdherents"
+          couleur="secondary"
+          label="Ajouter au groupe"
+          @click="addAdherents"
         />
       </div>
       <Table
@@ -94,7 +103,7 @@ import Card from '../components/common/Card.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
 import { useRoute } from 'vue-router'
-import { deleteGroup, fetchGroupes, postGroup } from '../api/groupe.js'
+import { deleteGroup, fetchGroupes, postGroup, putGroup } from '../api/groupe'
 import InputOptions from '../components/common/InputOptions.vue'
 import { onMounted, reactive, ref } from 'vue'
 import 'vue3-toastify/dist/index.css'
@@ -103,6 +112,7 @@ import { getDateDMY } from '../services/date_service'
 import type { FaTableRow } from '../components/common/Table.vue'
 import LabelText from '@components/common/LabelText.vue'
 import { getAnimateursParOrganisme } from '@api/animateur'
+import { getAdherentsParOrganisme } from '@api/adherent'
 
 const table_columns: FaTableColumnData<Adherent>[] = [
   { label: 'Nom et Prénom', data: (e) => `${e.nom} ${e.prenom}` },
@@ -124,6 +134,7 @@ const adherents = ref<Adherent[]>([])
 const selected_adherents = ref<FaTableRow<Adherent>[]>([])
 const adherents_groupe = ref<FaTableRow<Adherent>[]>([])
 const organismeId = ref(0)
+const group_id = ref(0)
 
 const form = reactive<{
   libelle: string
@@ -144,32 +155,17 @@ onMounted(async () => {
   if (organismeId.value > 0) {
     groupes.value = await fetchGroupes(organismeId.value)
     animateurs.value = await getAnimateursParOrganisme(organismeId.value)
-    adherents.value = [
-      {
-        id: 0,
-        nom: 'traut',
-        prenom: 'stéphane',
-        dateAdhesion: '',
-        dateFinAdhesion: '',
-        adresse: {},
-        email: 'traut@adipso.fr',
-        dateNaissance: '',
-        genre: 'm',
-        groupes: [],
-        licence: 'test',
-        telephone: '',
-        numeroAdherent: '',
-      },
-    ]
+    adherents.value = await getAdherentsParOrganisme(organismeId.value)
+
     form.idOrganisme = organismeId.value
   }
 })
 
 function removeAdherent(entity: Adherent) {
-  for(let i = 0; i < adherents_groupe.value.length; i++) {
-    const element = adherents_groupe.value[i];
-    if(element.data.id == entity.id) {
-      adherents_groupe.value.splice(i, 1);
+  for (let i = 0; i < adherents_groupe.value.length; i++) {
+    const element = adherents_groupe.value[i]
+    if (element.data.id == entity.id) {
+      adherents_groupe.value.splice(i, 1)
     }
   }
 }
@@ -203,10 +199,21 @@ function addGroup() {
 
 function editGroup(group: Groupe) {
   create.value = false
+  group_id.value = group.id
   form.libelle = group.libelle
   form.animateurs = group.animateurs.map((animateur) => animateur.id)
+  form.adherents = group.adherents
+  adherents_groupe.value = group.adherents.map((adherent) => {
+    return {
+      id: adherent.id,
+      data: adherent,
+      editable: false,
+      removable: true,
+    }
+  })
   mode.value = 'edit'
 }
+
 function getGroupTableData(groupe: Groupe): FaTableRow<Adherent>[] {
   return groupe.adherents.map((adherent) => {
     return {
@@ -228,27 +235,36 @@ function getAnimateurs() {
 }
 
 async function save() {
-  const group = await postGroup({
+  const contract = {
     libelle: form.libelle,
     idOrganisme: form.idOrganisme,
     animateurs: form.animateurs.map((e) => {
       return { id: e }
     }),
-    adherents: form.adherents.map((e) => {
-      return { id: e.id }
+    adherents: adherents_groupe.value.map((e) => {
+      return { id: e.data.id }
     }),
-  })
+  }
 
-  groupes.value.push(group)
-  create.value = false
+  if (create.value === true) {
+    const group = await postGroup(contract)
+    groupes.value.push(group)
+    create.value = false
+  } else {
+    await putGroup(group_id.value, contract)
+    groupes.value = await fetchGroupes(organismeId.value)
+  }
+
+  group_id.value = 0
 }
 
-function deleteGroupe(groupe: Groupe) {
+async function deleteGroupe(groupe: Groupe) {
   deleteGroup(groupe.id).then(() => {
     for (let i = 0; i < groupes.value.length; i++) {
       if (groupe.id == groupes.value[i].id) groupes.value.splice(i, 1)
     }
   })
+  groupes.value = await fetchGroupes(organismeId.value)
 }
 
 function clean() {
