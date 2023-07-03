@@ -70,6 +70,7 @@ const table_columns: FaTableColumnData<Seance>[] = [
 function getTableData(): FaTableRow<Seance>[] {
   return creneau_store.seances.map(seance => {
     return {
+      id: seance.id,
       data: seance,
       editable: seance.type === 'animateur',
       removable: seance.type === 'animateur',
