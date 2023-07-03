@@ -1,5 +1,5 @@
 <template>
-  <LabelText v-if="label" :text="label" />
+  <LabelText v-if="label" :text="label" class="mb-4"/>
   <Table :columns="column_data" :data="getTableData()">
     <template #col-0="{ index }">
       <Switch v-model="seance_store.selected_animateurs[index]" />
@@ -35,6 +35,7 @@ const column_data: FaTableColumnData<Animateur>[] = [
 function getTableData(): FaTableRow<Animateur>[] {
   return seance_store.getAnimateurs.map((animateur) => {
     return {
+      id: animateur.id,
       data: animateur,
       editable: false,
       removable: false,

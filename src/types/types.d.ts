@@ -66,6 +66,7 @@ type SeanceEditContract = {
     dateHeureFin: string;
     idCreneau: number;
     animateurs: { id: number }[];
+    groupes: {id: number}[];
 }
 
 type GroupeEditContract = {
@@ -164,6 +165,7 @@ type Seance = {
     type: string,
     participants: Participant[],
     animateurs: Animateur[],
+    groupes: Groupe[],
     selected_animateurs: number[],
 }
 
