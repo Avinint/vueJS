@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getActivitesByZones = async (page = 1, query = '') => {
   const response = await $fetch(
@@ -9,7 +10,7 @@ export const getActivitesByZones = async (page = 1, query = '') => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -25,7 +26,7 @@ export const postActivitesByZones = async (data) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(data),
     }
@@ -43,7 +44,7 @@ export const updateActivitesByZones = async (data, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(data),
     }
@@ -61,7 +62,7 @@ export const patchActivitesByZones = async (activite, id) => {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
         //'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(activite),
     }
@@ -78,7 +79,7 @@ export const deleteActivitesByZones = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -94,7 +95,7 @@ export const getActiviteByZone = async (id = 1) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -110,7 +111,7 @@ export const postZoneActivite = async (zoneId, activiteId, data) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(data),
     }
@@ -125,7 +126,7 @@ export const deleteZoneActivite = async (zoneId, activiteId) => {
         headers: {
             ...defaultHeaders,
             'Content-Type': 'application/merge-patch+json',
-            'Authorization': 'Bearer '+ localStorage.getItem('token')
+            'Authorization': 'Bearer '+ useStorage('token', '').value
         }
     })
     if (response.status !== 204)

@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export async function getActivites(fitArenaId: number, page = 1, query = ''): Promise<Activite[]> {
   const response = await $fetch(
@@ -11,7 +12,7 @@ export async function getActivites(fitArenaId: number, page = 1, query = ''): Pr
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -27,7 +28,7 @@ export const postActivites = async (fa) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(fa),
     }
@@ -44,7 +45,7 @@ export const postActiviteWithIcone = async (fa) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(fa),
     }
@@ -62,7 +63,7 @@ export const updateActivites = async (activite, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(activite),
     }
@@ -79,7 +80,7 @@ export const patchActivites = async (activite, id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(activite),
     }
@@ -96,7 +97,7 @@ export const deleteActivites = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

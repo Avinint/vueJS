@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getFitArenas = async (page = 1, query = '') => {
   const response = await $fetch(
@@ -9,7 +10,7 @@ export const getFitArenas = async (page = 1, query = '') => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -25,7 +26,7 @@ export const postFitArenas = async (fa) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(fa),
     }
@@ -43,7 +44,7 @@ export const updateFitarenas = async (client, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(client),
     }
@@ -60,7 +61,7 @@ export const deleteFitArenas = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const postZoneEquipement = async (body) => {
   const response = await $fetch(
@@ -9,7 +10,7 @@ export const postZoneEquipement = async (body) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(body),
     }
@@ -26,7 +27,7 @@ export const deleteZoneEquipement = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -45,7 +46,7 @@ export const deleteZoneEquipementByIds = async (zone, equipement) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

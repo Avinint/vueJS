@@ -1,3 +1,4 @@
+import { useStorage } from '@vueuse/core'
 import {defaultHeaders, get} from './api.js'
 import $fetch from './refreshToken.js'
 
@@ -13,7 +14,7 @@ export async function getOrganismes(page = 1, query = ''): Promise<Organisme[]> 
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       }
     }
   )
@@ -29,7 +30,7 @@ export async function getOrganismesSelect(page = 1, query = ''): Promise<Organis
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       }
     }
   )
@@ -50,7 +51,7 @@ export const postOrganismes = async (organisme) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(organisme.value),
     }
@@ -68,7 +69,7 @@ export const updateOrganismes = async (organisme, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(organisme.value),
     }
@@ -85,7 +86,7 @@ export const deleteOrganismes = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

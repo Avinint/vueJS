@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getParametreActivite = async (page = 1) => {
   const response = await $fetch(
@@ -9,7 +10,7 @@ export const getParametreActivite = async (page = 1) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -25,7 +26,7 @@ export const getParametreActiviteById = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -41,7 +42,7 @@ export const postParametreActivite = async (param) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(param),
     }
@@ -58,7 +59,7 @@ export const updateParametreActivite = async (param, id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(param),
     }
@@ -75,7 +76,7 @@ export const deleteParametreActivite = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -91,7 +92,7 @@ export const patchParametreActivite = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getProfils = async () => {
   const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/profils`, {
@@ -7,7 +8,7 @@ export const getProfils = async () => {
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
   })
   if (response.status !== 200) throw response

@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export async function getPlanning(
   debut: number,
@@ -24,7 +25,7 @@ export async function getPlanning(
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
   })
   if (response.status !== 200) throw response
@@ -39,7 +40,7 @@ export async function postCreneau(
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
     body: JSON.stringify(contract),
   })
@@ -58,7 +59,7 @@ export async function updateCreneau(
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(contract),
     }
@@ -75,7 +76,7 @@ export const deleteCreneau = async (id: number): Promise<void> => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
