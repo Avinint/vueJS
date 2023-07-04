@@ -1,5 +1,6 @@
 import { defaultHeaders, get, post, put } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getAdherentsParOrganisme = async (id, page = 1, query = '') =>
   await get(`${import.meta.env.VITE_API_URL}/api/organismes/${id}/adherents?page=${page}${query}`)
@@ -20,7 +21,7 @@ export const deleteAdherent = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
