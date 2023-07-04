@@ -1,7 +1,7 @@
 import { defaultHeaders, get, post, put } from './api.js'
 import $fetch from './refreshToken.js'
 
-export const getAdherentsParOrganisme = async (id, page = 1, query = '') =>
+export const getAdherentsParOrganisme = async (id: number, page = 1, query = '') =>
   await get(`${import.meta.env.VITE_API_URL}/api/organismes/${id}/adherents?page=${page}${query}`)
 
 export const postAdherent = async (adherent) => {
@@ -12,7 +12,7 @@ export const postAdherent = async (adherent) => {
 export const putAdherent = async (adherent, id) =>
   await put(`${import.meta.env.VITE_API_URL}/api/adherent/${id}`, adherent)
 
-export const deleteAdherent = async (id) => {
+export const deleteAdherent = async (id: number) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/adherent/${id}`,
     {
@@ -28,10 +28,10 @@ export const deleteAdherent = async (id) => {
   return {}
 }
 
-export const selectGroupes = async (organismeId) =>
+export const selectGroupes = async (organismeId: number) =>
   await get(`${import.meta.env.VITE_API_URL}/api/organismes/${organismeId}/groupes/select`)
 
-export const groupes = async (organismeId) =>
+export const groupes = async (organismeId: number) =>
 await get(`${import.meta.env.VITE_API_URL}/api/organismes/${organismeId}/groupes/select`)
 
 

@@ -22,7 +22,6 @@
           :data="getTableData()"
           editable
           removable
-          selectable
           @entity:edit="modify_seance"
           @entity:remove="delete_seance"
         >
@@ -39,7 +38,7 @@
       </div>
     </template>
   </ModalBottom>
-  <EditSeance ref="edit_seance" :mode="edit_mode" />
+  <EditSeance ref="edit_seance" :mode="edit_mode" :groupes="groupes"/>
   <ModalQRCode ref="modal_qrcode"/>
 </template>
 
@@ -57,25 +56,16 @@ import type { FaTableColumnData, FaTableRow } from '@components/common/Table.vue
 import { getAnimateurs } from '@api/animateur'
 import Table from '@components/common/Table.vue'
 import ModalQRCode from './ModalQRCode.vue'
+import { fetchGroupes } from '@api/groupe'
 
 defineExpose({ open_modal, close_modal })
 
 const table_columns: FaTableColumnData<Seance>[] = [
   { label: 'Horaire', data: (e: Seance) => getSeanceHours(e) },
   { label: 'Animateur(s)', data: (e: Seance) => getSeanceAnimateurs(e) },
-  { label: 'Groupe(s)', data: (_: Seance) => 'Aucun' },
+  { label: 'Groupe(s)', data: (e: Seance) => e.groupes.map(groupe => groupe.libelle).join(', ') },
   { label: 'QR Code de séance' },
 ]
-
-function getTableData(): FaTableRow<Seance>[] {
-  return creneau_store.seances.map(seance => {
-    return {
-      data: seance,
-      editable: seance.type === 'animateur',
-      removable: seance.type === 'animateur',
-    }
-  });
-}
 
 const edit_mode = ref<'create' | 'edit'>('create')
 const edit_seance = ref<InstanceType<typeof EditSeance>>()
@@ -83,7 +73,24 @@ const modal_qrcode = ref<InstanceType<typeof ModalQRCode>>()
 const open = ref(false)
 const creneau_store = useCreneauStore()
 const seance_store = useSeanceStore()
+const groupes = ref<Groupe[]>([]);
 const route = useRoute()
+
+onMounted(async () => {
+  const id_organisme = parseInt(route.params.org_id as any);
+  groupes.value = await fetchGroupes(id_organisme)
+})
+
+function getTableData(): FaTableRow<Seance>[] {
+  return creneau_store.seances.map(seance => {
+    return {
+      id: seance.id,
+      data: seance,
+      editable: seance.type === 'animateur',
+      removable: seance.type === 'animateur',
+    }
+  });
+}
 
 function show_qrcode(seance: Seance) {
   if(modal_qrcode.value) {
@@ -121,6 +128,7 @@ function open_modal() {
   open.value = true
   creneau_store.fetchSeances()
   seance_store.fetchAnimateurs(route.params.id_org as any)
+  seance_store.groupes = groupes.value;
 }
 
 function close_modal() {

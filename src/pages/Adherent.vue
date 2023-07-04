@@ -332,7 +332,7 @@ import {
   postAdherent,
   putAdherent,
   selectGroupes
-} from '../api/adherent.js'
+} from '../api/adherent.ts'
 import { selectOrganismes } from '../api/organisme.ts'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'

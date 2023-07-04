@@ -352,11 +352,12 @@ const clients = ref([])
 const validation = ref({})
 const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
-onBeforeRouteUpdate(async (to, from) => {
-  // on recharge le composant si l'id change
-  if ((to.params?.id ?? false) && to.params.id !== from.params.id) {
-    organismes.value = await getOrganismesParClient(route.params.id)
-  }
+
+watch(() => route.params, async () => {
+  console.log(route.params.id)
+  getOrganismesParClient(route.params.id).then(response => {
+    organismes.value = response;
+  })
 })
 
 onMounted(async () => {

@@ -1,5 +1,5 @@
 <template>
-  <LabelText text="Ajouter des animateur(s) à la séance" />
+  <LabelText v-if="label" :text="label" class="mb-4"/>
   <Table :columns="column_data" :data="getTableData()">
     <template #col-0="{ index }">
       <Switch v-model="seance_store.selected_animateurs[index]" />
@@ -17,6 +17,13 @@ import Table, {
 import { useSeanceStore } from '@stores/seance'
 import { ref } from 'vue'
 
+defineProps({
+  label: {
+    type: String,
+    required: true,
+  }
+})
+
 const column_data: FaTableColumnData<Animateur>[] = [
   { label: 'Statut' },
   { label: 'Nom', data: (e: Animateur) => e.nom },
@@ -28,6 +35,7 @@ const column_data: FaTableColumnData<Animateur>[] = [
 function getTableData(): FaTableRow<Animateur>[] {
   return seance_store.getAnimateurs.map((animateur) => {
     return {
+      id: animateur.id,
       data: animateur,
       editable: false,
       removable: false,

@@ -14,12 +14,12 @@
           v-model:end_time="seance_store.data.dateHeureFin"
         />
         <LabelText text="Ajouter des groupe(s) à la séance" />
-        <Table :data="groupes" :columns="groupes_column_data" class="mb-8">
+        <Table :data="getGroupesTableData()" :columns="groupes_column_data" class="mb-8">
           <template #col-0="{ index }">
-            <Switch />
+            <Switch v-model="seance_store.selected_groupes[index]"/>
           </template>
         </Table>
-        <ListAnimateurs />
+        <ListAnimateurs label="Ajouter des animateur(s) à la séance"/>
         <div class="flex justify-end">
           <Button
             @click="close_panel"
@@ -38,7 +38,7 @@
 import Button from '@components/common/Button.vue'
 import Switch from '@components/common/Switch.vue'
 import { useSeanceStore } from '@stores/seance'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import ListAnimateurs from './ListAnimateurs.vue'
 import ModalBottom from '@components/common/ModalBottom.vue'
 import BorderContainer from '@components/common/BorderContainer.vue'
@@ -51,6 +51,7 @@ import TimeRange from '@components/molecules/TimeRange.vue'
 
 const props = defineProps<{
   mode: 'edit' | 'create'
+  groupes: Groupe[]
 }>()
 
 const container = ref<HTMLElement>()
@@ -58,12 +59,9 @@ const is_open = ref(false)
 const seance_store = useSeanceStore()
 defineExpose({ open_panel, close_panel })
 
-const groupes: FaTableRow<Groupe>[] = [
-  { data: { statut: true, groupe: 'U10' }, editable: true, removable: true },
-]
 const groupes_column_data: FaTableColumnData<Groupe>[] = [
   { label: 'Statut' },
-  { label: 'Groupe', data: (e: Groupe) => e.groupe },
+  { label: 'Libelle', data: (e: Groupe) => e.libelle },
 ]
 
 async function validate() {
@@ -74,6 +72,17 @@ async function validate() {
     is_open.value = false
     await seance_store.put()
   }
+}
+
+function getGroupesTableData(): FaTableRow<Groupe>[] {
+  return props.groupes.map(groupe => {
+    return {
+      id: groupe.id,
+      data: groupe,
+      removable: false,
+      editable: false,
+    }
+  })
 }
 
 function open_panel() {
