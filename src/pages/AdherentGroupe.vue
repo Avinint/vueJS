@@ -138,12 +138,10 @@ const group_id = ref(0)
 
 const form = reactive<{
   libelle: string
-  idOrganisme: number
   animateurs: number[]
   adherents: Adherent[]
 }>({
   libelle: '',
-  idOrganisme: 0,
   animateurs: [],
   adherents: [],
 })
@@ -152,12 +150,10 @@ const route = useRoute()
 
 onMounted(async () => {
   organismeId.value = parseInt(route.params?.id as string)
-  if (organismeId.value > 0) {
+  if (organismeId.value != 0) {
     groupes.value = await fetchGroupes(organismeId.value)
     animateurs.value = await getAnimateursParOrganisme(organismeId.value)
     adherents.value = await getAdherentsParOrganisme(organismeId.value)
-
-    form.idOrganisme = organismeId.value
   }
 })
 
@@ -237,7 +233,7 @@ function getAnimateurs() {
 async function save() {
   const contract = {
     libelle: form.libelle,
-    idOrganisme: form.idOrganisme,
+    idOrganisme: organismeId.value,
     animateurs: form.animateurs.map((e) => {
       return { id: e }
     }),
