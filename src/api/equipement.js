@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getEquipements = async (fitArenaId, page = 1, query = '') => {
   const response = await $fetch(
@@ -11,7 +12,7 @@ export const getEquipements = async (fitArenaId, page = 1, query = '') => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -27,7 +28,7 @@ export const getEquipement = async (id = 1) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -43,7 +44,7 @@ export const postEquipements = async (equipement) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(equipement),
     }
@@ -61,7 +62,7 @@ export const updateEquipements = async (equipement, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(equipement),
     }
@@ -79,7 +80,7 @@ export const patchEquipements = async (equipement, id) => {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
         //'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(equipement),
     }
@@ -96,7 +97,7 @@ export const deleteEquipements = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -114,7 +115,7 @@ export const getEquipementsByZone = async (page, zoneId, query = '') => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

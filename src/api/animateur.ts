@@ -1,5 +1,6 @@
 import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getAnimateurs = async (page = 1, query = '') => {
   return await get (`${import.meta.env.VITE_API_URL}/api/animateurs?page=${page}${query}`);
@@ -17,7 +18,7 @@ export const postAnimateur = async (animateur) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(animateur.value),
     }
@@ -36,7 +37,7 @@ export const putAnimateur = async (animateur, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(animateur.value),
     }
@@ -53,7 +54,7 @@ export const deleteAnimateur = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -71,7 +72,7 @@ export async function getAnimateursOrganisme(id_organisme: number, page = 1): Pr
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
   })
   if (response.status !== 200) throw response

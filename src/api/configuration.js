@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getConfigActiviteById = async (activite_id) => {
   const response = await $fetch(
@@ -9,7 +10,7 @@ export const getConfigActiviteById = async (activite_id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -27,7 +28,7 @@ export const getConfigFitArenaById = async (fitArena_id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -43,7 +44,7 @@ export const getConfigZoneById = async (zone_id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -59,7 +60,7 @@ export const updateConfig = async (config) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(config),
     }
@@ -76,7 +77,7 @@ export const postConfig = async (config) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(config),
     }
@@ -92,7 +93,7 @@ export const postConfigurationZoneActivite = async (zoneId, activiteId, data) =>
         headers: {
             ...defaultHeaders,
             'Content-Type': 'application/ld+json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + useStorage('token', '').value
         },
         body: JSON.stringify(data)
     })

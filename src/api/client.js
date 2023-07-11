@@ -1,5 +1,6 @@
 import { defaultHeaders, getHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export const getClients = async (page= 1, query = '') =>
    get( `${import.meta.env.VITE_API_URL}/api/clients?page=${page}${query}`)
@@ -13,7 +14,7 @@ export const postClient = async (client) => {
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
     body: JSON.stringify(client),
   })
@@ -30,7 +31,7 @@ export const updateClient = async (client, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(client),
     }
@@ -47,7 +48,7 @@ export const deleteClient = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -65,7 +66,7 @@ export const getGestionnaireCollectivites = async (page = 1, query = '') => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

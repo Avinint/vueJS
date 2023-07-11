@@ -1,5 +1,6 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export async function getCreneauSeances(id_creneau: number, page = 1): Promise<Seance[]> {
   const api_url = import.meta.env.VITE_API_URL
@@ -11,7 +12,7 @@ export async function getCreneauSeances(id_creneau: number, page = 1): Promise<S
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
   })
   if (response.status !== 200) throw response
@@ -28,7 +29,7 @@ export async function postSeance(contract: SeanceEditContract): Promise<SeanceEd
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${useStorage('token', '').value}`,
     }
   })
 
@@ -46,7 +47,7 @@ export async function putSeance(seance_id: number, contract: SeanceEditContract)
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${useStorage('token', '').value}`,
     }
   })
 
@@ -62,7 +63,7 @@ export async function deleteSeance(seance_id: number): Promise<void> {
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${useStorage('token', '').value}`,
     }
   })
 
@@ -78,7 +79,7 @@ export async function getQRCode(seance_id: number): Promise<QRCodeResponse> {
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${useStorage('token', '').value}`,
     }
   })
 
