@@ -20,6 +20,8 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
     }
   }
 
+  creneau.recurrence.dateDebut = creneau.date;
+
   return {
     activites: activities,
     titre: creneau.titre,
@@ -36,6 +38,7 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
     organisme: creneau.organisme,
     tarifHoraire: creneau.tarifHoraire,
     zoneId: zone_id,
+    recurrence: creneau.recurrence,
   }
 }
 
@@ -83,4 +86,14 @@ export const default_creneau = (): Creneau => ({
   nbParticipants: 0,
   mode: null,
   seances: [],
+  recurrence: {
+    dateDebut: "",
+    dateFin: "",
+    maxOccurrences: 0,
+    recurrenceType: 0,
+    recurrenceJoursSemaine: [],
+    recurrenceOrdinaux: [],
+    recurrenceSemainesMois: [],
+    separation: 0, 
+  }
 });

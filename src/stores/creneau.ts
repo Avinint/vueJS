@@ -53,6 +53,7 @@ export const useCreneauStore = defineStore('creneau', {
       for (let i = 0; i < this.zones.length; i++) {
         const zone_id = this.zones[i]
         const creneau = makeCreneauEditContract(zone_id, this.$state)
+        console.log(creneau);
         const response = await postCreneau(creneau)
 
         if (planningStore.currentViewName === 'day') {

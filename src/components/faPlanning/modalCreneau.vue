@@ -90,11 +90,18 @@
       </div>
       <FAButton
         v-if="creneauStore.creneauType == 1"
+        class="mr-4"
         label="Paramètres avancés"
         couleur="secondary"
-        @click="advanced_options = !advanced_options"
+        @click="setSubmenu('advanced')"
       />
-      <div v-if="advanced_options" class="flex gap-5">
+      <FAButton
+        v-if="creneauStore.creneauType"
+        label="Récurrence"
+        couleur="secondary"
+        @click="setSubmenu('recurence')"
+      />
+      <div v-if="submenu == 'advanced'" class="flex gap-5">
         <FAInput
           v-model="creneauStore.dureeActivite"
           :inline="false"
@@ -114,6 +121,7 @@
           type="number"
         />
       </div>
+      <MenuRecurrence v-if="submenu == 'recurence'"/>
       <div
         v-if="creneauStore.creneauType != 0"
         class="relative rounded-lg border border-gray-300 p-4"
@@ -199,6 +207,7 @@ import InputRadio from '@components/common/InputRadio.vue'
 import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
+import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
 
 export default {
   components: {
@@ -207,6 +216,7 @@ export default {
     InputSelect,
     FAInput,
     FAButton,
+    MenuRecurrence,
   },
   props: {
     isOpen: {
@@ -230,7 +240,7 @@ export default {
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
       defaultTarif: '20',
-      advanced_options: false,
+      submenu: 'none'
     }
   },
   computed: {
@@ -326,6 +336,18 @@ export default {
     }
   },
   methods: {
+    /**
+     * Open the submenu that contains additional inputs 
+     * @param {'advanced' | 'recurence' | 'none'} menu 
+     */
+    setSubmenu(type) {
+      if(this.submenu == type) {
+        this.submenu = 'none';
+        return;
+      }
+
+      this.submenu = type;
+    },
     delete_creneau() {
       if(confirm('Souhaitez vous vraiment supprimer le créneau ?')) {
         this.creneauStore.delete();
