@@ -245,7 +245,9 @@ async function save() {
   if (create.value === true) {
     const group = await postGroup(contract)
     groupes.value.push(group)
+    group_id.value = group.id;
     create.value = false
+    return;
   } else {
     await putGroup(group_id.value, contract)
     groupes.value = await fetchGroupes(organismeId.value)
