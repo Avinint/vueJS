@@ -48,12 +48,13 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user.js'
 import Input from '../components/common/Input.vue'
 import { emailValidation, requiredValidation, isValid } from '../validation.js'
+import { toast } from 'vue3-toastify'
 
 const router = useRouter()
 const mail = ref('')
@@ -69,7 +70,14 @@ const login = async () => {
     await user.login(mail.value, password.value)
     await router.push('/')
   } catch (e) {
-    alert(JSON.stringify(e))
+    if(e instanceof Response) {
+      if(e.status == 401) {
+        toast.error("Identifiants invalides.");
+        return;
+      }
+
+      toast.error("Une erreur est survenue.");
+    }
   }
 }
 
