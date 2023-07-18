@@ -34,6 +34,34 @@
         </div>
       </div>
     </div>
+    <div class="mb-8" v-if="creneau_store.recurrence.recurrenceType == 2">
+      <label class="mb-2 block text-sm text-gray-700"
+        >Jour(s) de répétition</label
+      >
+      <div class="flex gap-4 mb-4">
+        <div
+          v-for="(day, key) in days"
+          :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
+          class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-gray-300 p-4 text-gray-700"
+          @click="selectDay(key)"
+        >
+          {{ day }}
+        </div>
+      </div>
+      <label class="mb-2 block text-sm text-gray-700"
+        >Semaine(s) de répétition</label
+      >
+      <div class="flex gap-4">
+        <div
+          v-for="(week, key) in '1234'"
+          :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
+          class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-gray-300 p-4 text-gray-700"
+          @click="selectDay(key)"
+        >
+          {{ week }}
+        </div>
+      </div>
+    </div>
     <div>
       <label class="mb-2 block text-sm text-gray-700">Fin de répétition</label>
       <div class="flex items-center gap-2">
@@ -98,7 +126,7 @@ function selectDay(day_index: number) {
 }
 
 watch(repetition_date, () => {
-  setRepetitionValue();
+  setRepetitionValue()
 })
 
 watch(type, (v) => {
@@ -121,18 +149,18 @@ function setDaysData() {
 
 function setRepetitionDate() {
   repetition_mode.value = 'date'
-  setRepetitionValue();
+  setRepetitionValue()
 }
 
 function setRepetitionOccurence() {
   repetition_mode.value = 'occurence'
-  setRepetitionValue();
+  setRepetitionValue()
 }
 
 function setRepetitionValue() {
   switch (repetition_mode.value) {
     case 'date':
-      if(repetition_date.value != '') {
+      if (repetition_date.value != '') {
         creneau_store.recurrence.dateFin = dayjs(
           repetition_date.value,
           'DD / MM / YYYY'
@@ -142,7 +170,7 @@ function setRepetitionValue() {
       break
 
     case 'occurence':
-      creneau_store.recurrence.dateFin = '';
+      creneau_store.recurrence.dateFin = ''
       creneau_store.recurrence.maxOccurrences = repetition_occurence.value
       break
   }
