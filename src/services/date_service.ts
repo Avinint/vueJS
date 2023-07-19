@@ -38,3 +38,11 @@ export function getDateDMY(date_string: string) {
   const date = new Date(date_string);
   return `${f0(date.getDate())}/${f0(date.getMonth())}/${f0(date.getFullYear())}`
 }
+
+export function parseDateToInput(date: Date) {
+  return `${f0(date.getDate())} / ${f0(date.getMonth())} / ${f0(date.getFullYear())}`
+}
+
+export function extractHour(date: Date) {
+  return `${f0(date.getHours())}:${f0(date.getMinutes())}`;
+}

@@ -41,6 +41,7 @@ export const planning_configuration: CalendarOptions = {
     dayGridPlugin,
     timeGridPlugin,
     resourceTimeGridPlugin,
+    interactionPlugin,
   ],
   headerToolbar: false,
   initialView: 'timeGridWeek',
