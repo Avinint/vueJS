@@ -57,7 +57,7 @@ import SideNavItem from "./SideNavItem.vue"
 import {onMounted, reactive, ref} from "vue"
 // import { getFitArenas } from '../api/fit-arena'
 import Link from '../types/Link'
-import {getMenu} from "@api/menu";
+import { getMenu as getMenuData } from "@api/menu";
 import {useUserStore} from "@/stores/user.js";
 
 const {isAdmin, isGestCo, isGestOrg} = useUserStore();
@@ -116,9 +116,14 @@ const openSubSubLinks = (i, sub_i) => {
   sub_links[sub_i].sub_links_open = !sub_links[sub_i].sub_links_open
 }
 
-onMounted(async () => {
+const getMenu = async () => {
+  const menu = await getMenuData()
+ return menu.menu;
 
-  const {clients = false, fitarenas = false, organismes = false} = await (await getMenu()).menu;
+}
+
+onMounted(async () => {
+  const {clients = false, fitarenas = false, organismes = false} = await getMenu()
 
   if (clients) {
     clientLinks.value = clients.map((cli) => {
@@ -263,7 +268,7 @@ onMounted(async () => {
 
       return {
         label: fa.libelle,
-        path: '/fitarena/' + fa.id,
+        path: isAdmin ? '/fitarena/' + fa.id + '/config' : '/fitarena/' + fa.id,
         icon: homeIcone,
         sub_links: isAdmin ? subLinksAdmin : subLinksGestionnaire
       }
