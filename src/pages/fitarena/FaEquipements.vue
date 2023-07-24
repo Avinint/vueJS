@@ -498,8 +498,6 @@ const mapApiToData = (equipementTemp) => {
   equipement.value = equipementTemp
   id_selected.value = equipementTemp.id
   equipement_selected.value = equipementTemp.typeEquipement.id
-
-  console.log( equipement.value)
 }
 
 const addEquipementConfiguration = () => {
