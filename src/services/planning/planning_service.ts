@@ -6,8 +6,14 @@ import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 
+export enum EventType {
+  CRENEAU,
+  DEMANDE,
+}
+
 export const default_planning: Planning = {
   creneaux: [],
+  demandes: [],
   filters: {
     debut: 0,
     fit_arena: 0,
@@ -32,7 +38,22 @@ export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
     end: creneau.dateSortie,
     title: creneau.titre,
     resourceIds: creneau.zones,
-    extendedProps: creneau,
+    overlap: true,
+    extendedProps: { ...creneau, event_type: EventType.CRENEAU },
+  }
+}
+
+export function parseDemandeToEvent(demande: DemandeCreneau): CalendarEvent {
+  return {
+    id: 0,
+    start: '',
+    end: '',
+    title: '',
+    resourceIds: [],
+    overlap: true,
+    editable: false,
+    selectable: false,
+    extendedProps: { ...demande, event_type: EventType.DEMANDE },
   }
 }
 

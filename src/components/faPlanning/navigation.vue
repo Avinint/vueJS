@@ -108,6 +108,7 @@ export default {
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
+    this.$emit('afterFetch');
   },
   methods: {
     today() {
@@ -115,11 +116,15 @@ export default {
     },
     prev() {
       this.calendarApi.prev()
-      this.planningStore.fetch()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
     },
     next() {
       this.calendarApi.next()
-      this.planningStore.fetch()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
     },
     updateActivities() {
       this.planningStore.updateActivities()
