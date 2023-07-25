@@ -37,7 +37,7 @@ import TimeRange from '@components/molecules/TimeRange.vue'
 import type { DateSelectArg } from '@fullcalendar/core'
 import { extractHour, parseDateToInput } from '../../services/date_service'
 import { reactive, ref } from 'vue'
-import { makeDemandeEditContract } from '@services/planning/creneau_service'
+import { makeDemandeEditContract } from '../../services/planning/creneau_service'
 import { postCreneauDemande } from '@api/creneau'
 import { useRoute, useRouter } from 'vue-router'
 
