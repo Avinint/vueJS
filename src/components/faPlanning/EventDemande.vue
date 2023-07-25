@@ -3,7 +3,7 @@
     <div class="event-demande-wrapper">
       <div class="event-demande-content">
         <p class="information">Demande en attente</p>
-        <p class="title">Club de la Source</p>
+        <p class="title">{{ event.title }}</p>
         <p class="hour">12:00 - 13:00</p>
       </div>
     </div>

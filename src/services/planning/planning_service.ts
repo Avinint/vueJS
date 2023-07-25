@@ -17,6 +17,7 @@ export enum EventType {
 
 export const default_planning: Planning = {
   creneaux: [],
+  // (TODO FITE2D-2853): Load data from WS instead of static mock
   demandes: [
     {
       id: 0,
@@ -43,7 +44,7 @@ export const default_planning: Planning = {
       seances: [],
     },
     {
-      id: 0,
+      id: 1,
       creneauType: 0,
       type: 0,
       activites: [],
