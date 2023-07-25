@@ -37,6 +37,12 @@ import TimeRange from '@components/molecules/TimeRange.vue'
 import type { DateSelectArg } from '@fullcalendar/core'
 import { extractHour, parseDateToInput } from '../../services/date_service'
 import { reactive, ref } from 'vue'
+import { makeDemandeEditContract } from '@services/planning/creneau_service'
+import { postCreneauDemande } from '@api/creneau'
+import { useRoute, useRouter } from 'vue-router'
+
+const router = useRouter();
+const route = useRoute();
 
 const default_form_values = {
   title: '',
@@ -76,8 +82,14 @@ function create(event: DateSelectArg) {
   form.end_time = extractHour(event.end)
 }
 
-function submit() {
+async function submit() {
   state.value = 'closed';
+  for(let i = 0; i < form.zones.length; i++) {
+    let organisme_id = route.params.org_id as string;
+    const contract = makeDemandeEditContract(form.zones[i], parseInt(organisme_id), form); 
+    const response = await postCreneauDemande(contract);
+  }
+  
 }
 </script>
 
