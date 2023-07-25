@@ -12,6 +12,7 @@
         :pattern="pattern"
         :minlength="minLength"
         :maxlength="maxLength"
+        :disabled="disabled"
         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         :placeholder="placeholder"
       />
@@ -40,6 +41,7 @@ const props = defineProps<{
   validation?: Function[],
   valid?: boolean,
   required?: boolean,
+  disabled?: boolean,
 }>()
 
 const emits = defineEmits<{
@@ -69,3 +71,10 @@ const inputValidation = ($event: any) => {
 const label = computed(() => props.label)
 const error = ref('')
 </script>
+
+<style>
+input:disabled {
+  background-color: rgb(235, 235, 235);
+  color: rgb(190, 190, 190);
+}
+</style>

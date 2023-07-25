@@ -19,7 +19,7 @@
         />
       </div>
     </div>
-    <div class="mb-8" v-if="creneau_store.recurrence.recurrenceType == 1">
+    <div class="mb-8" v-if="type == 'Semaines' || type == 'Mois'">
       <label class="mb-2 block text-sm text-gray-700"
         >Jour(s) de répétition</label
       >
@@ -27,36 +27,23 @@
         <div
           v-for="(day, key) in days"
           :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
-          class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-gray-300 p-4 text-gray-700"
+          class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full border p-4 text-gray-700"
           @click="selectDay(key)"
         >
           {{ day }}
         </div>
       </div>
     </div>
-    <div class="mb-8" v-if="creneau_store.recurrence.recurrenceType == 2">
-      <label class="mb-2 block text-sm text-gray-700"
-        >Jour(s) de répétition</label
-      >
-      <div class="flex gap-4 mb-4">
-        <div
-          v-for="(day, key) in days"
-          :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
-          class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-gray-300 p-4 text-gray-700"
-          @click="selectDay(key)"
-        >
-          {{ day }}
-        </div>
-      </div>
+    <div class="mb-8" v-if="type == 'Mois'">
       <label class="mb-2 block text-sm text-gray-700"
         >Semaine(s) de répétition</label
       >
       <div class="flex gap-4">
         <div
-          v-for="(week, key) in '1234'"
-          :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
-          class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-gray-300 p-4 text-gray-700"
-          @click="selectDay(key)"
+          v-for="week in '1234'"
+          class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full border p-4 text-gray-700"
+          :class="{ 'bg-blue-400 text-white': selected_weeks.includes(parseInt(week)) }"
+          @click="selectWeek(parseInt(week))"
         >
           {{ week }}
         </div>
@@ -77,6 +64,8 @@
           i18n="fr"
           as-single
           v-model="repetition_date"
+          :disabled="repetition_mode != 'date'"
+          :key="date_key"
           :formatter="{ date: 'DD / MM / YYYY' }"
           class="w-fit"
         />
@@ -92,6 +81,7 @@
         <FaInput
           class="w-16"
           default-value="0"
+          :disabled="repetition_mode != 'occurence'"
           v-model="repetition_occurence"
           @input="setRepetitionValue"
         />
@@ -112,9 +102,11 @@ const creneau_store = useCreneauStore()
 
 const days = 'LMMJVSD'
 const selected_days = ref<boolean[]>([])
+const selected_weeks = ref<number[]>([])
+const date_key = ref(0);
 
 const types = ['Jours', 'Semaines', 'Mois']
-const type = ref('Jours')
+const type = ref('Semaines')
 
 const repetition_date = ref('')
 const repetition_occurence = ref(0)
@@ -125,8 +117,19 @@ function selectDay(day_index: number) {
   setDaysData()
 }
 
+function selectWeek(week: number) {
+  const index = selected_weeks.value.findIndex((e) => e == week);
+  if(index == -1) {
+    selected_weeks.value.push(week);
+  } else {
+    selected_weeks.value.splice(index, 1);
+  }
+  creneau_store.recurrence.recurrenceSemainesMois = selected_weeks.value;
+}
+
 watch(repetition_date, () => {
   setRepetitionValue()
+  date_key.value++;
 })
 
 watch(type, (v) => {
@@ -149,11 +152,13 @@ function setDaysData() {
 
 function setRepetitionDate() {
   repetition_mode.value = 'date'
+  repetition_occurence.value = 0;
   setRepetitionValue()
 }
 
 function setRepetitionOccurence() {
   repetition_mode.value = 'occurence'
+  repetition_date.value = '';
   setRepetitionValue()
 }
 
@@ -170,6 +175,7 @@ function setRepetitionValue() {
       break
 
     case 'occurence':
+      repetition_date.value = '';
       creneau_store.recurrence.dateFin = ''
       creneau_store.recurrence.maxOccurrences = repetition_occurence.value
       break
