@@ -49,6 +49,7 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
  * @param creneau Creneau data
  */
 export function makeCreneauOGEditContract(zone_id: number, creneau: Creneau): CreneauOGEditContract {
+  creneau.recurrence.dateDebut = creneau.date;
   return {
     creneauType: 2,
     titre: creneau.titre,
@@ -60,6 +61,7 @@ export function makeCreneauOGEditContract(zone_id: number, creneau: Creneau): Cr
     heureFin: `${creneau.heureFin}:00`,
     organisme: creneau.organisme,
     zoneId: zone_id,
+    recurrence: creneau.recurrence
   }
 }
 

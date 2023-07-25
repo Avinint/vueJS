@@ -52,6 +52,7 @@ type CreneauOGEditContract = {
   dureeInterCreneau: number
   description: string
   organisme: number
+  recurrence?: Recurrence
 }
 
 // POST // PUT
