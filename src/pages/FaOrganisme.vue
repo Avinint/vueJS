@@ -354,7 +354,6 @@ const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
 watch(() => route.params, async () => {
-  console.log(route.params.id)
   getOrganismesParClient(route.params.id).then(response => {
     organismes.value = response;
   })

@@ -28,7 +28,7 @@
           <tr>
             <td class="border border-gray-300">Ville, département (numéro)</td>
             <td class="border border-gray-300">
-              <input v-model="ville" class="w-full border-slate-300 border-1 mb-2" type="text">
+              <div class="w-full border-slate-300 border-1 mb-2">{{ ville }}</div>
 <!--              <select class="w-full select-ville" v-if="selectVille || ville" v-model="ville">-->
 <!--                <option v-for="option in optionsVille" :key="option" value=""> {{ option }}</option>-->
 <!--              </select>-->
@@ -60,7 +60,6 @@
         </colgroup>
         <tbody >
         <tr>
-
           <td class="border border-gray-300">Bandeau</td>
           <td class="border border-gray-300">
             <label class="upload " for="uploadMiniature">
@@ -79,6 +78,73 @@
             <!--              <select class="w-full select-ville" v-if="selectVille || ville" v-model="ville">-->
             <!--                <option v-for="option in optionsVille" :key="option" value=""> {{ option }}</option>-->
             <!--              </select>-->
+
+            <div v-if="!readonly && address.length" class="flex items-center">
+              <div class="mr-1.5 block w-1/2"></div>
+              <select
+                id="TorgaSelectAdresse"
+                v-model="address_selected"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                @change="addressSelect"
+              >
+                <option v-for="(address, i) in addresses" :key="i" :value="address">
+                  {{ address.label }}
+                </option>
+              </select>
+            </div>
+            <template v-if="address_selected">
+              <Input
+                id="TadresseComplement"
+                v-model="complement"
+                :readonly="readonly"
+                :type="'text'"
+                label="Complément"
+                class="w-full"
+                inline
+              />
+              <Input
+                id="TadressePostcode"
+                v-model="address_selected.postcode"
+                :readonly="readonly"
+                :type="'text'"
+                :required="true"
+                label="Code postal"
+                class="w-full"
+                pattern="[0-9]{5}"
+                inline
+              />
+              <Input
+                id="TadresseCity"
+                v-model="address_selected.city"
+                :readonly="readonly"
+                :type="'text'"
+                :required="true"
+                label="Ville"
+                class="w-full"
+                pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï -]{1,50}"
+                inline
+              />
+              <Input
+                inline
+                label="Latitude"
+                v-model="address_selected.latitude"
+                :readonly="readonly"
+                type="text"
+                class="w-full"
+                pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
+                placeholder="46.7897"
+              />
+              <Input
+                id="TfaLongitude"
+                v-model="address_selected.longitude"
+                :readonly="readonly"
+                type="text"
+                label="Longitude"
+                inline
+                class="w-full"
+                pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
+              />
+            </template>
           </td>
         </tr>
 
@@ -171,7 +237,7 @@
 import Card from '../../components/common/Card.vue'
 import Input from '../../components/common/Input.vue'
 
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { asset } from "@/composables/assets.js"
 import { getParametres, postParametres } from '@api/parametres.js'
 import { isValid } from "@/validation.js";
@@ -188,11 +254,13 @@ import LabelText from "@components/common/LabelText.vue";
 import BorderContainer from "@components/common/BorderContainer.vue";
 import UploadSVG from "@components/svg/UploadSVG.vue";
 import {toast} from "vue3-toastify";
+import { getOrganismesParClient } from "@api/organisme.js";
+import { watchDebounced } from "@vueuse/core";
+import { getAdresses } from "@api/address.js";
 
 const route = useRoute()
 const selectVille = ref(false)
 const ordre = ref(1)
-const ville = ref("")
 const rechercheVille = ref("")
 const optionsVille = ref([])
 const urlMiniature = ref("")
@@ -204,50 +272,75 @@ const reseauxSociaux = ref([])
 
 // const fitArena = ref({})
 
-const parametres = ref([])
 const address_selected = ref({})
+const complement = ref('')
+const actif = ref(false)
+const addresses = ref([])
+const address = ref('')
+
+const parametres = ref([])
 const fitArenaId = ref(null)
 const nouveauService = {libelle: "", icone: null}
 const nouveauReseauSocial = {libelle: "", url: ""}
 const services = ref([])
+const fitArenaConfig = ref({})
+const fitArena = ref({})
+
+const departement = ref([])
+const fitArenaSave = ref({})
 
 onMounted(async () => {
-  const fit =   await getFitArenaConfig(route.params.id)
+  figArenaConfig.value  = await getFitArenaConfig(route.params.id)
+  fitArena.value = await getFitArenas()
 
-  fitArenaId.value = fit.fitArenaId
-  ville.value = `${fit.ville} ${fit.departement} (${fit.numeroDepartement})`
-  ordre.value = fit.ordre || 1
-  urlMiniature.value = fit.urlMiniature
-  urlBandeau.value = fit.urlBandeau
-  services.value = [...(fit.services || [])]
 
+  mapApiToData()
+  // reseauxSociaux.value = [...fit.reseauxSociaux.map((rs) => JSON.parse(JSON.stringify(rs)))]
+
+  reseauxSociaux.value = []
+  for (const rs of fit.reseauxSociaux) {
+    reseauxSociaux.value.push(JSON.parse(JSON.stringify(rs)))
+  }
 })
 
-// watch(() => selectVille, () => {
-//   if (ville.value.length) {
-//     optionsVille.value = getVilles(ville.value)
-//   }
-// })
+watch(() => route.params, async () => {
+  fitArenaConfig.value = await getFitArenaConfig(route.params.id)
+})
+
+const ville = computed(( ) => address_selected.value.city + ' ' + departement.value[0] + ' '+ departement.value[1])
 
 
 
-const modifier = () => {
+const mapApiToData = () => {
 
-  fit_arena.value =
-    {
-      ordre: ordre.value,
-      adresse: {
-        adresse: address_selected.value.label,
-        complement: complement.value,
-        codePostal: address_selected.value.postcode,
-        ville: address_selected.value.city,
-        pays: 'france',
+  fitArenaId.value = fitArenaConfig.fitArenaId
+  ordre.value = fitArenaConfig.ordre ?? 1
+  departement.value = [fitArenaConfig.departement, fitArenaConfig.numeroDepartement]
+  ville.value = `${fitArenaConfig.ville} ${fitArenaConfig.departement} (${fitArenaConfig.numeroDepartement})`
+  urlMiniature.value = fitArenaConfig.urlMiniature
+  urlBandeau.value = fitArenaConfig.urlBandeau
 
-        numeroDepartement: '' + address_selected.value.context.split(',')[0],
-        nomDepartement: '' + address_selected.value.context.split(',')[1],
-      },
-    }
+  address_selected.value = {
+    address: fitArenaConfig.adresse.adresse,
+    postcode: fitArenaConfig.adresse.codePostal,
+    complement: fitArenaConfig.adresse.complement,
+    pays: 'france',
+    city: fitArenaConfig.adresse.ville,
+    citycode: fitArenaConfig.adresse.codeInsee,
+    latitude: fitArenaConfig.adresse.latitude,
+    longitude: fitArenaConfig.adresse.longitude,
   }
+
+  address.value = address_selected.value.address
+  complement.value = address_selected.value.complement
+
+  services.value =  fitArenaConfig.services.map((service) => ({...service}) )
+
+  reseauxSociaux.value = []
+  for (const rs of fitArenaConfig.reseauxSociaux) {
+    reseauxSociaux.value.push(JSON.parse(JSON.stringify(rs)))
+  }
+}
 
   const uploadMiniature = async (e) => {
     const file = e.target.files[0]
@@ -257,16 +350,14 @@ const modifier = () => {
 
 const uploadBandeau = async (e) => {
   const file = e.target.files[0]
-  const fit = await uploadBandeauConfig(fitArenaId.value, file)
+  await uploadBandeauConfig(fitArenaId.value, file)
   urlBandeau.value = fit.urlBandeau
 }
-
-
 const uploadIconeService = async(service, e) => {
 
   if (service.libelle.length) {
     service.icone = e.target.files[0]
-    service.fitArenaId = fitArenaId
+    service.fitArenaId = fitArenaId.value
     console.log(services.value)
     const fit = await uploadIconeServiceAPI(service)
     toast.success("Service ajouté avec succès")
@@ -275,19 +366,14 @@ const uploadIconeService = async(service, e) => {
 }
 
 const ajouterService = () => {
-
   services.value.push({...nouveauService})
 }
-
 const ajouterReseauSocial = () => {
-
   reseauxSociaux.value.push({...nouveauReseauSocial})
 }
-
 const enregistrerReseauSocial = async (rs) => {
-  const valide = true
+  let msg = "";
   let erreur = ''
-console.log(rs)
   if (!rs.libelle.length) {
     erreur = "Le champ libellé est requis"
   }
@@ -299,31 +385,68 @@ console.log(rs)
     rs.fitArenaId = fitArenaId.value
 
     if (rs.id) {
-      const fit = await putReseauSocial(rs)
+      console.log(fitArenaConfig.value.reseauxSociaux)
+      console.log(rs)
+
+
+      if (rsModifie) {
+        await putReseauSocial(rs)
+
+        msg = "Réseau social modifié avec succès";
+        const index = fitArenaConfig.value.reseauxSociaux.findIndex(
+          (el) => el.id === rs.id)
+
+        // fitArena.value.reseauxSociaux[index] = rs
+      } else {
+        await postReseauSocial(rs)
+        msg = "Réseau social ajouté avec succès";
+      }
+
+      if (msg.length) {
+        toast.success(msg)
+      }
+
     } else {
-      const fit = await postReseauSocial(rs)
+      toast.error(erreur)
     }
-
-    toast.success("Réseau social ajouté avec succès")
-  } else {
-    toast.error(e)
   }
-
-
-  service.fitArenaId = fitArenaId
-  console.log(services.value)
-
-
 }
 
+const save = () => {
+  fitArenaSave.value = Object.assign({}, fitArenaConfig)
+  fitArenaSave.value.adresse = {
+    adresse: address_selected.value.label,
+      complement: complement.value,
+      codePostal: address_selected.value.postcode,
+      ville: address_selected.value.city,
+      pays: 'france',
+      codeInsee: '' + address_selected.value.citycode,
+      latitude: '' + address_selected.value.latitude,
+      longitude: '' + address_selected.value.longitude,
+      numeroDepartement: '' + departement.value[1],
+      nomDepartement: '' + departement.value[0],
+  }
+}
 
-
+const rsModifie = (rs) => fitArenaConfig.value.reseauxSociaux.find(
+  (el) => el.id === rs.id && el.url === rs.url) === undefined
 
 const urlService = (service, e) => {
   if (e.target.value.replace(' ', '').length) {
     service.url = e.target.value
   }
 }
+
+
+watchDebounced(
+  address,
+  async () => {
+    address_selected.value = {}
+    addresses.value = await getAdresses(address.value)
+    address_selected.value = addresses.value[0]
+  },
+  { debounce: 500, maxWait: 1000 }
+)
 </script>
 
 <style scoped>
