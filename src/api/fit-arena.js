@@ -18,8 +18,12 @@ export const getFitArenas = async (page = 1, query = '') => {
   return response.json()
 }
 
+export const getFitArena = async (id) => {
+  return await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`)
+}
+
 export const getFitArenaConfig = async(id) => {
-  return get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}/configuration`)
+  return await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}/configuration`)
 }
 
 export const uploadMiniature = async(id, file) => {
@@ -47,11 +51,13 @@ export const uploadIconeService = async(service) => {
     formData.append('fitArenaId', service.fitArenaId)
     formData.append('libelle', service.libelle)
 
-    if (service.id) {
-        formData.append('id', service.id)
-    }
+    if (service.id) { formData.append('id', service.id) }
 
     return await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/service`, formData)
+}
+
+export const putService = async(service) => {
+  return await put(`${import.meta.env.VITE_API_URL}/api/fit_arenas/service/${service.id}`, service)
 }
 
 export const postReseauSocial = async (rs) => {
@@ -60,7 +66,7 @@ export const postReseauSocial = async (rs) => {
   formData.append('libelle', rs.libelle)
   formData.append('url', rs.url)
 
-  if (rs.iconeId) { formData.append('iconeId', rs.iconeId) }
+  // if (rs.iconeId) { formData.append('iconeId', rs.iconeId) }
   if (rs.id) { formData.append('id', rs.id) }
 
   return await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/reseau-social`, formData)
@@ -87,18 +93,17 @@ export const postFitArenas = async (fa) => {
   return response.json()
 }
 
-export const updateFitarenas = async (client, id) => {
+export const updateFitarenas = async (fa, id) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`,
     {
       method: 'put',
       headers: {
         ...defaultHeaders,
-        // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
         Authorization: 'Bearer ' + useStorage('token', '').value,
       },
-      body: JSON.stringify(client),
+      body: JSON.stringify(fa),
     }
   )
   if (response.status !== 200) throw response
