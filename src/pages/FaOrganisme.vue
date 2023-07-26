@@ -491,7 +491,7 @@ const updateOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 const addOrganismeValidation = async () => {
@@ -505,7 +505,7 @@ const addOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 watchDebounced(
