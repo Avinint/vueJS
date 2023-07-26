@@ -52,10 +52,10 @@
         <tr>
           <td class="border border-gray-300 p-2">Bandeau</td>
           <td class="border border-gray-300 p-2">
-            <label class="upload " for="uploadMiniature">
+            <label class="upload " for="uploadBandeau">
               <div class="bg-gray-50 mx-2 px-3 py-1 border border-gray-300 inline-block">Choisir un fichier <UploadSVG/></div>
             </label>
-            <input @change="uploadBandeau" id="uploadMiniature" class="w-1/2 border-slate-300 border-1 mb-2" type="file" style="display:none;" >
+            <input @change="uploadBandeau" id="uploadBandeau" class="w-1/2 border-slate-300 border-1 mb-2" type="file" style="display:none;" >
             <span class="text-gray-400">Taille maximale : 5 mo</span>
           </td>
         </tr>
@@ -149,7 +149,7 @@
     </div>
 
     <div class="w-full">
-      <img :src="asset(urlBandeau)" class="miniature" alt="miniature" v-if="urlBandeau">
+      <img :src="asset(urlBandeau)" class="bandeau" alt="bandeau" v-if="urlBandeau">
     </div>
 
     <div class="p-6  w-full">
@@ -331,10 +331,10 @@ const refreshFitArena = () => {
 }
 
 const refreshFitArenaConfig = () => {
-  urlMiniature.value = fitArenaConfig.urlMiniature
-  urlBandeau.value = fitArenaConfig.urlBandeau
-  services.value =  fitArenaConfig.value.services.map((service) => ({...service}) )
-  reseauxSociaux.value = fitArenaConfig.value.reseauxSociaux.map((rs) => ({ ...rs}))
+  urlMiniature.value = fitArenaConfig.value.urlMiniature
+  urlBandeau.value = fitArenaConfig.value.urlBandeau
+  services.value =  fitArenaConfig.value.services?.map((service) => ({...service}) ) ?? []
+  reseauxSociaux.value = fitArenaConfig.value.reseauxSociaux?.map((rs) => ({ ...rs})) ?? []
 
 }
 
@@ -346,7 +346,7 @@ const uploadMiniature = async (e) => {
 
 const uploadBandeau = async (e) => {
   const file = e.target.files[0]
-  await uploadBandeauConfig(fitArenaId.value, file)
+  const fit = await uploadBandeauConfig(fitArenaId.value, file)
   urlBandeau.value = fit.urlBandeau
 }
 const uploadIconeService = async(service, e) => {
