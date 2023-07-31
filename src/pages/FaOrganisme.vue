@@ -70,7 +70,7 @@
         <div v-if="!readonly && address.length" class="flex items-center">
           <div class="mr-1.5 block w-1/2"></div>
           <select
-            id="TclientSelectAdresse"
+            id="TorgaSelectAdresse"
             v-model="address_selected"
             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             @change="addressSelect"
@@ -354,7 +354,6 @@ const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
 watch(() => route.params, async () => {
-  console.log(route.params.id)
   getOrganismesParClient(route.params.id).then(response => {
     organismes.value = response;
   })
@@ -492,7 +491,7 @@ const updateOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 const addOrganismeValidation = async () => {
@@ -506,7 +505,7 @@ const addOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 watchDebounced(
