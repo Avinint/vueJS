@@ -48,6 +48,7 @@ import Table, {
   type FaTableRow,
 } from '@components/common/Table.vue'
 import TimeRange from '@components/molecules/TimeRange.vue'
+import { useCreneauStore } from '@stores/creneau'
 
 const props = defineProps<{
   mode: 'edit' | 'create'
@@ -57,6 +58,7 @@ const props = defineProps<{
 const container = ref<HTMLElement>()
 const is_open = ref(false)
 const seance_store = useSeanceStore()
+const creneau_store = useCreneauStore()
 defineExpose({ open_panel, close_panel })
 
 const groupes_column_data: FaTableColumnData<Groupe>[] = [
@@ -71,6 +73,7 @@ async function validate() {
   } else if (props.mode === 'edit') {
     is_open.value = false
     await seance_store.put()
+    creneau_store.fetchSeances()
   }
 }
 
