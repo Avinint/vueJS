@@ -69,7 +69,7 @@
   </Card>
 
   <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration />
+  <CardKeyMomentDuration/>
 
   <Card>
     <h1>Invitation à une réservation</h1>

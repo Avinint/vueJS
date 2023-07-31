@@ -167,6 +167,8 @@ const zoneParents = ref([])
 const nbCreneaux = ['1', '5', '10', '15', '20']
 const zone_selected = ref({})
 const valeur_selected = ref({})
+const equipements = ref([])
+const typeEquipements = ref([])
 
 onMounted(async () => {
   parametres.value = await getParametresById(13)

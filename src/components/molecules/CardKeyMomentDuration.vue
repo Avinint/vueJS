@@ -19,57 +19,59 @@
       </div>
     </div>
     <div class="mb-4 w-1/2 rounded-lg border">
-      <div class="relative my-4 overflow-x-auto text-black" v-for="(activite, index) in activites" :key="index">
-        <!-- dynamique à venir, quand le back et le front seront au même niveau -->
-        <div class="flex px-6 py-4">
-          <p class="w-4/12 font-bold">{{ activite.libelle }}</p>
-          <p class="w-1/12 pr-16">Actif</p>
-          <label class="relative inline-flex w-7/12 cursor-pointer">
-            <input
-              :checked="activite.parametres.duree_du_temps_fort.actif"
-              type="checkbox"
-              :value="activite.parametres.duree_du_temps_fort.actif"
-              class="peer sr-only"
-              @click="modifKeyMomentDuration(activite.parametres.duree_du_temps_fort, activite.parametres.duree_du_temps_fort.id)"
+      <template v-for="(activite, index) in activites" :key="index">
+        <div v-if="Object.keys(activite.parametres).length" class="relative my-4 overflow-x-auto text-black" >
+          <!-- dynamique à venir, quand le back et le front seront au même niveau -->
+          <div class="flex px-6 py-4">
+            <p class="w-4/12 font-bold">{{ activite.libelle }}</p>
+            <p class="w-1/12 pr-16">Actif</p>
+            <label class="relative inline-flex w-7/12 cursor-pointer">
+              <input
+                :checked="activite.parametres.duree_du_temps_fort.actif"
+                type="checkbox"
+                :value="activite.parametres.duree_du_temps_fort.actif"
+                class="peer sr-only"
+                @click="modifKeyMomentDuration(activite.parametres.duree_du_temps_fort, activite.parametres.duree_du_temps_fort.id)"
+              />
+              <div
+                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+              ></div>
+              <span
+                class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+              ></span>
+            </label>
+            <Button
+              test="TeditKeyMoment"
+              borderless
+              icon="edit"
+              couleur="secondary"
+              @click="editKeyMomentDuration(index)"
             />
-            <div
-              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-            ></div>
-            <span
-              class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-            ></span>
-          </label>
-          <Button
-            test="TeditKeyMoment"
-            borderless
-            icon="edit"
-            couleur="secondary"
-            @click="editKeyMomentDuration(i)"
-          />
-          <Button
-            test="TdeleteKeyMoment"
-            borderless
-            icon="delete"
-            couleur="secondary"
-            class="flex justify-end"
-            @click="removeKeyMomentDuration(i)"
-          />
-        </div>
-        <div class="mt-6 flex items-center font-light">
-          <p class="ml-6 flex w-9/12 justify-start">{{ activite.parametres.duree_du_temps_fort?.libelle }}</p>
-          <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2">{{ activite.parametres.duree_du_temps_fort?.valeur ?? 0 }} sec</p>
+            <Button
+              test="TdeleteKeyMoment"
+              borderless
+              icon="delete"
+              couleur="secondary"
+              class="flex justify-end"
+              @click="removeKeyMomentDuration(index)"
+            />
+          </div>
+          <div class="mt-6 flex items-center font-light">
+            <p class="ml-6 flex w-9/12 justify-start">{{ activite.parametres.duree_du_temps_fort?.libelle }}</p>
+            <div class="bg-grey flex justify-end rounded-lg">
+              <p class="flex p-2">{{ activite.parametres.duree_du_temps_fort?.valeur ?? 0 }} sec</p>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center font-light">
+            <p class="ml-6 flex w-9/12 justify-start">
+              {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.libelle }}
+            </p>
+            <div class="bg-grey flex justify-end rounded-lg">
+              <p class="flex p-2"> {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.valeur ?? 0 }} sec</p>
+            </div>
           </div>
         </div>
-        <div class="mt-6 flex items-center font-light">
-          <p class="ml-6 flex w-9/12 justify-start">
-            {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.libelle }}
-          </p>
-          <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2"> {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.valeur ?? 0 }} sec</p>
-          </div>
-        </div>
-      </div>
+      </template>
     </div>
     <Button
       id="TaddKeyMomentDurationForAnActivity"
@@ -85,7 +87,7 @@
     <Modal
       v-if="keyMomentDuration_modal"
       :title="modal_title"
-      @cancel="keyMomentDuration_modal = false"
+      @cancel="closeModal"
     >
       <div>
         <p class="mb-2 block text-sm font-medium text-gray-900">
@@ -192,48 +194,70 @@ import 'vue3-toastify/dist/index.css'
 const route = useRoute()
 const idFitArena = ref(route.params.id)
 const parametresDuration = ref({})
-const parametreActivite = ref([])
+const parametreActivite_selected = ref({})
 const parametre = ref({})
-const profils = ref({})
-const activite_selected = ref({})
-const profil_selected = ref({})
-const durationKeyMoment_selected = ref({})
-const durationEnd_selected = ref({})
+const profils = ref(null)
+
+const formulaire = reactive({
+  activite: null,
+  profil: null,
+  durationKeyMoment: null,
+  durationEnd: null,
+  parametreActiviteId: null
+})
+
+const activite_selected = ref(null)
+const profil_selected = ref(null)
+const durationKeyMoment_selected = ref(null)
+const durationEnd_selected = ref(null)
 const keyMomentDuration_modal = ref(false)
 const modal_title = ref('')
 const activites = reactive({})
 const durationsEnd = ['1', '2', '3', '4', '5']
 const durationsKeyMoment = ['5', '10', '15', '20', '25']
 
-const afficherActivites = computed(() => Object.entries(activites ).length)
+const afficherActivites = true
+
+const parametreActivites = computed(() => activites[i].parametres)
+// const afficherActivites = computed(() => Object.entries(activites ).length)
 
 onMounted(async () => {
-
-  parametresDuration.value = await getParametresById(14)
-  console.log(parametresDuration)
+  // parametresDuration.value = await getParametresById(14)
   profils.value = await getProfils()
   const activitesRecuperees = await getActivites(idFitArena.value)
-  for (const activite of activitesRecuperees) {
 
-    if (activite.parametreActivites.length) {
-      activites[activite.code] = {libelle: activite.libelle, parametres: {}}
+  for (const activite of activitesRecuperees) {
+    // if (activite.parametreActivites.length) {
+      activites[activite.code] = {libelle: activite.libelle, id: activite.id, parametres: {}}
       for (const paramActivite of activite.parametreActivites) {
         activites[activite.code].parametres[paramActivite.parametre.code] = {
           libelle: paramActivite.parametre.libelle,
           valeur: paramActivite.valeur,
           actif: paramActivite.actif,
           id: paramActivite.id,
+          profil_id: paramActivite
         }
       }
-    }
   }
-
 
 })
 
+
+const reset = () => {
+  activite_selected.value = null
+  durationKeyMoment_selected.value = null
+  durationEnd_selected.value = null
+  profil_selected.value = null
+}
+
+const closeModal = () => {
+  reset()
+  keyMomentDuration_modal.value = false
+}
+
 const addKeyMomentDurationForAnActivity = async () => {
   parametre.value = {}
-  activite_selected.value = {}
+  // activite_selected.value = null
   modal_title.value = 'Ajouter une condition de réservation des créneaux'
   keyMomentDuration_modal.value = true
 }
@@ -249,23 +273,39 @@ const modifKeyMomentDuration = async (parametre, id) => {
 }
 
 const removeKeyMomentDuration = async (i) => {
+
+
   try {
-    await deleteParametreActivite(i)
+    for (const prop in activites[i].parametres) {
+     const paramActiviteId = activites[i].parametres[prop].id
+      console.log(paramActiviteId)
+      await deleteParametreActivite(paramActiviteId)
+    }
+    activites[i].parametres = {}
+
     toast.success('Succès de la suppression')
   } catch (e) {
+    console.log(e)
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }
   parametresDuration.value = await getParametresById(14)
 }
 
-const editKeyMomentDuration = async (i) => {
+const editKeyMomentDuration = async ( i) => {
+
   parametre.value = parametresDuration.value[i]
+  const params = activites[i].parametres
+  durationKeyMoment_selected.value = params.duree_du_temps_fort.valeur
+
+  durationEnd_selected.value = params.duree_soustraite_a_la_fin_du_temps_fort.valeur
+  console.log( params.duree_du_temps_fort.valeur)
   keyMomentDuration_modal.value = true
   modal_title.value =
     'Modifier une durée de temps fort spécifique à une activité'
 }
 
-const saveKeyMomentDuration = async () => {
+const saveKeyMomentDuration = async (index) => {
+
   const paramTemp = {
     // profil:
     activite: '/api/activites/' + activite_selected.value,
@@ -276,22 +316,19 @@ const saveKeyMomentDuration = async () => {
   const params1 = {valeur: durationKeyMoment_selected.value, parametre: '/api/parametres/14'}
   const params2 = {valeur: durationEnd_selected.value, parametre: '/api/parametres/15'}
 
-  if (modal_title.value.includes('modifier')) {
+
     try {
-      await updateParametreActivite({...paramTemp, ...params1}, parametre.value.id)
-      await updateParametreActivite({...paramTemp, ...params2}, parametre.value.id
-      )
+      if (modal_title.value.includes('modifier')) {
+        await updateParametreActivite({ ...paramTemp, ...params1 }, );
+        await updateParametreActivite({ ...paramTemp, ...params2 }, );
+      } else {
+        await postParametreActivite({ ...paramTemp, ...params1 })
+        await postParametreActivite({ ...paramTemp, ...params2 })
+      }
+      closeModal()
+
     } catch (e) {
       toast.error('Erreur, Veuillez contacter votre administrateur')
     }
-  } else {
-    try {
-      await postParametreActivite({...paramTemp, ...params1})
-      await postParametreActivite({...paramTemp, ...params2})
-    } catch (e) {
-      toast.error('Erreur, Veuillez contacter votre administrateur')
-    }
-  }
-  keyMomentDuration_modal.value = false
 }
 </script>
