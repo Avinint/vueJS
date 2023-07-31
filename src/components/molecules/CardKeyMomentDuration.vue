@@ -19,17 +19,18 @@
       </div>
     </div>
     <div class="mb-4 w-1/2 rounded-lg border">
-      <div class="relative my-4 overflow-x-auto text-black">
+      <div class="relative my-4 overflow-x-auto text-black" v-for="(activite, index) in activites" :key="index">
         <!-- dynamique à venir, quand le back et le front seront au même niveau -->
         <div class="flex px-6 py-4">
-          <p class="w-4/12 font-bold">Futsal</p>
+          <p class="w-4/12 font-bold">{{ activite.libelle }}</p>
           <p class="w-1/12 pr-16">Actif</p>
           <label class="relative inline-flex w-7/12 cursor-pointer">
             <input
+              :checked="activite.parametres.duree_du_temps_fort.actif"
               type="checkbox"
-              value="true"
+              :value="activite.parametres.duree_du_temps_fort.actif"
               class="peer sr-only"
-              @change="modifKeyMomentDuration(i)"
+              @click="modifKeyMomentDuration(activite.parametres.duree_du_temps_fort, activite.parametres.duree_du_temps_fort.id)"
             />
             <div
               class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
@@ -55,17 +56,17 @@
           />
         </div>
         <div class="mt-6 flex items-center font-light">
-          <p class="ml-6 flex w-9/12 justify-start">Durée d'un temps fort</p>
+          <p class="ml-6 flex w-9/12 justify-start">{{ activite.parametres.duree_du_temps_fort?.libelle }}</p>
           <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2">45 sec</p>
+            <p class="flex p-2">{{ activite.parametres.duree_du_temps_fort?.valeur ?? 0 }} sec</p>
           </div>
         </div>
         <div class="mt-6 flex items-center font-light">
           <p class="ml-6 flex w-9/12 justify-start">
-            Durée soustraite à la fin du temps fort
+            {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.libelle }}
           </p>
           <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2">0 sec</p>
+            <p class="flex p-2"> {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.valeur ?? 0 }} sec</p>
           </div>
         </div>
       </div>
@@ -98,6 +99,7 @@
 
         <div class="mb-6 flex w-4/12 items-center">
           <select
+            v-model="profil_selected"
             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
           >
             <option value="" disabled selected>Ajouter un profil</option>
@@ -111,7 +113,7 @@
             >Activité</label
           >
           <select
-            v-if="activites.length"
+            v-if="afficherActivites"
             id="TfaSelectActivite"
             v-model="activite_selected"
             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
@@ -182,7 +184,7 @@ import {
 } from '../../api/parametreActivite.js'
 import { getProfils } from '../../api/profil.js'
 import { getActivites } from '../../api/activite.ts'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -190,23 +192,43 @@ import 'vue3-toastify/dist/index.css'
 const route = useRoute()
 const idFitArena = ref(route.params.id)
 const parametresDuration = ref({})
-const parametreActivite = ref({})
+const parametreActivite = ref([])
 const parametre = ref({})
 const profils = ref({})
 const activite_selected = ref({})
+const profil_selected = ref({})
 const durationKeyMoment_selected = ref({})
 const durationEnd_selected = ref({})
 const keyMomentDuration_modal = ref(false)
 const modal_title = ref('')
-const activites = ref([])
+const activites = reactive({})
 const durationsEnd = ['1', '2', '3', '4', '5']
 const durationsKeyMoment = ['5', '10', '15', '20', '25']
 
+const afficherActivites = computed(() => Object.entries(activites ).length)
+
 onMounted(async () => {
-  parametreActivite.value = await getParametreActivite()
+
   parametresDuration.value = await getParametresById(14)
+  console.log(parametresDuration)
   profils.value = await getProfils()
-  activites.value = await getActivites(idFitArena.value)
+  const activitesRecuperees = await getActivites(idFitArena.value)
+  for (const activite of activitesRecuperees) {
+
+    if (activite.parametreActivites.length) {
+      activites[activite.code] = {libelle: activite.libelle, parametres: {}}
+      for (const paramActivite of activite.parametreActivites) {
+        activites[activite.code].parametres[paramActivite.parametre.code] = {
+          libelle: paramActivite.parametre.libelle,
+          valeur: paramActivite.valeur,
+          actif: paramActivite.actif,
+          id: paramActivite.id,
+        }
+      }
+    }
+  }
+
+
 })
 
 const addKeyMomentDurationForAnActivity = async () => {
@@ -216,9 +238,10 @@ const addKeyMomentDurationForAnActivity = async () => {
   keyMomentDuration_modal.value = true
 }
 
-const modifKeyMomentDuration = async ({ actif, id }) => {
+const modifKeyMomentDuration = async (parametre, id) => {
+  parametre.actif = !parametre.actif
   try {
-    await patchParametreActivite({ actif }, id)
+    await patchParametreActivite({ actif: parametre.actif }, id)
     toast.success('Modification du paramètre avec succès')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
@@ -242,28 +265,29 @@ const editKeyMomentDuration = async (i) => {
     'Modifier une durée de temps fort spécifique à une activité'
 }
 
-const saveKeyMomentDuration = async (i) => {
+const saveKeyMomentDuration = async () => {
   const paramTemp = {
     // profil:
     activite: '/api/activites/' + activite_selected.value,
-    parametre: '/api/parametres/14',
-    valeur: durationKeyMoment_selected.value,
-    valeur2: durationEnd_selected.value,
+    profil: '/api/profils/' + profil_selected.value,
     actif: true,
   }
 
+  const params1 = {valeur: durationKeyMoment_selected.value, parametre: '/api/parametres/14'}
+  const params2 = {valeur: durationEnd_selected.value, parametre: '/api/parametres/15'}
+
   if (modal_title.value.includes('modifier')) {
     try {
-      const { data } = await updateParametreActivite(
-        paramTemp,
-        parametre.value.id
+      await updateParametreActivite({...paramTemp, ...params1}, parametre.value.id)
+      await updateParametreActivite({...paramTemp, ...params2}, parametre.value.id
       )
     } catch (e) {
       toast.error('Erreur, Veuillez contacter votre administrateur')
     }
   } else {
     try {
-      const { data } = await postParametreActivite(paramTemp)
+      await postParametreActivite({...paramTemp, ...params1})
+      await postParametreActivite({...paramTemp, ...params2})
     } catch (e) {
       toast.error('Erreur, Veuillez contacter votre administrateur')
     }

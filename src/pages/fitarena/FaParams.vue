@@ -89,10 +89,10 @@ import {
   getParametreFitArena,
   patchParametreFitArena,
   postParametreFitArena,
-} from '../../api/parametreFitArena.js'
+} from '@api/parametreFitArena.js'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getParametres, postParametres } from '../../api/parametres.js'
+import { getParametres, postParametres } from '@api/parametres.js'
 
 const ID_VISU_CRENEAU = 16
 
@@ -121,9 +121,9 @@ onMounted(async () => {
 
 const getParameterByCode = async (code, value = 0) => {
   let parametre = parametres.value.find((el) => el.parametre.code === code)
-  if (!parametre) {
-    await createParamsForFitArena(route.params.id, code, value)
-  }
+  // if (!parametre) {
+  //   await createParamsForFitArena(route.params.id, code, value)
+  // }
   parametres.value = await getParametreFitArena(
     1,
     '?fitArena.id=' + route.params.id
@@ -152,7 +152,7 @@ const setCancelBooking = async () => {
   if (!editCancelBooking.value) {
     // RETURN TO READONLY MODE -> SAVE INPUT VIA API
     const { id } = (
-      await getParametres(1, '&code=condition-annulation-des-creneaux')
+      await getParametres({page: 1, code: 'condition-annulation-des-creneaux'})
     )[0]
     await patchParametreFitArena(id, {
       fitArena: 'api/fit_arenas/' + route.params.id,

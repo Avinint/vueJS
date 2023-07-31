@@ -11,6 +11,14 @@ export const getHeaders = {
   'Content-Type': 'application/ld+json',
 }
 
+export const getQuery = (queryParams = {}) => {
+  let query = ''
+  for (const prop in queryParams) {
+    query += (query.length ? '&' : '?') + prop + '=' + queryParams[prop]
+  }
+
+  return query
+}
 export const get = async (url) => {
   const token = useStorage('token', '')
   const response = await $fetch(url, {

@@ -284,12 +284,10 @@ onMounted(async () => {
     '&categoryTypeEquipement.code=numerique'
   )
   parametre_config_equipements_motorises.value = (
-    await getParametres(1, '&code=config_des_equipements_motorises')
+    await getParametres({page: 1, code: 'config_des_equipements_motorises'})
   ).shift()
   parametre_mode_ecran_interface_video_scoring.value = (
-    await getParametres(
-      1,
-      '&code=mode_d_ecran_geant_et_d_interface_de_video_et_scoring'
+    await getParametres({page: 1, code: 'mode_d_ecran_geant_et_d_interface_de_video_et_scoring'}
     )
   ).shift()
   let data = await getTypeZone(1, '&code=sous_zone')
@@ -550,10 +548,10 @@ const removeSousZone = async (index) => {
 // TODO: en passant par 1 store, on pourra déporter ça directement vers le composant paramSousZone
 const fetchSousZoneParametres = async () => {
   const parametreNombreParticipantsMax = (
-    await getParametres(1, '&code=nombre_de_participants_max')
+    await getParametres({page: 1, code: 'nombre_de_participants_max'})
   ).shift()
   const parametreNombreParticipantsConseille = (
-    await getParametres(1, '&code=nombre_de_participants_conseille')
+    await getParametres({page: 1, code: 'nombre_de_participants_conseille'})
   ).shift()
 
   sousZoneParametres.value = {

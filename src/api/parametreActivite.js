@@ -84,8 +84,9 @@ export const deleteParametreActivite = async (id) => {
   return {}
 }
 
-export const patchParametreActivite = async (id) => {
+export const patchParametreActivite = async (param, id) => {
   const response = await $fetch(
+
     `${import.meta.env.VITE_API_URL}/api/parametre_activites/${id}`,
     {
       method: 'patch',
@@ -94,6 +95,7 @@ export const patchParametreActivite = async (id) => {
         'Content-Type': 'application/merge-patch+json',
         Authorization: 'Bearer ' + useStorage('token', '').value,
       },
+      body: JSON.stringify(param),
     }
   )
   if (response.status !== 200) throw response
