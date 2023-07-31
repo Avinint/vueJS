@@ -148,7 +148,7 @@
             <option
               v-for="client in clients"
               :key="i"
-              :value="`/api/clients/${client.id}`"
+              :value="client.id"
             >
               {{ client.nom }}
             </option>
@@ -450,12 +450,11 @@ const mapApiToData = (organisme) => {
 }
 
 const saveOrganisme = () => {
-console.log(idClient.value)  
 if (!isValid(validation)) return
   organisme.value = {
     libelle: name.value,
     actif: actif.value,
-    client: 'api/clients/' + idClient.value,
+    client: 'api/clients/' + client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
     adresse: {
       adresse: address_selected.value.label,
