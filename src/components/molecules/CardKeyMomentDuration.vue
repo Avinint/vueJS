@@ -34,10 +34,10 @@
                 @click="modifKeyMomentDuration(activite.parametres.duree_du_temps_fort, activite.parametres.duree_du_temps_fort.id)"
               />
               <div
-                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
               ></div>
               <span
-                class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                class="ml-3 text-sm font-medium text-gray-900"
               ></span>
             </label>
             <Button
@@ -74,6 +74,7 @@
       </template>
     </div>
     <Button
+      v-if="ajoutPossible"
       id="TaddKeyMomentDurationForAnActivity"
       label="Ajouter une durée de temps fort spécifique à une activité"
       class="font-bold text-black"
@@ -101,11 +102,12 @@
 
         <div class="mb-6 flex w-4/12 items-center">
           <select
-            v-model="profil_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            multiple
+            v-model="formulaire.profils"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
-            <option value="" disabled selected>Ajouter un profil</option>
-            <option v-for="(profil, i) in profils" :key="i" :value="profil.id">
+            <option value="" disabled>Ajouter un profil</option>
+            <option v-for="(profil, i) in profils" :key="i" :value="'/api/profils/' + profil.id">
               {{ profil.libelle }}
             </option>
           </select>
@@ -117,16 +119,18 @@
           <select
             v-if="afficherActivites"
             id="TfaSelectActivite"
-            v-model="activite_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            v-model="formulaire.activite"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
-            <option
-              v-for="(activite, i) in activites"
-              :key="i"
-              :value="activite.id"
-            >
-              {{ activite.libelle }}
-            </option>
+            <template v-for="(activite, i) in activites"
+                       :key="i">
+              <option v-if="!Object.keys(activite.parametres).length || activite.id === formulaire.activite"
+                :value="activite.id"
+              >
+                {{ activite.libelle }}
+              </option>
+            </template>
+
           </select>
         </div>
         <div class="mb-6 flex items-center">
@@ -135,8 +139,8 @@
           >
           <select
             v-if="durationsKeyMoment.length"
-            v-model="durationKeyMoment_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            v-model="formulaire.durationKeyMoment"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
             <option
               v-for="(duration, i) in durationsKeyMoment"
@@ -153,8 +157,8 @@
           >
           <select
             v-if="durationsEnd.length"
-            v-model="durationEnd_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            v-model="formulaire.durationEnd"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
             <option
               v-for="(duration, i) in durationsEnd"
@@ -176,16 +180,16 @@ import Modal from '../common/Modal.vue'
 import Button from '../common/Button.vue'
 import ButtonRight from '../common/Button.vue'
 
-import { getParametresById } from '../../api/parametres.js'
+import { getParametresById } from '@api/parametres.js'
 import {
   getParametreActivite,
   postParametreActivite,
   updateParametreActivite,
   deleteParametreActivite,
   patchParametreActivite,
-} from '../../api/parametreActivite.js'
-import { getProfils } from '../../api/profil.js'
-import { getActivites } from '../../api/activite.ts'
+} from '@api/parametreActivite.js'
+import { getProfils } from '@api/profil.js'
+import { getActivites } from '@api/activite.ts'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
@@ -194,60 +198,85 @@ import 'vue3-toastify/dist/index.css'
 const route = useRoute()
 const idFitArena = ref(route.params.id)
 const parametresDuration = ref({})
-const parametreActivite_selected = ref({})
 const parametre = ref({})
 const profils = ref(null)
 
 const formulaire = reactive({
   activite: null,
-  profil: null,
+  profils: [],
   durationKeyMoment: null,
   durationEnd: null,
-  parametreActiviteId: null
+  durationKeyMomentId: null,
+  durationEndId: null
 })
 
-const activite_selected = ref(null)
-const profil_selected = ref(null)
-const durationKeyMoment_selected = ref(null)
-const durationEnd_selected = ref(null)
 const keyMomentDuration_modal = ref(false)
 const modal_title = ref('')
-const activites = reactive({})
+// const activites = reactive({})
+
+const activitesRecuperees = ref([])
 const durationsEnd = ['1', '2', '3', '4', '5']
 const durationsKeyMoment = ['5', '10', '15', '20', '25']
 
 const afficherActivites = true
 
-const parametreActivites = computed(() => activites[i].parametres)
 // const afficherActivites = computed(() => Object.entries(activites ).length)
+
+const ajoutPossible = computed(() => {
+  return activitesRecuperees.value.some((activite => activite.parametreActivites))
+})
+
 
 onMounted(async () => {
   // parametresDuration.value = await getParametresById(14)
   profils.value = await getProfils()
-  const activitesRecuperees = await getActivites(idFitArena.value)
-
-  for (const activite of activitesRecuperees) {
-    // if (activite.parametreActivites.length) {
-      activites[activite.code] = {libelle: activite.libelle, id: activite.id, parametres: {}}
-      for (const paramActivite of activite.parametreActivites) {
-        activites[activite.code].parametres[paramActivite.parametre.code] = {
-          libelle: paramActivite.parametre.libelle,
-          valeur: paramActivite.valeur,
-          actif: paramActivite.actif,
-          id: paramActivite.id,
-          profil_id: paramActivite
-        }
-      }
-  }
-
+  activitesRecuperees.value = await getActivites(idFitArena.value)
+  // await initialiseActivites();
 })
 
+const activites = computed(() => initialiseActivites())
+
+const initialiseActivites = () => {
+  const tempActivites = {}
+
+
+  for (const activite of activitesRecuperees.value) {
+    tempActivites[activite.code] = { libelle: activite.libelle, id: activite.id, parametres: {} }
+    initialiseParametresActivites(tempActivites, activite);
+  }
+
+  return tempActivites
+}
+
+const initialiseParametresActivites = ( activites, activite) => {
+  for (const paramActivite of activite.parametreActivites) {
+    activites[activite.code].parametres[paramActivite.parametre.code] = {
+      libelle: paramActivite.parametre.libelle,
+      valeur: paramActivite.valeur,
+      actif: paramActivite.actif,
+      id: paramActivite.id,
+      profils: paramActivite.profils
+    }
+
+    switch (paramActivite.parametre.code) {
+      case 'duree_du_temps_fort':
+        formulaire.durationKeyMomentId = paramActivite.id
+        break
+      case 'duree_soustraite_a_la_fin_du_temps_fort':
+        formulaire.durationEndId = paramActivite.id
+        break
+    }
+  }
+
+}
 
 const reset = () => {
-  activite_selected.value = null
-  durationKeyMoment_selected.value = null
-  durationEnd_selected.value = null
-  profil_selected.value = null
+  formulaire.activite = null
+  formulaire.durationKeyMoment = null
+  formulaire.durationEnd = null
+  formulaire.profils = []
+  formulaire.durationKeyMomentId = null
+  formulaire.durationEndId = null
 }
 
 const closeModal = () => {
@@ -256,7 +285,7 @@ const closeModal = () => {
 }
 
 const addKeyMomentDurationForAnActivity = async () => {
-  parametre.value = {}
+  reset()
   // activite_selected.value = null
   modal_title.value = 'Ajouter une condition de réservation des créneaux'
   keyMomentDuration_modal.value = true
@@ -266,6 +295,7 @@ const modifKeyMomentDuration = async (parametre, id) => {
   parametre.actif = !parametre.actif
   try {
     await patchParametreActivite({ actif: parametre.actif }, id)
+    activitesRecuperees.value = await getActivites(idFitArena.value)
     toast.success('Modification du paramètre avec succès')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
@@ -273,16 +303,13 @@ const modifKeyMomentDuration = async (parametre, id) => {
 }
 
 const removeKeyMomentDuration = async (i) => {
-
-
   try {
-    for (const prop in activites[i].parametres) {
-     const paramActiviteId = activites[i].parametres[prop].id
-      console.log(paramActiviteId)
+    for (const prop in activites.value[i].parametres) {
+     const paramActiviteId = activites.value[i].parametres[prop].id
       await deleteParametreActivite(paramActiviteId)
     }
-    activites[i].parametres = {}
-
+    // activites.value[i].parametres = {}
+    activitesRecuperees.value = await getActivites(idFitArena.value)
     toast.success('Succès de la suppression')
   } catch (e) {
     console.log(e)
@@ -293,42 +320,44 @@ const removeKeyMomentDuration = async (i) => {
 
 const editKeyMomentDuration = async ( i) => {
 
-  parametre.value = parametresDuration.value[i]
-  const params = activites[i].parametres
-  durationKeyMoment_selected.value = params.duree_du_temps_fort.valeur
-
-  durationEnd_selected.value = params.duree_soustraite_a_la_fin_du_temps_fort.valeur
-  console.log( params.duree_du_temps_fort.valeur)
+  const params = activites.value[i].parametres
+  formulaire.durationKeyMoment = params.duree_du_temps_fort.valeur
+  formulaire.durationKeyMomentId = params.duree_du_temps_fort.id
+  formulaire.durationEnd = params.duree_soustraite_a_la_fin_du_temps_fort.valeur
+  formulaire.durationEndId = params.duree_soustraite_a_la_fin_du_temps_fort.id
+  formulaire.profils = params.duree_du_temps_fort.profils
+  formulaire.activite = activites.value[i].id
   keyMomentDuration_modal.value = true
   modal_title.value =
     'Modifier une durée de temps fort spécifique à une activité'
 }
 
 const saveKeyMomentDuration = async (index) => {
-
   const paramTemp = {
     // profil:
-    activite: '/api/activites/' + activite_selected.value,
-    profil: '/api/profils/' + profil_selected.value,
+    activite: '/api/activites/' + formulaire.activite,
+    profils: formulaire.profils,
     actif: true,
   }
 
-  const params1 = {valeur: durationKeyMoment_selected.value, parametre: '/api/parametres/14'}
-  const params2 = {valeur: durationEnd_selected.value, parametre: '/api/parametres/15'}
-
-
+  const params1 = {valeur: formulaire.durationKeyMoment, parametre: '/api/parametres/14'}
+  const params2 = {valeur: formulaire.durationEnd, parametre: '/api/parametres/15'}
     try {
-      if (modal_title.value.includes('modifier')) {
-        await updateParametreActivite({ ...paramTemp, ...params1 }, );
-        await updateParametreActivite({ ...paramTemp, ...params2 }, );
+
+      if (formulaire.durationKeyMomentId !== null) {
+        await updateParametreActivite({ ...paramTemp, ...params1 }, formulaire.durationKeyMomentId);
+        await updateParametreActivite({ ...paramTemp, ...params2 },   formulaire.durationEndId);
       } else {
         await postParametreActivite({ ...paramTemp, ...params1 })
         await postParametreActivite({ ...paramTemp, ...params2 })
       }
+
       closeModal()
+      activitesRecuperees.value = await getActivites(idFitArena.value)
 
     } catch (e) {
       toast.error('Erreur, Veuillez contacter votre administrateur')
     }
+
 }
 </script>
