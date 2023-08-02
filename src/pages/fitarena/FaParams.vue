@@ -108,10 +108,7 @@ const cancelSessionTime = ref(1)
 
 onMounted(async () => {
   // SEARCH ALL PARAMS FOR THIS FIT ARENA
-  parametres.value = await getParametreFitArena(
-    1,
-    '?fitArena.id=' + route.params.id
-  )
+  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
 
   // PARAMETRE ANNULATION DES CRENEAUX
   cancelSessionTime.value = await getParameterByCode(
@@ -124,10 +121,7 @@ const getParameterByCode = async (code, value = 0) => {
   // if (!parametre) {
   //   await createParamsForFitArena(route.params.id, code, value)
   // }
-  parametres.value = await getParametreFitArena(
-    1,
-    '?fitArena.id=' + route.params.id
-  )
+  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
   return parametres.value.find((el) => el.parametre.code === code)
 }
 

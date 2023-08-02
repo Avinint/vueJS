@@ -180,13 +180,8 @@ const saveDurationInterslot = async (i) => {
 }
 
 onMounted(async () => {
-  durationTempInter.value = await getParametreFitArena(
-    1,
-    '&parametre.code=duree-inter-creneau&fitArena.id=' + props.id
-  )
-  durationTemp.value = await getParametreFitArena(
-    1,
-    '&parametre.code=duree-du-creneau&fitArena.id=' + props.id
-  )
+  const params = { page: 1, 'fitArena.id': props.id }
+  durationTempInter.value = await getParametreFitArena({ 'parametre.code': 'duree-inter-creneau', ...params })
+  durationTemp.value = await getParametreFitArena({ 'parametre.code': 'duree-du-creneau', ...params })
 })
 </script>
