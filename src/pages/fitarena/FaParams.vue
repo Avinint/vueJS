@@ -69,7 +69,7 @@
   </Card>
 
   <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration/>
+  <CardKeyMomentDuration :params="parametres" @refresh="loadParams"/>
 
   <Card>
     <h1>Invitation à une réservation</h1>
@@ -108,13 +108,17 @@ const cancelSessionTime = ref(1)
 
 onMounted(async () => {
   // SEARCH ALL PARAMS FOR THIS FIT ARENA
-  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
+  await loadParams()
 
   // PARAMETRE ANNULATION DES CRENEAUX
   cancelSessionTime.value = await getParameterByCode(
     'condition-annulation-des-creneaux'
   ).valeur
 })
+
+const loadParams = async () => {
+  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
+}
 
 const getParameterByCode = async (code, value = 0) => {
   let parametre = parametres.value.find((el) => el.parametre.code === code)

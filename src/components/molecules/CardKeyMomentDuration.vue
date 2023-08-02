@@ -219,6 +219,8 @@ import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { getParametreFitArena, postParametreFitArena, updateParametreFitArena } from "@api/parametreFitArena.js";
 
+const props = defineProps({params: Object})
+const emit = defineEmits(["refresh"])
 const route = useRoute()
 const idFitArena = computed(() => route.params.id)
 const parametresDuration = ref({})
@@ -252,7 +254,7 @@ const ajoutPossibleParFitArena = computed(() => Object.keys(parametres.value).le
 
 const parametres = computed(() => {
   const res = {}
-  for (const param of parametresRecuperes.value) {
+  for (const param of props.params ) {
     res[param.parametre.code] = {libelle: param.parametre.libelle, valeur: param.valeur, id: param.id}
   }
 
@@ -261,13 +263,13 @@ const parametres = computed(() => {
 
 onMounted(async () => {
   profils.value = await getProfils()
-  await reinitParametres()
+
   await reinitParametresParActivites()
 })
 
-const reinitParametres = async () => {
-  parametresRecuperes.value = await getParametreFitArena({ 'fitArena.id': idFitArena.value })
-}
+// const reinitParametres = async () => {
+//   parametresRecuperes.value = await getParametreFitArena({ 'fitArena.id': idFitArena.value })
+// }
 
 const reinitParametresParActivites = async () => {
   activites.value = await getActivites(idFitArena.value)
@@ -401,7 +403,7 @@ const saveTempsFortParFitArena = async () => {
 
     closeModal()
     toast.success('Temps fort sauvegardé avec succès')
-    await reinitParametres()
+    await emit('refresh')
 
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
