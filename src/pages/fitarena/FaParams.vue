@@ -93,6 +93,7 @@ import {
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getParametres, postParametres } from '@api/parametres.js'
+import { getProfils } from "@api/profil.js";
 
 const ID_VISU_CRENEAU = 16
 
@@ -106,7 +107,10 @@ const editCancelBooking = ref(false)
 
 const cancelSessionTime = ref(1)
 
+const profils = ref([])
+
 onMounted(async () => {
+  profils.value = await getProfils()
   // SEARCH ALL PARAMS FOR THIS FIT ARENA
   await loadParams()
 

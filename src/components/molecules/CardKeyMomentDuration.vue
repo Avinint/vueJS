@@ -116,27 +116,27 @@
       @cancel="closeModal"
     >
       <div>
-        <p class="mb-2 block text-sm font-medium text-gray-900">
-          Accès à la Fit Arena réservé uniquement pour certains profils :
-        </p>
-        <div
-          class="bg-light-blue text-light-blue mb-4 block w-2/12 rounded-lg text-center text-sm font-medium"
-        >
-          <p class="p-2">Adhérents</p>
-        </div>
+<!--        <p class="mb-2 block text-sm font-medium text-gray-900">-->
+<!--          Accès à la Fit Arena réservé uniquement pour certains profils :-->
+<!--        </p>-->
+<!--        <div-->
+<!--          class="bg-light-blue text-light-blue mb-4 block w-2/12 rounded-lg text-center text-sm font-medium"-->
+<!--        >-->
+<!--          <p class="p-2">Adhérents</p>-->
+<!--        </div>-->
 
-        <div class="mb-6 flex items-center">
-          <select
-            multiple
-            v-model="formulaire.profils"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option value="" disabled>Ajouter un profil</option>
-            <option v-for="(profil, i) in profils" :key="i" :value="'/api/profils/' + profil.id">
-              {{ profil.libelle }}
-            </option>
-          </select>
-        </div>
+<!--        <div class="mb-6 flex items-center">-->
+<!--          <select-->
+<!--            multiple-->
+<!--            v-model="formulaire.profils"-->
+<!--            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"-->
+<!--          >-->
+<!--            <option value="" disabled>Ajouter un profil</option>-->
+<!--            <option v-for="(profil, i) in profils" :key="i" :value="'/api/profils/' + profil.id">-->
+<!--              {{ profil.libelle }}-->
+<!--            </option>-->
+<!--          </select>-->
+<!--        </div>-->
         <div class="mb-6 flex items-center" v-if="modeFormulaire  === 'ParActivite'">
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
             >Activité</label
@@ -229,7 +229,6 @@ const profils = ref(null)
 
 const formulaire = reactive({
   activite: null,
-  profils: [],
   durationKeyMoment: null,
   durationEnd: null,
   durationKeyMomentId: null,
@@ -262,16 +261,10 @@ const parametres = computed(() => {
 })
 
 onMounted(async () => {
-  profils.value = await getProfils()
-
-  await reinitParametresParActivites()
+  await dynamiseParametresParActivites()
 })
 
-// const reinitParametres = async () => {
-//   parametresRecuperes.value = await getParametreFitArena({ 'fitArena.id': idFitArena.value })
-// }
-
-const reinitParametresParActivites = async () => {
+const dynamiseParametresParActivites = async () => {
   activites.value = await getActivites(idFitArena.value)
   for (const activite of activites.value) {
     activite.parametres = {}
@@ -281,7 +274,6 @@ const reinitParametresParActivites = async () => {
         valeur: paramActivite.valeur,
         actif: paramActivite.actif,
         id: paramActivite.id,
-        profils: paramActivite.profils
       }
     }
 
@@ -293,10 +285,9 @@ const reset = () => {
   formulaire.activite = null
   formulaire.durationKeyMoment = null
   formulaire.durationEnd = null
-  formulaire.profils = []
   formulaire.durationKeyMomentId = null
   formulaire.durationEndId = null
-  formulaire.actif = null
+  formulaire.actif = true
 }
 
 const closeModal = () => {
@@ -337,7 +328,7 @@ const removeKeyMomentDuration = async (i) => {
       await deleteParametreActivite(paramActiviteId)
     }
     // activites.value[i].parametres = {}
-    await reinitParametresParActivites()
+    await dynamiseParametresParActivites()
     toast.success('Succès de la suppression')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
@@ -431,7 +422,7 @@ const saveTempsFortParActivite = async () => {
 
     closeModal()
     toast.success('Temps fort sauvegardé avec succès')
-    await reinitParametresParActivites()
+    await dynamiseParametresParActivites()
 
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
