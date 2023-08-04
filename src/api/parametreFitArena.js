@@ -72,9 +72,9 @@ export const deleteParametreFitArena = async (id) => {
   return {}
 }
 
-export const patchParametreFitArena = async (id) => {
+export const patchParametreFitArena = async (param) => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas/${id}`,
+    `${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas/${param.id}`,
     {
       method: 'patch',
       headers: {
@@ -82,6 +82,7 @@ export const patchParametreFitArena = async (id) => {
         'Content-Type': 'application/merge-patch+json',
         Authorization: 'Bearer ' + useStorage('token', '').value,
       },
+      body: JSON.stringify(param),
     }
   )
   if (response.status !== 200) throw response

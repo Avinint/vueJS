@@ -44,32 +44,11 @@
     </div>
   </Card>
 
-  <Card>
-    <h1>Condition de visualisation des créneaux</h1>
-    {{ visualisation_creneaux }}
-    <div class="flex items-center space-x-2">
-      <Button icon="edit" couleur="secondary" borderless></Button>
-      <div class="flex items-center">
-        <div class="mr-2">Actif</div>
-        <Switch />
-      </div>
-      <div class="text-sm">
-        Nombre de jours visibles pour la réservation de créneaux par les
-        utilisateurs Grand Public
-      </div>
-      <Button label="Détails" couleur="secondary" />
-    </div>
-    <Button
-      class="font-bold font-black"
-      label="Ajouter une condition de visualisation des créneaux"
-      icon="add"
-      couleur="secondary"
-    />
-    <Modal v-if="false"> </Modal>
-  </Card>
 
+
+  <CardConditionVisualisationCreneaux :params="params" />
   <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration :params="parametres" @refresh="loadParams"/>
+  <CardKeyMomentDuration :params="params" @refresh="loadParams"/>
 
   <Card>
     <h1>Invitation à une réservation</h1>
@@ -90,10 +69,11 @@ import {
   patchParametreFitArena,
   postParametreFitArena,
 } from '@api/parametreFitArena.js'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getParametres, postParametres } from '@api/parametres.js'
 import { getProfils } from "@api/profil.js";
+import CardConditionVisualisationCreneaux from "@components/molecules/CardConditionVisualisationCreneaux.vue";
 
 const ID_VISU_CRENEAU = 16
 
@@ -107,11 +87,8 @@ const editCancelBooking = ref(false)
 
 const cancelSessionTime = ref(1)
 
-const profils = ref([])
-
 onMounted(async () => {
-  profils.value = await getProfils()
-  // SEARCH ALL PARAMS FOR THIS FIT ARENA
+  // SEARCH ALL PARAMS FO THIS FIT ARENA
   await loadParams()
 
   // PARAMETRE ANNULATION DES CRENEAUX
@@ -123,6 +100,14 @@ onMounted(async () => {
 const loadParams = async () => {
   parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
 }
+
+const params = computed(() => parametres.value.reduce(conversionListeEnObjet, {}))
+
+const conversionListeEnObjet = (objet, param) =>   ({
+  ...objet, [param.parametre.code]: {
+    libelle: param.parametre.libelle, valeur: param.valeur, id: param.id, type: param.type
+  }
+})
 
 const getParameterByCode = async (code, value = 0) => {
   let parametre = parametres.value.find((el) => el.parametre.code === code)

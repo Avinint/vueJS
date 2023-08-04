@@ -142,7 +142,7 @@ import ButtonRight from '../../components/common/Button.vue'
 import { getParametres, getParametresById } from '../../api/parametres.js'
 import { getProfils } from '../../api/profil.js'
 import { getZones } from '../../api/zone.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -160,7 +160,7 @@ const route = useRoute()
 const idFitArena = ref(route.params.id)
 const parametres = ref({})
 const parametre = ref({})
-const profils = ref({})
+const profils = ref([])
 const conditionReservation_modal = ref(false)
 const modal_title = ref('')
 const zoneParents = ref([])
@@ -169,6 +169,12 @@ const zone_selected = ref({})
 const valeur_selected = ref({})
 const equipements = ref([])
 const typeEquipements = ref([])
+
+const formulaireParZone = reactive({
+  zone: null,
+  valeur: null,
+
+})
 
 onMounted(async () => {
   parametres.value = await getParametresById(13)
@@ -179,17 +185,36 @@ onMounted(async () => {
   )
 })
 
+
 const addConditionReservation = () => {
   parametre.value = {}
   zone_selected.value = {}
   modal_title.value = 'Ajouter une condition de réservation des créneaux'
   conditionReservation_modal.value = true
+  modeFormulaire.value = 'reservation'
+}
+
+const addConditionVisualisation = () => {
+  parametre.value = {}
+  zone_selected.value = {}
+  modal_title.value = 'Ajouter une condition de réservation des créneaux'
+  conditionReservation_modal.value = true
+  modeFormulaire.value = 'visualisation'
 }
 
 const modifConditionReservation = async ({ actif, id }) => {
   try {
     await patchParametreZone({ actif }, id)
-    toast.success('Modification du paramètre avec succès')
+    toast.success('Modification du paramètre effectuée avec succès')
+  } catch (e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur')
+  }
+}
+
+const modifVisualisationReservation = async ({ actif, id }) => {
+  try {
+    await patchParametreZone({ actif }, id)
+    toast.success('Modification du paramètre effectuée avec succès')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }
