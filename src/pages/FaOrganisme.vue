@@ -1,5 +1,4 @@
 <template>
-  <div>
     <CrudList
       entity="organisme"
       plural="organismes"
@@ -109,7 +108,7 @@
             :required="true"
             label="Ville"
             class="w-full"
-            pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï -]{1,50}"
+            pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï \-]{1,50}"
             inline
           />
           <Input
@@ -224,7 +223,16 @@
                 :validation="[emailValidation]"
               />
             </div>
+            <div v-if="carte_selected !== null" class="flex items-center">
+              <CarteAcces :carte="carte_selected"/>
+
+            </div>
+            <Button @click="imprimerPdf(gestionnaire)" label="Imprimer"
+                    class="bg-red-600 hover:bg-red-800 text-white"/>
             <div class="flex items-center">
+
+
+
               <Input
                 id="TcodePin"
                 v-model="gestionnaire.codePin"
@@ -280,12 +288,13 @@
       >
       </ValidationModal>
     </form>
-  </div>
+
 </template>
 
 <script setup>
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
+// import CarteAcces from "@/pdf/CarteAcces.vue";
 import ValidationModal from '../components/common/ValidationModal.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
@@ -297,8 +306,8 @@ import {
   postOrganismes,
   updateOrganismes,
 } from '../api/organisme.ts'
-import { onMounted, reactive, ref, watch } from 'vue'
-import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { nextTick, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -307,15 +316,15 @@ import { selectClients } from '@api/client.js'
 import { useUserStore } from '@/stores/user.js'
 import CrudList from '@components/molecules/CrudList.vue'
 import LabelText from '@components/common/LabelText.vue'
-import InputSelect from '@components/common/InputSelect.vue'
+import html2pdf from 'html2pdf.js'
+import CarteAcces from "@/pdf/CarteAcces.vue";
+import { getCarteAcces } from "@api/carte_acces.js";
 const { isAdmin, isGestCo } = useUserStore()
-
 const crud_columns = [
   { data: (e) => e.libelle, label: 'Nom' },
   { data: (e) => e.adresse.codePostal, label: 'Code Postal' },
   { data: (e) => e.adresse.ville, label: 'Ville' },
 ]
-
 function getTableData() {
   return organismes.value.map((organisme) => {
     return {
@@ -353,6 +362,8 @@ const validation = ref({})
 const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
+const carte_selected = ref(null)
+
 watch(() => route.params, async () => {
   getOrganismesParClient(route.params.id).then(response => {
     organismes.value = response;
@@ -387,6 +398,7 @@ const reset = async () => {
   id_selected.value = 0
   address_selected.value = {}
   client.value = {}
+  carte_selected.value = null
 }
 
 const cancel = () => {
@@ -433,6 +445,7 @@ const mapApiToData = (organisme) => {
   actif.value = organisme.actif
   client.value = idClient.value
   gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
+
   address_selected.value = {
     address: organisme.adresse.adresse,
     postcode: organisme.adresse.codePostal,
@@ -526,4 +539,18 @@ const removeFrom = (refArray, i) => {
     .slice(0, i)
     .concat(refArray.value.slice(i + 1))
 }
+
+const getDonneesCarte = async (gestionnaire) => {
+  return (await getCarteAcces(gestionnaire.infoCarte.id)) ?? null
+}
+
+const imprimerPdf = async (gestionnaire) => {
+  carte_selected.value = await getDonneesCarte(gestionnaire)
+  if (carte_selected.value !== null) {
+    await nextTick()
+    const template = document.querySelector('.document-a-imprimer')
+    html2pdf().from(template).save()
+  }
+}
+
 </script>
