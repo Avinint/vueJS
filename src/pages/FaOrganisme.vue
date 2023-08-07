@@ -146,9 +146,9 @@
             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
           >
             <option
-              v-for="client in clients"
+              v-for="(client, i) in clients"
               :key="i"
-              :value="`/api/clients/${client.id}`"
+              :value="client.id"
             >
               {{ client.nom }}
             </option>
@@ -297,7 +297,7 @@ import {
   postOrganismes,
   updateOrganismes,
 } from '../api/organisme.ts'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -350,7 +350,6 @@ const modal_title = ref('')
 const client = ref({})
 const clients = ref([])
 const validation = ref({})
-const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
 watch(() => route.params, async () => {
@@ -358,6 +357,8 @@ watch(() => route.params, async () => {
     organismes.value = response;
   })
 })
+
+const idClient = computed(() => route.params.id)
 
 onMounted(async () => {
   if (route.name === 'organismes') {
@@ -450,12 +451,12 @@ const mapApiToData = (organisme) => {
 }
 
 const saveOrganisme = () => {
-console.log(idClient.value)  
+  console.log("save")
 if (!isValid(validation)) return
   organisme.value = {
     libelle: name.value,
     actif: actif.value,
-    client: 'api/clients/' + idClient.value,
+    client: 'api/clients/' + client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
     adresse: {
       adresse: address_selected.value.label,
@@ -482,6 +483,8 @@ if (!isValid(validation)) return
 
 const updateOrganismeValidation = async () => {
   try {
+    console.log(idClient.value)
+    console.log(client.value)
     await updateOrganismes(organisme, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
