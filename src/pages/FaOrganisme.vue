@@ -40,7 +40,7 @@
             >
               <svg
                 aria-hidden="true"
-                class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                class="h-5 w-5 text-gray-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -71,7 +71,7 @@
           <select
             id="TorgaSelectAdresse"
             v-model="address_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             @change="addressSelect"
           >
             <option v-for="(address, i) in addresses" :key="i" :value="address">
@@ -142,10 +142,10 @@
             v-if="clients.length"
             id="TclientSelect"
             v-model="client"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
             <option
-              v-for="client in clients"
+              v-for="(client, i) in clients"
               :key="i"
               :value="client.id"
             >
@@ -166,9 +166,9 @@
               class="peer sr-only"
             />
             <div
-              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
             ></div>
-            <!-- <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span> -->
+            <!-- <span class="ml-3 text-sm font-medium text-gray-900></span> -->
           </label>
         </div>
 
@@ -306,7 +306,8 @@ import {
   postOrganismes,
   updateOrganismes,
 } from '../api/organisme.ts'
-import { nextTick, onMounted, ref, watch } from 'vue'
+
+import { nextTick, computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -359,7 +360,6 @@ const modal_title = ref('')
 const client = ref({})
 const clients = ref([])
 const validation = ref({})
-const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
 const carte_selected = ref(null)
@@ -369,6 +369,8 @@ watch(() => route.params, async () => {
     organismes.value = response;
   })
 })
+
+const idClient = computed(() => route.params.id)
 
 onMounted(async () => {
   if (route.name === 'organismes') {
@@ -463,6 +465,7 @@ const mapApiToData = (organisme) => {
 }
 
 const saveOrganisme = () => {
+
 if (!isValid(validation)) return
   organisme.value = {
     libelle: name.value,
@@ -494,6 +497,8 @@ if (!isValid(validation)) return
 
 const updateOrganismeValidation = async () => {
   try {
+    console.log(idClient.value)
+    console.log(client.value)
     await updateOrganismes(organisme, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
