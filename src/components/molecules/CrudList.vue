@@ -47,7 +47,6 @@ defineProps<{
 }>()
 
 function entity_edit(entity: unknown) {
-  console.log(entity)
   emits('entity:edit', entity)
 }
 
