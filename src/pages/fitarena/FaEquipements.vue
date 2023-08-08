@@ -260,7 +260,7 @@
                   <option
                     v-for="(mode, j) in selectableModes"
                     :key="j"
-                    :value="mode"
+                    :value="mode.iri"
                   >
                     {{ mode.libelle }}
                   </option>
@@ -565,7 +565,7 @@ const addEquipmentValidation = async () => {
     await postEquipements(equipmentTemp.value)
     toast.success('Ajout effectué avec succès')
   } catch (e) {
-    toast.error(e)
+    toast.error('Une erreur est survenue')
   }
 
   add_modal.value = false
