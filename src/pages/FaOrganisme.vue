@@ -317,7 +317,7 @@ import { selectClients } from '@api/client.js'
 import { useUserStore } from '@/stores/user.js'
 import CrudList from '@components/molecules/CrudList.vue'
 import LabelText from '@components/common/LabelText.vue'
-import html2pdf from 'html2pdf.js'
+import html2pdf from 'vue3-html2pdf'
 import CarteAcces from "@/pdf/CarteAcces.vue";
 import { getCarteAcces } from "@api/carte_acces.js";
 const { isAdmin, isGestCo } = useUserStore()
