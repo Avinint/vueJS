@@ -1,5 +1,4 @@
 <template>
-  <div>
     <CrudList
       entity="organisme"
       plural="organismes"
@@ -41,7 +40,7 @@
             >
               <svg
                 aria-hidden="true"
-                class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                class="h-5 w-5 text-gray-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -70,9 +69,9 @@
         <div v-if="!readonly && address.length" class="flex items-center">
           <div class="mr-1.5 block w-1/2"></div>
           <select
-            id="TclientSelectAdresse"
+            id="TorgaSelectAdresse"
             v-model="address_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             @change="addressSelect"
           >
             <option v-for="(address, i) in addresses" :key="i" :value="address">
@@ -109,7 +108,7 @@
             :required="true"
             label="Ville"
             class="w-full"
-            pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï -]{1,50}"
+            pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï \-]{1,50}"
             inline
           />
           <Input
@@ -143,12 +142,12 @@
             v-if="clients.length"
             id="TclientSelect"
             v-model="client"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
             <option
-              v-for="client in clients"
+              v-for="(client, i) in clients"
               :key="i"
-              :value="`/api/clients/${client.id}`"
+              :value="client.id"
             >
               {{ client.nom }}
             </option>
@@ -167,9 +166,9 @@
               class="peer sr-only"
             />
             <div
-              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
             ></div>
-            <!-- <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span> -->
+            <!-- <span class="ml-3 text-sm font-medium text-gray-900></span> -->
           </label>
         </div>
 
@@ -224,7 +223,16 @@
                 :validation="[emailValidation]"
               />
             </div>
+            <div v-if="carte_selected !== null" class="flex items-center">
+              <CarteAcces :carte="carte_selected"/>
+
+            </div>
+            <Button @click="imprimerPdf(gestionnaire)" label="Imprimer"
+                    class="bg-red-600 hover:bg-red-800 text-white"/>
             <div class="flex items-center">
+
+
+
               <Input
                 id="TcodePin"
                 v-model="gestionnaire.codePin"
@@ -280,12 +288,13 @@
       >
       </ValidationModal>
     </form>
-  </div>
+
 </template>
 
 <script setup>
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
+// import CarteAcces from "@/pdf/CarteAcces.vue";
 import ValidationModal from '../components/common/ValidationModal.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
@@ -297,8 +306,9 @@ import {
   postOrganismes,
   updateOrganismes,
 } from '../api/organisme.ts'
-import { onMounted, reactive, ref, watch } from 'vue'
-import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+
+import { nextTick, computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -307,15 +317,15 @@ import { selectClients } from '@api/client.js'
 import { useUserStore } from '@/stores/user.js'
 import CrudList from '@components/molecules/CrudList.vue'
 import LabelText from '@components/common/LabelText.vue'
-import InputSelect from '@components/common/InputSelect.vue'
+import html2pdf from 'html2pdf.js'
+import CarteAcces from "@/pdf/CarteAcces.vue";
+import { getCarteAcces } from "@api/carte_acces.js";
 const { isAdmin, isGestCo } = useUserStore()
-
 const crud_columns = [
   { data: (e) => e.libelle, label: 'Nom' },
   { data: (e) => e.adresse.codePostal, label: 'Code Postal' },
   { data: (e) => e.adresse.ville, label: 'Ville' },
 ]
-
 function getTableData() {
   return organismes.value.map((organisme) => {
     return {
@@ -350,15 +360,17 @@ const modal_title = ref('')
 const client = ref({})
 const clients = ref([])
 const validation = ref({})
-const idClient = ref(route.params.id)
 const gestionnairesOrganisme = ref([])
 
+const carte_selected = ref(null)
+
 watch(() => route.params, async () => {
-  console.log(route.params.id)
   getOrganismesParClient(route.params.id).then(response => {
     organismes.value = response;
   })
 })
+
+const idClient = computed(() => route.params.id)
 
 onMounted(async () => {
   if (route.name === 'organismes') {
@@ -388,6 +400,7 @@ const reset = async () => {
   id_selected.value = 0
   address_selected.value = {}
   client.value = {}
+  carte_selected.value = null
 }
 
 const cancel = () => {
@@ -434,6 +447,7 @@ const mapApiToData = (organisme) => {
   actif.value = organisme.actif
   client.value = idClient.value
   gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
+
   address_selected.value = {
     address: organisme.adresse.adresse,
     postcode: organisme.adresse.codePostal,
@@ -451,12 +465,12 @@ const mapApiToData = (organisme) => {
 }
 
 const saveOrganisme = () => {
-console.log(idClient.value)  
+
 if (!isValid(validation)) return
   organisme.value = {
     libelle: name.value,
     actif: actif.value,
-    client: 'api/clients/' + idClient.value,
+    client: 'api/clients/' + client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
     adresse: {
       adresse: address_selected.value.label,
@@ -483,6 +497,8 @@ if (!isValid(validation)) return
 
 const updateOrganismeValidation = async () => {
   try {
+    console.log(idClient.value)
+    console.log(client.value)
     await updateOrganismes(organisme, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
@@ -492,7 +508,7 @@ const updateOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 const addOrganismeValidation = async () => {
@@ -506,7 +522,7 @@ const addOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 watchDebounced(
@@ -528,4 +544,18 @@ const removeFrom = (refArray, i) => {
     .slice(0, i)
     .concat(refArray.value.slice(i + 1))
 }
+
+const getDonneesCarte = async (gestionnaire) => {
+  return (await getCarteAcces(gestionnaire.infoCarte.id)) ?? null
+}
+
+const imprimerPdf = async (gestionnaire) => {
+  carte_selected.value = await getDonneesCarte(gestionnaire)
+  if (carte_selected.value !== null) {
+    await nextTick()
+    const template = document.querySelector('.document-a-imprimer')
+    html2pdf().from(template).save()
+  }
+}
+
 </script>
