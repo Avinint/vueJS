@@ -21,7 +21,7 @@ const afficherModale = ref(false)
 const modal_title = ref('')
 
 const parametres = computed(() => {
-  console.log("props.params", parametres.value)
+
   return props.params
 })
 
@@ -45,7 +45,7 @@ const modificationStatus = async (parametre) => {
 
       await postParametreFitArena({
         actif: parametre.actif,
-        parametre: '/api/parametres/' +
+        parametre: '/api/parametres/'
       }, parametre.id)
     } else {
       parametre.actif = !parametre.actif
