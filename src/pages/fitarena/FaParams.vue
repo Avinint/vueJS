@@ -46,9 +46,9 @@
 
 
 
-  <CardConditionVisualisationCreneaux :params="params" />
+  <CardConditionVisualisationCreneaux :params="parametresFitArenas" />
   <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration :params="params" @refresh="loadParams"/>
+  <CardKeyMomentDuration :params="parametreFitarenas" :parametreActivites="parametreActivites" @refresh="loadParams"/>
 
   <Card>
     <h1>Invitation à une réservation</h1>
@@ -65,21 +65,22 @@ import CardConditionReservationOfSlots from '../../components/molecules/CardCond
 import CardKeyMomentDuration from '../../components/molecules/CardKeyMomentDuration.vue'
 import CardReservationDuration from '../../components/molecules/CardReservationDuration.vue'
 import {
-  getParametreFitArena,
+
   patchParametreFitArena,
   postParametreFitArena,
 } from '@api/parametreFitArena.js'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getParametres, postParametres } from '@api/parametres.js'
+import { getParametres, postParametres, getParametresParFitArena } from '@api/parametres.js'
+import { useParamStore } from '@stores/parametre.js'
 import { getProfils } from "@api/profil.js";
 import CardConditionVisualisationCreneaux from "@components/molecules/CardConditionVisualisationCreneaux.vue";
 
 const ID_VISU_CRENEAU = 16
 
 const route = useRoute()
+const  { fetchParametres, parametresFitArenas } = useParamStore()
 
-const parametres = ref([])
 
 const visualisation_creneaux = ref({})
 
@@ -89,34 +90,27 @@ const cancelSessionTime = ref(1)
 
 onMounted(async () => {
   // SEARCH ALL PARAMS FO THIS FIT ARENA
-  await loadParams()
-
+  //await loadParams()
+  await fetchParametres(route.params.id)
+  console.log("ROH", parametres.value)
   // PARAMETRE ANNULATION DES CRENEAUX
-  cancelSessionTime.value = await getParameterByCode(
-    'condition-annulation-des-creneaux'
-  ).valeur
+  cancelSessionTime.value = parametreFitarenas['condition-annulation-des-creneaux']?.valeur ?? 1
 })
 
-const loadParams = async () => {
-  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
-}
+// const conversionListeEnObjet = (objet, param) =>   ({
+//   ...objet, [param.parametre.code]: {
+//     libelle: param.parametre.libelle, valeur: param.valeur, id: param.id, type: param.type
+//   }
+// })
 
-const params = computed(() => parametres.value.reduce(conversionListeEnObjet, {}))
-
-const conversionListeEnObjet = (objet, param) =>   ({
-  ...objet, [param.parametre.code]: {
-    libelle: param.parametre.libelle, valeur: param.valeur, id: param.id, type: param.type
-  }
-})
-
-const getParameterByCode = async (code, value = 0) => {
-  let parametre = parametres.value.find((el) => el.parametre.code === code)
-  // if (!parametre) {
-  //   await createParamsForFitArena(route.params.id, code, value)
-  // }
-  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
-  return parametres.value.find((el) => el.parametre.code === code)
-}
+// const getParameterByCode = async (code, value = 0) => {
+//   let parametre = parametres.value.find((el) => el.parametre.code === code)
+//   // if (!parametre) {
+//   //   await createParamsForFitArena(route.params.id, code, value)
+//   // }
+//   parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
+//   return parametres.value.find((el) => el.parametre.code === code)
+// }
 
 const createParamsForFitArena = async (id_fa, code, value) => {
   // CREATE GENERIC PARAMS
@@ -138,9 +132,7 @@ const setCancelBooking = async () => {
   editCancelBooking.value = !editCancelBooking.value
   if (!editCancelBooking.value) {
     // RETURN TO READONLY MODE -> SAVE INPUT VIA API
-    const { id } = (
-      await getParametres({page: 1, code: 'condition-annulation-des-creneaux'})
-    )[0]
+    const  id = parametreFitarenas['condition-annulation-des-creneaux'].id
     await patchParametreFitArena(id, {
       fitArena: 'api/fit_arenas/' + route.params.id,
       parametre: 'api/parametres/' + id,

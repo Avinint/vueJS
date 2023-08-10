@@ -169,6 +169,7 @@ const zone_selected = ref({})
 const valeur_selected = ref({})
 const equipements = ref([])
 const typeEquipements = ref([])
+const modeFormulaire = ref('')
 
 const formulaireParZone = reactive({
   zone: null,

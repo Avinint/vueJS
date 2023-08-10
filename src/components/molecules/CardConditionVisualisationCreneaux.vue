@@ -14,7 +14,7 @@ import { patchParametreFitArena } from "@api/parametreFitArena.js";
 
 const PARAM_NB_JOURS_VISIBLES = 'nombre_de_jours_visibles_pour_la_reservation_de_creneaux_par_les_utilisateurs_grand_public'
 
-const props = defineProps({params: Object})
+const props = defineProps({params: { type: Object, required: false }})
 const idFitArena = computed(() => useRoute().params.id)
 const profils = ref([])
 const afficherModale = ref(false)
@@ -68,7 +68,7 @@ const modificationStatus = async (parametre) => {
       <div class="flex items-center">
         <div class="mr-2">Actif</div>
         <Switch :modelValue="
-        props.params[PARAM_NB_JOURS_VISIBLES]?.actif ?? false"
+        props.params?.[PARAM_NB_JOURS_VISIBLES]?.actif ?? false"
                 @change="modificationStatus(props.params[PARAM_NB_JOURS_VISIBLES] ?? null)"/>
       </div>
       <div class="text-sm">
