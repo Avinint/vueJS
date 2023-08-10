@@ -15,18 +15,18 @@
             @click="editTempsFortParFitArena(index)"
           />
         </div>
-        <div v-if="props.params.duree_du_temps_fort?.id ?? false" class="mt-6 flex items-center font-light">
+        <div v-if="parametreFitArenas.duree_du_temps_fort?.id ?? false" class="mt-6 flex items-center font-light">
           <p class="ml-6 flex w-5/12 justify-start">{{ props.params.duree_du_temps_fort.libelle }}</p>
           <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2">{{ props.params.duree_du_temps_fort.valeur }} min</p>
+            <p class="flex p-2">{{ parametreFitArenas.duree_du_temps_fort.valeur }} min</p>
           </div>
         </div>
-        <div v-if="props.params.duree_soustraite_a_la_fin_du_temps_fort?.id ?? false" class="mt-6 flex items-center font-light">
+        <div v-if="parametreFitArenas.duree_soustraite_a_la_fin_du_temps_fort?.id ?? false" class="mt-6 flex items-center font-light">
           <p class="ml-6 flex w-5/12 justify-start">
-            {{ props.params.duree_soustraite_a_la_fin_du_temps_fort.libelle }}
+            {{ parametreFitArenas.duree_soustraite_a_la_fin_du_temps_fort.libelle }}
           </p>
           <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2">{{ props.params.duree_soustraite_a_la_fin_du_temps_fort.valeur }} sec</p>
+            <p class="flex p-2">{{ parametreFitArenas.duree_soustraite_a_la_fin_du_temps_fort.valeur }} sec</p>
           </div>
         </div>
       </div>
@@ -41,7 +41,7 @@
       />
     </div>
     <div class="my-2 w-1/2 rounded-lg border">
-      <template v-for="(activite, index) in activites" :key="index">
+      <template v-for="(activite, index) in activites" :key="activite.id">
         <div v-if="activite.parametreActivites.length" class="relative my-4 overflow-x-auto text-black" >
           <!-- dynamique à venir, quand le back et le front seront au même niveau -->
           <div class="flex px-6 py-4">
@@ -52,11 +52,11 @@
             </div>
             <label class="relative inline-flex w-3/12 cursor-pointer">
               <input
-                :checked="activite.parametres.duree_du_temps_fort?.actif"
+                :checked="activite.parametres?.duree_du_temps_fort?.actif"
                 type="checkbox"
-                :value="activite.parametres.duree_du_temps_fort?.actif"
+                :value="activite.parametres?.duree_du_temps_fort?.actif"
                 class="peer sr-only"
-                @click="modifKeyMomentDuration(activite.parametres.duree_du_temps_fort, activite.parametres.duree_du_temps_fort.id)"
+                @click="modifKeyMomentDuration(activite.parametres?.duree_du_temps_fort, activite.parametres?.duree_du_temps_fort.id)"
               />
               <div
                 class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
@@ -82,17 +82,17 @@
             />
           </div>
           <div class="mt-6 flex items-center font-light">
-            <p class="ml-6 flex w-5/12 justify-start">{{ activite.parametres.duree_du_temps_fort?.libelle }}</p>
+            <p class="ml-6 flex w-5/12 justify-start">{{ activite.parametres?.duree_du_temps_fort?.libelle }}</p>
             <div class="bg-grey flex justify-end rounded-lg">
-              <p class="flex p-2">{{ activite.parametres.duree_du_temps_fort?.valeur ?? 0 }} min</p>
+              <p class="flex p-2">{{ activite.parametres?.duree_du_temps_fort?.valeur ?? 0 }} min</p>
             </div>
           </div>
           <div class="mt-6 flex items-center font-light">
             <p class="ml-6 flex w-5/12 justify-start">
-              {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.libelle }}
+              {{ activite.parametres?.duree_soustraite_a_la_fin_du_temps_fort?.libelle }}
             </p>
             <div class="bg-grey flex justify-end rounded-lg">
-              <p class="flex p-2"> {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.valeur ?? 0 }} sec</p>
+              <p class="flex p-2"> {{ activite.parametres?.duree_soustraite_a_la_fin_du_temps_fort?.valeur ?? 0 }} sec</p>
             </div>
           </div>
         </div>
@@ -212,16 +212,19 @@ import {
   patchParametreActivite,
 } from '@api/parametreActivite.js'
 import { getProfils } from '@api/profil.js'
-import { getActivites } from '@api/activite.ts'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { useParamStore } from '@stores/parametre.js'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { getParametreFitArena, postParametreFitArena, updateParametreFitArena } from "@api/parametreFitArena.js";
 
-const props = defineProps({params: Object})
+const props = defineProps({params: Object, parametreActivites: Object})
 const emit = defineEmits(["refresh"])
 const route = useRoute()
+const params = useParamStore()
+const
+
 const idFitArena = computed(() => route.params.id)
 const profils = ref(null)
 
@@ -245,29 +248,48 @@ const ajoutPossibleParActivite = computed(() => {
   return activites.value.some((activite => !activite.parametreActivites.length))
 })
 
-const ajoutPossibleParFitArena = computed(() => Object.keys(props.params).length  === 0)
-
-const parametres = computed(() => props.params)
+const ajoutPossibleParFitArena = computed(() => Object.keys(parametreFitArenas?.value ?? {}).length  === 0)
 
 onMounted(async () => {
-  await dynamiseParametresParActivites()
+ await dynamiseParametresParActivites()
+    // activite.parametres = {...props.parametreActivites}
+
+    // for (const paramActivite of activite.parametreActivites) {
+    //   activite.parametres[paramActivite.parametre.code] = {
+    //     libelle: paramActivite.parametre.libelle,
+    //     valeur: paramActivite.valeur,
+    //     actif: paramActivite.actif,
+    //     id: paramActivite.id,
+    //   }
+    // }
+
 })
 
-const dynamiseParametresParActivites = async () => {
-  activites.value = await getActivites(idFitArena.value)
+const dynamiseParametresParActivites = async() => {
+  activites.value = await fetchActivites(idFitArena.value)
   for (const activite of activites.value) {
-    activite.parametres = {}
-    for (const paramActivite of activite.parametreActivites) {
-      activite.parametres[paramActivite.parametre.code] = {
-        libelle: paramActivite.parametre.libelle,
-        valeur: paramActivite.valeur,
-        actif: paramActivite.actif,
-        id: paramActivite.id,
-      }
+    console.log(activite.code)
+    console.log(props.parametreActivites)
+    console.log(props.parametreActivites[activite.code])
+
+    if  (parametreActivites[activite.code] !== undefined) {
+      activite.parametres = {...parametreActivites[activite.code]}
+    } else {
+      activite.parametres = {}
     }
+    console.log(activite.parametres)
+    // activite.parametres = {...props.parametreActivites}
+
+    // for (const paramActivite of activite.parametreActivites) {
+    //   activite.parametres[paramActivite.parametre.code] = {
+    //     libelle: paramActivite.parametre.libelle,
+    //     valeur: paramActivite.valeur,
+    //     actif: paramActivite.actif,
+    //     id: paramActivite.id,
+    //   }
+    // }
 
   }
-
 }
 
 const reset = () => {
@@ -313,8 +335,10 @@ const removeKeyMomentDuration = async (i) => {
      const paramActiviteId = activites.value[i].parametres[prop].id
       await deleteParametreActivite(paramActiviteId)
     }
+
     // activites.value[i].parametres = {}
-    await dynamiseParametresParActivites()
+    await emit('refresh')
+    dynamiseParametresParActivites()
     toast.success('Succès de la suppression')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
@@ -323,7 +347,9 @@ const removeKeyMomentDuration = async (i) => {
 
 const editTempsFortParActivite = async (i, ) => {
 
+  console.error(activites.value[i])
   const params = activites.value[i].parametres
+  console.error(params, params === {})
   formulaire.durationKeyMoment   = params.duree_du_temps_fort.valeur
   formulaire.durationKeyMomentId = params.duree_du_temps_fort.id
   formulaire.durationEnd         = params.duree_soustraite_a_la_fin_du_temps_fort.valeur
@@ -337,11 +363,11 @@ const editTempsFortParActivite = async (i, ) => {
 }
 
 const editTempsFortParFitArena = async (i,) => {
-  formulaire.durationKeyMoment   = parametres.value.duree_du_temps_fort.valeur
-  formulaire.durationKeyMomentId = parametres.value.duree_du_temps_fort.id
-  formulaire.durationEnd         = parametres.value.duree_soustraite_a_la_fin_du_temps_fort.valeur
-  formulaire.durationEndId       = parametres.value.duree_soustraite_a_la_fin_du_temps_fort.id
-  formulaire.profils             = parametres.value.duree_du_temps_fort.profils
+  formulaire.durationKeyMoment   = parametreFitArenas.value.duree_du_temps_fort.valeur
+  formulaire.durationKeyMomentId = parametreFitArenas.value.duree_du_temps_fort.id
+  formulaire.durationEnd         = parametreFitArenas.value.duree_soustraite_a_la_fin_du_temps_fort.valeur
+  formulaire.durationEndId       = parametreFitArenas.value.duree_soustraite_a_la_fin_du_temps_fort.id
+  formulaire.profils             = parametreFitArenas.value.duree_du_temps_fort.profils
 
   modaleVisible.value  = true
   modeFormulaire.value = "ParFitArena"
@@ -379,8 +405,9 @@ const saveTempsFortParFitArena = async () => {
 
     closeModal()
     toast.success('Temps fort sauvegardé avec succès')
-    await emit('refresh')
 
+    await emit('refresh')
+    dynamiseParametresParActivites()
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }
@@ -406,8 +433,11 @@ const saveTempsFortParActivite = async () => {
     }
 
     closeModal()
+
+
     toast.success('Temps fort sauvegardé avec succès')
-    await dynamiseParametresParActivites()
+    await await emit('refresh')
+    dynamiseParametresParActivites()
 
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
