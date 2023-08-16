@@ -46,9 +46,9 @@
 
 
 
-  <CardConditionVisualisationCreneaux :params="parametresFitArenas" />
+  <CardConditionVisualisationCreneaux  />
   <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration :params="parametreFitarenas" :parametreActivites="parametreActivites" @refresh="loadParams"/>
+  <CardKeyMomentDuration/>
 
   <Card>
     <h1>Invitation à une réservation</h1>
@@ -69,8 +69,8 @@ import {
   patchParametreFitArena,
   postParametreFitArena,
 } from '@api/parametreFitArena.js'
-import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { getParametres, postParametres, getParametresParFitArena } from '@api/parametres.js'
 import { useParamStore } from '@stores/parametre.js'
 import { getProfils } from "@api/profil.js";
@@ -79,7 +79,7 @@ import CardConditionVisualisationCreneaux from "@components/molecules/CardCondit
 const ID_VISU_CRENEAU = 16
 
 const route = useRoute()
-const  { fetchParametres, parametresFitArenas } = useParamStore()
+const  params = useParamStore()
 
 
 const visualisation_creneaux = ref({})
@@ -88,29 +88,20 @@ const editCancelBooking = ref(false)
 
 const cancelSessionTime = ref(1)
 
-onMounted(async () => {
-  // SEARCH ALL PARAMS FO THIS FIT ARENA
-  //await loadParams()
-  await fetchParametres(route.params.id)
-  console.log("ROH", parametres.value)
-  // PARAMETRE ANNULATION DES CRENEAUX
-  cancelSessionTime.value = parametreFitarenas['condition-annulation-des-creneaux']?.valeur ?? 1
+onBeforeRouteUpdate(async (to, from) => {
+    await params.fetchActivites(to.params.id)
+    await params.fetchParametres(to.params.id)
 })
 
-// const conversionListeEnObjet = (objet, param) =>   ({
-//   ...objet, [param.parametre.code]: {
-//     libelle: param.parametre.libelle, valeur: param.valeur, id: param.id, type: param.type
-//   }
-// })
+onBeforeMount(async () => {
+  // SEARCH ALL PARAMS FO THIS FIT ARENA
+  await params.fetchActivites(route.params.id)
+  await params.fetchParametres(route.params.id)
 
-// const getParameterByCode = async (code, value = 0) => {
-//   let parametre = parametres.value.find((el) => el.parametre.code === code)
-//   // if (!parametre) {
-//   //   await createParamsForFitArena(route.params.id, code, value)
-//   // }
-//   parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
-//   return parametres.value.find((el) => el.parametre.code === code)
-// }
+  // PARAMETRE ANNULATION DES CRENEAUX
+  cancelSessionTime.value = params.parametreFitarenas?.['condition-annulation-des-creneaux'].valeur ?? 1
+})
+
 
 const createParamsForFitArena = async (id_fa, code, value) => {
   // CREATE GENERIC PARAMS

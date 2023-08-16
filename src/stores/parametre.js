@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { getParametresParFitArena } from '@api/parametres.js'
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { getActivites } from "@api/activite.ts";
-export const useParamStore = defineStore('user', () => {
+export const useParamStore = defineStore('params', () => {
 
   const activites = ref([])
   const parametres = ref({})
@@ -11,13 +11,14 @@ export const useParamStore = defineStore('user', () => {
   const parametreFitArenaProfils = computed(() => parametres.value.parametreFitArenaProfils)
 
   async function fetchParametres(id) {
-    console.log("yolo")
-    this.parametres.value = await getParametresParFitArena(id)
+    parametres.value = await getParametresParFitArena(id)
+    return parametres.value
   }
-  async function fetchActivites() {
-    this.activites.value = await getActivites()
+  async function fetchActivites(id) {
+    activites.value = await getActivites(id)
+    return activites.value
   }
 
-  return { fetchParametres, fetchActivites, parametres, parametreFitArenas, parametreActivites, parametreFitArenaProfils }
+  return { fetchParametres, fetchActivites,  activites, parametres, parametreFitArenas, parametreActivites, parametreFitArenaProfils }
 
 })
