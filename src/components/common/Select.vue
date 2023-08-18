@@ -1,6 +1,6 @@
 <template>
   <div>
-    <InputLabel>{{ label }}</InputLabel>
+    <InputLabel :required="required">{{ label }}</InputLabel>
     <select
       :value="props.modelValue"
       @input="
@@ -24,6 +24,7 @@ import InputLabel from './InputLabel.vue'
 import { computed } from 'vue'
 
 const props = defineProps<{
+  required: boolean
   modelValue?: number
   placeholder?: string
   label: string
@@ -36,7 +37,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', item: object): void
+  (e: 'update:modelValue', item: number): void
 }>()
 
 const label = computed(() => props.label)

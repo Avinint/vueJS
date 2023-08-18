@@ -1,8 +1,7 @@
 <template>
   <div class="flex" :class="inline ? 'items-center' : 'flex-col'">
-    <InputLabel v-if="label" :for="id">{{ label }}</InputLabel>
+    <InputLabel :required="required" v-if="label" :for="id">{{ label }}</InputLabel>
     <div class="w-full">
-      <span class=" relative right-3 top-9" v-if="required"> * </span>
       <input
         :readonly="readonly"
         :id="id"
@@ -40,7 +39,7 @@ const props = defineProps<{
   id?: string,
   validation?: Function[],
   valid?: boolean,
-  required?: boolean,
+  required: boolean,
 }>()
 
 const emits = defineEmits<{
