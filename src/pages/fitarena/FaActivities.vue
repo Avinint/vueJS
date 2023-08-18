@@ -3,9 +3,9 @@
     <h1>Activités pratiquables dans la fit arena</h1>
 
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="text-xs uppercase text-gray-700"
         >
           <tr>
             <th scope="col" class="px-6 py-3"></th>
@@ -42,10 +42,10 @@
                   @change="modifieActivite(act)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
                 ></div>
                 <span
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="ml-3 text-sm font-medium text-gray-900"
                 ></span>
               </label>
             </td>
@@ -87,7 +87,7 @@
           id="TTypeActivite"
           v-model="activite_selected"
           :disabled="readonly == true ? true : false"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         >
           <option
             v-for="(typeActivite, i) in typeActivites"
@@ -112,13 +112,13 @@
       <div class="flex items-center">
         <!-- <Input :readonly="readonly" id="small_size" :type="'file'" label="Icône" class="w-full" /> -->
         <label
-          class="mb-2 block pr-3 text-sm font-medium text-gray-900 dark:text-white"
+          class="mb-2 block pr-3 text-sm font-medium text-gray-900"
           for="small_size"
           >Icône</label
         >
         <input
           id="small_size"
-          class="mb-5 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+          class="mb-5 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-900 focus:outline-none"
           type="file"
         />
       </div>
@@ -131,7 +131,7 @@
           v-model="activite.description"
           :readonly="readonly"
           type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           required
         ></textarea>
       </div>
@@ -156,7 +156,7 @@
         />
       </div>
       <div class="flex items-center">
-        <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        <span class="w-1/2 text-sm font-medium text-gray-900"
           >Actif :
         </span>
         <label class="relative inline-flex w-full cursor-pointer items-center">
@@ -168,15 +168,15 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
           ></div>
           <span
-            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+            class="ml-3 text-sm font-medium text-gray-900"
           ></span>
         </label>
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+        <span class="mr-3 text-sm font-medium text-gray-900"
           >Réservation individuelle</span
         >
         <label class="relative inline-flex cursor-pointer items-center">
@@ -188,13 +188,15 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
           ></div>
         </label>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+        <span class="ml-3 text-sm font-medium text-gray-900"
           >Réservation de groupe</span
         >
       </div>
+      <MentionChampsObligatoires margin-top="40px"/>
+
     </Modal>
   </form>
 
@@ -235,6 +237,7 @@ import {
 import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const props = defineProps(['id'])
 
