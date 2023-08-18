@@ -225,14 +225,12 @@
             </div>
             <div v-if="carte_selected !== null" class="flex items-center">
               <CarteAcces :carte="carte_selected"/>
-
             </div>
+
             <Button @click="imprimerPdf(gestionnaire)" label="Imprimer"
                     class="bg-red-600 hover:bg-red-800 text-white"/>
+
             <div class="flex items-center">
-
-
-
               <Input
                 id="TcodePin"
                 v-model="gestionnaire.codePin"
@@ -259,6 +257,7 @@
             @click="gestionnairesOrganisme.push({})"
           />
         </Card>
+        <MentionChampsObligatoires/>
       </Modal>
     </form>
 
@@ -320,6 +319,7 @@ import LabelText from '@components/common/LabelText.vue'
 import html2pdf from 'vue3-html2pdf'
 import CarteAcces from "@/pdf/CarteAcces.vue";
 import { getCarteAcces } from "@api/carte_acces.js";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 const { isAdmin, isGestCo } = useUserStore()
 const crud_columns = [
   { data: (e) => e.libelle, label: 'Nom' },
