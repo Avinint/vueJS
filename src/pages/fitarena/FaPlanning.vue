@@ -1,5 +1,6 @@
 <template>
   <div class="fa-planning">
+    <EditOptions ref="edit_options" @on-edit-single="editSingle" @on-edit-multiple="editRecurence"/>
     <PlanningNavigation
       class="mb-6"
       :calendar-api="calendarApi"
@@ -65,13 +66,15 @@ import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
 import { mapStores } from 'pinia'
 import { getZones } from '@api/zone.js'
+import EditOptions from '@components/faPlanning/EditOptions.vue'
 
 export default {
   components: {
     PlanningNavigation,
     modalCreneau,
     FullCalendar,
-  },
+    EditOptions
+},
   data() {
     return {
       calendarOptions: {
@@ -163,6 +166,18 @@ export default {
     eventClick(eventClickInfo) {
       this.actionType = 'edit'
       this.setSelectedCreneau(eventClickInfo.event)
+      if(eventClickInfo.event.recurrence)
+        this.$refs.edit_options.open();
+      else {
+        this.creneauStore.recurrence = undefined;
+        this.isModalCreneauOpen = true;
+      }
+    },
+    editSingle() {
+      this.creneauStore.recurrence = undefined;
+      this.isModalCreneauOpen = true;
+    },
+    editRecurence() {
       this.isModalCreneauOpen = true
     },
     select(selectionInfo) {

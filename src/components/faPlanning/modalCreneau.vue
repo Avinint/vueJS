@@ -96,7 +96,7 @@
         @click="setSubmenu('advanced')"
       />
       <FAButton
-        v-if="creneauStore.creneauType"
+        v-if="creneauStore.creneauType && creneauStore.recurrence != undefined"
         label="Récurrence"
         couleur="secondary"
         @click="setSubmenu('recurence')"
