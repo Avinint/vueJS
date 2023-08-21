@@ -95,7 +95,7 @@
 import FaInput from '@components/common/Input.vue'
 import InputSelect from '@components/common/InputSelect.vue'
 import { useCreneauStore } from '@stores/creneau'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 
 const creneau_store = useCreneauStore()
@@ -111,6 +111,10 @@ const type = ref('Semaines')
 const repetition_date = ref('')
 const repetition_occurence = ref(0)
 const repetition_mode = ref<'date' | 'occurence'>('date')
+
+onMounted(() => {
+  creneau_store.recurrence.recurrenceType = 2;
+})
 
 function selectDay(day_index: number) {
   selected_days.value[day_index] = !selected_days.value[day_index]
@@ -135,7 +139,7 @@ watch(repetition_date, () => {
 watch(type, (v) => {
   for (let i = 0; i < types.length; i++) {
     if (types[i] === v) {
-      creneau_store.recurrence.recurrenceType = i
+      creneau_store.recurrence.recurrenceType = i + 1
     }
   }
 })
@@ -176,7 +180,7 @@ function setRepetitionValue() {
 
     case 'occurence':
       repetition_date.value = '';
-      creneau_store.recurrence.dateFin = ''
+      creneau_store.recurrence.dateFin = undefined;
       creneau_store.recurrence.maxOccurrences = repetition_occurence.value
       break
   }

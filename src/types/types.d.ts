@@ -27,7 +27,7 @@ type Creneau = {
 
 type Recurrence = {
   dateDebut: string
-  dateFin: string
+  dateFin?: string
   maxOccurrences: number
   separation: number
   recurrenceType: number

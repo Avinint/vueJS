@@ -38,7 +38,7 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
     organisme: creneau.organisme,
     tarifHoraire: creneau.tarifHoraire,
     zoneId: zone_id,
-    recurrence: creneau.recurrence,
+    recurrence: creneau.recurrence.separation > 0 ? creneau.recurrence : undefined,
   }
 }
 
@@ -92,7 +92,7 @@ export const default_creneau = (): Creneau => ({
     dateDebut: "",
     dateFin: "",
     maxOccurrences: 0,
-    recurrenceType: 0,
+    recurrenceType: 1,
     recurrenceJoursSemaine: [],
     recurrenceOrdinaux: [],
     recurrenceSemainesMois: [],
