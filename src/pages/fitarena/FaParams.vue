@@ -69,7 +69,7 @@
   </Card>
 
   <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration />
+  <CardKeyMomentDuration :params="parametres" @refresh="loadParams"/>
 
   <Card>
     <h1>Invitation à une réservation</h1>
@@ -89,10 +89,11 @@ import {
   getParametreFitArena,
   patchParametreFitArena,
   postParametreFitArena,
-} from '../../api/parametreFitArena.js'
+} from '@api/parametreFitArena.js'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getParametres, postParametres } from '../../api/parametres.js'
+import { getParametres, postParametres } from '@api/parametres.js'
+import { getProfils } from "@api/profil.js";
 
 const ID_VISU_CRENEAU = 16
 
@@ -106,12 +107,12 @@ const editCancelBooking = ref(false)
 
 const cancelSessionTime = ref(1)
 
+const profils = ref([])
+
 onMounted(async () => {
+  profils.value = await getProfils()
   // SEARCH ALL PARAMS FOR THIS FIT ARENA
-  parametres.value = await getParametreFitArena(
-    1,
-    '?fitArena.id=' + route.params.id
-  )
+  await loadParams()
 
   // PARAMETRE ANNULATION DES CRENEAUX
   cancelSessionTime.value = await getParameterByCode(
@@ -119,15 +120,16 @@ onMounted(async () => {
   ).valeur
 })
 
+const loadParams = async () => {
+  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
+}
+
 const getParameterByCode = async (code, value = 0) => {
   let parametre = parametres.value.find((el) => el.parametre.code === code)
-  if (!parametre) {
-    await createParamsForFitArena(route.params.id, code, value)
-  }
-  parametres.value = await getParametreFitArena(
-    1,
-    '?fitArena.id=' + route.params.id
-  )
+  // if (!parametre) {
+  //   await createParamsForFitArena(route.params.id, code, value)
+  // }
+  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
   return parametres.value.find((el) => el.parametre.code === code)
 }
 
@@ -152,7 +154,7 @@ const setCancelBooking = async () => {
   if (!editCancelBooking.value) {
     // RETURN TO READONLY MODE -> SAVE INPUT VIA API
     const { id } = (
-      await getParametres(1, '&code=condition-annulation-des-creneaux')
+      await getParametres({page: 1, code: 'condition-annulation-des-creneaux'})
     )[0]
     await patchParametreFitArena(id, {
       fitArena: 'api/fit_arenas/' + route.params.id,

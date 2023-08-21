@@ -37,6 +37,12 @@ export const getEquipement = async (id = 1) => {
 }
 
 export const postEquipements = async (equipement) => {
+  if (equipement.hasOwnProperty['equipementModes']) {
+    for (let configuration of equipement.equipementModes) {
+      configuration.mode = configuration.mode.iri
+    }
+  }
+
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/equipements`,
     {
@@ -49,11 +55,15 @@ export const postEquipements = async (equipement) => {
       body: JSON.stringify(equipement),
     }
   )
-  if (response.status !== 201) throw response
+  if (response.status !== 201) throw response.json()
   return response.json()
 }
 
 export const updateEquipements = async (equipement, id) => {
+  for (let configuration of equipement.equipementModes) {
+    configuration.mode = configuration.mode.iri
+  }
+
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/equipements/${id}`,
     {

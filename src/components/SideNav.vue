@@ -19,7 +19,7 @@
                     d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                     clip-rule="evenodd"/>
             </svg>
-            <side-nav-item :icon="link.icon" :label="link.label" :path="link.path" :tag="link.tag"
+            <side-nav-item :icon="link.icon ?? ''" :label="link.label" :path="link.path" :tag="link.tag"
                            :id="'T' + link.path"/>
           </div>
           <div class="w-full bg-gray-100">
@@ -57,7 +57,7 @@ import SideNavItem from "./SideNavItem.vue"
 import {onMounted, reactive, ref} from "vue"
 // import { getFitArenas } from '../api/fit-arena'
 import Link from '../types/Link'
-import {getMenu} from "@api/menu";
+import { getMenu as getMenuData } from "@api/menu";
 import {useUserStore} from "@/stores/user.js";
 
 const {isAdmin, isGestCo, isGestOrg} = useUserStore();
@@ -116,9 +116,14 @@ const openSubSubLinks = (i, sub_i) => {
   sub_links[sub_i].sub_links_open = !sub_links[sub_i].sub_links_open
 }
 
-onMounted(async () => {
+const getMenu = async () => {
+  const menu = await getMenuData()
+ return menu.menu;
 
-  const {clients = false, fitarenas = false, organismes = false} = await (await getMenu()).menu;
+}
+
+onMounted(async () => {
+  const {clients = false, fitarenas = false, organismes = false} = await getMenu()
 
   if (clients) {
     clientLinks.value = clients.map((cli) => {
@@ -263,7 +268,7 @@ onMounted(async () => {
 
       return {
         label: fa.libelle,
-        path: '/fitarena/' + fa.id,
+        path: isAdmin ? '/fitarena/' + fa.id + '/config' : '/fitarena/' + fa.id,
         icon: homeIcone,
         sub_links: isAdmin ? subLinksAdmin : subLinksGestionnaire
       }

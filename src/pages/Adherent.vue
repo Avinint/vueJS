@@ -20,7 +20,7 @@
         <tbody>
         <tr v-for="(adherent, i) in  adherents" :key="i" class="bg-white">
 
-          <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.nom }}</td>
+          <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.prenom }}</td>
           <td class="px-6 py-4">{{ afficherDate(adherent.dateNaissance) }}</td>
           <td class="px-6 py-4">{{ adherent.numeroAdherent }}</td>
           <td class="px-6 py-4">{{ afficherDate(adherent.dateAdhesion) }}</td>

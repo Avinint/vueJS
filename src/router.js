@@ -6,6 +6,7 @@ import FitArena from './pages/fitArena.vue'
 import FitArenas from './pages/fitArenas.vue'
 import Client from './pages/client.vue'
 import FaParams from './pages/fitarena/FaParams.vue'
+import FaConfig from './pages/fitarena/FaConfig.vue'
 import FaSpaces from './pages/fitarena/FaSpaces.vue'
 import FaWeb from './pages/fitarena/FaWeb.vue'
 import FaSubSpaces from './pages/fitarena/FaSubSpaces.vue'
@@ -73,6 +74,22 @@ const routes = [
       breadcrumbs: [],
     },
     children: [
+      {
+        path: 'config',
+        component: FaConfig,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
+            /**{
+              label: '',
+              link: 'fitarena/',
+            },**/
+          ],
+        },
+      },
       {
         path: 'planning',
         component: FaPlanning,
