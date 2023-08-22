@@ -132,6 +132,7 @@
                 pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
               />
             </template>
+              <MentionChampsObligatoires/>
           </td>
         </tr>
         </tbody>
@@ -258,6 +259,7 @@ import {toast} from "vue3-toastify";
 import { watchDebounced } from "@vueuse/core";
 import { getAdresses } from "@api/address.js";
 import ValidationModal from "@components/common/ValidationModal.vue";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const route = useRoute()
 const modaleConfirmation = ref(false)

@@ -6,9 +6,9 @@
       lequel est praticable une seule activité en même temps
     </span>
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="text-xs uppercase text-gray-700"
         >
           <tr>
             <th scope="col" class="px-6 py-3"></th>
@@ -45,10 +45,10 @@
                   @change="modifieEspace(esp)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
                 ></div>
                 <span
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="ml-3 text-sm font-medium text-gray-900"
                 ></span>
               </label>
             </td>
@@ -97,7 +97,7 @@
           id="TfaSelectEspace"
           v-model="espace_selected"
           :disabled="readonly == true ? true : false"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         >
           <option
             v-for="(espaceParent, i) in espaceParents"
@@ -129,7 +129,7 @@
         />
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+        <span class="mr-3 text-sm font-medium text-gray-900"
           >Actif :
         </span>
         <label class="relative inline-flex cursor-pointer items-center">
@@ -141,10 +141,10 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
           ></div>
           <span
-            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+            class="ml-3 text-sm font-medium text-gray-900"
           ></span>
         </label>
       </div>
@@ -166,6 +166,7 @@
           :readonly="readonly"
         ></AjoutEquipements>
       </div>
+      <MentionChampsObligatoires/>
     </Modal>
   </form>
 
@@ -211,6 +212,7 @@ import {
 import { getTypeZone } from '../../api/typeZone.js'
 import { toast } from 'vue3-toastify'
 import { onMounted, ref } from 'vue'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const props = defineProps(['id'])
 

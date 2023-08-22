@@ -3,9 +3,9 @@
     <h1> Mes Adhérents</h1>
 
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="bg-gray-50 text-xs uppercase text-gray-700"
         >
         <tr>
           <th scope="col" class="px-6 py-3">Nom et prénom</th>
@@ -102,7 +102,7 @@
             <select
               id="TadhGenre"
               v-model="genre"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="unGenre in genres"
@@ -159,7 +159,7 @@
                 multiple
                 id="TadhGroupes"
                 v-model="groupes"
-                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                   v-for="unGroupe in listeGroupes"
@@ -183,7 +183,7 @@
             >
               <svg
                   aria-hidden="true"
-                  class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                  class="h-5 w-5 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -214,7 +214,7 @@
               v-if="address && address.length"
               id="TclientSelectAdresse"
               v-model="address_selected"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
               @change="addressSelect"
           >
             <option
@@ -283,7 +283,7 @@
               :validation="[emailValidation]"
           />
         </div>
-
+        <MentionChampsObligatoires/>
       </Card>
     </Modal>
   </form>
@@ -345,6 +345,7 @@ import {
   cityValidation,
   phoneValidation
 } from '@/validation.js'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)

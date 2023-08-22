@@ -2,9 +2,9 @@
   <Card class="space-y-3">
     <h1>Clients</h1>
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="bg-gray-50 text-xs uppercase text-gray-700"
         >
           <tr>
             <th scope="col" class="px-6 py-3"></th>
@@ -75,7 +75,7 @@
             </div>
 
             <div class="flex items-center">
-              <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+              <label class="required mb-2 block w-1/2 text-sm font-medium text-gray-900"
                 >Adresse</label
               >
               <div class="relative w-full">
@@ -84,7 +84,7 @@
                 >
                   <svg
                     aria-hidden="true"
-                    class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                    class="h-5 w-5 text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -116,7 +116,7 @@
                 v-if="address.length"
                 id="TclientSelectAdresse"
                 v-model="address_selected"
-                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                 required
                 @change="addressSelect"
               >
@@ -340,6 +340,7 @@
             @click="community_managers.push({})"
           />
         </Card>
+        <MentionChampsObligatoires/>
       </Modal>
     </form>
 
@@ -392,6 +393,7 @@ import { onMounted, ref } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const client_modal = ref(false)
 

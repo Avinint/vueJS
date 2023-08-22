@@ -302,6 +302,7 @@
                     class="ml-3 text-sm font-medium text-gray-900"
                   ></span>
                 </label>
+
 <!--                <span v-else>{{ // equipementMode.actif ? 'Oui': 'Non' }}</span>-->
               </td>
             </tr>
@@ -316,6 +317,7 @@
           @click="addEquipementConfiguration"
         />
       </CardConfiguration>
+      <MentionChampsObligatoires/>
     </Modal>
   </form>
 
@@ -361,6 +363,7 @@ import { computed, onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { getModes } from "@api/mode.js";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 // libelle éléments motoris&s ou éléménts numériques
 const props = defineProps({
