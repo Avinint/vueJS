@@ -49,3 +49,9 @@ const route = useRoute()
   }
 }
 </style>
+<style>
+label.required::before{
+  content: "*";
+  margin-right: 5px;
+}
+</style>
