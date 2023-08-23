@@ -233,7 +233,7 @@ import {
   updateActivites,
   patchActivites,
 } from '../../api/activite.ts'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
@@ -267,6 +267,10 @@ onMounted(async () => {
   activites.value = await getActivites(props.id, 1, '&order=asc')
   typeActivites.value = await getTypeActivites()
 })
+
+watch(() => props.id, async (  ) => {
+    activites.value = await getActivites(props.id, 1, '&order=asc')
+  })
 
 const addActivite = () => {
   activite.value = {}
