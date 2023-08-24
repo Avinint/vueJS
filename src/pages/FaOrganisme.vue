@@ -94,7 +94,7 @@
             v-model="address_selected.postcode"
             :readonly="readonly"
             :type="'text'"
-            :required="true"
+            required
             label="Code postal"
             class="w-full"
             pattern="[0-9]{5}"
@@ -105,7 +105,7 @@
             v-model="address_selected.city"
             :readonly="readonly"
             :type="'text'"
-            :required="true"
+            required
             label="Ville"
             class="w-full"
             pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï \-]{1,50}"
@@ -119,7 +119,6 @@
             type="text"
             class="w-full"
             pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
-            placeholder="46.7897"
           />
           <Input
             id="TfaLongitude"
@@ -385,7 +384,7 @@ onMounted(async () => {
 })
 
 const addOrganisme = () => {
-  reset()
+  client.value = idClient.value
   gestionnairesOrganisme.value = [{ nom: '', prenom: '', email: '' }]
   afficherFormulaire.value = true
   readonly.value = false
@@ -399,7 +398,6 @@ const reset = async () => {
   address.value = ''
   id_selected.value = 0
   address_selected.value = {}
-  client.value = {}
   carte_selected.value = null
 }
 
@@ -423,7 +421,7 @@ const deleteOrganismeValidation = async (id) => {
   }
   modaleConfirmation.value = false
   deleteOrganismeId.value = 0
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 const editOrganisme = (organisme) => {
