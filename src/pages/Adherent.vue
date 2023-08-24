@@ -503,7 +503,8 @@ const mapApiToData = (adherent) => {
     citycode: adherent.adresse.codeInsee,
     latitude: adherent.adresse.latitude,
     longitude: adherent.adresse.longitude,
-  } : null
+  } : {}
+
 
   address.value = address_selected.value?.address
   complement.value = address_selected.value?.complement
@@ -588,7 +589,7 @@ watchDebounced(
     async () => {
       address_selected.value = {}
       addresses.value = await getAdresses(address.value)
-      address_selected.value = addresses.value[0]
+      address_selected.value = addresses.value[0] ?? {}
     },
     { debounce: 500, maxWait: 1000 }
 )
