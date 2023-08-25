@@ -54,23 +54,22 @@
 <script setup lang="ts">
 
 import SideNavItem from "./SideNavItem.vue"
-import {onMounted, reactive, ref} from "vue"
+import {computed, nextTick, onMounted, reactive, ref} from "vue"
 // import { getFitArenas } from '../api/fit-arena'
 import Link from '../types/Link'
-import { getMenu as getMenuData } from "@api/menu";
+import { getMenu } from "@api/menu";
 import {useUserStore} from "@/stores/user.js";
 
 const {isAdmin, isGestCo, isGestOrg} = useUserStore();
 
 const fas = ref([])
-const fitArenaLinks = ref([])
-const clientLinks = ref([])
-const organismeLinks = ref([])
+// const fitArenaLinks = ref([])
+// const clientLinks = ref([])
+// const organismeLinks = ref([])
+
 
 const homeIcone = '<svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.8625 15.0189H5.0125V9.50644H10V15.0189H13.15V6.55332L7.50625 2.33145L1.8625 6.55332V15.0189ZM0.375 16.5064V5.80957L7.50625 0.450195L14.6375 5.80957V16.5064H8.57812V10.9283H6.43437V16.5064H0.375Z" fill="#DE001A"/></svg>'
 const cityIcone = '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.625 16.375V4.23438H4.23438V0.625H12.7656V7.84375H16.375V16.375H9.65938V12.7656H7.34063V16.375H0.625ZM1.9375 15.0625H4.23438V12.7656H1.9375V15.0625ZM1.9375 11.4531H4.23438V9.15625H1.9375V11.4531ZM1.9375 7.84375H4.23438V5.54688H1.9375V7.84375ZM5.54688 11.4531H7.84375V9.15625H5.54688V11.4531ZM5.54688 7.84375H7.84375V5.54688H5.54688V7.84375ZM5.54688 4.23438H7.84375V1.9375H5.54688V4.23438ZM9.15625 11.4531H11.4531V9.15625H9.15625V11.4531ZM9.15625 7.84375H11.4531V5.54688H9.15625V7.84375ZM9.15625 4.23438H11.4531V1.9375H9.15625V4.23438ZM12.7656 15.0625H15.0625V12.7656H12.7656V15.0625ZM12.7656 11.4531H15.0625V9.15625H12.7656V11.4531Z" fill="#DE001A"/></svg>'
-
-let links: Link[] = reactive([])
 
 // {
 //   label: 'Fit Arena',
@@ -108,90 +107,87 @@ let links: Link[] = reactive([])
 
 
 const openSubLinks = (i) => {
-  links[i].sub_links_open = !links[i].sub_links_open
+  console.log(links.value[i])
+  links.value[i].sub_links_open = !links.value[i].sub_links_open
+  console.log(links.value[i].sub_links_open)
 }
 
 const openSubSubLinks = (i, sub_i) => {
-  let sub_links = links[i].sub_links
+  let sub_links = links.value[i].sub_links
   sub_links[sub_i].sub_links_open = !sub_links[sub_i].sub_links_open
 }
 
-const getMenu = async () => {
-  const menu = await getMenuData()
- return menu.menu;
+// const getMenu = async () => {
+//   const menu = await getMenuData()
+//  return menu.menu;
+//
+// }
 
-}
+const clients = ref([])
+const fitArenas = ref([])
+const organismes = ref([])
+// let links: Link[] = reactive([])
 
-onMounted(async () => {
-  const {clients = false, fitarenas = false, organismes = false} = await getMenu()
+const clientLinks = computed(
+  {
+    get: () => clients.value.length ? [
+        {
+          label: 'Espace client',
+          path: '',
+          divider: true,
+        },
 
-  if (clients) {
-    clientLinks.value = clients.map((cli) => {
-
-      return {
-        label: cli.libelle,
-        path: '/clients/' + cli.id,
-        icon: homeIcone,
-        sub_links: [
-          // {
-          //   label: 'Utilisateurs',
-          //   path: '/users'
-          //   // path: `/client/${cli.id}/utilisateurs`
-          // },
-          // {
-          //   label: 'Demandes en attente',
-          //   tag: cli.options.organisme_demande_attente,
-          //   path: ''
-          // },
+        ...isAdmin ? [
           {
-            label: 'Organismes',
-            path: `/clients/${cli.id}/organismes`,
-          },
-        ]
-      }
-    })
+            label: 'Clients',
+            path: '/clients',
+          }
+        ] : [],
+
+        ...clients.value.map(
+          (cli) => ({
+            label: cli.libelle,
+            path: '/clients/' + cli.id,
+            icon: homeIcone,
+            sub_links: [
+              // {
+              //   label: 'Utilisateurs',
+              //   path: '/users'
+              //   // path: `/client/${cli.id}/utilisateurs`
+              // },
+              // {
+              //   label: 'Demandes en attente',
+              //   tag: cli.options.organisme_demande_attente,
+              //   path: ''
+              // },
+              {
+                label: 'Organismes',
+                path: `/clients/${cli.id}/organismes`,
+              },
+            ]
+          })
+        )] : [],
+
+
+    set: (value) => {
+    }
+
   }
+)
 
-  if (isGestOrg && organismes) {
-    organismeLinks.value = organismes.map((org) => {
-
-      let planningSubLinks = []
-      for (const fit of org.options.fitArenas) {
-        planningSubLinks.push({
-          label: `Mon planning ` + fit.libelle.substring(0, 20) + (fit.libelle.length > 20 ? '...' : ''),
-          path: `/organismes/${org.id}/planning/${fit.id}`
-        })
+const fitArenaLinks = computed(() => fitArenas.value.length ? [
+    {
+      label: 'Administrateur',
+      path: '',
+      divider: true,
+    },
+    ...isAdmin && [
+      {
+        label: 'Fit Arenas',
+        path: '/fitarena',
       }
-
-      return {
-        label: org.libelle,
-        path: '/organismes/' + org.id,
-        icon: homeIcone,
-        sub_links: [
-            ...planningSubLinks,
-          {
-            label: 'Mes adhérents',
-            path: `/organismes/${org.id}/adherents`
-          },
-          {
-            label: "Mes groupes d'adhérents",
-            path: `/organismes/${org.id}/groupes`
-          },
-          // {
-          //   label: 'Demande de créneaux',
-          //   path: `/organisme/${org.id}/creneau/`
-          // },
-          {
-            label: 'Mes animateurs',
-            path: `/organismes/${org.id}/animateurs`
-          },
-        ]
-      }
-    })
-  }
-
-  if (fitarenas) {
-    fitArenaLinks.value = fitarenas.map((fa) => {
+    ] || []
+    , ...fitArenas.value.map((fa) => {
 
       const subLinksGestionnaire = [
         // {
@@ -273,61 +269,67 @@ onMounted(async () => {
         sub_links: isAdmin ? subLinksAdmin : subLinksGestionnaire
       }
     })
-  }
+  ] : []
+)
 
-  if (fitArenaLinks.value.length) {
-    links.push({
-        label: 'Fit Arena',
-        path: '',
-        divider: true,
-      })
+const organismeLinks = computed(() => isGestOrg ?
+  [
+    {
+      label: 'Espace organisme',
+      path: '',
+      divider: true,
+    }, ...organismes.value.map((org) => {
 
-    if (isAdmin) {
-      links.push({
-        label: 'Fit Arenas',
-        path: '/fitarena',
-      })
-    }
-
-    for (const faLink of fitArenaLinks.value) {
-      links.push(faLink)
-    }
-  }
-
-  if (clientLinks.value.length) {
-    links.push(
-      {
-        label: 'Espace client',
-        path: '',
-        divider: true,
-      })
-
-    if (isAdmin) {
-      links.push({
-        label: 'Clients',
-        path: '/clients',
+    let planningSubLinks = []
+    for (const fit of org.options.fitArenas) {
+      planningSubLinks.push({
+        label: `Mon planning ` + fit.libelle.substring(0, 20) + (fit.libelle.length > 20 ? '...' : ''),
+        path: `/organismes/${org.id}/planning/${fit.id}`
       })
     }
 
-    for (const cliLink of clientLinks.value) {
-      links.push(cliLink)
+    return {
+      label: org.libelle,
+      path: '/organismes/' + org.id,
+      icon: homeIcone,
+      sub_links: [
+        ...planningSubLinks,
+        {
+          label: 'Mes adhérents',
+          path: `/organismes/${org.id}/adherents`
+        },
+        {
+          label: "Mes groupes d'adhérents",
+          path: `/organismes/${org.id}/groupes`
+        },
+        // {
+        //   label: 'Demande de créneaux',
+        //   path: `/organisme/${org.id}/creneau/`
+        // },
+        {
+          label: 'Mes animateurs',
+          path: `/organismes/${org.id}/animateurs`
+        },
+      ]
     }
-  }
+  })
+  ] : []
+)
 
-  if (organismeLinks.value.length) {
-    if (isGestOrg) {
-      links.push({
-        label: 'Espace organisme',
-        path: '',
-        divider: true,
-      })
-
-      for (const orgLink of organismeLinks.value) {
-        links.push(orgLink)
-      }
+const links = computed(() => [...fitArenaLinks.value, ...clientLinks.value, ...organismeLinks.value] ?? [])
+onMounted(async () => {
+  ({
+    menu: {
+      clients: clients.value = [],
+      fitarenas: fitArenas.value = [],
+      organismes: organismes.value = []
     }
+  } = await getMenu())
 
-  }
+
+console.log(links.value)
+
+
 })
 
 </script>
