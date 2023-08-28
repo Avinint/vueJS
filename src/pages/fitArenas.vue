@@ -272,12 +272,14 @@ import {
   cityValidation,
   latitudeAndLongitudeValidation,
 } from '../validation.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import { useMenuStore } from "@stores/menu.js";
 
+const { fitArenas: menuFitArenas } = useMenuStore()
 const fa_modal = ref(false)
 const readonly = ref(false)
 
@@ -339,6 +341,10 @@ const deleteFitArenaValidation = async (id) => {
   } catch (e) {
     toast.error('Une erreur est survenue')
   }
+
+  const index = menuFitArenas.findIndex(fit => fit.id ===  deleteFitArenaId.value)
+  menuFitArenas.splice(index, 1)
+
   delete_modal.value = false
   deleteFitArenaId.value = 0
   fit_arenas.value = await getFitArenas()
@@ -413,7 +419,7 @@ const saveFA = () => {
 
 const updateFitArenaValidation = async () => {
   try {
-    await updateFitarenas(fit_arena, id_selected.value)
+    await updateFitarenas(fit_arena.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -424,6 +430,13 @@ const updateFitArenaValidation = async () => {
   cancel()
   fit_arenas.value = await getFitArenas()
 }
+
+watch(() => fit_arena.value.libelle, () => {
+  const fitArenaMenu = menuFitArenas.find((fit) => fit.id === id_selected.value)
+  if (fitArenaMenu) {
+    fitArenaMenu.libelle = fit_arena.value.libelle
+  }
+})
 
 const addFitArenaValidation = async () => {
   try {
@@ -437,6 +450,9 @@ const addFitArenaValidation = async () => {
   fa_modal.value = false
   cancel()
   fit_arenas.value = await getFitArenas()
+
+  const nouvelle = fit_arenas.value.find(fit => fit.libelle ===  fit_arena.value.libelle)
+  menuFitArenas.push({id: nouvelle.id, libelle: nouvelle.libelle, open: false})
 }
 
 watchDebounced(
