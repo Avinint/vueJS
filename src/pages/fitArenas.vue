@@ -413,7 +413,7 @@ const saveFA = () => {
 
 const updateFitArenaValidation = async () => {
   try {
-    await updateFitarenas(fit_arena, id_selected.value)
+    await updateFitarenas(fit_arena.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
