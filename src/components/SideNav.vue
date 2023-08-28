@@ -1,7 +1,7 @@
 <template>
   <div>
     <aside id="logo-sidebar"
-           class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-64 h-full font-normal duration-75 lg:flex transition-width"
+           class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-80 h-full font-normal duration-75 lg:flex transition-width"
            aria-label="Sidebar">
       <div class="bg-red-600 h-14 flex items-center">
         <router-link test="Thome" to="/" class="ml-2">
