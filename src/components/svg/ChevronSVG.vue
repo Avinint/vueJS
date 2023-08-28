@@ -4,15 +4,7 @@
     visible: Boolean,
   })
 
-
-
   const emit = defineEmits(['openMenuItem'])
-
-  const emitEvent = () => {
-
-console.log(props.open)
-
-  }
 
 </script>
 
