@@ -1,15 +1,16 @@
 <template>
   <div>
     <aside id="logo-sidebar"
-           class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-64 h-full font-normal duration-75 lg:flex transition-width"
+           class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-80 h-full font-normal duration-75 lg:flex transition-width"
            aria-label="Sidebar">
       <div class="bg-red-600 h-14 flex items-center">
         <router-link test="Thome" to="/" class="ml-2">
           <img src="../assets/logo.png" class="h-5 ml-10" alt="logo">
         </router-link>
       </div>
-      <div class="h-full overflow-y-auto bg-white ">
+      <div class="h-full overflow-y-auto bg-white pl-2">
         <div v-for="(link, i) in links" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900">
+
           <div class="flex items-center pl-8 pr-1 py-2 w-full"
                :class="link.divider ? 'text-xl -ml-6 text-red-600' : 'hover:bg-gray-100 -ml-14 text-sm'">
             <svg @click="openSubLinks(i)" class="cursor-pointer h-8 w-8"
@@ -277,7 +278,7 @@ onMounted(async () => {
 
   if (fitArenaLinks.value.length) {
     links.push({
-        label: 'Fit Arena',
+        label: 'Administrateur',
         path: '',
         divider: true,
       })
