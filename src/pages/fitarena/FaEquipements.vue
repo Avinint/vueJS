@@ -217,14 +217,14 @@
       <CardConfiguration>
         <h3 class="pl-10 pt-2">Configuration</h3>
         <table
-          class="w-full text-left text-sm text-gray-500"
+          class="w-full text-left text-sm text-gray-500 table-fixed"
         >
           <thead>
             <tr>
-              <th scope="col" class="w-1/5 px-6 py-3"></th>
-              <th scope="col" class="w-1/5 px-6 py-3">Libellé</th>
-              <th scope="col" class="w-1/5 px-6 py-3">Nom d'Appel</th>
-              <th scope="col" class="w-1/5 px-6 py-3">Actif</th>
+              <th scope="col" class="w-1/6 px-6 py-3"></th>
+              <th scope="col" class="w-1/4 px-6 py-3">Libellé</th>
+              <th scope="col" class="w-1/2 px-6 py-3">Nom d'Appel</th>
+              <th scope="col" class="w-1/6 px-6 py-3">Actif</th>
             </tr>
           </thead>
           <tbody>
@@ -233,9 +233,9 @@
               :key="i"
               class="items-center bg-white"
             >
-              <td class="flex items-center justify-center p-3">
+              <td class="flex items-center justify-center px-4 py-5">
                 <Button
-                  test="TdeleteClient"
+                  test="TdeleteEquipementMode"
                   borderless
                   icon="delete"
                   couleur="secondary"
@@ -243,17 +243,17 @@
                   @click="removeEquipementConfiguration(equipement.equipementModes, i)"
                 />
                 <Button
-                  test="TeditClient"
+                  test="TeditquipementMode"
                   borderless
                   icon="edit"
                   couleur="secondary"
                   @click="editEquipementConfiguration(equipementMode)"
                 />
               </td>
-              <td class="px-6 py-4">
+              <td class="px-4 py-4">
                 <select
                   :id="'Tmode' + i"
-                  v-model="equipementMode.mode"
+                  v-model="equipementMode.mode.iri"
                   :disabled="equipementMode.readonly ?? true"
                   class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 disabled:text-gray-400"
                 >
@@ -266,7 +266,7 @@
                   </option>
                 </select>
               </td>
-              <td class="px-6 py-4">
+              <td class="px-4 py-4">
                 <input
                   type="text"
                   class="text-gray-900 disabled:text-gray-400"
@@ -274,7 +274,7 @@
                   :disabled="equipementMode.readonly ?? true"
                 />
               </td>
-              <td class="px-6 py-4">
+              <td class="px-4 py-4">
 
                 <label
                   class="relative inline-flex cursor-pointer items-center"
@@ -411,7 +411,8 @@ onMounted(async () => {
   )
   selectableModes.value = await getModes(
     1,
-    '&categoryTypeEquipement.code=' + props.codeType)
+    '&categoryTypeEquipement.code=' + props.codeType
+  )
 })
 
 
