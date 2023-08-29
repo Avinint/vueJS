@@ -242,25 +242,25 @@
 
                   @click="removeEquipementConfiguration(equipement.equipementModes, i)"
                 />
-                <Button
-                  test="TeditquipementMode"
-                  borderless
-                  icon="edit"
-                  couleur="secondary"
-                  @click="editEquipementConfiguration(equipementMode)"
-                />
+<!--                <Button-->
+<!--                  test="TeditquipementMode"-->
+<!--                  borderless-->
+<!--                  icon="edit"-->
+<!--                  couleur="secondary"-->
+<!--                  @click="editEquipementConfiguration(equipementMode)"-->
+<!--                />-->
               </td>
               <td class="px-4 py-4">
                 <select
                   :id="'Tmode' + i"
-                  v-model="equipementMode.mode.iri"
-                  :disabled="equipementMode.readonly ?? true"
+                  v-model="equipementMode.mode"
+                  :disabled="false"
                   class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 disabled:text-gray-400"
                 >
                   <option
                     v-for="(mode, j) in selectableModes"
                     :key="j"
-                    :value="mode.iri"
+                    :value="mode"
                   >
                     {{ mode.libelle }}
                   </option>
@@ -271,7 +271,7 @@
                   type="text"
                   class="text-gray-900 disabled:text-gray-400"
                   v-model="equipementMode.nomAppel"
-                  :disabled="equipementMode.readonly ?? true"
+                  :disabled="false"
                 />
               </td>
               <td class="px-4 py-4">
@@ -284,16 +284,10 @@
                     type="checkbox"
                     value="true"
                     class="peer sr-only disabled:text-gray-300"
-                    :disabled="equipementMode.readonly ?? true"
+                    :disabled="false"
                   />
                   <div
-                       :class="{
-                            'peer-checked:bg-green-400': ! (equipementMode.readonly ?? true),
-                            'peer-checked:bg-green-200': equipementMode.readonly ?? true,
-                            'bg-gray-200': !(equipementMode.readonly ?? true),
-                            'bg-gray-100': equipementMode.readonly ?? true,
-                       }"
-                    class="peer h-6 w-11 rounded-full  after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                    class="peer h-6 w-11 peer-checked:bg-green-400  bg-gray-200 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
                   ></div>
 <!--                  <div v-else-->
 <!--                       class="peer h-6 w-11 rounded-full bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-200 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"-->
@@ -392,7 +386,6 @@ const modal_title = ref('')
 
 const validation = ref({})
 const selectableModes = ref([])
-
 
 onMounted(async () => {
   equipements.value = await getEquipements(
