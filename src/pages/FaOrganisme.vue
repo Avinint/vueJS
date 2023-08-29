@@ -94,7 +94,7 @@
             v-model="address_selected.postcode"
             :readonly="readonly"
             :type="'text'"
-            :required="true"
+            required
             label="Code postal"
             class="w-full"
             pattern="[0-9]{5}"
@@ -105,7 +105,7 @@
             v-model="address_selected.city"
             :readonly="readonly"
             :type="'text'"
-            :required="true"
+            required
             label="Ville"
             class="w-full"
             pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï \-]{1,50}"
@@ -119,7 +119,6 @@
             type="text"
             class="w-full"
             pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
-            placeholder="46.7897"
           />
           <Input
             id="TfaLongitude"
@@ -225,14 +224,12 @@
             </div>
             <div v-if="carte_selected !== null" class="flex items-center">
               <CarteAcces :carte="carte_selected"/>
-
             </div>
+
             <Button @click="imprimerPdf(gestionnaire)" label="Imprimer"
                     class="bg-red-600 hover:bg-red-800 text-white"/>
+
             <div class="flex items-center">
-
-
-
               <Input
                 id="TcodePin"
                 v-model="gestionnaire.codePin"
@@ -259,6 +256,7 @@
             @click="gestionnairesOrganisme.push({})"
           />
         </Card>
+        <MentionChampsObligatoires/>
       </Modal>
     </form>
 
@@ -320,6 +318,7 @@ import LabelText from '@components/common/LabelText.vue'
 import html2pdf from 'vue3-html2pdf'
 import CarteAcces from "@/pdf/CarteAcces.vue";
 import { getCarteAcces } from "@api/carte_acces.js";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 const { isAdmin, isGestCo } = useUserStore()
 const crud_columns = [
   { data: (e) => e.libelle, label: 'Nom' },
@@ -385,7 +384,7 @@ onMounted(async () => {
 })
 
 const addOrganisme = () => {
-  reset()
+  client.value = idClient.value
   gestionnairesOrganisme.value = [{ nom: '', prenom: '', email: '' }]
   afficherFormulaire.value = true
   readonly.value = false
@@ -399,7 +398,6 @@ const reset = async () => {
   address.value = ''
   id_selected.value = 0
   address_selected.value = {}
-  client.value = {}
   carte_selected.value = null
 }
 
@@ -423,7 +421,7 @@ const deleteOrganismeValidation = async (id) => {
   }
   modaleConfirmation.value = false
   deleteOrganismeId.value = 0
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 const editOrganisme = (organisme) => {

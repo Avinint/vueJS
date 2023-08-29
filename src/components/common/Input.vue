@@ -1,7 +1,7 @@
 <template>
   <div class="flex" :class="inline ? 'items-center' : 'flex-col'">
-    <InputLabel v-if="label" :for="id">{{ label }}</InputLabel>
-    <div>
+    <InputLabel :required="required" v-if="label" :for="id">{{ label }}</InputLabel>
+    <div class="w-full">
       <input
         :readonly="readonly"
         :id="id"

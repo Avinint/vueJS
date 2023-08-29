@@ -168,6 +168,7 @@
           couleur="secondary"
           @click="carteActive.actif = true"
         />
+        <MentionChampsObligatoires/>
       </Card>
       <Card v-if="carteActive.actif === true" class="w-full space-y-2">
         <h3>Carte d'accès</h3>
@@ -250,6 +251,7 @@ import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { isValid, emailValidation } from '@/validation.js'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
