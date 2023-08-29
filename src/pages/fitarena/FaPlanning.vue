@@ -12,8 +12,9 @@
       :type-action="actionType"
       @close-modal-creneau="closeModal"
     />
+    <ModalDemande ref="modal_demande"/>
     <div
-      class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+    class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
     >
       <FullCalendar ref="fullCalendar" :options="calendarOptions">
         <template #eventContent="arg">
@@ -47,6 +48,7 @@ import { mapStores } from 'pinia'
 import { getZones } from '@api/zone.js'
 import Event from '@components/faPlanning/Event.vue'
 import EventDemande from '@components/faPlanning/EventDemande.vue'
+import ModalDemande from '@components/faPlanning/ModalDemande.vue'
 
 export default {
   components: {
@@ -55,7 +57,8 @@ export default {
     FullCalendar,
     Event,
     EventDemande,
-  },
+    ModalDemande
+},
   data() {
     return {
       calendarOptions: {
@@ -151,6 +154,11 @@ export default {
         this.actionType = 'edit'
         this.setSelectedCreneau(eventClickInfo.event)
         this.isModalCreneauOpen = true
+      }
+
+      if(eventClickInfo.event.extendedProps.event_type == 1) {
+        this.$refs.modal_demande.setDemande(eventClickInfo.event.extendedProps);
+        this.$refs.modal_demande.open(); 
       }
     },
     select(selectionInfo) {

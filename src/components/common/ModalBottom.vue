@@ -23,7 +23,7 @@ const emit = defineEmits(['close'])
     bottom: 0;
     border-radius: 8px 8px 0px 0px;
     width: 100%;
-    max-width: calc(100vw - 288px);
+    max-width: calc(100vw - 350px);
     box-shadow: 0px 0px 15px rgb(99, 99, 99);
 }
 
