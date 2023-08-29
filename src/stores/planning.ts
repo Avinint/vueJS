@@ -3,8 +3,10 @@ import { getPlanning } from '@api/planning'
 import dayjs from 'dayjs'
 import { getActivites } from '@api/activite'
 import {
+  EventType,
   default_planning,
   parseCreneauToEvent,
+  parseDemandeToEvent,
 } from '../services/planning/planning_service'
 
 export const usePlanningStore = defineStore('planning', {
@@ -47,20 +49,29 @@ export const usePlanningStore = defineStore('planning', {
       return state.activites
     },
     getCreneauxEvents(state): CalendarEvent[] {
-      return state.creneaux.map((creneau) => parseCreneauToEvent(creneau))
+      const creneaux = state.creneaux.map((creneau) =>
+        parseCreneauToEvent(creneau)
+      )
+      
+      const demandes = state.demandes.map((demande) => 
+        parseDemandeToEvent(demande)
+      )
+
+      const output = creneaux.concat(demandes)
+      return output
     },
     getCreneauxOrganismesEvents(state): CalendarEvent[] {
-      const output: CalendarEvent[] = [];
-      for(const creneau of state.creneaux) {
-        if(creneau.type == 2) {
-          output.push(parseCreneauToEvent(creneau));
+      const output: CalendarEvent[] = []
+      for (const creneau of state.creneaux) {
+        if (creneau.type == 2) {
+          output.push(parseCreneauToEvent(creneau))
         }
       }
-      return output;
+      return output
     },
     getOrganismeEvents(state) {
       return state.idOrganisme
-    }
+    },
   },
   actions: {
     async fetch() {
@@ -74,8 +85,7 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.fit_arena,
         this.filters.duree,
         this.filters.zone.join(','),
-          this.filters.organisme,
-
+        this.filters.organisme
       )
       this.pushCreneaux(response.creneaux)
     },
