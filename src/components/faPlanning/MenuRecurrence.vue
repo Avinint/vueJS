@@ -16,6 +16,7 @@
           :option-label="(e) => e"
           :options="['Jours', 'Semaines', 'Mois']"
           v-model="type"
+          :key="type"
         />
       </div>
     </div>
@@ -97,6 +98,7 @@ import InputSelect from '@components/common/InputSelect.vue'
 import { useCreneauStore } from '@stores/creneau'
 import { onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
+import { getDateForInput } from '../../services/date_service'
 
 const creneau_store = useCreneauStore()
 
@@ -113,7 +115,12 @@ const repetition_occurence = ref(0)
 const repetition_mode = ref<'date' | 'occurence'>('date')
 
 onMounted(() => {
-  creneau_store.recurrence.recurrenceType = 2;
+  if(!creneau_store.recurrence.recurrenceType)
+    creneau_store.recurrence.recurrenceType = 2;
+  else {
+    type.value = types[creneau_store.recurrence.recurrenceType - 1];
+    repetition_date.value = getDateForInput(creneau_store.recurrence.dateDebut);
+  }
 })
 
 function selectDay(day_index: number) {

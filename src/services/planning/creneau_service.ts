@@ -20,7 +20,9 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
     }
   }
 
-  creneau.recurrence.dateDebut = creneau.date;
+  if(creneau.recurrence) {
+    creneau.recurrence.dateDebut = creneau.date;
+  }
 
   return {
     activites: activities,
@@ -49,7 +51,11 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
  * @param creneau Creneau data
  */
 export function makeCreneauOGEditContract(zone_id: number, creneau: Creneau): CreneauOGEditContract {
-  creneau.recurrence.dateDebut = creneau.date;
+
+  if(creneau.recurrence) {
+    creneau.recurrence.dateDebut = creneau.date;
+  }
+
   return {
     creneauType: 2,
     titre: creneau.titre,

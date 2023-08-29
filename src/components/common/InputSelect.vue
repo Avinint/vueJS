@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 interface LabelCallback<T> {
     (e: T): string
@@ -25,10 +25,14 @@ const props = defineProps<{
   optionLabel: LabelCallback<any>
 }>()
 
-const emits = defineEmits(['update:modelValue']);
 const select = ref(props.modelValue ?? '');
 
-function updateValue(event: Event) {
-    emits('update:modelValue', (event.target as HTMLInputElement).value);    
+const emits = defineEmits<{
+  (e: 'update:modelValue', value: string | null): void
+}>()
+
+
+function updateValue() {
+    emits('update:modelValue', select.value);    
 }
 </script>

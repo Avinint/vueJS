@@ -166,7 +166,7 @@ export default {
     eventClick(eventClickInfo) {
       this.actionType = 'edit'
       this.setSelectedCreneau(eventClickInfo.event)
-      if(eventClickInfo.event.recurrence)
+      if(eventClickInfo.event.extendedProps.recurrence)
         this.$refs.edit_options.open();
       else {
         this.creneauStore.recurrence = undefined;
