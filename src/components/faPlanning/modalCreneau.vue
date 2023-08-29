@@ -54,14 +54,14 @@
           />
         </div>
         <div class="ml-20 grow">
-          <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
+          <label class="required mb-2 block w-1/2 text-sm font-medium text-gray-900">
             Plage horaire du créneau
           </label>
           <div class="flex">
             <select
               v-model="creneauStore.heureDebut"
               required
-              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listStart"
@@ -75,7 +75,7 @@
             <select
               v-model="creneauStore.heureFin"
               required
-              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listEnd"
@@ -181,6 +181,7 @@
             </div>
           </template>
         </div>
+        <MentionChampsObligatoires/>
       </div>
     </Modal>
   </form>
@@ -199,9 +200,11 @@ import InputRadio from '@components/common/InputRadio.vue'
 import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 export default {
   components: {
+    MentionChampsObligatoires,
     Modal,
     InputRadio,
     InputSelect,

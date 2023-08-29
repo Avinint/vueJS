@@ -168,6 +168,7 @@
           couleur="secondary"
           @click="carteActive.actif = true"
         />
+        <MentionChampsObligatoires/>
       </Card>
       <Card v-if="carteActive.actif === true" class="w-full space-y-2">
         <h3>Carte d'accès</h3>
@@ -245,11 +246,12 @@ import {
   putAnimateur,
 } from '../api/animateur.ts'
 import { selectOrganismes } from '../api/organisme.ts'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { isValid, emailValidation } from '@/validation.js'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
@@ -269,7 +271,7 @@ const prenom = ref('')
 const email = ref('')
 const telephone = ref('')
 const titulaireCarte = ref(false)
-const organismeId = ref(0)
+const organismeId = ref(null)
 const organismeValue = ref([])
 const carteActive = ref({ codePin: null, actif: false })
 const modal_title = ref('')
@@ -282,7 +284,6 @@ const route = useRoute()
 onMounted(async () => {
   organismes.value = await selectOrganismes()
   organismeId.value = route.params?.id ? parseInt(route.params?.id) : null
-
   animateurs.value = organismeId.value ? await getAnimateursParOrganisme(organismeId.value) : await getAnimateurs()
 })
 
@@ -300,7 +301,6 @@ const reset = async () => {
   titulaireCarte.value = false
   telephone.value = ''
   id_selected.value = 0
-  organismeId.value = 0
   carteActive.value.codePin = null
   carteActive.value.qrCode = null
   carteActive.value.actif = false
@@ -331,7 +331,7 @@ const removeAnimateurValidation = async (id) => {
   }
   modaleConfirmation.value = false
   deleteAnimateurId.value = 0
-  animateurs.value = await getAnimateurs()
+  animateurs.value = await getAnimateursParOrganisme(organismeId.value)
 }
 
 const editAnimateur = (i) => {
@@ -363,6 +363,7 @@ const mapApiToData = (animateur) => {
 }
 
 const hydrateAnimateur = () => {
+
   if (!isValid(validation)) return
 
   animateur.value = {
@@ -382,8 +383,9 @@ const hydrateAnimateur = () => {
     modaleConfirmation.value = 'edit'
   } else {
     modaleConfirmation.value = 'add'
-    animateur.value.organismeId = organismeId.value
   }
+
+  animateur.value.organismeId = organismeId.value
 }
 
 const updateAnimateur = async () => {
@@ -397,7 +399,7 @@ const updateAnimateur = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
 
-  animateurs.value = await getAnimateurs()
+  animateurs.value = await getAnimateursParOrganisme(organismeId.value)
 }
 
 const addAnimateur = async () => {
@@ -405,14 +407,13 @@ const addAnimateur = async () => {
     await postAnimateur(animateur)
     toast.success('Ajout effectué avec succès')
   } catch (e)   {
-    const message = (await e).detail
-    toast.error(message)
+    toast.error('Une erreur est survenue')
   }
 
   modaleConfirmation.value = false
   afficherFormulaire.value = false
 
-  animateurs.value = await getAnimateurs()
+  animateurs.value = await getAnimateursParOrganisme(organismeId.value)
 }
 //
 // watch(organismeValue,  (newVal, oldVal) =>

@@ -3,9 +3,9 @@
     <h1> Mes Adhérents</h1>
 
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="bg-gray-50 text-xs uppercase text-gray-700"
         >
         <tr>
           <th scope="col" class="px-6 py-3">Nom et prénom</th>
@@ -20,7 +20,7 @@
         <tbody>
         <tr v-for="(adherent, i) in  adherents" :key="i" class="bg-white">
 
-          <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.nom }}</td>
+          <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.prenom }}</td>
           <td class="px-6 py-4">{{ afficherDate(adherent.dateNaissance) }}</td>
           <td class="px-6 py-4">{{ adherent.numeroAdherent }}</td>
           <td class="px-6 py-4">{{ afficherDate(adherent.dateAdhesion) }}</td>
@@ -102,7 +102,7 @@
             <select
               id="TadhGenre"
               v-model="genre"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="unGenre in genres"
@@ -159,7 +159,7 @@
                 multiple
                 id="TadhGroupes"
                 v-model="groupes"
-                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                   v-for="unGroupe in listeGroupes"
@@ -183,7 +183,7 @@
             >
               <svg
                   aria-hidden="true"
-                  class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                  class="h-5 w-5 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -214,7 +214,7 @@
               v-if="address && address.length"
               id="TclientSelectAdresse"
               v-model="address_selected"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
               @change="addressSelect"
           >
             <option
@@ -283,7 +283,7 @@
               :validation="[emailValidation]"
           />
         </div>
-
+        <MentionChampsObligatoires/>
       </Card>
     </Modal>
   </form>
@@ -334,7 +334,7 @@ import {
   selectGroupes
 } from '../api/adherent.ts'
 import { selectOrganismes } from '../api/organisme.ts'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -345,6 +345,7 @@ import {
   cityValidation,
   phoneValidation
 } from '@/validation.js'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
@@ -406,11 +407,9 @@ onMounted(async () => {
   organismeId.value = parseInt(route.params?.id)
   if (organismeId.value > 0) {
     adherents.value = await getAdherentsParOrganisme(organismeId.value)
-    listeGroupes.value = await selectGroupes(organismeId.value)
-  }
+    listeGroupes.value = (await selectGroupes(organismeId.value)).map(g => ({id: g.id, libelle: g.libelle}))
 
-
-})
+  }})
 
 const startFrom = (value) => {
   let date;
@@ -423,7 +422,7 @@ const startFrom = (value) => {
 
 
 const createAdherent = () => {
-  reset()
+
   afficherFormulaire.value = true
   readonly.value = false
   modal_title.value = 'Ajouter un Adhérent'
@@ -440,6 +439,7 @@ const reset = async () => {
   dateNaissance.value = []
   address.value = '',
   address_selected.value = {}
+  groupes.value = []
 }
 
 // const desactiverCarte = () => {
@@ -502,7 +502,7 @@ const mapApiToData = (adherent) => {
     citycode: adherent.adresse.codeInsee,
     latitude: adherent.adresse.latitude,
     longitude: adherent.adresse.longitude,
-  } : null
+  } : {}
 
   address.value = address_selected.value?.address
   complement.value = address_selected.value?.complement
@@ -569,6 +569,7 @@ const updateAdherent = async () => {
 }
 
 const addAdherent = async () => {
+
   try {
     await postAdherent(adherent)
     toast.success('Ajout effectué avec succès')
@@ -587,7 +588,7 @@ watchDebounced(
     async () => {
       address_selected.value = {}
       addresses.value = await getAdresses(address.value)
-      address_selected.value = addresses.value[0]
+      address_selected.value = addresses.value[0] ?? {}
     },
     { debounce: 500, maxWait: 1000 }
 )

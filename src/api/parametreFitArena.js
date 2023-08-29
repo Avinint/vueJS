@@ -1,23 +1,9 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders, get, getQuery } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
-export const getParametreFitArena = async (page = 1, query = '') => {
-  const response = await $fetch(
-    `${
-      import.meta.env.VITE_API_URL
-    }/api/parametre_fit_arenas?page=${page}${query}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
+export const getParametreFitArena = async (query = {page: 1}) => {
+  return await get(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas${getQuery(query)}`)
 }
 
 export const getParametreFitArenaById = async (id) => {
@@ -36,7 +22,7 @@ export const getParametreFitArenaById = async (id) => {
   return response.json()
 }
 
-export const postParametreFitArena = async (param) => {
+export const postParametreFitArena = async (param) => {q
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas`,
     {
