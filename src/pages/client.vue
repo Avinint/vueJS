@@ -389,12 +389,14 @@ import {
   cityValidation,
   phoneValidation,
 } from '../validation.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import { useMenuStore } from "@stores/menu.js";
 
+const { clients: menuClients } = useMenuStore()
 const client_modal = ref(false)
 
 const delete_modal = ref(false)
@@ -447,6 +449,13 @@ const refExploitationIsValid = () => {
   })
   return isValid
 }
+
+watch(() => client.value.nom, () => {
+  const clientMenu = menuClients.find((cli) => cli.id === id_selected.value)
+  if (clientMenu) {
+    clientMenu.libelle = client.value.nom
+  }
+})
 
 const saveClient = () => {
   if (!refExploitationIsValid()) return // IL FAUT QU'AU MOINS UN DES CHAMPS SOIT REMPLI POUR ENREGISTRER LA MODIFICATION / L'AJOUT
@@ -503,6 +512,8 @@ const addClientValidation = async () => {
   client_modal.value = false
   cancel()
   clients.value = await getClients()
+  const nouveau = clients.value.find(cli => cli.nom ===  client.value.nom)
+  menuClients.push({id: nouveau.id, libelle: nouveau.nom, open: false})
 }
 
 const cancel = async () => {
@@ -587,6 +598,10 @@ const deleteClientValidation = async (id) => {
   } catch (e) {
     toast.error('Une erreur est survenue')
   }
+
+  const indexAncienClient = menuClients.findIndex(cli => cli.id ===  deleteClientId.value)
+  menuClients.splice(indexAncienClient, 1)
+
   delete_modal.value = false
   deleteClientId.value = 0
   clients.value = await getClients(1)
