@@ -242,19 +242,11 @@
 
                   @click="removeEquipementConfiguration(equipement.equipementModes, i)"
                 />
-<!--                <Button-->
-<!--                  test="TeditquipementMode"-->
-<!--                  borderless-->
-<!--                  icon="edit"-->
-<!--                  couleur="secondary"-->
-<!--                  @click="editEquipementConfiguration(equipementMode)"-->
-<!--                />-->
               </td>
               <td class="px-4 py-4">
                 <select
                   :id="'Tmode' + i"
                   v-model="equipementMode.mode"
-                  :disabled="false"
                   class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 disabled:text-gray-400"
                 >
                   <option
@@ -271,7 +263,6 @@
                   type="text"
                   class="text-gray-900 disabled:text-gray-400"
                   v-model="equipementMode.nomAppel"
-                  :disabled="false"
                 />
               </td>
               <td class="px-4 py-4">
@@ -284,7 +275,6 @@
                     type="checkbox"
                     value="true"
                     class="peer sr-only disabled:text-gray-300"
-                    :disabled="false"
                   />
                   <div
                     class="peer h-6 w-11 peer-checked:bg-green-400  bg-gray-200 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
@@ -507,9 +497,6 @@ const addEquipementConfiguration = () => {
 const removeEquipementConfiguration = (equipementModes, i) => {
 
   equipementModes.splice(i, 1)
-}
-const editEquipementConfiguration = (equipementMode) => {
-  equipementMode.readonly =  !(equipementMode.readonly ?? true)
 }
 
 const saveEquipement = () => {
