@@ -20,6 +20,10 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
     }
   }
 
+  if(creneau.recurrence) {
+    creneau.recurrence.dateDebut = creneau.date;
+  }
+
   return {
     activites: activities,
     titre: creneau.titre,
@@ -36,6 +40,7 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
     organisme: creneau.organisme,
     tarifHoraire: creneau.tarifHoraire,
     zoneId: zone_id,
+    recurrence: creneau.recurrence.separation > 0 ? creneau.recurrence : undefined,
   }
 }
 
@@ -46,6 +51,11 @@ export function makeCreneauEditContract(zone_id: number, creneau: Creneau): Cren
  * @param creneau Creneau data
  */
 export function makeCreneauOGEditContract(zone_id: number, creneau: Creneau): CreneauOGEditContract {
+
+  if(creneau.recurrence) {
+    creneau.recurrence.dateDebut = creneau.date;
+  }
+
   return {
     creneauType: 2,
     titre: creneau.titre,
@@ -57,6 +67,7 @@ export function makeCreneauOGEditContract(zone_id: number, creneau: Creneau): Cr
     heureFin: `${creneau.heureFin}:00`,
     organisme: creneau.organisme,
     zoneId: zone_id,
+    recurrence: creneau.recurrence
   }
 }
 
@@ -83,4 +94,14 @@ export const default_creneau = (): Creneau => ({
   nbParticipants: 0,
   mode: null,
   seances: [],
+  recurrence: {
+    dateDebut: "",
+    dateFin: "",
+    maxOccurrences: 0,
+    recurrenceType: 1,
+    recurrenceJoursSemaine: [],
+    recurrenceOrdinaux: [],
+    recurrenceSemainesMois: [],
+    separation: 0, 
+  }
 });
