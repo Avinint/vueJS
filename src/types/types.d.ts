@@ -36,6 +36,10 @@ type Recurrence = {
   recurrenceOrdinaux: { id: number }[]
 }
 
+type DemandeCreneau = {
+
+}
+
 type Zone = {
   id: number
   libelle: string
@@ -128,6 +132,7 @@ type PlanningFilters = {
 
 type Planning = {
   creneaux: Creneau[]
+  demandes: DemandeCreneau[]
   filters: PlanningFilters
   activites: Activite[]
   currentViewName: string
@@ -149,6 +154,10 @@ type CalendarEvent = {
   end: string
   title: string
   resourceIds: number[]
+  classNames?: string[]
+  overlap?: boolean
+  editable?: boolean
+  selectable?: boolean
   extendedProps?: any
 }
 
