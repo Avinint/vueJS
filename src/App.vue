@@ -2,9 +2,9 @@
   <div v-if="route.name === 'Login'">
     <Login />
   </div>
-  <div v-else class="main-wrapper overflow-hidden bg-gray-50 dark:bg-gray-900">
+  <div v-else class="main-wrapper overflow-hidden bg-gray-50">
     <SideNav class="main-sidebar min-w-1/4"></SideNav>
-    <div class="main-content h-full w-full bg-gray-50 dark:bg-gray-900">
+    <div class="main-content h-full w-full bg-gray-50">
       <NavBar />
       <div class="min-h-screen w-full overflow-auto bg-white px-4 pt-20">
         <router-view></router-view>
@@ -39,13 +39,13 @@ const route = useRoute()
 
 @media screen and (min-width: 1024px) {
   .main-sidebar {
-    min-width: 16rem;
+    min-width: 20rem;
     display: table-cell;
   }
 
   .main-content {
-    width: calc(100vw - 16rem);
-    max-width: calc(100vw - 16rem);
+    width: calc(100vw - 20rem);
+    max-width: calc(100vw - 20rem);
   }
 }
 </style>

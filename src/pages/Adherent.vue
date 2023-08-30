@@ -334,7 +334,7 @@ import {
   selectGroupes
 } from '../api/adherent.ts'
 import { selectOrganismes } from '../api/organisme.ts'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -407,11 +407,9 @@ onMounted(async () => {
   organismeId.value = parseInt(route.params?.id)
   if (organismeId.value > 0) {
     adherents.value = await getAdherentsParOrganisme(organismeId.value)
-    listeGroupes.value = await selectGroupes(organismeId.value)
-  }
+    listeGroupes.value = (await selectGroupes(organismeId.value)).map(g => ({id: g.id, libelle: g.libelle}))
 
-
-})
+  }})
 
 const startFrom = (value) => {
   let date;
@@ -424,7 +422,7 @@ const startFrom = (value) => {
 
 
 const createAdherent = () => {
-  reset()
+
   afficherFormulaire.value = true
   readonly.value = false
   modal_title.value = 'Ajouter un Adhérent'
@@ -441,6 +439,7 @@ const reset = async () => {
   dateNaissance.value = []
   address.value = '',
   address_selected.value = {}
+  groupes.value = []
 }
 
 // const desactiverCarte = () => {
@@ -503,7 +502,7 @@ const mapApiToData = (adherent) => {
     citycode: adherent.adresse.codeInsee,
     latitude: adherent.adresse.latitude,
     longitude: adherent.adresse.longitude,
-  } : null
+  } : {}
 
   address.value = address_selected.value?.address
   complement.value = address_selected.value?.complement
@@ -570,6 +569,7 @@ const updateAdherent = async () => {
 }
 
 const addAdherent = async () => {
+
   try {
     await postAdherent(adherent)
     toast.success('Ajout effectué avec succès')
@@ -588,7 +588,7 @@ watchDebounced(
     async () => {
       address_selected.value = {}
       addresses.value = await getAdresses(address.value)
-      address_selected.value = addresses.value[0]
+      address_selected.value = addresses.value[0] ?? {}
     },
     { debounce: 500, maxWait: 1000 }
 )

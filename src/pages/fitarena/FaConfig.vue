@@ -108,7 +108,7 @@
                 :required="true"
                 label="Ville"
                 class="w-full"
-                pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï -]{1,50}"
+                pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï \-]{1,50}"
                 inline
               />
               <Input

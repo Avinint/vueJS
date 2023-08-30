@@ -113,6 +113,7 @@ import type { FaTableRow } from '../components/common/Table.vue'
 import LabelText from '@components/common/LabelText.vue'
 import { getAnimateursParOrganisme } from '@api/animateur'
 import { getAdherentsParOrganisme } from '@api/adherent'
+import {toast} from "vue3-toastify";
 
 const table_columns: FaTableColumnData<Adherent>[] = [
   { label: 'Nom et Prénom', data: (e) => `${e.nom} ${e.prenom}` },
@@ -242,16 +243,23 @@ async function save() {
     }),
   }
 
-  if (create.value === true) {
-    const group = await postGroup(contract)
-    groupes.value.push(group)
-    group_id.value = group.id;
-    create.value = false
-  } else {
-    await putGroup(group_id.value, contract)
-    groupes.value = await fetchGroupes(organismeId.value)
-    mode.value = 'view';
+  try {
+    if (create.value === true) {
+      const group = await postGroup(contract)
+      groupes.value.push(group)
+      group_id.value = group.id;
+      create.value = false
+      toast.success("Création effectuée avec succès.")
+    } else {
+      await putGroup(group_id.value, contract)
+      toast.success("Modification effectuée avec succès.")
+      groupes.value = await fetchGroupes(organismeId.value)
+      mode.value = 'view';
+    }
+  } catch (e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur.')
   }
+
 }
 
 async function deleteGroupe(groupe: Groupe) {

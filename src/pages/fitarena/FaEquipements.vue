@@ -217,14 +217,14 @@
       <CardConfiguration>
         <h3 class="pl-10 pt-2">Configuration</h3>
         <table
-          class="w-full text-left text-sm text-gray-500"
+          class="w-full text-left text-sm text-gray-500 table-fixed"
         >
           <thead>
             <tr>
-              <th scope="col" class="w-1/5 px-6 py-3"></th>
-              <th scope="col" class="w-1/5 px-6 py-3">Libellé</th>
-              <th scope="col" class="w-1/5 px-6 py-3">Nom d'Appel</th>
-              <th scope="col" class="w-1/5 px-6 py-3">Actif</th>
+              <th scope="col" class="w-1/6 px-6 py-3"></th>
+              <th scope="col" class="w-1/4 px-6 py-3">Libellé</th>
+              <th scope="col" class="w-1/2 px-6 py-3">Nom d'Appel</th>
+              <th scope="col" class="w-1/6 px-6 py-3">Actif</th>
             </tr>
           </thead>
           <tbody>
@@ -233,48 +233,39 @@
               :key="i"
               class="items-center bg-white"
             >
-              <td class="flex items-center justify-center p-3">
+              <td class="flex items-center justify-center px-4 py-5">
                 <Button
-                  test="TdeleteClient"
+                  test="TdeleteEquipementMode"
                   borderless
                   icon="delete"
                   couleur="secondary"
 
                   @click="removeEquipementConfiguration(equipement.equipementModes, i)"
                 />
-                <Button
-                  test="TeditClient"
-                  borderless
-                  icon="edit"
-                  couleur="secondary"
-                  @click="editEquipementConfiguration(equipementMode)"
-                />
               </td>
-              <td class="px-6 py-4">
+              <td class="px-4 py-4">
                 <select
                   :id="'Tmode' + i"
                   v-model="equipementMode.mode"
-                  :disabled="equipementMode.readonly ?? true"
                   class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 disabled:text-gray-400"
                 >
                   <option
                     v-for="(mode, j) in selectableModes"
                     :key="j"
-                    :value="mode.iri"
+                    :value="mode"
                   >
                     {{ mode.libelle }}
                   </option>
                 </select>
               </td>
-              <td class="px-6 py-4">
+              <td class="px-4 py-4">
                 <input
                   type="text"
                   class="text-gray-900 disabled:text-gray-400"
                   v-model="equipementMode.nomAppel"
-                  :disabled="equipementMode.readonly ?? true"
                 />
               </td>
-              <td class="px-6 py-4">
+              <td class="px-4 py-4">
 
                 <label
                   class="relative inline-flex cursor-pointer items-center"
@@ -284,16 +275,9 @@
                     type="checkbox"
                     value="true"
                     class="peer sr-only disabled:text-gray-300"
-                    :disabled="equipementMode.readonly ?? true"
                   />
                   <div
-                       :class="{
-                            'peer-checked:bg-green-400': ! (equipementMode.readonly ?? true),
-                            'peer-checked:bg-green-200': equipementMode.readonly ?? true,
-                            'bg-gray-200': !(equipementMode.readonly ?? true),
-                            'bg-gray-100': equipementMode.readonly ?? true,
-                       }"
-                    class="peer h-6 w-11 rounded-full  after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                    class="peer h-6 w-11 peer-checked:bg-green-400  bg-gray-200 rounded-full after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
                   ></div>
 <!--                  <div v-else-->
 <!--                       class="peer h-6 w-11 rounded-full bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-200 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"-->
@@ -393,7 +377,6 @@ const modal_title = ref('')
 const validation = ref({})
 const selectableModes = ref([])
 
-
 onMounted(async () => {
   equipements.value = await getEquipements(
     props.id,
@@ -411,7 +394,8 @@ onMounted(async () => {
   )
   selectableModes.value = await getModes(
     1,
-    '&categoryTypeEquipement.code=' + props.codeType)
+    '&categoryTypeEquipement.code=' + props.codeType
+  )
 })
 
 
@@ -513,9 +497,6 @@ const addEquipementConfiguration = () => {
 const removeEquipementConfiguration = (equipementModes, i) => {
 
   equipementModes.splice(i, 1)
-}
-const editEquipementConfiguration = (equipementMode) => {
-  equipementMode.readonly =  !(equipementMode.readonly ?? true)
 }
 
 const saveEquipement = () => {
