@@ -506,6 +506,7 @@ const saveSousZones = async (zoneId, activiteId) => {
         parametres.push({
           id: param.parametre.id,
           valeur: param.valeur,
+          code: param.parametre.code
         })
       })
       const equipements = []
