@@ -108,7 +108,7 @@
             required
             label="Ville"
             class="w-full"
-            pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï \-]{1,50}"
+            pattern="^[a-zA-ZÀ-ÿœ\- ]{1,50}$"
             inline
           />
           <Input
@@ -239,6 +239,8 @@
                 class="w-full"
                 max-length="6"
                 min-length="6"
+                :validation="[codePinValidation]"
+                :valid="validation"
                 :required="false"
               />
             </div>
@@ -310,7 +312,7 @@ import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-import { isValid, emailValidation } from '@/validation.js'
+import { isValid, emailValidation, codePinValidation } from '@/validation.js'
 import { selectClients } from '@api/client.js'
 import { useUserStore } from '@/stores/user.js'
 import CrudList from '@components/molecules/CrudList.vue'
