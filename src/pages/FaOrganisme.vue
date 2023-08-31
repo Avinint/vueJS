@@ -240,7 +240,7 @@
                 max-length="6"
                 min-length="6"
                 :validation="[codePinValidation]"
-                :valid="validation"
+                v-model:valid="validation.codePin"
                 :required="false"
               />
             </div>

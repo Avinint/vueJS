@@ -5,7 +5,7 @@
       <input
         :readonly="readonly"
         :id="id"
-        @change="inputValidation"
+        @input="inputValidation"
         :value="modelValue || defaultValue"
         :type="type"
         :required="required"
@@ -65,14 +65,19 @@ const inputValidation = ($event: any) => {
   if (props.validation) {
     props.validation.forEach((func: Function) => {
       try {
-        func(val)
+        if (func.name === 'codePinValidation') {
+          func(val, props.required)
+        } else {
+          func(val)
+        }
+
       } catch (e) {
         error.value += e + '<br>'
         emits('update:valid', false)
       }
     })
   }
-  if(!isNaN(val))
+  if(typeof(props.modelValue) === 'number')
     emits('update:modelValue', parseInt(val));
   else emits('update:modelValue', val)
 }

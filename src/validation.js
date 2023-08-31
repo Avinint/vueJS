@@ -72,12 +72,13 @@ export const lengthValidation = (min, max) => {
   }
 }
 
-export const codePinValidation = (code) => {
+export const codePinValidation = (code, required) => {
 
-    if (code.length !== 6) {
-      throw 'Le code pin doit faire 6 caractères'
-    }
+  if (code.length !== 6 && !(code.length === 0 && !required)) {
+    throw 'Le code pin doit faire 6 caractères'
+  }
 
+  if (code.length) {
     if (estNumerique(code)) {
       throw 'Le code pin ne peut pas comporter de lettres'
     }
@@ -87,6 +88,7 @@ export const codePinValidation = (code) => {
     if (estSuiteDecroissante(code)) {
       throw 'Le code pin ne peut pas être une suite décroissante'
     }
+  }
 
   return true
 }

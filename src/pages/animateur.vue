@@ -116,6 +116,8 @@
             label="Téléphone"
             :required="true"
             class="w-full"
+            :validation="[phoneValidation]"
+            v-model:valid="validation.telephone"
           />
         </div>
         <div v-if="false && !id_selected" class="flex items-center">
@@ -183,6 +185,8 @@
             maxlength="6"
             pattern="\d{6}"
             class="w-full"
+            :validation="[codePinValidation]"
+            v-model:valid="validation.codePin"
           />
           &nbsp;
           <Button
@@ -250,7 +254,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-import { isValid, emailValidation } from '@/validation.js'
+import { isValid, emailValidation, codePinValidation, phoneValidation } from '@/validation.js'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const modaleConfirmation = ref(false)
