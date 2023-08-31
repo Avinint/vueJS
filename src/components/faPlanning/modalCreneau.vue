@@ -189,8 +189,8 @@
             </div>
           </template>
         </div>
-        <MentionChampsObligatoires/>
       </div>
+      <MentionChampsObligatoires/>
     </Modal>
   </form>
 </template>
@@ -253,11 +253,11 @@ export default {
     modalTitle() {
       switch (this.typeAction) {
         case 'create':
-          return 'Création de creneau'
+          return 'Création de créneau'
         case 'edit':
-          return 'Modifier un creneau'
+          return 'Modifier un créneau'
         default:
-          return 'Modifier un creneau'
+          return 'Modifier un créneau'
       }
     },
     getOrganismesOptions() {
