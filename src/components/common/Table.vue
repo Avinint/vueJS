@@ -4,6 +4,7 @@
       <col :style="{ width: selectable ? '60px' : '20px' }" />
       <col v-for="_ in columns" />
       <col v-if="editable" style="width: 75px" />
+      <col  v-if="readable" style="width: 75px"/>
       <col v-if="removable" style="width: 75px" />
     </colgroup>
     <thead class="h-10 w-full bg-gray-50 text-sm text-gray-700">
@@ -12,6 +13,7 @@
         {{ column.label }}
       </th>
       <th v-if="editable"></th>
+      <th v-if="readable"></th>
       <th v-if="removable"></th>
     </thead>
     <tbody>
@@ -36,16 +38,25 @@
         </template>
         <td v-if="editable && item.editable">
           <Button
-            test="TdeleteClient"
+            test="TeditElement"
             borderless
             icon="edit"
             couleur="secondary"
             @click="emits('entity:edit', item.data)"
           />
         </td>
+        <td v-if="readable && item.readable">
+          <Button
+            test="TreadElement"
+            borderless
+            label="détails"
+            couleur="secondary"
+            @click="emits('entity:read', item.data)"
+          />
+        </td>
         <td v-if="removable && item.removable">
           <Button
-            test="TdeleteClient"
+            test="TdeleteElement"
             borderless
             icon="delete"
             couleur="secondary"
@@ -80,17 +91,26 @@ export type FaTableRow<T> = {
   data: T
 }
 
-const props = defineProps<{
+interface Props {
   columns: FaTableColumnData<any>[]
   data: FaTableRow<any>[]
   selected?: FaTableRow<any>[]
   selectable?: boolean
   editable?: boolean
   removable?: boolean
-}>()
+  readable?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  selectable: false,
+  editable: false,
+  removable: false,
+  readable: false,
+})
 
 const emits = defineEmits<{
   (e: 'entity:edit', entity: any): void
+  (e: 'entity:read', entity: any): void
   (e: 'entity:remove', entity: any): void
   (e: 'update:selected', selected: FaTableRow<any>[]): void
 }>()

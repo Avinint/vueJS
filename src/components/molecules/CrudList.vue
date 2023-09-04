@@ -3,13 +3,16 @@
     <div class="mb-6 flex justify-between items-center">
       <div class="flex gap-4 items-center">
         <h1 class="uppercase">MES {{ plural }}</h1>
-        <Input placeholder="Recherche"/>
-        <Button label="Filtrer" couleur="secondary"/>
+        <template v-if="canFilter">
+          <Input placeholder="Recherche"/>
+          <Button label="Filtrer" couleur="secondary"/>
+        </template>
+
       </div>
       <Button
-        v-if="canCreate"
-        id="TaddOrganisme"
-        label="Ajouter un Organisme"
+        v-if="canCreate || canAll"
+        id="TaddElement"
+        :label="`Ajouter un${fem ? 'e': ''} ` + entity"
         icon="add"
         couleur="secondary"
         @click="emits('entity:new')"
@@ -20,10 +23,12 @@
       <Table
         :columns="columns"
         :data="data"
-        selectable
-        editable
-        removable
+        :selectable="checklist && (canSelect || canAll)"
+        :editable="canEdit|| canAll"
+        :removable="canRemove || canAll"
+        :readable="canRead || canAll"
         @entity:edit="entity_edit"
+        @entity:read="entity_read"
         @entity:remove="entity_remove"
       />
     </BorderContainer>
@@ -44,11 +49,24 @@ defineProps<{
   columns: FaTableColumnData<any>[];
   data: FaTableRow<any>[];
   canCreate?: boolean;
+  fem?: boolean,
+  canSelect?: boolean,
+  checklist?: boolean,
+  canRemove?: boolean,
+  canEdit?: boolean,
+  canRead?: boolean,
+  canAll?: boolean,
+  canFilter?: boolean
 }>()
 
 function entity_edit(entity: unknown) {
   emits('entity:edit', entity)
 }
+
+function entity_read(entity: unknown) {
+  emits('entity:read', entity)
+}
+
 
 function entity_remove(entity: unknown) {
   emits('entity:remove', entity)
@@ -57,6 +75,7 @@ function entity_remove(entity: unknown) {
 const emits = defineEmits<{
   <T>(e: 'entity:new'): void
   <T>(e: 'entity:edit', entity: T): void
+  <T>(e: 'entity:read', entity: T): void
   <T>(e: 'entity:remove', entity: T): void
 }>()
 </script>

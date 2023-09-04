@@ -4,7 +4,7 @@
       plural="organismes"
       :columns="crud_columns"
       :data="getTableData()"
-      :can-create="isAdmin || isGestCo"
+      :can-all="isAdmin || isGestCo"
       @entity:new="addOrganisme"
       @entity:edit="editOrganisme"
       @entity:remove="removeOrganisme"
