@@ -53,7 +53,7 @@ export async function updateCreneau(
   contract: DemandeCreneauEditContract
 ): Promise<DemandeCreneauEditResponse> {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/creneau/demandes/${id}`,
+    `${import.meta.env.VITE_API_URL}/api/creneau/${id}/demandes`,
     {
       method: 'put',
       headers: {

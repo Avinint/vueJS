@@ -1,4 +1,4 @@
-import { getCreneauDuration } from '../date_service'
+import { getCreneauDuration, getDateStringHour } from '../date_service'
 
 /**
  * Generate an ``grand public`` type creneau edit contract that is properly typed to be used by the API
@@ -135,23 +135,32 @@ export function ParseDemandeCreneauResponse(response: DemandeCreneauEditResponse
       date: creneau.dateDebut, // besoin de l'heure
       description: creneau.description,
       animateurLabellise: 0,
-      creneauType: 1, //creneau.creneauType.libelle: retourner un ID plutot qu'un libelle,
+      creneauType: creneau.type,
       dureeActivite: creneau.dureeActivite,
       dureeInterCreneau: creneau.dureeIntercreneau,
-      nbParticipants: 0,
+      nbParticipants: creneau.remplissage,
       niveauPratique: 0,
       tarifHoraire: 0,
-      heureDebut: creneau.heureDebut,
-      heureFin: '',
+      heureDebut: getDateStringHour(creneau.dateDebut),
+      heureFin: getDateStringHour(creneau.dateFinCreneau),
       organisme: 0, // creneau.organismes? kesako
-      zones: [], // besoin?
-      activites: [], // besoin?
+      zones: creneau.zones,
+      activites: creneau.activites.map(e => {
+        return {
+          activiteId: e.id,
+          libelle: e.libelle,
+          tarif: e.prix,
+           maxTerrain: 0,
+        }
+      }),
       dateDebut: creneau.dateDebut,
-      dateFinCreneau: '',
-      dateSortie: '',
+      dateFinCreneau: creneau.dateFinCreneau,
+      dateSortie: creneau.dateSortie,
       seances: [],
       type: 1,
       zoneId: 0,
+      recurrence: creneau.recurrence,
+      mode: '',
     }
 
     return value;

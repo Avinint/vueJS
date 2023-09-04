@@ -126,19 +126,23 @@ type DemandeCreneauEditResponse = {
 
 type DemandeCreneauResult = {
   id: number
-  creneauType: {
-    libelle: string
-  }
-  titre: string
   dateDebut: string
-  heureDebut: string
+  dateSortie: string
+  dateFinCreneau: string
+  titre: string
+  description: string
+  activites: {
+    id: number
+    libelle: string
+    prix: number
+  }[],
+  type: number,
+  remplissage: number,
+  zones: number[],
   dureeActivite: number
   dureeIntercreneau: number
-  description: string
-  creneauOrganismes: []
-  statut: {
-    libelle: string
-  }
+  statut: string
+  recurrence: Recurrence
 }
 
 type SeanceEditResponse = {
