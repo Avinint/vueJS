@@ -3,9 +3,11 @@ import { deleteCreneau, postCreneau, updateCreneau } from '@api/planning'
 import { usePlanningStore } from '@stores/planning'
 import { getOrganismes } from '@api/organisme'
 import {
+  ParseDemandeCreneauResponse,
   default_creneau,
   makeCreneauEditContract,
   makeCreneauOGEditContract,
+  makeDemandeCreneauEditContract,
 } from '../services/planning/creneau_service'
 import dayjs from 'dayjs'
 import { getCreneauSeances } from '@api/seance'
@@ -13,7 +15,7 @@ import { getCreneauSeances } from '@api/seance'
 export const useCreneauStore = defineStore('creneau', {
   state: default_creneau,
   getters: {
-    getId: (state) => parseInt(state.id?.toString() || '0')
+    getId: (state) => parseInt(state.id?.toString() || '0'),
   },
   actions: {
     setDefault() {
@@ -33,7 +35,7 @@ export const useCreneauStore = defineStore('creneau', {
         this.activites = creneau.extendedProps.activites.map(
           (activite: any) => {
             activite.activiteId = activite.id
-            activite.tarif = activite.prix
+            activite.tarif = activite.tarif
             return activite
           }
         )
@@ -41,20 +43,26 @@ export const useCreneauStore = defineStore('creneau', {
         this.titre = creneau.extendedProps.titre
         this.dureeActivite = creneau.extendedProps.dureeActivite // 55
         this.dureeInterCreneau = creneau.extendedProps.dureeInterCreneau // 5
-        this.organisme = creneau.extendedProps.organismeId;
+        this.organisme = creneau.extendedProps.organismeId
         this.recurrence = creneau.extendedProps.recurrence
       } else {
         this.zones = []
       }
     },
-    async addCreneau() {
+    async addCreneau(fitarena_id: number) {
+      const planningStore = usePlanningStore()
+      const creneau = makeDemandeCreneauEditContract(fitarena_id, this.$state)
+      const response = await postCreneau(creneau)
+      planningStore.addCreneaux(ParseDemandeCreneauResponse(response))
+    },
+    async addCreneauOrganisme() {
       const planningStore = usePlanningStore()
       let created_creneaux: Creneau[] = []
 
       for (let i = 0; i < this.zones.length; i++) {
         const zone_id = this.zones[i]
-        const creneau = makeCreneauEditContract(zone_id, this.$state)
-        const response = await postCreneau(creneau)
+        const contract = makeCreneauOGEditContract(zone_id, this.$state)
+        const response = await postCreneau(contract)
 
         if (planningStore.currentViewName === 'day') {
           if (zone_id == planningStore.filters.zone[0])
@@ -66,33 +74,13 @@ export const useCreneauStore = defineStore('creneau', {
 
       planningStore.addCreneaux(created_creneaux)
     },
-    async addCreneauOrganisme() {
-      const planningStore = usePlanningStore();
-      let created_creneaux: Creneau[] = [];
+    async editCreneau(fitarena_id: number) {
+      if (!this.id) return
 
-      for(let i = 0; i < this.zones.length; i++) {
-        const zone_id = this.zones[i];
-        const contract = makeCreneauOGEditContract(zone_id, this.$state);
-        const response = await postCreneau(contract);
-
-        if (planningStore.currentViewName === 'day') {
-          if (zone_id == planningStore.filters.zone[0])
-            created_creneaux = created_creneaux.concat(response.creneaux)
-        } else {
-          created_creneaux = created_creneaux.concat(response.creneaux)
-        }
-      }
-      
-      planningStore.addCreneaux(created_creneaux)
-    },
-    async editCreneau() {
       const planningStore = usePlanningStore()
-
-      this.zones.forEach(async (id: number) => {
-        const contract = makeCreneauEditContract(id, this)
-        const response = await updateCreneau(this.id!, contract)
-        planningStore.addCreneaux(response.creneaux)
-      })
+      const contract = makeDemandeCreneauEditContract(fitarena_id, this.$state)
+      const response = await updateCreneau(this.id, contract)
+      planningStore.addCreneaux(ParseDemandeCreneauResponse(response));
     },
     async editCreneauOrganisme() {
       const planningStore = usePlanningStore()
@@ -118,18 +106,17 @@ export const useCreneauStore = defineStore('creneau', {
       if (index !== -1) this.activites.splice(index, 1)
     },
     async delete() {
-      if(this.id) {
-        await deleteCreneau(this.id);
-        const planning_store = usePlanningStore();
-        planning_store.removeCreneau(this.id);
+      if (this.id) {
+        await deleteCreneau(this.id)
+        const planning_store = usePlanningStore()
+        planning_store.removeCreneau(this.id)
       }
     },
     async fetchSeances() {
-      this.seances = [];
-      if(this.id) {
-        this.seances = await getCreneauSeances(this.id);
+      this.seances = []
+      if (this.id) {
+        this.seances = await getCreneauSeances(this.id)
       }
-    }
+    },
   },
 })
-
