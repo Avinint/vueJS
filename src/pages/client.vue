@@ -312,6 +312,8 @@
                 class="w-full"
                 max-length="6"
                 min-length="6"
+                :validation="[codePinValidation]"
+                v-model:valid="validation.codePin"
                 :required="false"
               />
             </div>
@@ -387,7 +389,7 @@ import {
   isValid,
   zipValidation,
   cityValidation,
-  phoneValidation,
+  phoneValidation, codePinValidation,
 } from '../validation.js'
 import { onMounted, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'

@@ -31,7 +31,7 @@ export const zipValidation = (val) => {
 }
 
 export const cityValidation = (val) => {
-  const match = val.match(/^[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûÙùÖöÔôÎîÏïÇç-\s*]{1,50}$/)
+  const match = val.match(/^[a-zA-ZÀ-ÿœ\- ]{1,50}$/)
   // const match = val.match(/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/) ne prend pas en compte les accents
   if (match && match.length) {
     return true
@@ -71,3 +71,29 @@ export const lengthValidation = (min, max) => {
       throw `Le nombre de caractères doit être entre ${min} et ${max}`
   }
 }
+
+export const codePinValidation = (code, required) => {
+
+  if (code.length !== 6 && !(code.length === 0 && !required)) {
+    throw 'Le code pin doit faire 6 caractères'
+  }
+
+  if (code.length) {
+    if (estNumerique(code)) {
+      throw 'Le code pin ne peut pas comporter de lettres'
+    }
+    if (estSuiteCroissante(code)) {
+      throw 'Le code pin ne peut pas être une suite croissante'
+    }
+    if (estSuiteDecroissante(code)) {
+      throw 'Le code pin ne peut pas être une suite décroissante'
+    }
+  }
+
+  return true
+}
+
+const estNumerique = (nombre ) => Array.prototype.some.call(nombre, (chiffre) => isNaN(chiffre))
+const estSuite = (nombre, dec = false) => Array.prototype.every.call(nombre,(chiffre, index) => index === nombre.length - 1 || parseInt(chiffre) === parseInt(nombre[index + 1]) + (dec ? 1 : - 1))
+const estSuiteCroissante = (code) => estSuite(code)
+const estSuiteDecroissante = (code) => estSuite(code, true)
