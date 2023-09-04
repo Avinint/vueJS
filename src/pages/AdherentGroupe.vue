@@ -96,12 +96,21 @@
       />
     </Card>
   </Card>
+  <form @submit.prevent="deleteMemberGroupValidation(deleteMemberGroupId)">
+    <ValidationModal
+      v-if="delete_modal"
+      type="delete"
+      @cancel="delete_modal = false"
+    >
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup lang="ts">
 import Card from '../components/common/Card.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
+import ValidationModal from '../components/common/ValidationModal.vue'
 import { useRoute } from 'vue-router'
 import { deleteGroup, fetchGroupes, postGroup, putGroup } from '../api/groupe'
 import InputOptions from '../components/common/InputOptions.vue'
@@ -136,6 +145,8 @@ const selected_adherents = ref<FaTableRow<Adherent>[]>([])
 const adherents_groupe = ref<FaTableRow<Adherent>[]>([])
 const organismeId = ref(0)
 const group_id = ref(0)
+const delete_modal = ref(false)
+const deleteMemberGroupId = ref(0)
 
 const form = reactive<{
   libelle: string
@@ -263,12 +274,21 @@ async function save() {
 }
 
 async function deleteGroupe(groupe: Groupe) {
-  deleteGroup(groupe.id).then(() => {
-    for (let i = 0; i < groupes.value.length; i++) {
-      if (groupe.id == groupes.value[i].id) groupes.value.splice(i, 1)
-    }
-  })
-  groupes.value = await fetchGroupes(organismeId.value)
+  deleteMemberGroupId.value = groupe.id
+  delete_modal.value = true
+}
+
+async function deleteMemberGroupValidation (id: number) {
+  try {
+    await deleteGroup(id)
+    const i = groupes.value.findIndex(groupe => groupe.id == id)
+    groupes.value.splice(i, 1)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+  delete_modal.value = false
+  deleteMemberGroupId.value = 0
 }
 
 function clean() {
