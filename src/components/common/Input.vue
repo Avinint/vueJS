@@ -25,24 +25,33 @@
 import InputLabel from './InputLabel.vue'
 import { computed, ref } from 'vue'
 
-const props = defineProps<{
-  modelValue?: string | number,
-  defaultValue?: string,
-  placeholder?: string,
-  test?: string,
-  label?: string,
-  readonly?: boolean,
-  inline?: boolean,
-  pattern?: string,
-  minLength?: number,
-  maxLength?: number,
-  type?: string,
-  id?: string,
-  validation?: Function[],
-  valid?: boolean,
-  required?: boolean,
-  disabled?: boolean,
-}>()
+interface Props {
+  modelValue?: string | number
+  defaultValue?: string
+  placeholder?: string
+  test?: string
+  label?: string
+  readonly?: boolean
+  inline?: boolean
+  pattern?: string
+  minLength?: number
+  maxLength?: number
+  type?: string
+  id?: string
+  validation?: Function[]
+  valid?: boolean
+  required: boolean
+  disabled?: boolean
+}
+
+
+const props = withDefaults(defineProps<Props>(), {
+  readonly: false,
+  inline: false,
+  valid: false,
+  required: false,
+  disabled: false
+})
 
 const emits = defineEmits<{
   (e: 'update:modelValue', text: string | number): void
@@ -56,7 +65,12 @@ const inputValidation = ($event: any) => {
   if (props.validation) {
     props.validation.forEach((func: Function) => {
       try {
-        func(val)
+        if (func.name === 'codePinValidation') {
+          func(val, props.required)
+        } else {
+          func(val)
+        }
+
       } catch (e) {
         error.value += e + '<br>'
         emits('update:valid', false)
