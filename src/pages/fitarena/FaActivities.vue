@@ -332,18 +332,16 @@ const mapApiToData = (activiteTemp) => {
 }
 
 const saveActivite = () => {
+
   actTemp.value = {
     typeActivite: '/api/type_activites/' + activite_selected.value,
-    fitArena: '/api/fit_arenas/' + props.id,
+    fitArena: activite.value.fitArena,
     ordre: parseInt(activite.value.ordre),
     libelle: activite.value.libelle,
     description: activite.value.description,
-    actif: activite.value.actif == true ? activite.value.actif : false,
+    actif: activite.value.actif,
     icone: activite.value.icone,
-    reservationDeGroupe:
-      activite.value.reservationDeGroupe == true
-        ? activite.value.reservationDeGroupe
-        : false,
+    reservationDeGroupe: activite.value.reservationDeGroupe,
   }
 
   if (id_selected.value) {
@@ -355,7 +353,7 @@ const saveActivite = () => {
 
 const updateActivityValidation = async () => {
   try {
-    await updateActivites(actTemp, id_selected.value)
+    await updateActivites(actTemp.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
