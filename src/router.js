@@ -24,6 +24,7 @@ import { useUserStore } from './stores/user.js'
 import Animateur from '@pages/animateur.vue'
 import Adherent from '@pages/Adherent.vue'
 import AdherentGroupe from "@pages/AdherentGroupe.vue";
+import FaReservations from "@pages/fitarena/FaReservations.vue";
 
 const routes = [
   {
@@ -103,6 +104,18 @@ const routes = [
               label: '',
               link: 'fitarena/',
             },**/
+          ],
+        },
+      },
+      {
+        path: 'reservations',
+        component: FaReservations,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
           ],
         },
       },

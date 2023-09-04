@@ -36,14 +36,19 @@ import { computed } from 'vue'
     '': 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white'
   }
 
-  const props = defineProps<{
+  interface Props {
     label?: string,
     icon_placement?: string
     icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | 'delete' | '',
     couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
     borderless: boolean,
-    submit?: boolean,
-  }>();
+    submit: boolean,
+  }
+
+  const props = withDefaults(defineProps<Props>(), {
+    borderless: false,
+    submit: false
+  });
 
   const icon: string = ICON[props.icon ?? '']
   const couleur: string = TYPE[props.couleur ?? '']

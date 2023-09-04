@@ -8,7 +8,7 @@
             {{ props.title }}
           </h3>
           <div class="flex align-center">
-            <Button v-if="delete_button" test='TcloseModal' @click="emit('delete')" couleur="danger" borderless label="Supprimer le créneau"/>
+            <slot name="topButtons"></slot>
             <Button test='TcloseModal' @click="emit('cancel', $event)" couleur="secondary" icon="cross" borderless />
           </div>
         </div>
@@ -17,14 +17,25 @@
         </div>
         <div v-if="props.type === 'classic'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
-            class="bg-red-600 hover:bg-red-800" />
-          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" />
+          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" :label="confirmButtonText"
+                  class="bg-red-600 hover:bg-red-800"/>
+          <slot name="actions"></slot>
+          <slot name="cancel">
+            <Button test='TcancelModal' @click="emit('cancel', $event)" :label="cancelButtonText" couleur="secondary"/>
+          </slot>
+        </div>
+        <div v-if="props.type === 'custom'"
+             class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+          <slot name="buttons">
+            <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
+                    class="bg-red-600 hover:bg-red-800"/>
+            <Button test='TcancelModal' @click="emit('cancel', $event)" :label="cancelButtonText" couleur="secondary"/>
+          </slot>
         </div>
 
         <div v-if="props.type === 'visualiser'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-          <Button class="ml-auto mr-0" test='TcancelModal' @click="emit('cancel', $event)" label="Annuler"
+          <Button class="ml-auto mr-0" test='TcancelModal' @click="emit('cancel', $event)" :label="cancelButtonText"
             couleur="secondary" />
         </div>
 
@@ -32,6 +43,7 @@
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
             class="bg-red-600 w-x hover:bg-red-800" />
+          <slot name="actions"></slot>
           <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" />
         </div>
       </div>
@@ -45,9 +57,10 @@ import Button from './Button.vue'
 
 type Props = {
   title: string
-  type: 'classic' | 'alert' | 'visualiser' | 'none'
-  size: '2xl' | '3xl' | '5xl'
-  delete_button?: boolean,
+  type: 'classic' | 'alert' | 'visualiser' | 'custom' | 'none'
+  size: '2xl' | '3xl' | '5xl' | '4xl' | '6xl'
+  confirmButtonText: string,
+  cancelButtonText: string
 }
 
 const emit = defineEmits(['confirm', 'cancel', 'delete'])
@@ -56,6 +69,8 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   type: 'classic',
   size: '2xl',
+  confirmButtonText: 'Confirmer',
+  cancelButtonText: 'Annuler'
 })
 </script>
 
