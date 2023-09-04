@@ -39,7 +39,7 @@ export const upload = async (url, body) => {
   return await request(url, body, 'post')
 }
 
-export const put = async (url, body) => await request(url, body, 'put')
+export const put = async (url, body = {}) => await request(url, body, 'put')
 
 export const request = async (url, body, method = 'post', contentType= "application/ld+json") => {
   let options= {}

@@ -180,6 +180,10 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
             path: `/fitarena/${fa.id}/planning`,
           },
           {
+            label: 'Réservations',
+            path: `/fitarena/${fa.id}/reservations`
+          },
+          {
             label: 'Activités',
             path: `/fitarena/${fa.id}/activites`
           },
