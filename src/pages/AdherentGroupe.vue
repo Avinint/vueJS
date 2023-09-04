@@ -280,13 +280,10 @@ async function deleteGroupe(groupe: Groupe) {
 
 async function deleteMemberGroupValidation (id: number) {
   try {
-    deleteGroup(id).then(() => {
-      for (let i = 0; i < groupes.value.length; i++) {
-        if (id == groupes.value[i].id) groupes.value.splice(i, 1)
-      }
-    })
+    await deleteGroup(id)
+    const i = groupes.value.findIndex(groupe => groupe.id == id)
+    groupes.value.splice(i, 1)
     toast.success('Suppression effectuée avec succès')
-    groupes.value = await fetchGroupes(organismeId.value)
   } catch (e) {
     toast.error('Une erreur est survenue')
   }
