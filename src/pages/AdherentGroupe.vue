@@ -19,7 +19,7 @@
         <Button
           couleur="danger"
           label="Supprimer le groupe"
-          @click="deleteGroupe(groupe)"
+          @click="deleteGroupe(groupe.id)"
         />
       </div>
       <Table :columns="table_columns" :data="getGroupTableData(groupe)" />
@@ -273,8 +273,8 @@ async function save() {
 
 }
 
-async function deleteGroupe(groupe: Groupe) {
-  deleteMemberGroupId.value = groupe.id
+async function deleteGroupe(id: number) {
+  deleteMemberGroupId.value = id
   delete_modal.value = true
 }
 
