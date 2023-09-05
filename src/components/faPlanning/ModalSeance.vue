@@ -127,7 +127,7 @@ function delete_seance(seance: Seance) {
 function open_modal() {
   open.value = true
   creneau_store.fetchSeances()
-  seance_store.fetchAnimateurs(route.params.id_org as any)
+  seance_store.fetchAnimateurs(route.params.org_id as any)
   seance_store.groupes = groupes.value;
 }
 
