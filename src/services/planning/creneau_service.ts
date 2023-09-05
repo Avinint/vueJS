@@ -157,7 +157,7 @@ export function ParseDemandeCreneauResponse(response: DemandeCreneauEditResponse
       dateFinCreneau: creneau.dateFinCreneau,
       dateSortie: creneau.dateSortie,
       seances: [],
-      type: 1,
+      type: creneau.type,
       zoneId: 0,
       recurrence: creneau.recurrence,
       mode: '',

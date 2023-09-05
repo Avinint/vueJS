@@ -428,8 +428,8 @@ export default {
 
         case 2:
           if (this.typeAction === 'create') {
-            this.creneauStore.addCreneauOrganisme()
-          } else this.creneauStore.editCreneauOrganisme()
+            this.creneauStore.addCreneauOrganisme(fitarena_id)
+          } else this.creneauStore.editCreneauOrganisme(fitarena_id)
           break
       }
 

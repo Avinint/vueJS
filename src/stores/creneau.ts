@@ -56,24 +56,12 @@ export const useCreneauStore = defineStore('creneau', {
       const creneaux = ParseDemandeCreneauResponse(response);
       planningStore.addCreneaux(creneaux);
     },
-    async addCreneauOrganisme() {
+    async addCreneauOrganisme(fitarena_id: number) {
       const planningStore = usePlanningStore()
-      let created_creneaux: Creneau[] = []
-
-      for (let i = 0; i < this.zones.length; i++) {
-        const zone_id = this.zones[i]
-        const contract = makeCreneauOGEditContract(zone_id, this.$state)
-        const response = await postCreneau(contract)
-
-        if (planningStore.currentViewName === 'day') {
-          if (zone_id == planningStore.filters.zone[0])
-            created_creneaux = created_creneaux.concat(response.creneaux)
-        } else {
-          created_creneaux = created_creneaux.concat(response.creneaux)
-        }
-      }
-
-      planningStore.addCreneaux(created_creneaux)
+      const creneau = makeDemandeCreneauEditContract(fitarena_id, this.$state)
+      const response = await postCreneau(creneau)
+      const creneaux = ParseDemandeCreneauResponse(response);
+      planningStore.addCreneaux(creneaux);
     },
     async editCreneau(fitarena_id: number) {
       if (!this.id) return
@@ -83,14 +71,13 @@ export const useCreneauStore = defineStore('creneau', {
       const response = await updateCreneau(this.id, contract)
       planningStore.addCreneaux(ParseDemandeCreneauResponse(response));
     },
-    async editCreneauOrganisme() {
-      const planningStore = usePlanningStore()
+    async editCreneauOrganisme(fitarena_id: number) {
+      if (!this.id) return
 
-      this.zones.forEach(async (id: number) => {
-        const contract = makeCreneauOGEditContract(id, this)
-        const response = await updateCreneau(this.id!, contract)
-        planningStore.addCreneaux(response.creneaux)
-      })
+      const planningStore = usePlanningStore()
+      const contract = makeDemandeCreneauEditContract(fitarena_id, this.$state)
+      const response = await updateCreneau(this.id, contract)
+      planningStore.addCreneaux(ParseDemandeCreneauResponse(response));
     },
     addActivite(activite: Activite) {
       const index = this.activites.findIndex(
