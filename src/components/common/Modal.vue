@@ -2,9 +2,9 @@
   <div tabindex="-1" aria-hidden="true"
     class="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full backdrop-blur bg-black/50 flex items-center justify-center">
     <div :class="'relative max-h-full w-9/12 max-w-'+props.size">
-      <div class="relative bg-white rounded-lg shadow p-4">
-        <div class="flex items-start justify-between p-4 border-b rounded-t">
-          <h3 class="text-xl font-semibold text-gray-900">
+      <div class="relative bg-white rounded-lg shadow">
+        <div class="flex items-start justify-between pl-10 py-6 pr-4 border-b rounded-t">
+          <h3 class="text-xl text-red-600 uppercase">
             {{ props.title }}
           </h3>
           <div class="flex align-center">
@@ -16,7 +16,7 @@
           <slot></slot>
         </div>
         <div v-if="props.type === 'classic'"
-          class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+          class="flex justify-end items-center p-6 space-x-2 rounded-b">
           <Button submit test='TconfirmModal' @click="emit('confirm', $event)" :label="confirmButtonText"
                   class="bg-red-600 hover:bg-red-800"/>
           <slot name="actions"></slot>
@@ -25,7 +25,7 @@
           </slot>
         </div>
         <div v-if="props.type === 'custom'"
-             class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+             class="flex justify-end items-center p-6 space-x-2 rounded-b">
           <slot name="buttons">
             <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
                     class="bg-red-600 hover:bg-red-800"/>
@@ -34,17 +34,18 @@
         </div>
 
         <div v-if="props.type === 'visualiser'"
-          class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+          class="flex justify-end items-center p-6 space-x-2 rounded-b">
           <Button class="ml-auto mr-0" test='TcancelModal' @click="emit('cancel', $event)" :label="cancelButtonText"
             couleur="secondary" />
         </div>
 
         <div v-if="props.type === 'alert'"
-          class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Confirmer"
-            class="bg-red-600 w-x hover:bg-red-800" />
+          class="flex justify-end items-center p-6 space-x-2 rounded-b">
+          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" class="border border-red-600" />
+          
           <slot name="actions"></slot>
-          <Button test='TcancelModal' @click="emit('cancel', $event)" label="Annuler" couleur="secondary" />
+          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Enregistrer"
+            class="bg-red-600 w-x hover:bg-red-800" />
         </div>
       </div>
 

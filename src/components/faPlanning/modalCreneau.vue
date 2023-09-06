@@ -406,7 +406,7 @@ export default {
       const type_creneau = this.creneauStore.creneauType
 
       if(this.creneauStore.recurrence) {
-        if(this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "") {
+        if(this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "Invalid Date") {
           this.creneauStore.recurrence = undefined;
         }
       }
@@ -416,7 +416,7 @@ export default {
       // (REFACTORING)
       switch (type_creneau) {
         case 1:
-          // Retreive activity data from the local references
+          // Retrieve activity data from the local references
           // Before sending it to the API. This has to be done
           // This way because of the unsynchronized data.
           this.updateActivites()

@@ -51,7 +51,7 @@
       </div>
     </div>
     <div>
-      <label class="mb-2 block text-sm text-gray-700">Fin de répétition</label>
+      <label class="mb-2 block text-sm text-gray-700">Fin de répétition *</label>
       <div class="flex items-center gap-2">
         <input
           type="radio"
@@ -69,6 +69,7 @@
           :key="date_key"
           :formatter="{ date: 'DD / MM / YYYY' }"
           class="w-fit"
+          required
         />
         <input
           class="ml-4"

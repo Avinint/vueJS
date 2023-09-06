@@ -321,6 +321,7 @@ import html2pdf from 'vue3-html2pdf'
 import CarteAcces from "@/pdf/CarteAcces.vue";
 import { getCarteAcces } from "@api/carte_acces.js";
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+
 const { isAdmin, isGestCo } = useUserStore()
 const crud_columns = [
   { data: (e) => e.libelle, label: 'Nom' },
@@ -438,7 +439,7 @@ const showOrganisme = async (i) => {
   mapApiToData(organisme)
   afficherFormulaire.value = true
   readonly.value = true
-  modal_title.value = 'Informations de l organisme'
+  modal_title.value = 'Informations de l\'organisme'
 }
 
 const mapApiToData = (organisme) => {

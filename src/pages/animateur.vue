@@ -1,68 +1,14 @@
 <template>
-  <Card class="space-y-3">
-    <h1>Animateur</h1>
-
-    <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-        <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
-        >
-        <tr>
-          <th scope="col" class="px-6 py-3"></th>
-          <th scope="col" class="px-6 py-3">Nom</th>
-          <th scope="col" class="px-6 py-3">Prénom</th>
-          <th scope="col" class="px-6 py-3">E-mail</th>
-          <th scope="col" class="px-6 py-3">Téléphone</th>
-          <th scope="col" class="px-6 py-3">Titulaire carte</th>
-          <th scope="col" class="px-6 py-3">Organisme</th>
-          <th scope="col" class="px-6 py-3"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(animateur, i) in animateurs" :key="i" class="bg-white">
-          <td class="flex items-center justify-center p-3">
-            <Button
-              test="TdeleteClient"
-              borderless
-              icon="delete"
-              couleur="secondary"
-              @click="removeAnimateur(animateur.id)"
-            />
-            <Button
-              test="TeditClient"
-              borderless
-              icon="edit"
-              couleur="secondary"
-              @click="editAnimateur(i)"
-            />
-          </td>
-          <td class="px-6 py-4">{{ animateur.nom }}</td>
-          <td class="px-6 py-4">{{ animateur.prenom }}</td>
-          <td class="px-6 py-4">{{ animateur.email }}</td>
-          <td class="px-6 py-4">{{ animateur.telephone }}</td>
-          <td class="px-6 py-4">
-            {{ animateur.titulaireCarte ? 'oui' : 'non' }}
-          </td>
-          <td class="px-6 py-4">{{ animateur.organisme.libelle }}</td>
-          <td class="px-6 py-4">
-            <Button
-              label="Détails"
-              couleur="secondary"
-              @click="showAnimateur(i)"
-            />
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-    <Button
-      id="TaddAnimateur"
-      label="Ajouter un Animateur"
-      icon="add"
-      couleur="secondary"
-      @click="createAnimateur"
-    />
-  </Card>
+  <CrudList
+    entity="animateur"
+    plural="animateurs"
+    :columns="crud_columns"
+    :data="getTableData()"
+    :can-all="isAdmin || isGestCo || isGestOrg"
+    @entity:new="createAnimateur"
+    @entity:edit="editAnimateur"
+    @entity:remove="removeAnimateur"
+  />
   <form @submit.prevent="hydrateAnimateur">
     <Modal
       v-if="afficherFormulaire"
@@ -70,84 +16,63 @@
       :title="modal_title"
       @cancel="cancel()"
     >
-      <Card class="w-full space-y-2">
-        <!--        <h3>Ajouter un animateur</h3>-->
-
-        <div class="flex items-center">
+      <div class="pl-4">
+        <HeaderModal text="ÉTAT CIVIL" />
+        <div class="mt-6">
           <Input
             id="TanimNom"
             v-model="nom"
             :readonly="readonly"
             type="text"
             label="Nom"
-            :required="true"
-            class="w-full"
+            :inline="true"
+            placeholder="Nom"
+            class="mb-4"
           />
-        </div>
-        <div class="flex items-center">
           <Input
             id="TanimPrenom"
             v-model="prenom"
             :readonly="readonly"
             type="text"
             label="Prénom"
-            :required="true"
-            class="w-full"
+            :inline="true"
+            placeholder="Prénom"
+            class="mb-4"
           />
-        </div>
-        <div class="flex items-center">
-          <Input
-            id="TanimMail"
-            v-model:valid="validation.email"
-            v-model="email"
-            :readonly="readonly"
-            type="email"
-            label="E-mail"
-            :required="true"
-            class="w-full"
-          />
-        </div>
-        <div class="flex items-center">
           <Input
             id="TanimTel"
             v-model="telephone"
             :readonly="readonly"
             type="text"
-            label="Téléphone"
-            :required="true"
-            class="w-full"
+            label="Numéro de téléphone"
+            :inline="true"
+            placeholder="0601010101"
             :validation="[phoneValidation]"
-            v-model:valid="validation.telephone"
+            class="mb-4"
           />
-        </div>
-        <div v-if="false && !id_selected" class="flex items-center">
-          <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Organisme</label
-          >
-          <div v-if="!readonly" class="flex items-center">
-            <div class="mr-1.5 block"></div>
-            <select
-              v-if="organismes.length"
-              id="TSelectOrganisme"
-              v-model="organismeId"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              @change="selectionOrganisme"
-            >
-              <option
-                v-for="(organisme, i) in organismes"
-                :key="i"
-                :value="organisme.id"
-              >
-                {{ organisme.label }}
-              </option>
-            </select>
+          <Input
+            id="TanimMail"
+            v-model="email"
+            :readonly="readonly"
+            :type="'email'"
+            label="Adresse email"
+            :inline="true"
+            :validation="[emailValidation]"
+          />
+          <div class="flex items-center">
+            <div class="w-1/2"></div>
+            <div class="w-full">
+              <p class="text-info">L'animateur recevra un email à cette adresse afin d’activer ses accès animateurs</p>
+            </div>
           </div>
         </div>
-
-        <div class="flex items-center">
-          <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
-          >Titulaire carte :</span
-          >
+      </div>
+      <div class="pl-4">
+        <HeaderModal text="CARTE D'ACCÈS" />
+        <div class="my-6 flex items-center">
+          <p class="mb-2 w-4/12 label-text"
+            >Titulaire d'une carte d'accès :</p
+            >
           <label class="relative inline-flex cursor-pointer items-center">
             <input
               v-model="titulaireCarte"
@@ -159,51 +84,42 @@
             <div
               class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
             ></div>
-            <!-- <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span> -->
           </label>
         </div>
-        <Button
-          v-if="!readonly && carteActive.actif === false"
-          id="TeditionCarteAcces"
-          label="Ajouter une carte d'accès"
-          icon="add"
-          couleur="secondary"
-          @click="carteActive.actif = true"
+        <Input
+          v-if="titulaireCarte"
+          id="TcarteCodePin"
+          v-model="carteActive.codePin"
+          :inline="true"
+          :readonly="readonly"
+          type="text"
+          label="Code PIN"
+          :validation="[codePinValidation]"
         />
-        <MentionChampsObligatoires/>
-      </Card>
-      <Card v-if="carteActive.actif === true" class="w-full space-y-2">
-        <h3>Carte d'accès</h3>
-        <div class="flex items-center">
-          <Input
-            id="TcarteCodePin"
-            v-model="carteActive.codePin"
-            :readonly="readonly"
-            :required="true"
-            type="text"
-            label="Code PIN"
-            maxlength="6"
-            pattern="\d{6}"
-            class="w-full"
-            :validation="[codePinValidation]"
-            v-model:valid="validation.codePin"
-          />
-          &nbsp;
-          <Button
-            v-if="!readonly"
-            id="TdesactivationCarteAcces"
-            icon="cross"
-            couleur="danger"
-            @click="desactiverCarte"
-          />
+      </div>
+      <div v-if="carteActive.actif === true" class="pl-4">
+        <HeaderModal text="QR CODE" />
+        <p class="text-info">L’animateur peut retrouver son QR code sur son profil Fit Arena en se connectant à fit-arena.fr via l’adresse mail renseignée ci-dessus.</p>
+        <div class="flex items-center justify-between mt-10">
+          <div class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
+            <img
+              alt="QR CODE Fit Arena"
+              :src="carteActive.qrCode"
+            />
+          </div>
+          <div class="w-8/12">
+            <ButtonRight
+              id="TAnimQRCodeImprimer"
+              icon="print"
+              couleur="danger"
+              class="w-full"
+              label="Imprimer le QR Code"
+            />
+          </div>
         </div>
-        <div v-if="carteActive?.qrCode" class="flex items-center">
-          <img
-            alt="qr code"
-            :src="carteActive.qrCode"
-          />
-        </div>
-      </Card>
+      </div>
+
+      <MentionChampsObligatoires class="pt-10 ml-4" />
     </Modal>
   </form>
 
@@ -239,10 +155,13 @@
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
-import Button from '../components/common/Button.vue'
+import ButtonRight from '../components/common/Button.vue'
+import HeaderModal from '@components/common/HeaderModal.vue'
 import Input from '../components/common/Input.vue'
 import { getAdresses } from '../api/address.js'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { useUserStore } from '@/stores/user.js'
+
 import {
   deleteAnimateur,
   getAnimateurs, getAnimateursParOrganisme,
@@ -250,6 +169,8 @@ import {
   putAnimateur,
 } from '../api/animateur.ts'
 import { selectOrganismes } from '../api/organisme.ts'
+import CrudList from '@components/molecules/CrudList.vue'
+
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -257,6 +178,7 @@ import 'vue3-toastify/dist/index.css'
 import { isValid, emailValidation, codePinValidation, phoneValidation } from '@/validation.js'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
+const { isAdmin, isGestCo, isGestOrg } = useUserStore()
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
 const readonly = ref(false)
@@ -283,6 +205,23 @@ let client = ref({})
 const validation = ref({})
 const organismes = ref([])
 
+const crud_columns = [
+  { data: (e) => e.nom, label: 'Nom' },
+  { data: (e) => e.prenom, label: 'Prénom' },
+  { data: (e) => e.email, label: 'E-mail' },
+  { data: (e) => e.telephone, label: 'Téléphone' },
+  { data: (e) => e.titulaireCarte, label: 'Titulaire carte' },
+  { data: (e) => e.organisme.libelle, label: 'Organisme' },
+]
+function getTableData() {
+  return animateurs.value.map((animateur) => {
+    return {
+      data: animateur,
+      editable: true,
+      removable: true,
+    }
+  })
+}
 
 const route = useRoute()
 onMounted(async () => {
@@ -320,8 +259,8 @@ const cancel = () => {
   afficherFormulaire.value = false
 }
 
-const removeAnimateur = (id) => {
-  deleteAnimateurId.value = id
+const removeAnimateur = (animateur) => {
+  deleteAnimateurId.value = animateur.id
   modaleConfirmation.value = 'delete'
   // delete_modal.value = true
 }
@@ -338,8 +277,8 @@ const removeAnimateurValidation = async (id) => {
   animateurs.value = await getAnimateursParOrganisme(organismeId.value)
 }
 
-const editAnimateur = (i) => {
-  const animateur = animateurs.value[i]
+const editAnimateur = (animateur) => {
+  // const animateur = animateurs.value[i]
   mapApiToData(animateur)
   afficherFormulaire.value = true
   readonly.value = false
@@ -431,3 +370,25 @@ const removeFrom = (refArray, i) => {
   .concat(refArray.value.slice(i + 1))
 }
 </script>
+
+<style>
+.divider {
+  width: 20px;
+  height: 1px;
+  border: 1px solid #DE001A;
+}
+
+.text-info {
+  font-size: 1rem;
+  color: black;
+  margin-top: 1rem;
+}
+
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+</style>
