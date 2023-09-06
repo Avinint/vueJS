@@ -6,7 +6,7 @@
         :readonly="readonly"
         :id="id"
         @input="inputValidation"
-        :value="modelValue || defaultValue"
+        v-model="value"
         :type="type"
         :required="required"
         :pattern="pattern"
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import InputLabel from './InputLabel.vue'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 interface Props {
   modelValue?: string | number
@@ -53,13 +53,21 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false
 })
 
+const value = ref(props.modelValue || props.defaultValue);
+onMounted(() => {
+  if(props.defaultValue) {
+    value.value = props.defaultValue;
+    inputValidation();
+  }
+})
+
 const emits = defineEmits<{
   (e: 'update:modelValue', text: string | number): void
   (e: 'update:valid', valid: boolean): void
 }>()
 
-const inputValidation = ($event: any) => {
-  const val = $event.target.value
+const inputValidation = () => {
+  const val = value.value
   error.value = ''
   emits('update:valid', true)
   if (props.validation) {

@@ -83,6 +83,7 @@ export default {
         eventClick: this.eventClick,
         eventResize: this.eventResizeOrDrag,
         eventDrop: this.eventResizeOrDrag,
+        editable: false,
         select: this.select,
         dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'long' },
         nowIndicator: true,

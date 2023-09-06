@@ -411,6 +411,8 @@ export default {
         }
       }
 
+      const fitarena_id = parseInt(this.$route.params.id);
+
       // (REFACTORING)
       switch (type_creneau) {
         case 1:
@@ -420,14 +422,14 @@ export default {
           this.updateActivites()
 
           if (this.typeAction === 'create') {
-            this.creneauStore.addCreneau()
-          } else this.creneauStore.editCreneau()
+            this.creneauStore.addCreneau(fitarena_id)
+          } else this.creneauStore.editCreneau(fitarena_id)
           break
 
         case 2:
           if (this.typeAction === 'create') {
-            this.creneauStore.addCreneauOrganisme()
-          } else this.creneauStore.editCreneauOrganisme()
+            this.creneauStore.addCreneauOrganisme(fitarena_id)
+          } else this.creneauStore.editCreneauOrganisme(fitarena_id)
           break
       }
 
