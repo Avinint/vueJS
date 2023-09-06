@@ -59,25 +59,47 @@ export function makeCreneauEditContract(
  * @param creneau Creneau data
  */
 export function makeCreneauOGEditContract(
-  zone_id: number,
+  fitarena_id: number,
   creneau: Creneau
-): CreneauOGEditContract {
+): DemandeCreneauEditContract {
   if (creneau.recurrence) {
     creneau.recurrence.dateDebut = creneau.date
   }
 
+  const zones = []
+  for (const zone_id of creneau.zones) {
+    const zone_activities = []
+    for (const activity of creneau.activites) {
+      if (activity.zoneId === zone_id) {
+        zone_activities.push({
+          activiteId: activity.activiteId,
+          tarif: activity.tarif,
+        })
+      }
+    }
+    zones.push({ id: zone_id, activites: zone_activities })
+  }
+
   return {
-    creneauType: 2,
-    titre: creneau.titre,
-    date: creneau.date,
-    description: creneau.description,
-    dureeActivite: getCreneauDuration(creneau.heureDebut, creneau.heureFin),
-    dureeInterCreneau: 0,
-    heureDebut: `${creneau.heureDebut}:00`,
-    heureFin: `${creneau.heureFin}:00`,
-    organisme: creneau.organisme,
-    zoneId: zone_id,
-    recurrence: creneau.recurrence,
+    creneau: {
+      titre: creneau.titre,
+      date: creneau.date,
+      description: creneau.description,
+      animateurLabellise: creneau.animateurLabellise,
+      creneauType: creneau.creneauType,
+      dureeActivite: getCreneauDuration(creneau.heureDebut, creneau.heureFin),
+      dureeInterCreneau: creneau.dureeInterCreneau,
+      nbParticipants: creneau.nbParticipants,
+      niveauPratique: creneau.niveauPratique,
+      tarifHoraire: creneau.tarifHoraire,
+      heureDebut: `${creneau.heureDebut}:00`,
+      heureFin: `${creneau.heureFin}:00`,
+      organisme: creneau.organisme,
+      zones: zones,
+      recurrence: creneau.recurrence,
+    },
+    commentaire: '',
+    fitArenaId: fitarena_id,
   }
 }
 
