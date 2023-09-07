@@ -16,9 +16,8 @@
       :title="modal_title"
       @cancel="cancel()"
     >
-      <div class="pl-4">
-        <HeaderModal text="ÉTAT CIVIL" />
-        <div class="mt-6">
+      <CardModalSection title="ÉTAT CIVIL">
+        <template #content>
           <Input
             id="TanimNom"
             v-model="nom"
@@ -28,6 +27,7 @@
             :inline="true"
             placeholder="Nom"
             class="mb-4"
+            required
           />
           <Input
             id="TanimPrenom"
@@ -38,6 +38,7 @@
             :inline="true"
             placeholder="Prénom"
             class="mb-4"
+            required
           />
           <Input
             id="TanimTel"
@@ -58,6 +59,7 @@
             label="Adresse email"
             :inline="true"
             :validation="[emailValidation]"
+            required
           />
           <div class="flex items-center">
             <div class="w-1/2"></div>
@@ -65,61 +67,65 @@
               <p class="text-info">L'animateur recevra un email à cette adresse afin d’activer ses accès animateurs</p>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="pl-4">
-        <HeaderModal text="CARTE D'ACCÈS" />
-        <div class="my-6 flex items-center">
-          <p class="mb-2 w-4/12 label-text"
-            >Titulaire d'une carte d'accès :</p
-            >
-          <label class="relative inline-flex cursor-pointer items-center">
-            <input
-              v-model="titulaireCarte"
-              :disabled="readonly"
-              type="checkbox"
-              :value="false"
-              class="peer sr-only"
-            />
-            <div
-              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-            ></div>
-          </label>
-        </div>
-        <Input
-          v-if="titulaireCarte"
-          id="TcarteCodePin"
-          v-model="carteActive.codePin"
-          :inline="true"
-          :readonly="readonly"
-          type="text"
-          label="Code PIN"
-          :validation="[codePinValidation]"
-        />
-      </div>
-      <div v-if="carteActive.actif === true" class="pl-4">
-        <HeaderModal text="QR CODE" />
-        <p class="text-info">L’animateur peut retrouver son QR code sur son profil Fit Arena en se connectant à fit-arena.fr via l’adresse mail renseignée ci-dessus.</p>
-        <div class="flex items-center justify-between mt-10">
-          <div class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
-            <img
-              alt="QR CODE Fit Arena"
-              :src="carteActive.qrCode"
-            />
+        </template>
+      </CardModalSection>
+      <CardModalSection title="CARTE D'ACCÈS">
+        <template #content>
+          <div class="my-6 flex items-center">
+            <p class="w-4/12 label-text"
+              >Titulaire d'une carte d'accès :</p
+              >
+            <label class="relative inline-flex cursor-pointer items-center">
+              <input
+                v-model="titulaireCarte"
+                :disabled="readonly"
+                type="checkbox"
+                :value="false"
+                class="peer sr-only"
+              />
+              <div
+                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+              ></div>
+            </label>
           </div>
-          <div class="w-8/12">
-            <ButtonRight
-              id="TAnimQRCodeImprimer"
-              icon="print"
-              couleur="danger"
-              class="w-full"
-              label="Imprimer le QR Code"
-            />
+          <Input
+            v-if="titulaireCarte"
+            id="TcarteCodePin"
+            v-model="carteActive.codePin"
+            :inline="true"
+            :readonly="readonly"
+            type="text"
+            label="Code PIN"
+            :validation="[codePinValidation]"
+            required
+          />
+        </template>
+      </CardModalSection>
+      <CardModalSection v-if="carteActive.actif === true" title="QR CODE">
+        <template #content>
+          <div>
+            <p class="text-info">L’animateur peut retrouver son QR code sur son profil Fit Arena en se connectant à fit-arena.fr via l’adresse mail renseignée ci-dessus.</p>
+            <div class="flex items-center justify-between mt-10">
+              <div class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
+                <img
+                  alt="QR CODE Fit Arena"
+                  :src="carteActive.qrCode"
+                />
+              </div>
+              <div class="w-8/12">
+                <ButtonRight
+                  id="TAnimQRCodeImprimer"
+                  icon="print"
+                  couleur="danger"
+                  class="w-full"
+                  label="Imprimer le QR Code"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <MentionChampsObligatoires class="pt-10 ml-4" />
+        </template>
+      </CardModalSection>
+      <MentionChampsObligatoires class="ml-4" />
     </Modal>
   </form>
 
@@ -155,8 +161,9 @@
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
-import ButtonRight from '../components/common/Button.vue'
+import ButtonRight from '../components/common/ButtonRight.vue'
 import HeaderModal from '@components/common/HeaderModal.vue'
+import CardModalSection from '@components/common/CardModalSection.vue'
 import Input from '../components/common/Input.vue'
 import { getAdresses } from '../api/address.js'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
@@ -262,10 +269,9 @@ const cancel = () => {
 const removeAnimateur = (animateur) => {
   deleteAnimateurId.value = animateur.id
   modaleConfirmation.value = 'delete'
-  // delete_modal.value = true
 }
 
-const removeAnimateurValidation = async (id) => {
+const removeAnimateurValidation = async () => {
   try {
     await deleteAnimateur(deleteAnimateurId.value)
     toast.success('Suppression effectuée avec succès')
@@ -317,10 +323,7 @@ const hydrateAnimateur = () => {
     titulaireCarte: titulaireCarte.value,
     carteActive: ref(carteActive),
   }
-
-  if (animateur.value.carteActive.active) {
-    animateur.value.titulaireCarte = true
-  }
+  animateur.value.carteActive.actif = animateur.value.titulaireCarte
 
   if (id_selected.value) {
     modaleConfirmation.value = 'edit'
@@ -371,7 +374,7 @@ const removeFrom = (refArray, i) => {
 }
 </script>
 
-<style>
+<style scoped>
 .divider {
   width: 20px;
   height: 1px;

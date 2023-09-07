@@ -5,7 +5,7 @@
 </script>
 
 <template>
-<p class="text-sm font-medium text-gray-900" :style="{ marginTop: props.marginTop}">* Champ obligatoire</p>
+<p class="text-sm font-medium text-gray-900 pt-10" :style="{ marginTop: props.marginTop}">* Champ obligatoire</p>
 </template>
 
 <style scoped lang="scss">

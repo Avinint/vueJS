@@ -5,10 +5,13 @@
   </div>
 </template>
 
-<script setup lang="ts">
-defineProps<{
-    text: string
-}>()
+<script>
+export default {
+  name: "HeaderModal",
+  props: {
+    text: String
+  }
+}
 </script>
 
 <style scoped>

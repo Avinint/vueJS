@@ -14,7 +14,7 @@
       @close-modal-creneau="closeModal"
     />
     <div
-      class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+      class="space-y-3 p-4"
     >
       <FullCalendar ref="fullCalendar" :options="calendarOptions">
         <template #eventContent="arg">
