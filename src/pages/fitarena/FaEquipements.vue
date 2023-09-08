@@ -136,11 +136,11 @@
         </div>
       </div>
     </div>
-    <Button
+    <ButtonRight
       id="TaddEquipement"
       :label="'Ajouter un équipement ' + libelleType"
       icon="add"
-      couleur="secondary"
+      couleur="danger"
       @click="addEquipement"
     />
   </Card>
@@ -176,9 +176,10 @@
           id="TEquipementLibelle"
           v-model="equipement.libelle"
           :readonly="readonly"
-          :type="'text'"
+          type="text"
           label="Nom"
-          :required="true"
+          :inline="true"
+          required
           class="w-full"
         />
       </div>
@@ -187,9 +188,10 @@
           id="TEquipementIp"
           v-model="equipement.ip"
           :readonly="readonly"
-          :type="'text'"
+          type="text"
           label="Adresse IP"
-          :required="true"
+          :inline="true"
+          required
           class="w-full"
           :validation="[ipValidation]"
         />
@@ -259,9 +261,8 @@
                 </select>
               </td>
               <td class="px-4 py-4">
-                <input
+                <Input
                   type="text"
-                  class="text-gray-900 disabled:text-gray-400"
                   v-model="equipementMode.nomAppel"
                 />
               </td>
@@ -292,13 +293,14 @@
             </tr>
           </tbody>
         </table>
-        <Button
+        <ButtonRight
           v-if="!readonly"
           id="TaddConfiguration"
           label="Ajouter une configuration"
           icon="add"
-          couleur="secondary"
+          couleur="danger"
           @click="addEquipementConfiguration"
+          class="mt-4"
         />
       </CardConfiguration>
       <MentionChampsObligatoires/>
@@ -331,6 +333,7 @@ import CardConfiguration from '../../components/common/CardConfiguration.vue'
 import Modal from '../../components/common/Modal.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
+import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
 import {
   deleteEquipements,
