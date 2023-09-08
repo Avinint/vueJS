@@ -411,8 +411,8 @@ export default {
     submitCreneau() {
       const type_creneau = this.creneauStore.creneauType
 
-      if(this.creneauStore.recurrence) {
-        if(this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "Invalid Date") {
+      if (this.creneauStore.recurrence) {
+        if (this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "") {
           this.creneauStore.recurrence = undefined;
         }
       }

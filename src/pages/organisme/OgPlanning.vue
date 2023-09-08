@@ -3,7 +3,7 @@
     <ModalSeance ref="modal"/>
     <PlanningNavigation v-if="calendar_api" class="mb-6" :calendar-api="calendar_api" />
     <div
-      class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+      class="space-y-3 p-4"
     >
       <FullCalendar ref="calendar" :options="calendar_options">
         <template #eventContent="arg">
