@@ -80,8 +80,8 @@ export const default_planning: Planning = {
   currentDateStart: {},
   currentDateEnd: {},
   currentWeek: 0,
-  slotMinTime: '00:00',
-  slotMaxTime: '23:59',
+  slotMinTime: '07:00',
+  slotMaxTime: '22:00',
 }
 
 export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {

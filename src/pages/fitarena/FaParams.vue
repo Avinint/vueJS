@@ -46,7 +46,6 @@
 
   <Card>
     <h1>Condition de visualisation des créneaux</h1>
-    {{ visualisation_creneaux }}
     <div class="flex items-center space-x-2">
       <Button icon="edit" couleur="secondary" borderless></Button>
       <div class="flex items-center">

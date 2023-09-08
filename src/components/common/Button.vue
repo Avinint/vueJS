@@ -12,7 +12,7 @@
 import { computed } from 'vue'
 
   const ICON = {
-    print: '<svg class="w-6 h-6 text-gray-800 dark:text-white" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">\n' +
+    print: '<svg class="w-6 h-6 text-gray-800 dark:text-white" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 20 20">\n' +
         '    <path d="M5 20h10a1 1 0 0 0 1-1v-5H4v5a1 1 0 0 0 1 1Z"/>\n' +
         '    <path d="M18 7H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2v-3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-1-2V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3h14Z"/>\n' +
         '  </svg>',
@@ -22,7 +22,7 @@ import { computed } from 'vue'
     delete: '<svg width="13" height="15" viewBox="0 0 13 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.95653 15.1102C1.61046 15.1102 1.31631 14.9869 1.07406 14.7403C0.831817 14.4937 0.710695 14.1942 0.710695 13.8419V1.79222H-0.140625V0.52384H3.76299V-0.110352H9.24465V0.52384H13.1483V1.79222H12.2969V13.8419C12.2969 14.1801 12.1724 14.476 11.9232 14.7297C11.674 14.9834 11.3833 15.1102 11.0511 15.1102H1.95653ZM11.0511 1.79222H1.95653V13.8419H11.0511V1.79222ZM4.1575 12.0238H5.40333V3.5891H4.1575V12.0238ZM7.60431 12.0238H8.85014V3.5891H7.60431V12.0238ZM1.95653 1.79222V13.8419V1.79222Z" fill="black"/></svg>',
     export: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="m16.2 20.5l2.8-2.8V20h1v-4h-4v1h2.3l-2.8 2.8ZM5 21q-.825 0-1.413-.587Q3 19.825 3 19V5q0-.825.587-1.413Q4.175 3 5 3h14q.825 0 1.413.587Q21 4.175 21 5v6.7q-.475-.225-.975-.388q-.5-.162-1.025-.237V5H5v14h6.05q.075.55.238 1.05q.162.5.387.95Zm0-3v1V5v6.075V11v7Zm2-1h4.075q.075-.525.237-1.025q.163-.5.363-.975H7Zm0-4h6.1q.8-.75 1.787-1.25q.988-.5 2.113-.675V11H7Zm0-4h10V7H7Zm11 14q-2.075 0-3.537-1.462Q13 20.075 13 18q0-2.075 1.463-3.538Q15.925 13 18 13t3.538 1.462Q23 15.925 23 18q0 2.075-1.462 3.538Q20.075 23 18 23Z"/></svg>',
     logout: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="transform -rotate-90"><path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2a9.985 9.985 0 0 1 8 4h-2.71a8 8 0 1 0 .001 12h2.71A9.985 9.985 0 0 1 12 22zm7-6v-3h-8v-2h8V8l5 4l-5 4z"/></svg>',
-    cross: '<svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>',
+    cross: '<svg aria-hidden="true" class="w-5 h-5" fill="black" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>',
     '': ''
   }
 
@@ -39,7 +39,7 @@ import { computed } from 'vue'
   interface Props {
     label?: string,
     icon_placement?: string
-    icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | 'delete' | '',
+    icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | 'delete' | 'print' | '',
     couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
     borderless: boolean,
     submit: boolean,

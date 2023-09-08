@@ -50,8 +50,8 @@ const route = useRoute()
 }
 </style>
 <style>
-label.required::before{
-  content: "*";
+label.required::after{
+  content: " *";
   margin-right: 5px;
 }
 </style>

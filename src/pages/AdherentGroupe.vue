@@ -1,53 +1,53 @@
 <template>
   <Card v-if="mode === 'view'" class="space-y-4">
-    <h1>Mes groupes d'Adhérents</h1>
+    <div class="flex justify-between">
+      <h1>Mes groupes d'Adhérents</h1>
+      <ButtonRight id="TaddGroupe" label="Créer un groupe d'adhérent" icon="add"
+        couleur="danger" @click="addGroup" />
+    </div>
     <Card
       :shadow="false"
       class="overflow-hidden"
       v-for="(groupe, key) in groupes"
       :key="key"
+      :boxShadow="false"
     >
       <div class="mb-4 flex items-center gap-4">
         <LabelText :text="groupe.libelle" />
-        <Input placeholder="Rechercher" />
-        <Button couleur="secondary" label="Filtrer" />
+        <!-- <Input placeholder="Rechercher" />
+        <Button couleur="secondary" label="Filtrer" /> -->
         <Button
           couleur="secondary"
           label="Modifier le groupe"
           @click="editGroup(groupe)"
         />
-        <Button
-          couleur="danger"
-          label="Supprimer le groupe"
-          @click="deleteGroupe(groupe)"
-        />
       </div>
       <Table :columns="table_columns" :data="getGroupTableData(groupe)" />
     </Card>
-    <Button
-      id="TaddGroupe"
-      label="Ajouter un Groupe"
-      icon="add"
-      couleur="secondary"
-      @click="addGroup"
-    />
   </Card>
-  <Card v-if="mode === 'edit'" class="space-y-4">
+  <Card v-if="mode != 'view'" class="space-y-4">
     <div class="flex items-center justify-between">
       <h1>
         {{
           create
-            ? "CREER UN GROUPE D'ADHÉRENTS"
+            ? "CRÉER UN GROUPE D'ADHÉRENTS"
             : "MODIFIER UN GROUPE D'ADHÉRENTS"
         }}
       </h1>
-      <div class="flex gap-4">
-        <Button couleur="secondary" label="Annuler" @click="clean" />
-        <Button label="Enregistrer" @click="save" />
+      <div v-if="mode === 'edit'" class="flex justify-end mt-6 gap-4">
+        <Button couleur="secondary" label="Annuler" class="text-red-600 border border-red-600" @click="clean" />
+        <Button label="Enregister" couleur="danger" class="hover:bg-red-800 px-10" @click="save" />
       </div>
     </div>
-    <Card :shadow="false" class="overflow-hidden">
-      <LabelText class="mb-4" text="VOTRE GROUPE" />
+    <Card :shadow="false" class="overflow-hidden" :boxShadow="false">
+      <div class="flex items-center mb-4">
+        <LabelText class="mr-10" text="VOTRE GROUPE" />
+        <Button
+          couleur="danger"
+          label="Supprimer le groupe"
+          @click="deleteGroupe(form.libelle)"
+        />
+      </div>
       <form>
         <Input
           v-model="form.libelle"
@@ -70,20 +70,20 @@
         />
       </template>
     </Card>
-    <Card v-if="!create" :shadow="false" class="overflow-hidden">
+    <Card v-if="!create" :shadow="false" :boxShadow="false" class="overflow-hidden">
       <div class="mb-4 flex items-center gap-4">
         <LabelText text="LISTE DES ADHÉRENTS" />
-        <Input placeholder="Rechercher" />
-        <Button couleur="secondary" label="Filtrer" />
+        <!-- <Input placeholder="Rechercher" />
+        <Button couleur="secondary" label="Filtrer" /> -->
       </div>
       <div v-if="selected_adherents.length > 0" class="mb-4 flex items-center gap-4">
         <p
-          class="rounded-lg border px-3 py-2 text-sm font-bold text-blue-300"
+          class="rounded-lg border px-3 py-2 text-sm font-bold text-red-600"
         >
-          {{ `${selected_adherents.length} éléments` }}
+          {{ `${selected_adherents.length} élément(s)` }}
         </p>
         <Button
-          couleur="secondary"
+          couleur="danger"
           label="Ajouter au groupe"
           @click="addAdherents"
         />
@@ -96,6 +96,10 @@
       />
     </Card>
   </Card>
+  <div v-if="mode != 'view'" class="flex justify-end mt-6 gap-4">
+    <Button couleur="secondary" label="Annuler" class="text-red-600 border border-red-600" @click="clean" />
+    <Button :label="mode == 'add' ? 'Créer' : 'Enregister'" couleur="danger" class="hover:bg-red-800 px-10" @click="save" />
+  </div>
   <form @submit.prevent="deleteMemberGroupValidation(deleteMemberGroupId)">
     <ValidationModal
       v-if="delete_modal"
@@ -113,6 +117,7 @@ import Input from '../components/common/Input.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
 import { useRoute } from 'vue-router'
 import { deleteGroup, fetchGroupes, postGroup, putGroup } from '../api/groupe'
+import ButtonRight from '@components/common/ButtonRight.vue'
 import InputOptions from '../components/common/InputOptions.vue'
 import { onMounted, reactive, ref } from 'vue'
 import 'vue3-toastify/dist/index.css'
@@ -126,17 +131,17 @@ import {toast} from "vue3-toastify";
 
 const table_columns: FaTableColumnData<Adherent>[] = [
   { label: 'Nom et Prénom', data: (e) => `${e.nom} ${e.prenom}` },
-  { label: 'Date de naissance', data: (e) => getDateDMY(e.dateNaissance) },
+  { label: 'Date de naissance', data: (e) => e.dateNaissance ? getDateDMY(e.dateNaissance) : '' },
   { label: "Numéro d'adhérent", data: (e) => e.numeroAdherent },
-  { label: "Date d'adhésion", data: (e) => getDateDMY(e.dateAdhesion) },
+  { label: "Date d'adhésion", data: (e) => e.dateAdhesion ? getDateDMY(e.dateAdhesion) : '' },
   {
     label: "Date de fin d'adhésion",
-    data: (e) => getDateDMY(e.dateFinAdhesion),
+    data: (e) => e.dateFinAdhesion ? getDateDMY(e.dateFinAdhesion) : '',
   },
   { label: 'Groupes', data: (e) => e.groupes.map((g) => g.libelle).join(', ') },
 ]
 
-const mode = ref<'view' | 'edit'>('view')
+const mode = ref<'view' | 'edit' | 'add'>('view')
 const create = ref(true)
 const groupes = ref<Groupe[]>([])
 const animateurs = ref<Animateur[]>([])
@@ -202,7 +207,7 @@ function getAdherentsData(): FaTableRow<Adherent>[] {
 
 function addGroup() {
   create.value = true
-  mode.value = 'edit'
+  mode.value = 'add'
 }
 
 function editGroup(group: Groupe) {
@@ -270,12 +275,12 @@ async function save() {
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur.')
   }
-
 }
 
-async function deleteGroupe(groupe: Groupe) {
-  deleteMemberGroupId.value = groupe.id
-  delete_modal.value = true
+async function deleteGroupe(libelle) {
+  // chercher dans la liste des groupes le libelle qui correspond au paramètre
+  // deleteMemberGroupId.value = id
+  // delete_modal.value = true
 }
 
 async function deleteMemberGroupValidation (id: number) {
