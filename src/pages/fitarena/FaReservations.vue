@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import CrudList from "@components/molecules/CrudList.vue";
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, reactive, ref, watch, toRaw} from "vue";
 import dayjs from 'dayjs'
 import {getOrganismes, getOrganismesParClient} from "@api/organisme";
 import { useRoute } from 'vue-router'
@@ -14,8 +14,101 @@ import Card from "@components/common/Card.vue";
 import Table from "@components/common/Table.vue";
 import ValidationModal from "@components/common/ValidationModal.vue";
 import Button from "@components/common/Button.vue";
+import Switch from "@components/common/Switch.vue";
+import { useMenuStore } from "@stores/menu.js";
+import Input from "@components/common/Input.vue";
+import {watchDebounced} from "@vueuse/core";
+
+
 
 const route = useRoute()
+
+const {getOrganismes} = useMenuStore()
+const selectOrganismes = computed(() => getOrganismes().map(({id, libelle}) => ({id, libelle})))
+const datePickerFormat = {date: 'DD/MM/YYYY', month: 'MMM'}
+const selectStatuts = ref([
+  { libelle: 'Annulée',  id: "1" },
+  { libelle: 'En cours', id: "2" },
+  { libelle: 'Payée',    id: "3" }
+])
+
+const periode = reactive({
+  passe: false,
+  futur: false,
+})
+
+const criteres = reactive({
+  organisme: null,
+  responsable: '',
+  // dateDebut: null,
+  // dateFin: null,
+  uuid: null,
+  statut: null,
+  dateReservation: { startDate: null, endDate: null },
+  dateSeance: { startDate: null, endDate: null},
+})
+
+const recherche = reactive({})
+
+const modifieRecherchePeriode = () => {
+
+  const filtres = {
+    passees: Number(periode.passe),
+    futures: Number(periode.futur)
+  }
+
+  Object.assign(recherche, filtres)
+}
+
+const modifieRecherche = () => {
+  let filtres = {
+    organisme: criteres.organisme ?? null,
+    statutResa: criteres.statut ?? null,
+    uuidResa: criteres.uuid ??  null,
+    dateResaMin: dateToApi(criteres.dateReservation.startDate),
+    dateResaMax: dateToApi(criteres.dateReservation.endDate, true),
+    dateSeanceMin: dateToApi(criteres.dateSeance.startDate),
+    dateSeanceMax: dateToApi(criteres.dateSeance.endDate, true),
+
+    participant: criteres.responsable || null
+  };
+
+  Object.assign(recherche, filtres)
+}
+
+watch (() => ({...periode}) ,  (v1, v0) => {
+  if ((v1.futur !== v0.futur) && v1.futur) {
+    periode.passe = false
+    criteres.dateSeance = { startDate: null, endDate: null }
+  }
+
+  if((v1.passe !== v0.passe) && v1.passe) {
+    periode.futur = false
+    criteres.dateSeance = { startDate: null, endDate: null }
+  }
+
+  modifieRecherchePeriode()
+})
+
+watch(
+  criteres, async (val) => {
+    if (criteres.dateSeance.startDate !== null) {
+      periode.futur = false
+      periode.passe = false
+    }
+
+
+
+    modifieRecherche()
+})
+
+watchDebounced(() => ({...recherche}), async (v1, v0) => {
+  await chargeReservations(recherche)
+
+}, { debounce: 500, maxWait: 1000})
+
+const dateToApi = (date, max = false) =>   date && dayjs(date, 'DD/MM/YYYY')
+  .format('YYYY-MM-DD ' + (max ? '23:59:59' : '00:00:00')) || null
 
 const colonnesReservations = [
   { data: (e): string => e.type, label: 'Type' },
@@ -51,12 +144,15 @@ const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
 onMounted(async () => {
-   chargeReservations()
+   await chargeReservations()
+
 })
 
 watch(() => idFA.value, () => chargeReservations())
 
-const chargeReservations = async() => { reservations.value = await getReservations({idFA : idFA.value, page: 1}) }
+
+
+const chargeReservations = async(params = {}) => { reservations.value = await getReservations({idFA : idFA.value, page: 1, ...params}) }
 
 function getTableData() {
   return reservations.value.map((resa) => {
@@ -106,7 +202,6 @@ const annulerResaConfirmation = () => {
 const fermerCalqueFormulaire = () => {
   calqueFormulaireVisible.value = false
   calqueConfirmationVisible.value = false
-
 }
 
 </script>
@@ -119,9 +214,97 @@ const fermerCalqueFormulaire = () => {
     :data="getTableData()"
     :can-remove="true"
     :can-read="true"
+    :can-filter="true"
     @entity:remove="annulerResa"
     @entity:read="consulterResa"
-  />
+  >
+    <template #recherche>
+      <Card>
+        <LabelText text="Critère du filtre"/>
+        <div class="flex flex-row flex-wrap items-center w-full my-4">
+          <div class="mr-3"> Réservations passées</div>
+          <Switch  v-model="periode.passe"/>
+          <div class="mr-3">Réservations à venir</div>
+          <Switch  v-model="periode.futur"/>
+          <div v-if="!periode.futur && !periode.passe" class="ml-9 mr-3">Séances</div>
+          <div v-if="!periode.futur && !periode.passe" class="w-1/6 min-w-fit">
+            <vue-tailwind-datepicker
+              v-model="criteres.dateSeance"
+              i18n="fr"
+              use-range
+              separator=" au "
+              :formatter="datePickerFormat"
+              class="my-2"
+            />
+          </div>
+          <div class="mx-3">Réservations</div>
+          <div class="w-1/6 min-w-fit">
+            <vue-tailwind-datepicker
+              v-model="criteres.dateReservation"
+              i18n="fr"
+              use-range
+              separator=" au "
+              :formatter="datePickerFormat"
+              class="my-2"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-row flex-wrap items-center w-full">
+          <div class="mx-3">Statut de la réservation</div>
+          <select
+            id="TrechResaSelectOrganisme"
+            v-model="criteres.statut"
+            class="mr-3 block w-48 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option :value="null">Filtrer par statut...</option>
+            <option v-for="(statut, i) in selectStatuts" :key="i" :value="statut.id">
+              {{ statut.libelle }}
+            </option>
+          </select>
+
+          <div class="mx-3">Organisateur</div>
+          <Input
+            id="TrechResponsableReservation"
+            :model-value="criteres.responsable"
+            @change="e => criteres.responsable = e.target.value"
+            :type="'text'"
+            class="w-40 mr-3"
+            inline
+            lazy
+          />
+
+          <div class="mx-3">Organismes</div>
+          <select
+            id="TrechResaSelectOrganisme"
+            v-model="criteres.organisme"
+            class="mr-3 block w-48 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+
+          >
+            <option :value="null">Filtrer par organisme...</option>
+            <option v-for="(organisme, i) in selectOrganismes" :key="i" :value="organisme.id">
+              {{ organisme.libelle }}
+            </option>
+          </select>
+
+
+          <div class="mr-3">Numéro de réservation</div>
+          <Input
+            id="TrechNumeroReservation"
+            v-model="criteres.uuid"
+            :type="'text'"
+            class="w-48"
+            inline
+            lazy
+          />
+
+        </div>
+
+      </Card>
+
+    </template>
+  </CrudList>
+
     <Modal
       v-if="calqueFormulaireVisible"
       title="RÉSERVATION"

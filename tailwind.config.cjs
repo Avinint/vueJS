@@ -13,8 +13,8 @@ module.exports = {
       transparent: 'transparent',
       current: 'currentColor',
       faBlue: '#0B83D9',
-      'vtd-primary': colors.sky, // Light mode Datepicker color
-      'vtd-secondary': colors.gray, // Dark mode Datepicker color
+      'vtd-primary': colors.slate, // Light mode Datepicker color
+     // Dark mode Datepicker color
       ...colors,
       fontSize: {
         '2xs': '0.4rem',

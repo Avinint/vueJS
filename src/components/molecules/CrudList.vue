@@ -1,12 +1,15 @@
 <template>
   <Card>
     <div class="mb-6 flex justify-between items-center">
-      <div class="flex gap-4 items-center">
+      <div class="w-full">
         <h1 class="uppercase">MES {{ plural }}</h1>
-        <template v-if="canFilter">
-          <Input placeholder="Recherche"/>
-          <Button label="Filtrer" couleur="secondary"/>
-        </template>
+        <div class="mt-4 w-full">
+          <slot name="recherche" v-if="canFilter">
+            <Input placeholder="Recherche"/>
+            <Button label="Filtrer" couleur="secondary"/>
+          </slot>
+        </div>
+
 
       </div>
       <Button
