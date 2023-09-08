@@ -487,7 +487,7 @@ const saveAdherent = () => {
     numeroAdherent: numero.value,
     licence: licence.value,
     adresse: adresseSaisie ? {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
       pays: 'france',
@@ -546,7 +546,7 @@ watchDebounced(
 )
 
 const addressSelect = () => {
-  address.value = address_selected.value.label
+  address.value = address_selected.value.name
 }
 </script>
 

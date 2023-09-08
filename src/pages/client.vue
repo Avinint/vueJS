@@ -459,7 +459,7 @@ const saveClient = () => {
     referentExploitations: exploit_referents.value,
     gestionnaireCollectivites: community_managers.value,
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
       pays: 'france',
@@ -517,7 +517,7 @@ const cancel = async () => {
 }
 
 const addressSelect = () => {
-  address.value = address_selected.value.label
+  address.value = address_selected.value.name
 }
 
 const removeExploitReferent = (referent_index) => {
