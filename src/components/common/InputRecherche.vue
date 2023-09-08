@@ -5,8 +5,9 @@
       <input
         :readonly="readonly"
         :id="id"
-        @input="inputValidation"
-        :value="value"
+        @input="onInputValidation"
+        @change="onChangeValidation"
+        :value="modelValue || defaultValue"
         :type="type"
         :required="required"
         :pattern="pattern"
@@ -23,7 +24,7 @@
 
 <script setup lang="ts">
 import InputLabel from './InputLabel.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 interface Props {
   modelValue?: string | number
@@ -42,6 +43,7 @@ interface Props {
   valid?: boolean
   required: boolean
   disabled?: boolean
+  lazy: boolean
 }
 
 
@@ -50,15 +52,9 @@ const props = withDefaults(defineProps<Props>(), {
   inline: false,
   valid: false,
   required: false,
-  disabled: false
-})
+  disabled: false,
+  lazy: false
 
-const value = computed(() => props.modelValue || props.defaultValue || null);
-
-onMounted(() => {
-  if (props.defaultValue) {
-    inputValidation();
-  }
 })
 
 const emits = defineEmits<{
@@ -66,9 +62,8 @@ const emits = defineEmits<{
   (e: 'update:valid', valid: boolean): void
 }>()
 
-const inputValidation = (event: any = {}) => {
-  const val = event.target?.value || value.value
-
+function inputValidation($event: any) {
+  const val = $event.target.value
   error.value = ''
   emits('update:valid', true)
   if (props.validation) {
@@ -86,9 +81,19 @@ const inputValidation = (event: any = {}) => {
       }
     })
   }
-  if(typeof(props.modelValue) === 'number')
+  if (typeof (props.modelValue) === 'number')
     emits('update:modelValue', parseInt(val));
   else emits('update:modelValue', val)
+}
+
+const onChangeValidation = ($event: any) => {
+  if (props.lazy)
+    inputValidation($event);
+}
+
+const onInputValidation = ($event: any) => {
+  if (!props.lazy)
+    inputValidation($event);
 }
 
 const label = computed(() => props.label)

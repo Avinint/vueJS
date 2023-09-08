@@ -474,7 +474,7 @@ if (!isValid(validation)) return
     client: 'api/clients/' + client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       complement: complement.value,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
@@ -530,7 +530,9 @@ watchDebounced(
   address,
   async () => {
     address_selected.value = {}
-    addresses.value = await getAdresses(address.value)
+    try {
+      addresses.value = await getAdresses(address.value)
+    } catch (e) {}
     address_selected.value = addresses.value[0]
   },
   { debounce: 500, maxWait: 1000 }
@@ -557,6 +559,10 @@ const imprimerPdf = async (gestionnaire) => {
     const template = document.querySelector('.document-a-imprimer')
     html2pdf().from(template).save()
   }
+}
+
+const addressSelect = (event) => {
+  address.value  = address_selected.value.name
 }
 
 </script>

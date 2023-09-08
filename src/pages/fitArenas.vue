@@ -402,7 +402,7 @@ const saveFA = () => {
     actif: actif.value == true ? actif.value : false,
 
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       complement: complement.value,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
@@ -469,4 +469,8 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
+
+const addressSelect = (event) => {
+  address.value  = address_selected.value.name
+}
 </script>
