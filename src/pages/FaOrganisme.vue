@@ -530,7 +530,9 @@ watchDebounced(
   address,
   async () => {
     address_selected.value = {}
-    addresses.value = await getAdresses(address.value)
+    try {
+      addresses.value = await getAdresses(address.value)
+    } catch (e) {}
     address_selected.value = addresses.value[0]
   },
   { debounce: 500, maxWait: 1000 }

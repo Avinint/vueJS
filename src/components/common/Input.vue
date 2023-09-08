@@ -6,7 +6,7 @@
         :readonly="readonly"
         :id="id"
         @input="inputValidation"
-        v-model="value"
+        :value="value"
         :type="type"
         :required="required"
         :pattern="pattern"
@@ -53,10 +53,10 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false
 })
 
-const value = ref(props.modelValue || props.defaultValue);
+const value = computed(() => props.modelValue || props.defaultValue || null);
+
 onMounted(() => {
-  if(props.defaultValue) {
-    value.value = props.defaultValue;
+  if (props.defaultValue) {
     inputValidation();
   }
 })
@@ -66,8 +66,9 @@ const emits = defineEmits<{
   (e: 'update:valid', valid: boolean): void
 }>()
 
-const inputValidation = () => {
-  const val = value.value
+const inputValidation = ($event: any = {}) => {
+  const val = $event.target?.value || value.value
+
   error.value = ''
   emits('update:valid', true)
   if (props.validation) {
