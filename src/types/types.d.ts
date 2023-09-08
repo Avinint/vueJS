@@ -188,6 +188,7 @@ type Planning = {
   currentWeek: number
   slotMinTime: string
   slotMaxTime: string
+  scrollTime: string
 }
 
 type Organisme = {
