@@ -45,7 +45,7 @@
         <Button
           couleur="danger"
           label="Supprimer le groupe"
-          @click="deleteGroupe(form.libelle)"
+          @click="deleteGroupe()"
         />
       </div>
       <form>
@@ -213,6 +213,7 @@ function addGroup() {
 function editGroup(group: Groupe) {
   create.value = false
   group_id.value = group.id
+  deleteMemberGroupId.value = group.id
   form.libelle = group.libelle
   form.animateurs = group.animateurs.map((animateur) => animateur.id)
   form.adherents = group.adherents
@@ -277,10 +278,8 @@ async function save() {
   }
 }
 
-async function deleteGroupe(libelle) {
-  // chercher dans la liste des groupes le libelle qui correspond au paramètre
-  // deleteMemberGroupId.value = id
-  // delete_modal.value = true
+async function deleteGroupe() {
+  delete_modal.value = true
 }
 
 async function deleteMemberGroupValidation (id: number) {
@@ -294,6 +293,7 @@ async function deleteMemberGroupValidation (id: number) {
   }
   delete_modal.value = false
   deleteMemberGroupId.value = 0
+  mode.value = 'view'
 }
 
 function clean() {

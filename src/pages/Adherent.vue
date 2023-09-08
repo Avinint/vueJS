@@ -302,7 +302,7 @@ const crud_columns = [
   { data: (e) => dayjs(e.dateNaissance).format(dateFormatFr), label: 'Date de naissance' },
   { data: (e) => e.licence, label: 'Licence' },
   { data: (e) => dayjs(e.dateAdhesion).format(dateFormatFr), label: 'Date d\'adhésion' },
-  { data: (e) => e.groupes, label: 'Groupe(s)' },
+  { data: (e) => e.groupes.map(g => g.libelle).join(', '), label: 'Groupe(s)' },
 ]
 
 const dateFormatFr = import.meta.env.VITE_DATE_FORMAT_FR
