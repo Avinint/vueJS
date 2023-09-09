@@ -14,7 +14,7 @@
       @close-modal-creneau="closeModal"
     />
     <div
-      class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+      class="space-y-3 p-4"
     >
       <FullCalendar ref="fullCalendar" :options="calendarOptions">
         <template #eventContent="arg">
@@ -83,6 +83,7 @@ export default {
         eventClick: this.eventClick,
         eventResize: this.eventResizeOrDrag,
         eventDrop: this.eventResizeOrDrag,
+        editable: false,
         select: this.select,
         dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'long' },
         nowIndicator: true,
@@ -92,7 +93,7 @@ export default {
         allDaySlot: false,
         eventOverlap: true,
         selectOverlap: true,
-        height: 'auto',
+        height: '80vh',
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         // timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
         slotLabelFormat: {
@@ -104,7 +105,7 @@ export default {
       isModalCreneauOpen: false,
       actionType: '',
       zones: [],
-      redraw_key: 0,
+      redraw_key: 0
     }
   },
   computed: {
@@ -132,6 +133,8 @@ export default {
     this.calendarOptions.resources = [
       { id: this.zones[0].id, title: this.zones[0].libelle },
     ]
+    this.calendarOptions.scrollTime = this.planningStore.scrollTime
+    console.log(this.calendarOptions.scrollTime)
   },
   methods: {
     async closeModal() {

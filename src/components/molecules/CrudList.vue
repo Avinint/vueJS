@@ -10,37 +10,22 @@
           </slot>
         </div>
 
-
       </div>
-      <Button
-        v-if="canCreate || canAll"
-        id="TaddElement"
-        :label="`Ajouter un${fem ? 'e': ''} ` + entity"
-        icon="add"
-        couleur="secondary"
-        @click="emits('entity:new')"
-      />
+      <ButtonRight v-if="canCreate || canAll" id="TaddElement" :label="`Ajouter un${fem ? 'e' : ''} ` + entity" icon="add"
+        couleur="danger" @click="emits('entity:new')" />
     </div>
     <BorderContainer>
       <LabelText :text="plural" />
-      <Table
-        :columns="columns"
-        :data="data"
-        :selectable="checklist && (canSelect || canAll)"
-        :editable="canEdit|| canAll"
-        :removable="canRemove || canAll"
-        :readable="canRead || canAll"
-        @entity:edit="entity_edit"
-        @entity:read="entity_read"
-        @entity:remove="entity_remove"
-      />
+      <Table :columns="columns" :data="data" :selectable="checklist && (canSelect || canAll)" :editable="canEdit || canAll"
+        :removable="canRemove || canAll" :readable="canRead || canAll" @entity:edit="entity_edit"
+        @entity:read="entity_read" @entity:remove="entity_remove" />
     </BorderContainer>
   </Card>
 </template>
 
 <script setup lang="ts">
 import BorderContainer from '@components/common/BorderContainer.vue'
-import Button from '@components/common/Button.vue';
+import ButtonRight from '@components/common/ButtonRight.vue';
 import Card from '@components/common/Card.vue'
 import Input from '@components/common/Input.vue';
 import LabelText from '@components/common/LabelText.vue'

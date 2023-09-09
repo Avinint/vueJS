@@ -422,7 +422,7 @@ const save = () => {
   fitArenaSave.value.client = '/api/clients/' + fitArenaSave.value.client.id
   fitArenaSave.value.adresse = {
     '@id': '/api/adresses/' + fitArena.value.adresse.id,
-    adresse: address_selected.value.label,
+    adresse: address_selected.value.name,
     complement: complement.value,
     codePostal: address_selected.value.postcode,
     ville: address_selected.value.city,
@@ -463,7 +463,6 @@ const urlService = (service, e) => {
   }
 }
 
-
 watchDebounced(
   address,
   async () => {
@@ -473,6 +472,10 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
+
+const addressSelect = () => {
+  address.value = address_selected.value.name
+}
 </script>
 
 <style scoped>

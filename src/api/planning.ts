@@ -33,9 +33,9 @@ export async function getPlanning(
 }
 
 export async function postCreneau(
-  contract: CreneauEditContract | CreneauOGEditContract
-): Promise<CreneauEditResponse> {
-  const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/creneau`, {
+  contract: DemandeCreneauEditContract
+): Promise<DemandeCreneauEditResponse> {
+  const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/creneau/demandes`, {
     method: 'post',
     headers: {
       ...defaultHeaders,
@@ -50,10 +50,10 @@ export async function postCreneau(
 
 export async function updateCreneau(
   id: number,
-  contract: CreneauEditContract | CreneauOGEditContract
-): Promise<CreneauEditResponse> {
+  contract: DemandeCreneauEditContract
+): Promise<DemandeCreneauEditResponse> {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
+    `${import.meta.env.VITE_API_URL}/api/creneau/${id}/demandes`,
     {
       method: 'put',
       headers: {

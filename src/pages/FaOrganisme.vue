@@ -321,6 +321,7 @@ import html2pdf from 'vue3-html2pdf'
 import CarteAcces from "@/pdf/CarteAcces.vue";
 import { getCarteAcces } from "@api/carte_acces.js";
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+
 const { isAdmin, isGestCo } = useUserStore()
 const crud_columns = [
   { data: (e) => e.libelle, label: 'Nom' },
@@ -438,7 +439,7 @@ const showOrganisme = async (i) => {
   mapApiToData(organisme)
   afficherFormulaire.value = true
   readonly.value = true
-  modal_title.value = 'Informations de l organisme'
+  modal_title.value = 'Informations de l\'organisme'
 }
 
 const mapApiToData = (organisme) => {
@@ -473,7 +474,7 @@ if (!isValid(validation)) return
     client: 'api/clients/' + client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       complement: complement.value,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
@@ -529,7 +530,9 @@ watchDebounced(
   address,
   async () => {
     address_selected.value = {}
-    addresses.value = await getAdresses(address.value)
+    try {
+      addresses.value = await getAdresses(address.value)
+    } catch (e) {}
     address_selected.value = addresses.value[0]
   },
   { debounce: 500, maxWait: 1000 }
@@ -556,6 +559,10 @@ const imprimerPdf = async (gestionnaire) => {
     const template = document.querySelector('.document-a-imprimer')
     html2pdf().from(template).save()
   }
+}
+
+const addressSelect = (event) => {
+  address.value  = address_selected.value.name
 }
 
 </script>

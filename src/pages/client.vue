@@ -4,18 +4,21 @@
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700"
+          class="bg-gray-50 text-xs text-gray-700"
         >
           <tr>
-            <th scope="col" class="px-6 py-3"></th>
             <th scope="col" class="px-6 py-3">Nom</th>
             <th scope="col" class="px-6 py-3">Code postal</th>
             <th scope="col" class="px-6 py-3">Ville</th>
-            <th scope="col" class="px-6 py-3">Action</th>
+            <th scope="col" class="px-6 py-3"></th>
+            <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(client, i) in clients" :key="i" class="bg-white">
+            <td class="px-6 py-4">{{ client.nom }}</td>
+            <td class="px-6 py-4">{{ client.adresse.codePostal }}</td>
+            <td class="px-6 py-4">{{ client.adresse.ville }}</td>
             <td class="flex items-center justify-center p-3">
               <Button
                 test="TdeleteClient"
@@ -32,26 +35,20 @@
                 @click="editClient(i)"
               />
             </td>
-            <td class="px-6 py-4">{{ client.nom }}</td>
-            <td class="px-6 py-4">{{ client.adresse.codePostal }}</td>
-            <td class="px-6 py-4">{{ client.adresse.ville }}</td>
-            <td class="px-6 py-4">
+            <!-- <td class="px-6 py-4">
               <Button label="Détails" couleur="secondary" @click="showClient(i)" />
-            </td>
+            </td> -->
           </tr>
         </tbody>
       </table>
     </div>
-
-    <Button
+    <ButtonRight
       id="TaddClient"
       label="Ajouter un client"
       icon="add"
-      icon_placement="right"
-      couleur="secondary"
+      couleur="danger"
       @click="addClient"
     />
-
     <form @submit.prevent="saveClient">
       <Modal
         v-if="client_modal"
@@ -59,289 +56,294 @@
         :title="modal_title"
         @cancel="client_modal = false"
       >
-        <Card class="w-full">
-          <h3>Ajouter un client</h3>
-          <div class="space-y-2">
-            <div class="flex items-center">
-              <Input
-                id="TclientName"
-                v-model="name"
-                :readonly="readonly"
-                :type="'text'"
-                label="Nom"
-                class="w-full"
-                :required="true"
-              />
-            </div>
-
-            <div class="flex items-center">
-              <label class="required mb-2 block w-1/2 text-sm font-medium text-gray-900"
-                >Adresse</label
-              >
-              <div class="relative w-full">
-                <div
-                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="h-5 w-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </div>
-                <input
-                  id="TclientAdresse"
-                  v-model="address"
+        <CardModalSection title="CLIENT">
+          <template #content>
+            <div class="space-y-2">
+              <div class="flex items-center">
+                <Input
+                  id="TclientName"
+                  v-model="name"
                   :readonly="readonly"
-                  type="search"
-                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                  data-dropdown-toggle="dropdown"
-                  placeholder="Rue, ville, ..."
+                  type="text"
+                  label="Nom"
+                  class="w-full"
                   required
+                  :inline="true"
+                />
+              </div>
+              <div class="flex items-center">
+                <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+                  >Adresse</label
+                >
+                <div class="relative w-full">
+                  <div
+                    class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="h-5 w-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <input
+                    id="TclientAdresse"
+                    v-model="address"
+                    :readonly="readonly"
+                    type="search"
+                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                    data-dropdown-toggle="dropdown"
+                    placeholder="Rue, ville, ..."
+                  />
+                </div>
+              </div>
+              <div v-if="!readonly" class="flex items-center">
+                <div class="mr-1.5 block w-1/2"></div>
+                <select
+                  v-if="address.length"
+                  id="TclientSelectAdresse"
+                  v-model="address_selected"
+                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                  @change="addressSelect"
+                >
+                  <option
+                    v-for="(address, i) in addresses"
+                    :key="i"
+                    :value="address"
+                  >
+                    {{ address.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="flex items-center">
+                <Input
+                  v-if="address_selected"
+                  id="TadresseComplement"
+                  v-model="complement"
+                  :readonly="readonly"
+                  type="text"
+                  label="Complément"
+                  :inline="true"
+                  class="w-full"
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  v-if="address_selected"
+                  id="TadressePostcode"
+                  v-model="address_selected.postcode"
+                  :readonly="readonly"
+                  :inline="true"
+                  type="text"
+                  label="Code Postal"
+                  class="w-full"
+                  :validation="[zipValidation]"
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  v-if="address_selected"
+                  id="TadresseCity"
+                  v-model="address_selected.city"
+                  :readonly="readonly"
+                  :inline="true"
+                  type="text"
+                  label="Ville"
+                  class="w-full"
+                  :validation="[cityValidation]"
                 />
               </div>
             </div>
-            <div v-if="!readonly" class="flex items-center">
-              <div class="mr-1.5 block w-1/2"></div>
-              <select
-                v-if="address.length"
-                id="TclientSelectAdresse"
-                v-model="address_selected"
-                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                required
-                @change="addressSelect"
-              >
-                <option
-                  v-for="(address, i) in addresses"
-                  :key="i"
-                  :value="address"
-                >
-                  {{ address.label }}
-                </option>
-              </select>
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TadresseComplement"
-                v-model="complement"
-                :readonly="readonly"
-                :type="'text'"
-                label="Complément"
-                class="w-full"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                v-if="address_selected"
-                id="TadressePostcode"
-                v-model="address_selected.postcode"
-                :readonly="readonly"
-                :type="'text'"
-                label="Code Postal"
-                class="w-full"
-                :required="true"
-                :validation="[zipValidation]"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                v-if="address_selected"
-                id="TadresseCity"
-                v-model="address_selected.city"
-                :readonly="readonly"
-                :type="'text'"
-                label="Ville"
-                class="w-full"
-                :required="true"
-                :validation="[cityValidation]"
-              />
-            </div>
-          </div>
-        </Card>
+          </template>
+        </CardModalSection>
 
-        <Card class="space-y-2">
-          <h3>Référents d’exploitation</h3>
-          <Card
-            v-for="(exploit_referent, i) in exploit_referents"
-            :key="i"
-            class="relative space-y-2"
-          >
-            <p v-if="error[i]" class="error">
-              Au moins un des champs doit être renseigné.
-            </p>
-            <!-- BOUTON DELETE VISIBLE SEULEMENT EN MODE MODIFICATION / AJOUT, ET À PARTIR DE LA DEUXIÈME ITÉRATION -->
-            <Button
-              v-if="!readonly && i !== 0"
-              class="absolute right-2 top-2 border-0"
-              icon="delete"
-              couleur="secondary"
-              size="s"
-              @click="removeExploitReferent(i)"
-            />
-            <div class="flex items-center pt-6">
-              <Input
-                id="TrefNom"
-                v-model="exploit_referent.nom"
-                :readonly="readonly"
-                :type="'text'"
-                label="Nom"
-                class="w-full"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TrefPrenom"
-                v-model="exploit_referent.prenom"
-                :readonly="readonly"
-                :type="'text'"
-                label="Prénom"
-                class="w-full"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TrefFonction"
-                v-model="exploit_referent.fonction"
-                :readonly="readonly"
-                :type="'text'"
-                label="Fonction"
-                class="w-full"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TrefTelephone"
-                v-model="exploit_referent.telephone"
-                :readonly="readonly"
-                :type="'text'"
-                label="Numéro de téléphone"
-                class="w-full"
-                :validation="[phoneValidation]"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TrefEmail"
-                v-model="exploit_referent.email"
-                v-model:valid="validation.email"
-                :readonly="readonly"
-                :type="'text'"
-                label="Email"
-                class="w-full"
-                :validation="[emailValidation]"
-              />
-            </div>
-          </Card>
-          <Button
-            v-if="!readonly"
-            id="TaddRefExploit"
-            label="Ajouter un référent d'exploitation supplémentaire"
-            icon="add"
-            couleur="secondary"
-            @click="exploit_referents.push({})"
-          />
-        </Card>
-
-        <Card class="space-y-2">
-          <h3>Comptes gestionnaires</h3>
-          <Card
-            v-for="(community_manager, i) in community_managers"
-            :key="i"
-            class="relative space-y-2"
-          >
-            <!-- BOUTON DELETE VISIBLE SEULEMENT EN MODE MODIFICATION / AJOUT, ET À PARTIR DE LA DEUXIÈME ITÉRATION -->
-            <Button
-              v-if="!readonly && i !== 0"
-              class="absolute right-2 top-2 border-0"
-              icon="delete"
-              couleur="secondary"
-              size="s"
-              @click="removeCommunityManager(i)"
-            />
-            <div class="flex items-center pt-6">
-              <Input
-                id="TcomNom"
-                v-model="community_manager.nom"
-                :readonly="readonly"
-                :type="'text'"
-                label="Nom"
-                class="w-full"
-                :required="true"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TcomPrenom"
-                v-model="community_manager.prenom"
-                :readonly="readonly"
-                :type="'text'"
-                label="Prénom"
-                class="w-full"
-                :required="true"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TcomMail"
-                v-model="community_manager.email"
-                v-model:valid="validation.email2"
-                :readonly="readonly"
-                label="Email"
-                class="w-full"
-                :required="true"
-                :validation="[emailValidation]"
-              />
-            </div>
-            <div class="flex items-center">
-              <Input
-                id="TcodePin"
-                v-model="community_manager.codePin"
-                :readonly="readonly"
-                type="text"
-                pattern="\d{6}"
-                label="Code pin carte d'accès"
-                class="w-full"
-                max-length="6"
-                min-length="6"
-                :validation="[codePinValidation]"
-                v-model:valid="validation.codePin"
-                :required="false"
-              />
-            </div>
-            <div v-if="community_manager.qrCode" class="flex items-center">
-              <img
-                alt="qr code"
-                :src="community_manager.qrCode"
-              />
-            </div>
-            <div>
+        <CardModalSection title="RÉFÉRENTS D'EXPLOITATION">
+          <template #content>
+            <Card
+              v-for="(exploit_referent, i) in exploit_referents"
+              :key="i"
+              class="relative space-y-2 mt-4"
+            >
+              <p v-if="error[i]" class="error">
+                Au moins un des champs doit être renseigné.
+              </p>
+              <!-- BOUTON DELETE VISIBLE SEULEMENT EN MODE MODIFICATION / AJOUT, ET À PARTIR DE LA DEUXIÈME ITÉRATION -->
               <Button
-                  id="TImprimeComManager"
-                  label="Imprimer la carte"
-                  icon="print"
-                  couleur="primary"
-                  @click=""
+                v-if="!readonly && i !== 0"
+                class="absolute right-2 top-2 border-0"
+                icon="delete"
+                couleur="secondary"
+                size="s"
+                @click="removeExploitReferent(i)"
               />
-            </div>
-          </Card>
-          <Button
-            v-if="!readonly"
-            id="TaddComManager"
-            label="Ajouter un compte supplémentaire"
-            icon="add"
-            couleur="secondary"
-            @click="community_managers.push({})"
-          />
-        </Card>
+              <div class="flex items-center pt-6">
+                <Input
+                  id="TrefNom"
+                  v-model="exploit_referent.nom"
+                  :readonly="readonly"
+                  type="text"
+                  :inline="true"
+                  label="Nom"
+                  class="w-full"
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  id="TrefPrenom"
+                  v-model="exploit_referent.prenom"
+                  :readonly="readonly"
+                  type="text"
+                  :inline="true"
+                  label="Prénom"
+                  class="w-full"
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  id="TrefFonction"
+                  v-model="exploit_referent.fonction"
+                  :readonly="readonly"
+                  type="text"
+                  :inline="true"
+                  label="Fonction"
+                  class="w-full"
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  id="TrefTelephone"
+                  v-model="exploit_referent.telephone"
+                  :readonly="readonly"
+                  type="text"
+                  label="Numéro de téléphone"
+                  :inline="true"
+                  class="w-full"
+                  :validation="[phoneValidation]"
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  id="TrefEmail"
+                  v-model="exploit_referent.email"
+                  v-model:valid="validation.email"
+                  :readonly="readonly"
+                  type="text"
+                  label="Email"
+                  :inline="true"
+                  class="w-full"
+                  :validation="[emailValidation]"
+                />
+              </div>
+            </Card>
+          </template>
+        </CardModalSection>
+        <ButtonRight
+          v-if="!readonly"
+          id="TaddRefExploit"
+          label="Ajouter un référent d'exploitation supplémentaire"
+          icon="add"
+          couleur="danger"
+          class="ml-4"
+          @click="exploit_referents.push({})"
+        />
+
+        <CardModalSection title="COMPTES GESTIONNAIRES">
+          <template #content>
+            <Card
+              v-for="(community_manager, i) in community_managers"
+              :key="i"
+              class="relative space-y-2 mt-4"
+            >
+              <!-- BOUTON DELETE VISIBLE SEULEMENT EN MODE MODIFICATION / AJOUT, ET À PARTIR DE LA DEUXIÈME ITÉRATION -->
+              <Button
+                v-if="!readonly && i !== 0"
+                class="absolute right-2 top-2 border-0"
+                icon="delete"
+                couleur="secondary"
+                size="s"
+                @click="removeCommunityManager(i)"
+              />
+              <div class="flex items-center pt-6">
+                <Input
+                  id="TcomNom"
+                  v-model="community_manager.nom"
+                  :readonly="readonly"
+                  type="text"
+                  label="Nom"
+                  class="w-full"
+                  :inline="true"
+                  required
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  id="TcomPrenom"
+                  v-model="community_manager.prenom"
+                  :readonly="readonly"
+                  :inline="true"
+                  type="text"
+                  label="Prénom"
+                  class="w-full"
+                  required
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  id="TcomMail"
+                  v-model="community_manager.email"
+                  v-model:valid="validation.email2"
+                  :readonly="readonly"
+                  label="Email"
+                  class="w-full"
+                  :inline="true"
+                  required
+                  :validation="[emailValidation]"
+                />
+              </div>
+              <div class="flex items-center">
+                <Input
+                  id="TcodePin"
+                  v-model="community_manager.codePin"
+                  :readonly="readonly"
+                  type="text"
+                  pattern="\d{6}"
+                  label="Code pin carte d'accès"
+                  class="w-full"
+                  :inline="true"
+                  max-length="6"
+                  min-length="6"
+                  :validation="[codePinValidation]"
+                  v-model:valid="validation.codePin"
+                  :required="false"
+                />
+              </div>
+              <div v-if="community_manager.qrCode" class="flex items-center">
+                <img
+                  alt="qr code"
+                  :src="community_manager.qrCode"
+                />
+              </div>
+            </Card>
+          </template>
+        </CardModalSection>
+        <ButtonRight
+          v-if="!readonly"
+          id="TaddComManager"
+          label="Ajouter un compte gestionnaire supplémentaire"
+          icon="add"
+          couleur="danger"
+          class="ml-4"
+          @click="community_managers.push({})"
+        />
         <MentionChampsObligatoires/>
       </Modal>
     </form>
@@ -373,7 +375,9 @@
 
 <script setup>
 import Button from '../components/common/Button.vue'
+import ButtonRight from '../components/common/ButtonRight.vue'
 import Modal from '../components/common/Modal.vue'
+import CardModalSection from '@components/common/CardModalSection.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
 import Card from '../components/common/Card.vue'
 import Input from '../components/common/Input.vue'
@@ -468,7 +472,7 @@ const saveClient = () => {
     referentExploitations: exploit_referents.value,
     gestionnaireCollectivites: community_managers.value,
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
       pays: 'france',
@@ -526,7 +530,7 @@ const cancel = async () => {
 }
 
 const addressSelect = () => {
-  address.value = address_selected.value.label
+  address.value = address_selected.value.name
 }
 
 const removeExploitReferent = (referent_index) => {

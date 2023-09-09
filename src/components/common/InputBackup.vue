@@ -6,7 +6,7 @@
         :readonly="readonly"
         :id="id"
         @input="inputValidation"
-        :value="value"
+        :value="modelValue || defaultValue"
         :type="type"
         :required="required"
         :pattern="pattern"
@@ -23,63 +23,40 @@
 
 <script setup lang="ts">
 import InputLabel from './InputLabel.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
-interface Props {
-  modelValue?: string | number
-  defaultValue?: string
-  placeholder?: string
-  test?: string
-  label?: string
-  readonly?: boolean
-  inline?: boolean
-  pattern?: string
-  minLength?: number
-  maxLength?: number
-  type?: string
-  id?: string
-  validation?: Function[]
-  valid?: boolean
-  required: boolean
-  disabled?: boolean
-}
-
-
-const props = withDefaults(defineProps<Props>(), {
-  readonly: false,
-  inline: false,
-  valid: false,
-  required: false,
-  disabled: false
-})
-
-const value = computed(() => props.modelValue || props.defaultValue || null);
-
-onMounted(() => {
-  if (props.defaultValue) {
-    inputValidation();
-  }
-})
+const props = defineProps<{
+  modelValue?: string | number,
+  defaultValue?: string,
+  placeholder?: string,
+  test?: string,
+  label?: string,
+  readonly?: boolean,
+  inline?: boolean,
+  pattern?: string,
+  minLength?: number,
+  maxLength?: number,
+  type?: string,
+  id?: string,
+  validation?: Function[],
+  valid?: boolean,
+  required?: boolean,
+  disabled?: boolean,
+}>()
 
 const emits = defineEmits<{
   (e: 'update:modelValue', text: string | number): void
   (e: 'update:valid', valid: boolean): void
 }>()
 
-const inputValidation = (event: any = {}) => {
-  const val = event.target?.value || value.value
-
+const inputValidation = ($event: any) => {
+  const val = $event.target.value
   error.value = ''
   emits('update:valid', true)
   if (props.validation) {
     props.validation.forEach((func: Function) => {
       try {
-        if (func.name === 'codePinValidation') {
-          func(val, props.required)
-        } else {
-          func(val)
-        }
-
+        func(val)
       } catch (e) {
         error.value += e + '<br>'
         emits('update:valid', false)

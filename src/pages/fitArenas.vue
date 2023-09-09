@@ -5,19 +5,29 @@
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700"
+          class="bg-gray-50 text-xs text-gray-700"
         >
           <tr>
-            <th scope="col" class="px-6 py-3"></th>
             <th scope="col" class="px-6 py-3">Nom</th>
             <th scope="col" class="px-6 py-3">Code postal</th>
             <th scope="col" class="px-6 py-3">Ville</th>
+            <th scope="col" class="px-6 py-3"></th>
             <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(fit_arena, i) in fit_arenas" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
+            <td class="px-6 py-4">{{ fit_arena.libelle }}</td>
+            <td class="px-6 py-4">{{ fit_arena.adresse.codePostal }}</td>
+            <td class="px-6 py-4">{{ fit_arena.adresse.ville }}</td>
+            <td class="flex items-center justify-center p-3 gap-4">
+              <Button
+              test="TeditClient"
+              borderless
+              icon="edit"
+              couleur="secondary"
+              @click="editFa(i)"
+              />
               <Button
                 test="TdeleteClient"
                 borderless
@@ -25,29 +35,19 @@
                 couleur="secondary"
                 @click="removeFa(fit_arena.id)"
               />
-              <Button
-                test="TeditClient"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editFa(i)"
-              />
             </td>
-            <td class="px-6 py-4">{{ fit_arena.libelle }}</td>
-            <td class="px-6 py-4">{{ fit_arena.adresse.codePostal }}</td>
-            <td class="px-6 py-4">{{ fit_arena.adresse.ville }}</td>
-            <td class="px-6 py-4">
+            <!-- <td class="px-6 py-4">
               <Button label="Détails" couleur="secondary" @click="showFa(i)" />
-            </td>
+            </td> -->
           </tr>
         </tbody>
       </table>
     </div>
-    <Button
+    <ButtonRight
       id="TaddFitArena"
       label="Ajouter une Fit Arena"
       icon="add"
-      couleur="secondary"
+      couleur="danger"
       @click="addFa"
     />
   </Card>
@@ -56,7 +56,7 @@
       v-if="fa_modal"
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modal_title"
-      @cancel=";(fa_modal = false), cancel()"
+      @cancel="(fa_modal = false), cancel()"
     >
       <div class="flex items-center">
         <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
@@ -81,7 +81,8 @@
           :readonly="readonly"
           :type="'text'"
           label="Nom"
-          :required="true"
+          :inline="true"
+          required
           class="w-full"
         />
       </div>
@@ -140,7 +141,8 @@
           id="TadresseComplement"
           v-model="complement"
           :readonly="readonly"
-          :type="'text'"
+          type="text"
+          :inline="true"
           label="Complément"
           class="w-full"
         />
@@ -151,8 +153,9 @@
           id="TadressePostcode"
           v-model="address_selected.postcode"
           :readonly="readonly"
-          :type="'text'"
-          :required="true"
+          type="text"
+          required
+          :inline="true"
           label="Code postal"
           class="w-full"
           :validation="[zipValidation]"
@@ -164,8 +167,9 @@
           id="TadresseCity"
           v-model="address_selected.city"
           :readonly="readonly"
-          :type="'text'"
-          :required="true"
+          type="text"
+          :inline="true"
+          required
           label="Ville"
           class="w-full"
           :validation="[cityValidation]"
@@ -255,6 +259,7 @@
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
+import ButtonRight from '../components/common/ButtonRight.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
 import InputDescription from '../components/common/InputDescription.vue'
@@ -397,7 +402,7 @@ const saveFA = () => {
     actif: actif.value == true ? actif.value : false,
 
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       complement: complement.value,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
@@ -464,4 +469,8 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
+
+const addressSelect = (event) => {
+  address.value  = address_selected.value.name
+}
 </script>

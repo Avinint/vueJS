@@ -1,13 +1,13 @@
 <template>
-  <table class="w-full text-left">
+  <table class="w-full text-left mt-4">
     <colgroup>
       <col :style="{ width: selectable ? '60px' : '20px' }" />
       <col v-for="_ in columns" />
       <col v-if="editable" style="width: 75px" />
-      <col  v-if="readable" style="width: 75px"/>
+      <col v-if="readable" style="width: 75px"/>
       <col v-if="removable" style="width: 75px" />
     </colgroup>
-    <thead class="h-10 w-full bg-gray-50 text-sm text-gray-700">
+    <thead class="h-10 w-full bg-gray-100 text-sm text-gray-700">
       <th></th>
       <th v-for="column in columns" :key="column.label">
         {{ column.label }}
@@ -20,7 +20,7 @@
       <tr
         v-if="data.length > 0"
         v-for="(item, index) in data"
-        class="h-10 border-x border-b border-gray-50 text-sm text-gray-700"
+        class="h-10 border border-gray-200 text-sm text-gray-700"
       >
         <td class="flex h-10 items-center justify-center">
           <input
