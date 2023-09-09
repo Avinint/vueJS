@@ -18,7 +18,7 @@
         <div v-if="props.type === 'classic'"
           class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
           <Button submit test='TconfirmModal' @click="emit('confirm', $event)" :label="confirmButtonText"
-                  class="bg-red-600 hover:bg-red-800"/>
+                  :icon="icon" class="bg-red-600 hover:bg-red-800"/>
           <slot name="actions"></slot>
           <slot name="cancel">
             <Button test='TcancelModal' @click="emit('cancel', $event)" :label="cancelButtonText" couleur="secondary"/>
@@ -61,6 +61,7 @@ type Props = {
   size: '2xl' | '3xl' | '5xl' | '4xl' | '6xl'
   confirmButtonText: string,
   cancelButtonText: string
+  icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | 'delete' | 'search' | '',
 }
 
 const emit = defineEmits(['confirm', 'cancel', 'delete'])
