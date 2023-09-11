@@ -92,6 +92,13 @@
             <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateFinAdhesion" :disabled="readonly" :formatter="formatter" as-single />
           </div>
           <div class="flex items-center mb-4">
+            <label class="w-1/2 label-text" for="TadhGroupes">Groupes</label>
+            <InputOptions
+              v-model="groupes"
+              :options="getGroupes()"
+            />
+          </div>
+          <!-- <div class="flex items-center mb-4">
             <label class="w-1/2 label-text" for="TadhGroupes">Groupe(s)</label>
             <select
               id="TadhGroupes"
@@ -101,12 +108,12 @@
               <option
                 v-for="unGroupe in listeGroupes"
                 :key="unGroupe.id"
-                :value="unGroupe"
+                :value="unGroupe.libelle"
               >
                 {{ unGroupe.libelle }}
               </option>
             </select>
-          </div>
+          </div> -->
         </template>
       </CardModalSection>
       <CardModalSection title="COORDONNÉES">
@@ -257,11 +264,10 @@
 import dayjs from 'dayjs'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
 import CrudList from '@components/molecules/CrudList.vue'
-import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
 import CardModalSection from '@components/common/CardModalSection.vue'
+import InputOptions from '../components/common/InputOptions.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
-import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
 import { getAdresses } from '../api/address.js'
 import { useUserStore } from '@/stores/user.js'
@@ -274,7 +280,6 @@ import {
   putAdherent,
   selectGroupes
 } from '../api/adherent.ts'
-import { selectOrganismes } from '../api/organisme.ts'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -349,6 +354,7 @@ const validation = ref({})
 const organismes = ref([])
 const listeGroupes = ref([])
 
+const route = useRoute()
 
 function getTableData() {
   return adherents.value.map((adherent) => {
@@ -360,7 +366,15 @@ function getTableData() {
   })
 }
 
-const route = useRoute()
+function getGroupes() {
+  return listeGroupes.value.map((groupe) => {
+    return {
+      id: groupe.id,
+      label: groupe.libelle
+    }
+  })
+}
+
 onMounted(async () => {
   organismeId.value = parseInt(route.params?.id)
   if (organismeId.value > 0) {
@@ -463,7 +477,7 @@ const mapApiToData = (adherent) => {
   dateNaissance.value = [dayjs(adherent.dateNaissance).format(dateFormatFr)]
   dateAdhesion.value = [dayjs(adherent.dateAdhesion).format(dateFormatFr)]
   dateFinAdhesion.value = [dayjs(adherent.dateFinAdhesion).format(dateFormatFr)]
-  groupes.value = adherent.groupes
+  groupes.value = adherent.groupes.map(groupe => groupe.id)
 }
 
 const afficherDate = (date) => dayjs(date).format(dateFormatFr)
@@ -483,7 +497,7 @@ const saveAdherent = () => {
     dateFinAdhesion: dateFinAdhesion.value.length ? dayjs(dateFinAdhesion.value[0], dateFormatFr).format(dateFormatBdd) : null,
     idOrganisme: organismeId.value,
     genre: genre.value,
-    groupes: groupes.value,
+    groupes: groupes.value.map(groupe => { return { id: groupe } }),
     numeroAdherent: numero.value,
     licence: licence.value,
     adresse: adresseSaisie ? {
@@ -536,13 +550,13 @@ const addAdherent = async () => {
 }
 
 watchDebounced(
-    address,
-    async () => {
-      address_selected.value = {}
-      addresses.value = await getAdresses(address.value)
-      address_selected.value = addresses.value[0] ?? {}
-    },
-    { debounce: 500, maxWait: 1000 }
+  address,
+  async () => {
+    address_selected.value = {}
+    addresses.value = await getAdresses(address.value)
+    address_selected.value = addresses.value[0] ?? {}
+  },
+  { debounce: 500, maxWait: 1000 }
 )
 
 const addressSelect = () => {
