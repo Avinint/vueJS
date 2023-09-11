@@ -13,10 +13,10 @@ export const getHeaders = {
   'Content-Type': 'application/ld+json',
 }
 
-export const getQuery = (queryParams = {}) => {
+export const getQuery = (queryParams = {}, ignore = [null, false, '']) => {
   let query = ''
   for (const prop in queryParams) {
-    query += (query.length ? '&' : '?') + prop + '=' + queryParams[prop]
+    if ( !ignore.includes(queryParams[prop])) query += (query.length ? '&' : '?') + prop + '=' + queryParams[prop]
   }
 
   return query

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from "vue";
+import { ref, toRaw } from "vue";
 import { getMenu } from "@api/menu.js";
 
 export const useMenuStore = defineStore('menu', () => {
@@ -30,5 +30,9 @@ export const useMenuStore = defineStore('menu', () => {
         }
       } = await getMenu())
     }
-    return { fetchMenu, clients, fitArenas, organismes, toggleOrganisme, toggleFitArena, toggleClient}
+
+  const getOrganismes = () => organismes.length ? organismes : clients.value.map(({ options: { organismes}}) => toRaw(organismes)).flat()
+
+
+    return { fetchMenu, clients, fitArenas, organismes, getOrganismes, toggleOrganisme, toggleFitArena, toggleClient}
 })

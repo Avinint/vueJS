@@ -15,14 +15,15 @@
         <div class="p-6 space-y-6">
           <slot></slot>
         </div>
+
         <div v-if="props.type === 'classic'" class="flex justify-end items-center p-6 space-x-4 rounded-b">
           <slot name="cancel">
             <Button test='TcancelModal' @click="emit('cancel', $event)" :label="cancelButtonText" couleur="secondary"
               class="text-red-600 border border-red-600" />
           </slot>
           <slot name="actions"></slot>
-          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Enregistrer" couleur="danger"
-            class="hover:bg-red-800" />
+          <Button submit test='TconfirmModal' @click="emit('confirm', $event)" :label="confirmButtonText" couleur="danger"
+                  :icon="icon" class="hover:bg-red-800" />
         </div>
         <div v-if="props.type === 'custom'" class="flex justify-end items-center p-6 space-x-2 rounded-b">
           <slot name="buttons">
@@ -43,10 +44,9 @@
 
           <slot name="actions"></slot>
           <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Enregistrer"
-            class="bg-red-600 w-x hover:bg-red-800" />
+                  class="bg-red-600 w-x hover:bg-red-800"/>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -60,6 +60,7 @@ type Props = {
   size: '2xl' | '3xl' | '5xl' | '4xl' | '6xl'
   confirmButtonText: string,
   cancelButtonText: string
+  icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | 'delete' | 'search' | '',
 }
 
 const emit = defineEmits(['confirm', 'cancel', 'delete'])

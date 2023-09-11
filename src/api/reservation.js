@@ -16,3 +16,6 @@ export const getReservation = async(id) => {
 export const annulerReservation = async(id) => {
   return await put(`${import.meta.env.VITE_API_URL}/api/reservation/annulation/${id}`)
 }
+
+export const getTypes = async() => await get(`${import.meta.env.VITE_API_URL}/api/creneau_types`)
+export const getStatuts = async() => await get(`${import.meta.env.VITE_API_URL}/api/reservation_statuts`)
