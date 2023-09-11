@@ -498,8 +498,6 @@ if (!isValid(validation)) return
 
 const updateOrganismeValidation = async () => {
   try {
-    console.log(idClient.value)
-    console.log(client.value)
     await updateOrganismes(organisme, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {

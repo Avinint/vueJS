@@ -98,12 +98,12 @@
         couleur="secondary"
         @click="setSubmenu('advanced')"
       />
-      <FAButton
+      <!-- <FAButton
         v-if="creneauStore.creneauType && creneauStore.recurrence != undefined"
         label="Récurrence"
         couleur="secondary"
         @click="setSubmenu('recurence')"
-      />
+      /> -->
       <div v-if="submenu == 'advanced'" class="flex gap-5">
         <FAInput
           v-model="creneauStore.dureeActivite"
@@ -322,6 +322,9 @@ export default {
     isOneZoneChecked() {
       return this.creneauStore.zones.length > 0
     },
+    isOneActivityChecked() {
+      return this.creneauStore.activites.length > 0
+    },
     isNotOrganismeOrMaintenance() {
       return (
         this.creneauStore.creneauType !== 2 &&
@@ -418,7 +421,7 @@ export default {
       }
 
       const fitarena_id = parseInt(this.$route.params.id);
-      
+
       if (this.isOneZoneChecked) {
         switch (type_creneau) {
           case 1:
@@ -426,19 +429,25 @@ export default {
             // Before sending it to the API. This has to be done
             // This way because of the unsynchronized data.
             this.updateActivites()
-  
-            if (this.typeAction === 'create') {
-              this.creneauStore.addCreneau(fitarena_id)
-            } else this.creneauStore.editCreneau(fitarena_id)
+
+            if (!this.isOneActivityChecked) {
+              this.errorMessage = true
+              break
+            } else {
+              if (this.typeAction === 'create') {
+                this.creneauStore.addCreneau(fitarena_id)
+              } else this.creneauStore.editCreneau(fitarena_id)
+              this.$emit('closeModalCreneau')
+            }
             break
   
           case 2:
             if (this.typeAction === 'create') {
               this.creneauStore.addCreneauOrganisme(fitarena_id)
             } else this.creneauStore.editCreneauOrganisme(fitarena_id)
+            this.$emit('closeModalCreneau')
             break
         }
-        this.$emit('closeModalCreneau')
       } else {
         this.errorMessage = true
       }

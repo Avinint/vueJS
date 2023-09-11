@@ -134,7 +134,6 @@ export default {
       { id: this.zones[0].id, title: this.zones[0].libelle },
     ]
     this.calendarOptions.scrollTime = this.planningStore.scrollTime
-    console.log(this.calendarOptions.scrollTime)
   },
   methods: {
     async closeModal() {
