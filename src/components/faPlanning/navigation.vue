@@ -36,8 +36,7 @@
                   ? 'Journée >'
                   : 'Semaine >'
               "
-              couleur="secondary"
-              icon=""
+              couleur="info"
               class="w-24"
               :submit="false"
               @click="toggleView()"
@@ -49,13 +48,13 @@
           <template #content>
               <Button
                 label="<"
-                couleur="secondary"
+                couleur="info"
                 icon="prev"
                 :submit="false"
                 class="m-0"
                 @click="prev()"
               />
-              <div class="min-w-max cursor-default px-4">
+              <div class="min-w-max h-9 flex items-center cursor-default px-4 bg-gray-400 text-white rounded-lg">
                 {{ planningStore.getCurrentDateStart }}
                 <template v-if="planningStore.currentViewName === 'day'">
                   - {{ planningStore.getCurrentDateEnd }}
@@ -63,7 +62,7 @@
               </div>
               <Button
                 label=">"
-                couleur="secondary"
+                couleur="info"
                 icon="next"
                 :submit="false"
                 @click="next()"
@@ -71,7 +70,7 @@
               <Button
                 class="cursor-default"
                 :label="'S' + planningStore.currentWeek"
-                couleur="secondary"
+                couleur="info"
                 icon="next"
                 :submit="false"
               />
