@@ -2,7 +2,7 @@
   <nav
     class="flex space-y-3 p-4"
   >
-    <section class="flex justify-between gap-2">
+    <section class="flex w-full justify-between gap-2">
       <NavigationSection>
         <template #title> Zones actives </template>
         <template #content>
