@@ -27,7 +27,7 @@
               couleur="secondary"
               icon=""
               :submit="false"
-              class="mr-2"
+              class="mr-2 text-black"
               @click="today()"
             />
             <Button
@@ -54,7 +54,7 @@
                 class="m-0"
                 @click="prev()"
               />
-              <div class="min-w-max h-9 flex items-center cursor-default px-4 bg-gray-400 text-white rounded-lg">
+              <div class="min-w-max h-9 flex items-center cursor-default px-4 bg-gray-300 text-black rounded-lg">
                 {{ planningStore.getCurrentDateStart }}
                 <template v-if="planningStore.currentViewName === 'day'">
                   - {{ planningStore.getCurrentDateEnd }}
