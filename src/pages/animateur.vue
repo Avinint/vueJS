@@ -317,6 +317,9 @@ const mapApiToData = (animateur) => {
   for (const prop in animateur.carteActive) {
     carteActive.value[prop] = animateur.carteActive[prop]
   }
+  carteActive.value.nom = animateur.nom
+  carteActive.value.prenom = animateur.prenom
+  carteActive.value.type = "Animateur"
 }
 
 const hydrateAnimateur = () => {
@@ -331,6 +334,7 @@ const hydrateAnimateur = () => {
     titulaireCarte: titulaireCarte.value,
     carteActive: ref(carteActive),
   }
+
   animateur.value.carteActive.actif = animateur.value.titulaireCarte
 
   if (id_selected.value) {
