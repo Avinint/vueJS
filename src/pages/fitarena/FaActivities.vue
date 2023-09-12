@@ -1,11 +1,21 @@
 <template>
+  <!-- <CrudListAdmin
+    entity="activité"
+    plural="activités pratiquables dans la Fit Arena"
+    :columns="crud_columns"
+    :data="getTableData()"
+    :can-all="isAdmin || isGestCo || isGestOrg"
+    @entity:new="createAnimateur"
+    @entity:edit="editAnimateur"
+    @entity:remove="removeAnimateur"
+  /> -->
   <Card class="space-y-3">
     <h1>Activités pratiquables dans la fit arena</h1>
 
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs text-gray-700"
+          class="text-xs text-gray-700 bg-gray-200"
         >
           <tr>
             <th scope="col" class="px-6 py-3">Statut</th>
@@ -37,7 +47,7 @@
             <td class="px-6 py-4">{{ act.libelle }}</td>
 
             <td class="px-6 py-4">{{ act.ordre }}</td>
-            <td class="flex items-center justify-center p-3 gap-4">
+            <td class="flex items-center justify-end p-3 gap-8">
               <div @click="showActivite(i)" class="cursor-pointer">
                 <svg width="26" height="26" viewBox="0 0 32 32">
                   <path
@@ -235,6 +245,7 @@ import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
+// import CrudListAdmin from '@components/molecules/CrudListAdmin.vue'
 import { getTypeActivites } from '../../api/typeActivite.js'
 import {
   deleteActivites,
@@ -255,6 +266,12 @@ const notify = () => {
     autoClose: 1000,
   }) // ToastOptions
 }
+
+// const crud_columns = [
+//   { data: (e) => e.actif, label: 'Statut' },
+//   { data: (e) => e.libelle, label: 'Libellé' },
+//   { data: (e) => e.ordre, label: 'Ordre' }
+// ]
 
 const activite_modal = ref(false)
 const readonly = ref(false)
@@ -279,8 +296,18 @@ onMounted(async () => {
 })
 
 watch(() => props.id, async (  ) => {
-    activites.value = await getActivites(props.id, 1, '&order=asc')
-  })
+  activites.value = await getActivites(props.id, 1, '&order=asc')
+})
+
+// function getTableData() {
+//   return activites.value.map((activite) => {
+//     return {
+//       data: activite,
+//       editable: true,
+//       removable: true,
+//     }
+//   })
+// }
 
 const addActivite = () => {
   activite.value = {}
