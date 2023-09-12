@@ -335,7 +335,7 @@
                     <div class="flex items-center justify-between mt-10">
                       <div v-if="gestionnaire.carteAcces[0].qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
                         <img
-                          alt="zeuf"
+                          alt="QR CODE Fit Arena"
                           :src="gestionnaire.carteAcces[0].qrCode"
                         />
                       </div>

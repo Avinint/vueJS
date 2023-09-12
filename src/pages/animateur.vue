@@ -9,6 +9,10 @@
     @entity:edit="editAnimateur"
     @entity:remove="removeAnimateur"
   />
+
+  <div v-if="carteActive?.actif" class="offset">
+    <CarteAcces :carte="carteActive"/>
+  </div>
   <form @submit.prevent="hydrateAnimateur">
     <Modal
       v-if="afficherFormulaire"
@@ -119,6 +123,7 @@
                   couleur="danger"
                   class="w-full"
                   label="Imprimer le QR Code"
+                  @click="imprimerPdf(gestionnaire)"
                 />
               </div>
             </div>
@@ -178,12 +183,14 @@ import {
 import { selectOrganismes } from '../api/organisme.ts'
 import CrudList from '@components/molecules/CrudList.vue'
 
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { isValid, emailValidation, codePinValidation, phoneValidation } from '@/validation.js'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import html2pdf from "vue3-html2pdf";
+import CarteAcces from "@/pdf/CarteAcces.vue";
 
 const { isAdmin, isGestCo, isGestOrg } = useUserStore()
 const modaleConfirmation = ref(false)
@@ -361,11 +368,17 @@ const addAnimateur = async () => {
 
   animateurs.value = await getAnimateursParOrganisme(organismeId.value)
 }
-//
-// watch(organismeValue,  (newVal, oldVal) =>
-// {
-//     organismeId.value = newVal.id;
-// })
+
+const imprimerPdf = async () => {
+
+  if (carteActive.value?.actif) {
+    await nextTick()
+    const template = document.querySelector('.document-a-imprimer')
+    try {
+      html2pdf().from(template).save()
+    } catch(e) {console.log ("impression de template pdf hors écran") };
+  }
+}
 
 const removeFrom = (refArray, i) => {
   refArray.value = refArray.value
@@ -393,5 +406,10 @@ const removeFrom = (refArray, i) => {
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.offset {
+  position: absolute;
+  right: -2000px;
 }
 </style>
