@@ -259,7 +259,7 @@
         <CardModalSection title="COMPTES GESTIONNAIRES">
           <template #content>
             <Card
-              v-for="(community_manager, i) in community_managers"
+              v-for="(gestionnaire, i) in community_managers"
               :key="i"
               class="relative space-y-2 mt-4"
             >
@@ -275,7 +275,7 @@
               <div class="flex items-center pt-6">
                 <Input
                   id="TcomNom"
-                  v-model="community_manager.nom"
+                  v-model="gestionnaire.nom"
                   :readonly="readonly"
                   type="text"
                   label="Nom"
@@ -287,7 +287,7 @@
               <div class="flex items-center">
                 <Input
                   id="TcomPrenom"
-                  v-model="community_manager.prenom"
+                  v-model="gestionnaire.prenom"
                   :readonly="readonly"
                   :inline="true"
                   type="text"
@@ -299,7 +299,7 @@
               <div class="flex items-center">
                 <Input
                   id="TcomMail"
-                  v-model="community_manager.email"
+                  v-model="gestionnaire.email"
                   v-model:valid="validation.email2"
                   :readonly="readonly"
                   label="Email"
@@ -312,7 +312,7 @@
               <div class="flex items-center">
                 <Input
                   id="TcodePin"
-                  v-model="community_manager.codePin"
+                  v-model="gestionnaire.codePin"
                   :readonly="readonly"
                   type="text"
                   pattern="\d{6}"
@@ -326,12 +326,33 @@
                   :required="false"
                 />
               </div>
-              <div v-if="community_manager.qrCode" class="flex items-center">
-                <img
-                  alt="qr code"
-                  :src="community_manager.qrCode"
-                />
+              <div v-if="donneesPDF !== null" class="offset">
+              <CarteAcces :carte="donneesPDF"/>
               </div>
+              <CardModalSection class="pt-6" v-if="gestionnaire.afficherCarte" title="QR CODE">
+                <template #content>
+                  <div>
+                    <div class="flex items-center justify-between mt-10">
+                      <div v-if="gestionnaire.carteAcces[0].qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
+                        <img
+                          alt="zeuf"
+                          :src="gestionnaire.carteAcces[0].qrCode"
+                        />
+                      </div>
+                      <div class="w-8/12">
+                        <ButtonRight
+                          id="TGestColQRCodeImprimer"
+                          icon="print"
+                          couleur="danger"
+                          class="w-full"
+                          label="Imprimer le QR Code"
+                          @click="imprimerPdf(gestionnaire)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </CardModalSection>
             </Card>
           </template>
         </CardModalSection>
@@ -395,12 +416,15 @@ import {
   cityValidation,
   phoneValidation, codePinValidation,
 } from '../validation.js'
-import { onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 import { useMenuStore } from "@stores/menu.js";
+import { getCarteAcces } from "@api/carte_acces.js";
+import html2pdf from "vue3-html2pdf";
+import CarteAcces from "@/pdf/CarteAcces.vue";
 
 const { clients: menuClients } = useMenuStore()
 const client_modal = ref(false)
@@ -430,7 +454,7 @@ const exploit_referents = ref([])
 const community_managers = ref([])
 
 const validation = ref({})
-
+const donneesPDF = ref(null)
 
 
 onMounted(async () => {
@@ -526,7 +550,7 @@ const cancel = async () => {
   address.value = []
   complement.value = ''
   community_managers.value = []
-
+  donneesPDF.value = null
 }
 
 const addressSelect = () => {
@@ -569,7 +593,7 @@ const showClient = (i) => {
 }
 
 const mapApiToData = (client) => {
-  community_managers.value = client.gestionnaireCollectivites
+  community_managers.value = client.gestionnaireCollectivites?.map(gest => ({ afficherCarte: !!gest.codePin?.length, ...gest}))
   exploit_referents.value = client.referentExploitations
   address_selected.value = {
     address: client.adresse.adresse,
@@ -638,6 +662,19 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
+
+const getDonneesCarte = async (gestionnaire) => (await getCarteAcces(gestionnaire.carteAcces[0].id)) ?? null
+
+const imprimerPdf = async (gestionnaire) => {
+  donneesPDF.value = await getDonneesCarte(gestionnaire)
+  if (donneesPDF.value !== null) {
+    await nextTick()
+    const template = document.querySelector('.document-a-imprimer')
+    try {
+      html2pdf().from(template).save()
+    } catch(e) {console.log ("impression de template pdf hors écran") };
+  }
+}
 </script>
 
 <style scoped>
@@ -645,5 +682,9 @@ watchDebounced(
   color: #de001a;
   font-size: 16px;
   font-weight: 700;
+}
+.offset {
+  position: absolute;
+  right: -2000px;
 }
 </style>
