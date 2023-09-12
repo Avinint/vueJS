@@ -118,6 +118,9 @@ export default {
   methods: {
     today() {
       this.calendarApi.today()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
     },
     prev() {
       this.calendarApi.prev()
