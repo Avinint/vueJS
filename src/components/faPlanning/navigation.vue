@@ -6,7 +6,8 @@
       <NavigationSection>
         <template #title> Zones actives </template>
         <template #content>
-          <Button
+          <div class="flex flex-wrap gap-1">
+            <Button
             v-for="zone in zones"
             :key="zone.id"
             :label="zone.libelle"
@@ -15,7 +16,8 @@
             class="mr-2"
             :class="{ active: planningStore.isZoneActive(zone.id) }"
             @click="filterByZone(zone.id)"
-          />
+            />
+          </div>
         </template>
       </NavigationSection>
       <div class="flex">
@@ -27,7 +29,7 @@
               couleur="secondary"
               icon=""
               :submit="false"
-              class="mr-2"
+              class="mr-2 text-black"
               @click="today()"
             />
             <Button
@@ -54,7 +56,7 @@
                 class="m-0"
                 @click="prev()"
               />
-              <div class="min-w-max h-9 flex items-center cursor-default px-4 bg-gray-400 text-white rounded-lg">
+              <div class="min-w-max h-9 flex items-center cursor-default px-4 bg-gray-300 text-black rounded-lg">
                 {{ planningStore.getCurrentDateStart }}
                 <template v-if="planningStore.currentViewName === 'day'">
                   - {{ planningStore.getCurrentDateEnd }}
@@ -116,6 +118,9 @@ export default {
   methods: {
     today() {
       this.calendarApi.today()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
     },
     prev() {
       this.calendarApi.prev()
