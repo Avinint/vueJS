@@ -3,7 +3,7 @@ import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
 export async function getPlanning(
-  debut: number,
+  debut: string,
   fit_arena: number,
   duree: number,
   zone: string,

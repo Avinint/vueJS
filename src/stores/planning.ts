@@ -80,8 +80,9 @@ export const usePlanningStore = defineStore('planning', {
           ? this.getDebutOfWeek
           : this.getDebutOfDay
 
+      const date_debut = new Date(debut * 1000);
       const response = await getPlanning(
-        debut,
+        date_debut.toISOString(),
         this.filters.fit_arena,
         this.filters.duree,
         this.filters.zone.join(','),
@@ -95,8 +96,9 @@ export const usePlanningStore = defineStore('planning', {
           ? this.getDebutOfWeek
           : this.getDebutOfDay
 
+      const date_debut = new Date(debut * 1000);
       const response = await getPlanning(
-        debut,
+        date_debut.toISOString(),
         this.filters.fit_arena,
         this.filters.duree,
         this.filters.zone.join(','),
