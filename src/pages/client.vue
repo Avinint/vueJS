@@ -326,23 +326,17 @@
                   :required="false"
                 />
               </div>
-              <div v-if="gestionnaire.qrCode" class="flex items-center">
-                <img
-                  alt="qr code"
-                  :src="gestionnaire.qrCode"
-                />
-              </div>
-              <div v-if="donneesPDF !== null" class="flex items-center offset">
+              <div v-if="donneesPDF !== null" class="offset">
               <CarteAcces :carte="donneesPDF"/>
               </div>
               <CardModalSection class="pt-6" v-if="gestionnaire.afficherCarte" title="QR CODE">
                 <template #content>
                   <div>
                     <div class="flex items-center justify-between mt-10">
-                      <div v-if="gestionnaire.infoCarte?.qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
+                      <div v-if="gestionnaire.carteAcces[0].qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
                         <img
-                          alt="QR CODE Fit Arena"
-                          :src="gestionnaire.infoCarte?.qrCode"
+                          alt="zeuf"
+                          :src="gestionnaire.carteAcces[0].qrCode"
                         />
                       </div>
                       <div class="w-8/12">
@@ -669,10 +663,7 @@ watchDebounced(
   { debounce: 500, maxWait: 1000 }
 )
 
-const getDonneesCarte = async (gestionnaire) => {
-  alert(gestionnaire.carteAcces.id)
-  return (await getCarteAcces(gestionnaire.carteAcces)) ?? null
-}
+const getDonneesCarte = async (gestionnaire) => (await getCarteAcces(gestionnaire.carteAcces[0].id)) ?? null
 
 const imprimerPdf = async (gestionnaire) => {
   donneesPDF.value = await getDonneesCarte(gestionnaire)
@@ -691,5 +682,9 @@ const imprimerPdf = async (gestionnaire) => {
   color: #de001a;
   font-size: 16px;
   font-weight: 700;
+}
+.offset {
+  position: absolute;
+  right: -2000px;
 }
 </style>
