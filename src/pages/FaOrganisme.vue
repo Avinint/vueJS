@@ -222,12 +222,6 @@
                 :validation="[emailValidation]"
               />
             </div>
-            <div v-if="carte_selected !== null" class="flex items-center">
-              <CarteAcces :carte="carte_selected"/>
-            </div>
-
-            <Button @click="imprimerPdf(gestionnaire)" label="Imprimer"
-                    class="bg-red-600 hover:bg-red-800 text-white"/>
 
             <div class="flex items-center">
               <Input
@@ -244,9 +238,34 @@
                 :required="false"
               />
             </div>
-            <div v-if="gestionnaire.qrCode" class="flex items-center">
-              <img alt="qr code" :src="gestionnaire.qrCode" />
+            <div v-if="donneesPDF !== null" class="flex items-center offset">
+              <CarteAcces :carte="donneesPDF"/>
             </div>
+            <CardModalSection class="pt-6" v-if="gestionnaire.afficherCarte" title="QR CODE">
+              <template #content>
+                <div>
+                  <p class="text-info">Le gestionnaire peut retrouver son QR code sur son profil Fit Arena en se connectant à fit-arena.fr via l’adresse mail renseignée ci-dessus.</p>
+                  <div class="flex items-center justify-between mt-10">
+                    <div v-if="gestionnaire.infoCarte?.qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
+                      <img
+                        alt="QR CODE Fit Arena"
+                        :src="gestionnaire.infoCarte?.qrCode"
+                      />
+                    </div>
+                    <div class="w-8/12">
+                      <ButtonRight
+                        id="TGestOrgQRCodeImprimer"
+                        icon="print"
+                        couleur="danger"
+                        class="w-full"
+                        label="Imprimer le QR Code"
+                        @click="imprimerPdf(gestionnaire)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </CardModalSection>
           </Card>
 
           <Button
@@ -321,6 +340,8 @@ import html2pdf from 'vue3-html2pdf'
 import CarteAcces from "@/pdf/CarteAcces.vue";
 import { getCarteAcces } from "@api/carte_acces.js";
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import CardModalSection from "@components/common/CardModalSection.vue";
+import ButtonRight from "@components/common/ButtonRight.vue";
 
 const { isAdmin, isGestCo } = useUserStore()
 const crud_columns = [
@@ -364,7 +385,7 @@ const clients = ref([])
 const validation = ref({})
 const gestionnairesOrganisme = ref([])
 
-const carte_selected = ref(null)
+const donneesPDF = ref(null)
 
 watch(() => route.params, async () => {
   getOrganismesParClient(route.params.id).then(response => {
@@ -401,7 +422,7 @@ const reset = async () => {
   address.value = ''
   id_selected.value = 0
   address_selected.value = {}
-  carte_selected.value = null
+  donneesPDF.value = null
 }
 
 const cancel = () => {
@@ -447,7 +468,8 @@ const mapApiToData = (organisme) => {
   name.value = organisme.libelle
   actif.value = organisme.actif
   client.value = idClient.value
-  gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
+  gestionnairesOrganisme.value = organisme.gestionnaireOrganismes?.map(gest =>  ({afficherCarte: !!gest.codePin?.length ?? false, ...gest})) ??  []
+
 
   address_selected.value = {
     address: organisme.adresse.adresse,
@@ -551,11 +573,13 @@ const getDonneesCarte = async (gestionnaire) => {
 }
 
 const imprimerPdf = async (gestionnaire) => {
-  carte_selected.value = await getDonneesCarte(gestionnaire)
-  if (carte_selected.value !== null) {
+  donneesPDF.value = await getDonneesCarte(gestionnaire)
+  if (donneesPDF.value !== null) {
     await nextTick()
     const template = document.querySelector('.document-a-imprimer')
-    html2pdf().from(template).save()
+    try {
+      html2pdf().from(template).save()
+    } catch(e) {console.log ("impression de template pdf hors écran") };
   }
 }
 
@@ -564,3 +588,10 @@ const addressSelect = (event) => {
 }
 
 </script>
+
+<style scoped>
+ .offset {
+   position: absolute;
+   right: -2000px;
+ }
+</style>
