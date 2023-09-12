@@ -145,6 +145,7 @@
                 type="checkbox"
                 :value="zone.id"
                 class="hidden"
+                @click="selectActivities(zone)"
               />
               <label
                 class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
@@ -364,6 +365,19 @@ export default {
       }
 
       this.submenu = type;
+    },
+    selectActivities(zone) {
+      const isChecked = this.isZoneChecked(zone.id); 
+      console.log(zone);
+      if(!isChecked) {
+        for(const activity of zone.zoneActivites) {
+          activity.activite.checked = true;
+        }
+      } else {
+        for(const activity of zone.zoneActivites) {
+          activity.activite.checked = false;
+        }
+      }
     },
     delete_creneau() {
       if(confirm('Souhaitez vous vraiment supprimer le créneau ?')) {

@@ -2,11 +2,12 @@
   <nav
     class="flex space-y-3 p-4"
   >
-    <section class="flex w-full justify-between gap-2">
+    <section class="flex justify-between gap-2">
       <NavigationSection>
         <template #title> Zones actives </template>
         <template #content>
-          <Button
+          <div class="flex flex-wrap gap-1">
+            <Button
             v-for="zone in zones"
             :key="zone.id"
             :label="zone.libelle"
@@ -15,7 +16,8 @@
             class="mr-2"
             :class="{ active: planningStore.isZoneActive(zone.id) }"
             @click="filterByZone(zone.id)"
-          />
+            />
+          </div>
         </template>
       </NavigationSection>
       <div class="flex">
