@@ -239,7 +239,7 @@
               />
             </div>
             <div v-if="donneesPDF !== null" class="flex items-center offset">
-              <CarteAcces :carte="donneesPDF"/>
+              <CarteAcces :carte="donneesPDF" @impression-terminee="templatePDFVisible = false"/>
             </div>
             <CardModalSection class="pt-6" v-if="gestionnaire.afficherCarte" title="QR CODE">
               <template #content>
@@ -386,6 +386,7 @@ const validation = ref({})
 const gestionnairesOrganisme = ref([])
 
 const donneesPDF = ref(null)
+const templatePDFVisible = ref(false)
 
 watch(() => route.params, async () => {
   getOrganismesParClient(route.params.id).then(response => {
@@ -573,14 +574,11 @@ const getDonneesCarte = async (gestionnaire) => {
 }
 
 const imprimerPdf = async (gestionnaire) => {
+  templatePDFVisible.value = true
+
   donneesPDF.value = await getDonneesCarte(gestionnaire)
-  if (donneesPDF.value !== null) {
-    await nextTick()
-    const template = document.querySelector('.document-a-imprimer')
-    try {
-      html2pdf().from(template).save()
-    } catch(e) {console.log ("impression de template pdf hors écran") };
-  }
+  await nextTick()
+  donneesPDF.value = null
 }
 
 const addressSelect = (event) => {
