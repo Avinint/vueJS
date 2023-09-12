@@ -11,7 +11,7 @@
   />
 
   <div v-if="carteActive?.actif" class="offset">
-    <CarteAcces :carte="carteActive"/>
+    <CarteAcces v-if="templatePDFVisible" :carte="carteActive" @impression-terminee="templatePDFVisible = false"/>
   </div>
   <form @submit.prevent="hydrateAnimateur">
     <Modal
@@ -218,6 +218,7 @@ const modal_title = ref('')
 let client = ref({})
 const validation = ref({})
 const organismes = ref([])
+const templatePDFVisible = ref(false)
 
 const crud_columns = [
   { data: (e) => e.nom, label: 'Nom' },
@@ -369,14 +370,10 @@ const addAnimateur = async () => {
   animateurs.value = await getAnimateursParOrganisme(organismeId.value)
 }
 
-const imprimerPdf = async () => {
+const imprimerPdf = () => {
 
   if (carteActive.value?.actif) {
-    await nextTick()
-    const template = document.querySelector('.document-a-imprimer')
-    try {
-      html2pdf().from(template).save()
-    } catch(e) {console.log ("impression de template pdf hors écran") };
+    templatePDFVisible.value = true
   }
 }
 
@@ -409,7 +406,9 @@ const removeFrom = (refArray, i) => {
 }
 
 .offset {
-  position: absolute;
-  right: -2000px;
+  .offset {
+    position: absolute;
+    right: -2000px;
+  }
 }
 </style>
