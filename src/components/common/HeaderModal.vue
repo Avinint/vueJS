@@ -1,17 +1,22 @@
 <template>
   <div class="flex items-center">
     <div class="divider"></div>
-    <h2 class="ml-4 header-text font-medium">{{ text }}</h2>
+    <h2 :class="{ uppercase }" class="ml-4 header-text font-medium">{{ text }}</h2>
   </div>
 </template>
 
 <script>
 export default {
   name: "HeaderModal",
-  props: {
-    text: String
-  }
 }
+</script>
+
+<script setup>
+ defineProps({
+   text: String,
+   uppercase: {type: Boolean, default: false},
+
+ })
 </script>
 
 <style scoped>
