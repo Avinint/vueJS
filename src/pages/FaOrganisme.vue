@@ -236,7 +236,7 @@
                   >
                   <label class="relative inline-flex cursor-pointer items-center">
                     <input
-                      v-model="titulaireCarte"
+                      v-model="gestionnaire.titulaireCarte"
                       :disabled="readonly"
                       type="checkbox"
                       :value="false"
@@ -247,7 +247,7 @@
                     ></div>
                   </label>
                 </div>
-                <div class="flex items-center"  v-if="titulaireCarte">
+                <div class="flex items-center"  v-if="gestionnaire.titulaireCarte">
                   <Input
                     id="TcodePin"
                     v-model="gestionnaire.codePin"
@@ -407,7 +407,6 @@ const clients = ref([])
 const validation = ref({})
 const gestionnairesOrganisme = ref([])
 
-const titulaireCarte = ref(false)
 const donneesPDF = ref(null)
 const templatePDFVisible = ref(false)
 
@@ -447,7 +446,6 @@ const reset = async () => {
   id_selected.value = 0
   address_selected.value = {}
   donneesPDF.value = null
-  titulaireCarte.value = false
 }
 
 const cancel = () => {
@@ -493,7 +491,10 @@ const mapApiToData = (organisme) => {
   name.value = organisme.libelle
   actif.value = organisme.actif
   client.value = idClient.value
-  gestionnairesOrganisme.value = organisme.gestionnaireOrganismes?.map(gest =>  ({afficherCarte: !!gest.codePin?.length ?? false, ...gest})) ??  []
+  gestionnairesOrganisme.value = organisme.gestionnaireOrganismes?.map(gest =>  ({
+    afficherCarte: !!gest.codePin?.length,
+    titulaireCarte: !!gest.codePin?.length,
+    ...gest})) ??  []
 
 
   address_selected.value = {
