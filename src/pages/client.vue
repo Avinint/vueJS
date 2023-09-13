@@ -255,7 +255,9 @@
           class="ml-4"
           @click="exploit_referents.push({})"
         />
-
+        <div v-if="donneesPDF !== null" class="offset">
+          <CarteAcces :carte="donneesPDF" @impression-terminee="templatePDFVisible = false"/>
+        </div>
         <CardModalSection title="COMPTES GESTIONNAIRES">
           <template #content>
             <Card
@@ -272,7 +274,7 @@
                 size="s"
                 @click="removeCommunityManager(i)"
               />
-              <div class="flex items-center pt-6">
+              <div class="flex items-center">
                 <Input
                   id="TcomNom"
                   v-model="gestionnaire.nom"
@@ -326,9 +328,42 @@
                   :required="false"
                 />
               </div>
-              <div v-if="donneesPDF !== null" class="offset">
-              <CarteAcces :carte="donneesPDF" @impression-terminee="templatePDFVisible = false"/>
-              </div>
+              <div class="h-4"/>
+              <CardModalSection title="Carte d'accès">
+                <div class="my-6 flex items-center">
+                  <p class="w-4/12 label-text"
+                  >Titulaire d'une carte d'accès :</p
+                  >
+                  <label class="relative inline-flex cursor-pointer items-center">
+                    <input
+                      v-model="titulaireCarte"
+                      :disabled="readonly"
+                      type="checkbox"
+                      :value="false"
+                      class="peer sr-only"
+                    />
+                    <div
+                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                    ></div>
+                  </label>
+                </div>
+                <div class="flex items-center"  v-if="titulaireCarte">
+                  <Input
+                    id="TcodePin"
+                    v-model="gestionnaire.codePin"
+                    inline
+                    :readonly="readonly"
+                    pattern="\d{6}"
+                    label="Code PIN"
+                    class="w-full"
+                    max-length="6"
+                    min-length="6"
+                    :validation="[codePinValidation]"
+                    v-model:valid="validation.codePin"
+                    required
+                  />
+                </div>
+              </CardModalSection>
               <CardModalSection class="pt-6" v-if="gestionnaire.afficherCarte" title="QR CODE">
                 <template #content>
                   <div>
@@ -456,6 +491,7 @@ const community_managers = ref([])
 const validation = ref({})
 const donneesPDF = ref(null)
 const templatePDFVisible = ref(false)
+const titulaireCarte = ref(false)
 
 
 onMounted(async () => {
@@ -552,6 +588,7 @@ const cancel = async () => {
   complement.value = ''
   community_managers.value = []
   donneesPDF.value = null
+  titulaireCarte.value = false
 }
 
 const addressSelect = () => {
