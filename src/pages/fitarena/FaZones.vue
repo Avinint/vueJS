@@ -82,9 +82,10 @@
           id="TEspaceLibelle"
           v-model="subEspace.libelle"
           :readonly="readonly"
-          :type="'text'"
+          type="text"
           label="Nom"
-          :required="true"
+          :inline="true"
+          required
           class="w-full"
         />
       </div>
@@ -113,9 +114,10 @@
           v-if="!readonly"
           id="TEspaceOrdre"
           v-model="subEspace.ordre"
-          :type="'number'"
+          type="number"
           label="Ordre"
-          :required="true"
+          required
+          :inline="true"
           class="w-full"
         />
         <Input
@@ -129,10 +131,10 @@
         />
       </div>
       <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900"
+        <span class="w-1/2 mr-3 text-sm font-medium text-gray-900"
           >Actif :
         </span>
-        <label class="relative inline-flex cursor-pointer items-center">
+        <label class="relative inline-flex w-full cursor-pointer items-center">
           <input
             v-model="subEspace.actif"
             :disabled="readonly == true ? true : false"
@@ -307,7 +309,7 @@ const mapApiToData = async (espaceTemp) => {
   espace_selected.value = espaceParent.id
   subEspace.value = espaceTemp
   id_selected.value = espaceTemp.id
-  //Je cherche l'espace parent si il existe
+  // Je cherche l'espace parent si il existe
 }
 
 const saveEspace = async () => {

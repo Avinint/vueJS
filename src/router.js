@@ -1,4 +1,6 @@
 import { createWebHistory, createRouter } from 'vue-router'
+import { useUserStore } from './stores/user.js'
+
 import Login from './pages/login.vue'
 import Admin from './pages/admin.vue'
 import User from './pages/user.vue'
@@ -11,6 +13,7 @@ import FaSpaces from './pages/fitarena/FaSpaces.vue'
 import FaWeb from './pages/fitarena/FaWeb.vue'
 import FaSubSpaces from './pages/fitarena/FaSubSpaces.vue'
 import FaActualities from './pages/fitarena/FaActualities.vue'
+import FaSupervision from './pages/fitarena/FaSupervision.vue'
 import FaZones from './pages/fitarena/FaZones.vue'
 import FaActivitiesByZone from './pages/fitarena/FaActivitiesByZone.vue'
 import FaActivities from './pages/fitarena/FaActivities.vue'
@@ -19,8 +22,6 @@ import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
 import FaPlanning from './pages/fitarena/FaPlanning.vue'
 import FaOrganisme from './pages/FaOrganisme.vue'
 import OgPlanning from './pages/organisme/OgPlanning.vue'
-
-import { useUserStore } from './stores/user.js'
 import Animateur from '@pages/animateur.vue'
 import Adherent from '@pages/Adherent.vue'
 import AdherentGroupe from "@pages/AdherentGroupe.vue";
@@ -277,6 +278,18 @@ const routes = [
               label: '',
               link: 'fitarena/',
             },**/
+          ],
+        },
+      },
+      {
+        path: 'supervision',
+        component: FaSupervision,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
           ],
         },
       },
