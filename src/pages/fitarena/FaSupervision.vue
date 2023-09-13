@@ -43,8 +43,8 @@ onMounted(async () => {
 
 const openCA = async (caId) => {
   const data = {
-    id_arena: 4,
-    id_ca: 2
+    id_arena: fitArenaId,
+    id_ca: caId
   }
   await postControleAcces(data)
 }
