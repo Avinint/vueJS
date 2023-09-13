@@ -215,6 +215,10 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
             label: 'Paramètres de la Fit Arena',
             path: `/fitarena/${fa.id}/params`
           },
+          {
+            label: 'Supervision de la Fit Arena',
+            path: `/fitarena/${fa.id}/supervision`
+          },
         ]
 
         return {
