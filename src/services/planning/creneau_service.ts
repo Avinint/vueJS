@@ -88,7 +88,7 @@ export function makeCreneauOGEditContract(
       animateurLabellise: creneau.animateurLabellise,
       creneauType: creneau.creneauType,
       dureeActivite: getCreneauDuration(creneau.heureDebut, creneau.heureFin),
-      dureeInterCreneau: creneau.dureeInterCreneau,
+      dureeInterCreneau: 0,
       nbParticipants: creneau.nbParticipants,
       niveauPratique: creneau.niveauPratique,
       tarifHoraire: creneau.tarifHoraire,
