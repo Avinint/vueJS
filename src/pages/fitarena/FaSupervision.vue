@@ -2,7 +2,7 @@
   <Card>
     <h1>Ouverture à distance de {{ fit_arena.libelle }}</h1>
     <!-- <pre>{{ controleAcces }}</pre> -->
-    <div v-if="controleAcces !== undefined" class="flex flex-wrap mt-10 gap-10">
+    <div v-if="controleAcces !== undefined" class="flex flex-wrap mt-10 gap-6">
       <div v-for="(ca, index) in controleAcces.equipements" :key="index">
         <Button
           couleur="danger"

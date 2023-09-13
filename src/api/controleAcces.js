@@ -1,10 +1,9 @@
 import { defaultHeaders } from './api.js'
 import $fetch from './refreshToken.js'
-import { useStorage } from '@vueuse/core'
 
 export const postControleAcces = async (data) => {
   const response = await $fetch(
-    `http://admin-dev.fit-arena.fr/fitarena/ca/open`,
+    'http://admin-dev.fit-arena.fr/fitarena/ca/open',
     {
       method: 'post',
       headers: {
