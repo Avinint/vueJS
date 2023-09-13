@@ -311,23 +311,6 @@
                   :validation="[emailValidation]"
                 />
               </div>
-              <div class="flex items-center">
-                <Input
-                  id="TcodePin"
-                  v-model="gestionnaire.codePin"
-                  :readonly="readonly"
-                  type="text"
-                  pattern="\d{6}"
-                  label="Code pin carte d'accès"
-                  class="w-full"
-                  :inline="true"
-                  max-length="6"
-                  min-length="6"
-                  :validation="[codePinValidation]"
-                  v-model:valid="validation.codePin"
-                  :required="false"
-                />
-              </div>
               <div class="h-4"/>
               <CardModalSection title="Carte d'accès">
                 <div class="my-6 flex items-center">
@@ -336,7 +319,7 @@
                   >
                   <label class="relative inline-flex cursor-pointer items-center">
                     <input
-                      v-model="titulaireCarte"
+                      v-model="gestionnaire.titulaireCarte"
                       :disabled="readonly"
                       type="checkbox"
                       :value="false"
@@ -347,7 +330,7 @@
                     ></div>
                   </label>
                 </div>
-                <div class="flex items-center"  v-if="titulaireCarte">
+                <div class="flex items-center"  v-if="gestionnaire.titulaireCarte">
                   <Input
                     id="TcodePin"
                     v-model="gestionnaire.codePin"
@@ -491,8 +474,6 @@ const community_managers = ref([])
 const validation = ref({})
 const donneesPDF = ref(null)
 const templatePDFVisible = ref(false)
-const titulaireCarte = ref(false)
-
 
 onMounted(async () => {
   try {
@@ -588,7 +569,6 @@ const cancel = async () => {
   complement.value = ''
   community_managers.value = []
   donneesPDF.value = null
-  titulaireCarte.value = false
 }
 
 const addressSelect = () => {
@@ -631,7 +611,11 @@ const showClient = (i) => {
 }
 
 const mapApiToData = (client) => {
-  community_managers.value = client.gestionnaireCollectivites?.map(gest => ({ afficherCarte: !!gest.codePin?.length, ...gest}))
+  community_managers.value = client.gestionnaireCollectivites?.map(gest => ({
+    afficherCarte: !!gest.codePin?.length,
+    titulaireCarte: !!gest.codePin?.length,
+    ...gest,
+  }))
   exploit_referents.value = client.referentExploitations
   address_selected.value = {
     address: client.adresse.adresse,
