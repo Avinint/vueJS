@@ -163,11 +163,9 @@
 </template>
 
 <script setup>
-import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
 import ButtonRight from '../components/common/ButtonRight.vue'
-import HeaderModal from '@components/common/HeaderModal.vue'
 import CardModalSection from '@components/common/CardModalSection.vue'
 import Input from '../components/common/Input.vue'
 import { getAdresses } from '../api/address.js'
@@ -410,9 +408,7 @@ const removeFrom = (refArray, i) => {
 }
 
 .offset {
-  .offset {
     position: absolute;
     right: -2000px;
-  }
 }
 </style>
