@@ -11,10 +11,11 @@ const props = defineProps(
 onMounted(() => {
   const template = document.querySelector('.document-a-imprimer')
   html2pdf().from(template).save()
+  emits('impressionTerminee')
+
 })
 
-const templateCarteAcces = ref(null)
-
+const emits = defineEmits(['impressionTerminee'])
 
 </script>
 
