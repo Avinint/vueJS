@@ -1,8 +1,7 @@
 import { defaultHeaders } from './api.js'
-import $fetch from './refreshToken.js'
 
 export const postControleAcces = async (data) => {
-  const response = await $fetch(
+  const response = await fetch(
     'http://admin-dev.fit-arena.fr/fitarena/ca/open',
     {
       method: 'post',
