@@ -66,7 +66,7 @@ onMounted(async () => {
       1,
       '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + fitArenaId
     )
-  controleAcces.value = typeEquipements.value.find(te => te.code == 'control-acces')
+  controleAcces.value = typeEquipements.value.find(te => te.code == 'controle_acces')
 })
 
 const openCA = (caId, caLibelle) => {
