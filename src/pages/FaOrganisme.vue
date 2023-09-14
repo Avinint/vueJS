@@ -9,6 +9,7 @@
       @entity:edit="editOrganisme"
       @entity:remove="removeOrganisme"
     />
+
     <form @submit.prevent="saveOrganisme">
       <Modal
         v-if="afficherFormulaire"
@@ -173,8 +174,11 @@
           </div>
         </CardModalSection>
         <CardModalSection title="Comptes gestionnaires">
-          <div v-if="donneesPDF !== null" class="flex items-center">
-            <CarteAcces class="offset" :carte="donneesPDF" @impression-terminee="templatePDFVisible = false"/>
+          <div v-if="templatePDFVisible" class="offset">
+            <CarteAcces
+              :carte="donneesPDF"
+              ref="templatePDF"
+              @impression-terminee="impressionEnCours = false"/>
           </div>
           <Card
             v-for="(gestionnaire, i) in gestionnairesOrganisme"
@@ -334,7 +338,6 @@
 <script setup>
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
-// import CarteAcces from "@/pdf/CarteAcces.vue";
 import ValidationModal from '../components/common/ValidationModal.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
@@ -356,14 +359,11 @@ import { isValid, emailValidation, codePinValidation } from '@/validation.js'
 import { selectClients } from '@api/client.js'
 import { useUserStore } from '@/stores/user.js'
 import CrudList from '@components/molecules/CrudList.vue'
-import LabelText from '@components/common/LabelText.vue'
-import html2pdf from 'vue3-html2pdf'
 import CarteAcces from "@/pdf/CarteAcces.vue";
 import { getCarteAcces } from "@api/carte_acces.js";
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 import CardModalSection from "@components/common/CardModalSection.vue";
 import ButtonRight from "@components/common/ButtonRight.vue";
-import HeaderModal from "@components/common/HeaderModal.vue";
 
 const { isAdmin, isGestCo } = useUserStore()
 const crud_columns = [
@@ -407,8 +407,10 @@ const clients = ref([])
 const validation = ref({})
 const gestionnairesOrganisme = ref([])
 
+const templatePDF = ref(null)
 const donneesPDF = ref(null)
-const templatePDFVisible = ref(false)
+const templatePDFVisible = computed(() => donneesPDF.value !== null)
+const impressionEnCours = ref(false)
 
 watch(() => route.params, async () => {
   getOrganismesParClient(route.params.id).then(response => {
@@ -599,11 +601,10 @@ const getDonneesCarte = async (gestionnaire) => {
 }
 
 const imprimerPdf = async (gestionnaire) => {
-  templatePDFVisible.value = true
-
+  impressionEnCours.value = true
   donneesPDF.value = await getDonneesCarte(gestionnaire)
   await nextTick()
-  donneesPDF.value = null
+  templatePDF.value.imprimer()
 }
 
 const addressSelect = (event) => {
