@@ -256,7 +256,7 @@
           @click="exploit_referents.push({})"
         />
         <div v-if="donneesPDF !== null" class="offset">
-          <CarteAcces :carte="donneesPDF" @impression-terminee="templatePDFVisible = false"/>
+          <CarteAcces ref="templatePDF" :carte="donneesPDF"/>
         </div>
         <CardModalSection title="COMPTES GESTIONNAIRES">
           <template #content>
@@ -441,9 +441,7 @@ import 'vue3-toastify/dist/index.css'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 import { useMenuStore } from "@stores/menu.js";
 import { getCarteAcces } from "@api/carte_acces.js";
-import html2pdf from "vue3-html2pdf";
 import CarteAcces from "@/pdf/CarteAcces.vue";
-
 const { clients: menuClients } = useMenuStore()
 const client_modal = ref(false)
 
@@ -473,8 +471,7 @@ const community_managers = ref([])
 
 const validation = ref({})
 const donneesPDF = ref(null)
-const templatePDFVisible = ref(false)
-
+const templatePDF = ref(null);
 onMounted(async () => {
   try {
     clients.value = await getClients(1)
@@ -689,9 +686,8 @@ const getDonneesCarte = async (gestionnaire) => (await getCarteAcces(gestionnair
 
 const imprimerPdf = async (gestionnaire) => {
   donneesPDF.value = await getDonneesCarte(gestionnaire)
-  templatePDFVisible.value = true
   await nextTick()
-  donneesPDF.value = null
+  templatePDF.value.imprimer()
 }
 </script>
 
