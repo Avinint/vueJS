@@ -255,8 +255,11 @@
           class="ml-4"
           @click="exploit_referents.push({})"
         />
-        <div v-if="donneesPDF !== null" class="offset">
-          <CarteAcces ref="templatePDF" :carte="donneesPDF"/>
+        <div v-if="templatePDFVisible" class="offset">
+          <CarteAcces
+            :carte="donneesPDF"
+            ref="templatePDF"
+            @impression-terminee="impressionEnCours = false"/>
         </div>
         <CardModalSection title="COMPTES GESTIONNAIRES">
           <template #content>
@@ -434,7 +437,7 @@ import {
   cityValidation,
   phoneValidation, codePinValidation,
 } from '../validation.js'
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -472,6 +475,9 @@ const community_managers = ref([])
 const validation = ref({})
 const donneesPDF = ref(null)
 const templatePDF = ref(null);
+const impressionEnCours = ref(false)
+const templatePDFVisible = computed(() => donneesPDF.value !== null)
+
 onMounted(async () => {
   try {
     clients.value = await getClients(1)
@@ -685,6 +691,7 @@ watchDebounced(
 const getDonneesCarte = async (gestionnaire) => (await getCarteAcces(gestionnaire.carteAcces[0].id)) ?? null
 
 const imprimerPdf = async (gestionnaire) => {
+  impressionEnCours.value = true
   donneesPDF.value = await getDonneesCarte(gestionnaire)
   await nextTick()
   templatePDF.value.imprimer()

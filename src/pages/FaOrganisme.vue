@@ -174,8 +174,11 @@
           </div>
         </CardModalSection>
         <CardModalSection title="Comptes gestionnaires">
-          <div v-if="donneesPDF !== null" class="offset">
-            <CarteAcces ref="templatePDF" :carte="donneesPDF"/>
+          <div v-if="templatePDFVisible" class="offset">
+            <CarteAcces
+              :carte="donneesPDF"
+              ref="templatePDF"
+              @impression-terminee="impressionEnCours = false"/>
           </div>
           <Card
             v-for="(gestionnaire, i) in gestionnairesOrganisme"
@@ -404,8 +407,10 @@ const clients = ref([])
 const validation = ref({})
 const gestionnairesOrganisme = ref([])
 
-const templatePDF = ref(null);
+const templatePDF = ref(null)
 const donneesPDF = ref(null)
+const templatePDFVisible = computed(() => donneesPDF.value !== null)
+const impressionEnCours = ref(false)
 
 watch(() => route.params, async () => {
   getOrganismesParClient(route.params.id).then(response => {
@@ -596,6 +601,7 @@ const getDonneesCarte = async (gestionnaire) => {
 }
 
 const imprimerPdf = async (gestionnaire) => {
+  impressionEnCours.value = true
   donneesPDF.value = await getDonneesCarte(gestionnaire)
   await nextTick()
   templatePDF.value.imprimer()

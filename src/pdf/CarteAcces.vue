@@ -27,7 +27,10 @@ const imprimer = async() => {
   const template = document.querySelector('.document-a-imprimer')
   await nextTick()
   html2pdf().set(options).from(template).save()
+  emit('impressionTerminee')
 }
+
+const emit = defineEmits(['impressionTerminee'])
 
 defineExpose({
   imprimer
