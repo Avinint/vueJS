@@ -336,7 +336,7 @@ const saveEspace = async () => {
     ordre: parseInt(subEspace.value.ordre),
     libelle: subEspace.value.libelle,
     actif: subEspace.value.actif == true ? subEspace.value.actif : false,
-    idZoneParent: espace_selected.value,
+    zoneParent: '/api/zones/' + espace_selected.value,
   }
 
   if (id_selected.value) {
