@@ -257,7 +257,9 @@ import {
 import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import { useRoute } from 'vue-router'
 
 const props = defineProps(['id'])
 
@@ -283,6 +285,9 @@ const add_modal = ref(false)
 const actTemp = ref({})
 
 const id_selected = ref(0)
+
+const fitArenaId = parseInt(useRoute().params.id)
+
 const activites = ref([])
 const typeActivites = ref([])
 const typeActivite = ref({})
@@ -369,10 +374,9 @@ const mapApiToData = (activiteTemp) => {
 }
 
 const saveActivite = () => {
-
   actTemp.value = {
     typeActivite: '/api/type_activites/' + activite_selected.value,
-    fitArena: activite.value.fitArena,
+    fitArena: '/api/fit_arenas/' + fitArenaId,
     ordre: parseInt(activite.value.ordre),
     libelle: activite.value.libelle,
     description: activite.value.description,
@@ -380,7 +384,6 @@ const saveActivite = () => {
     icone: activite.value.icone,
     reservationDeGroupe: activite.value.reservationDeGroupe,
   }
-
   if (id_selected.value) {
     edit_modal.value = true
   } else {
