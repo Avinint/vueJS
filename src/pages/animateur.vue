@@ -11,7 +11,7 @@
   />
 
   <div v-if="carteActive?.actif" class="offset">
-    <CarteAcces v-if="templatePDFVisible" :carte="carteActive" @impression-terminee="templatePDFVisible = false"/>
+    <CarteAcces ref="templatePDF" :carte="carteActive" @impression-terminee="impressionEnCours = false"/>
   </div>
   <form @submit.prevent="hydrateAnimateur">
     <Modal
@@ -216,7 +216,8 @@ const modal_title = ref('')
 let client = ref({})
 const validation = ref({})
 const organismes = ref([])
-const templatePDFVisible = ref(false)
+const templatePDF = ref(null)
+const impressionEnCours = ref(false)
 
 const crud_columns = [
   { data: (e) => e.nom, label: 'Nom' },
@@ -372,11 +373,10 @@ const addAnimateur = async () => {
   animateurs.value = await getAnimateursParOrganisme(organismeId.value)
 }
 
-const imprimerPdf = () => {
-
-  if (carteActive.value?.actif) {
-    templatePDFVisible.value = true
-  }
+const imprimerPdf = async () => {
+  impressionEnCours.value = true
+  await nextTick()
+  templatePDF.value.imprimer()
 }
 
 const removeFrom = (refArray, i) => {
