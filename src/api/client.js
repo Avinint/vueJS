@@ -1,12 +1,12 @@
-import { defaultHeaders, getHeaders, get } from './api.js'
+import { defaultHeaders, getHeaders, get, getQuery } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
-export const getClients = async (page= 1, query = '?order=asc') =>
-   get( `${import.meta.env.VITE_API_URL}/api/clients?page=${page}${query}`)
+export const getClients = async (query = {}) =>
+   get( '/api/clients', getQuery({ ...{ page: 1, order: 'asc' }, ...query }))
 
 export const selectClients = async () =>
-  get(`${import.meta.env.VITE_API_URL}/api/selects/clients`)
+  get('/api/selects/clients')
 
 export const postClient = async (client) => {
   const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/clients`, {

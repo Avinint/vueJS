@@ -20,10 +20,10 @@ export const getFitArenas = async (page = 1, query = '') => {
 }
 
 export const getFitArena = async (id) =>
-  await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`)
+  await get(`/api/fit_arenas/${id}`)
 
 export const getFitArenaConfig = async (id) =>
-  await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}/configuration`)
+  await get(`/api/fit_arenas/${id}/configuration`)
 
 export const uploadMiniature = async (id, file) =>
   await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/configuration`, { miniature: file, fitArena: id })
