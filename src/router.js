@@ -49,7 +49,7 @@ const routes = [
       breadcrumbs: [
         {
           link: 'users',
-          label: 'Utilisaterus',
+          label: 'Utilisateurs',
         },
       ],
     },

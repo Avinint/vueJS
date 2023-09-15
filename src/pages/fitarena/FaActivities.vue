@@ -57,22 +57,19 @@
                 </svg>
               </div>
               <Button
-                test="TdeleteClient"
+                test="TdeleteActivite"
                 borderless
                 icon="delete"
                 couleur="secondary"
                 @click="removeActivite(act.id)"
               />
               <Button
-                test="TeditClient"
+                test="TeditActivite"
                 borderless
                 icon="edit"
                 couleur="secondary"
                 @click="editActivite(i)"
               />
-            </td>
-            <td class="px-6 py-4">
-             
             </td>
           </tr>
         </tbody>
@@ -214,7 +211,6 @@
         </label>
       </div>
       <MentionChampsObligatoires margin-top="40px"/>
-
     </Modal>
   </form>
 
