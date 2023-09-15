@@ -1,14 +1,13 @@
 <template>
   <div>
-    <aside id="logo-sidebar"
-           class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-80 h-full font-normal duration-75 lg:flex transition-width"
-           aria-label="Sidebar">
+    <aside id="logo-sidebar" aria-label="Sidebar"
+      class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-80 h-full font-normal duration-75 lg:flex transition-width">
       <div class="bg-red-600 h-14 flex items-center">
         <router-link test="Thome" to="/" class="ml-2">
           <img src="../assets/logo.png" class="h-5 ml-10" alt="logo">
         </router-link>
       </div>
-      <div class="h-full overflow-y-auto bg-white ">
+      <div class="h-full overflow-y-auto bg-white">
         <template v-for="(links_by_type, type) in links">
           <div v-for="(link, i) in links_by_type" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900">
             <div class="flex items-center pl-8 pr-1 py-2 w-full"
@@ -39,9 +38,7 @@
             </div>
           </div>
         </template>
-
       </div>
-
     </aside>
   </div>
 </template>
@@ -137,6 +134,18 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
           label: 'Fit Arenas',
           path: '/fitarena',
         }
+        // {
+        //   label: 'Liste des utilisateurs',
+        //   path: '/users',
+        // },
+        // {
+        //   label: 'Liste des clients',
+        //   path: '/clients',
+        // },
+        // {
+        //   label: 'Liste des Fit Arena',
+        //   path: '/fitarena',
+        // }
       ] || []
       , ...useMenuStore().fitArenas.map((fa) => {
 
@@ -282,9 +291,7 @@ const organismeLinks = computed(() => isGestOrg ?
 const links = computed(() =>  {
   return { fit_arenas:  fitArenaLinks.value, clients: clientLinks.value, organismes: organismeLinks.value }})
 
-
 onMounted(async () => {
   await fetchMenu()
 })
-
 </script>
