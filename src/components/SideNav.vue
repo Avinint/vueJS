@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div class="pl-6 mb-2 mt-4">
+      <div class="pl-6 my-4">
         <p class="text-red-600 text-xl">Espace client</p>
       </div>
       <div v-for="client, i in clients" :key="i" class="mb-2">
@@ -185,20 +185,20 @@ const openSubSubLinks = (i, sub_i) => {
 //     )] : []
 // )
 
-        const subLinksGestionnaire = [
+        // const subLinksGestionnaire = [
           // {
           //   label: 'Supervision',
           //   path: `/fitarena/${fa.id}/supervision`,
           //   tag: 1
           // },
-          {
-            label: 'Planning d\'ouverture',
-            path: `/fitarena/${fa.id}/planning`
-          },
-          {
-            label: 'Supervision de la Fit Arena',
-            path: `/fitarena/${fa.id}/supervision`
-          },
+          // {
+          //   label: 'Planning d\'ouverture',
+          //   path: `/fitarena/${fa.id}/planning`
+          // },
+          // {
+          //   label: 'Supervision de la Fit Arena',
+          //   path: `/fitarena/${fa.id}/supervision`
+          // },
 
 //         const subLinksGestionnaire = [
 //           // {
