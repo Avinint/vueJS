@@ -293,9 +293,11 @@ onMounted(async () => {
 })
 
 watch(() => route.params, async () => {
-  fitArenaConfig.value = await getFitArenaConfig(route.params.id)
-  fitArena.value = await getFitArena(route.params.id)
-  mapApiToData()
+  if (route.params.id) {
+    fitArenaConfig.value = await getFitArenaConfig(route.params.id)
+    fitArena.value = await getFitArena(route.params.id)
+    mapApiToData()
+  }
 })
 
 const nomDepartement = computed(() => address_selected.value.context?.split(',') [1] ?? fitArena.value.adresse?.nomDepartement) ?? ''
