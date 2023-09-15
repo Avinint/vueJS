@@ -391,16 +391,13 @@ onMounted(async () => {
       1,
       '&categoryTypeEquipement.code=' + props.codeType + '&equipements.fitArena=' + props.fitArenaId
     ), setProprieteReadonly)
+
   typeEquipementsSelects.value = await getTypeEquipements(
-      1,
-      '&categoryTypeEquipement.code=' + props.codeType
-  )
-  selectableModes.value = await getModes(
     1,
     '&categoryTypeEquipement.code=' + props.codeType
   )
+  selectableModes.value = await getModes({ 'categoryTypeEquipement.code': props.codeType })
 })
-
 
 //
 const setEquipementModes = (typeEquipements, setter) => {

@@ -2,8 +2,8 @@ import { defaultHeaders, get, post, put } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
-export const getAdherentsParOrganisme = async (id: number, page = 1, query = '') =>
-  await get(`${import.meta.env.VITE_API_URL}/api/organismes/${id}/adherents?page=${page}${query}`)
+export const getAdherentsParOrganisme = async (id: number, query: object = { page: 1 }) =>
+  await get(`/api/organismes/${id}/adherents`, query)
 
 export const postAdherent = async (adherent) => {
 
@@ -30,9 +30,9 @@ export const deleteAdherent = async (id: number) => {
 }
 
 export const selectGroupes = async (organismeId: number) =>
-  await get(`${import.meta.env.VITE_API_URL}/api/organismes/${organismeId}/groupes/select`)
+  await get(`/api/organismes/${organismeId}/groupes/select`)
 
 export const groupes = async (organismeId: number) =>
-await get(`${import.meta.env.VITE_API_URL}/api/organismes/${organismeId}/groupes/select`)
+await get(`/api/organismes/${organismeId}/groupes/select`)
 
 

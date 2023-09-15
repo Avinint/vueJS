@@ -1,9 +1,9 @@
-import { defaultHeaders, get, getQuery } from './api.js'
+import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
 export const getParametreFitArena = async (query = {page: 1}) => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas${getQuery(query)}`)
+  return await get('/api/parametre_fit_arenas', query)
 }
 
 export const getParametreFitArenaById = async (id) => {

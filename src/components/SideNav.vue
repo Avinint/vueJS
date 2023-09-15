@@ -185,19 +185,20 @@ const openSubSubLinks = (i, sub_i) => {
 //     )] : []
 // )
 
-// const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
-//       {
-//         label: 'Administrateur',
-//         path: '',
-//         divider: true,
-//       },
-//       ...isAdmin && [
-//         {
-//           label: 'Fit Arenas',
-//           path: '/fitarena',
-//         }
-//       ] || []
-//       , ...useMenuStore().fitArenas.map((fa) => {
+        const subLinksGestionnaire = [
+          // {
+          //   label: 'Supervision',
+          //   path: `/fitarena/${fa.id}/supervision`,
+          //   tag: 1
+          // },
+          {
+            label: 'Planning d\'ouverture',
+            path: `/fitarena/${fa.id}/planning`
+          },
+          {
+            label: 'Supervision de la Fit Arena',
+            path: `/fitarena/${fa.id}/supervision`
+          },
 
 //         const subLinksGestionnaire = [
 //           // {
