@@ -275,14 +275,8 @@ const zoneTemp = ref({})
 onMounted(async () => {
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
-  modes_motorise.value = await getModes(
-    1,
-    '&categoryTypeEquipement.code=motorise'
-  )
-  modes_numerique.value = await getModes(
-    1,
-    '&categoryTypeEquipement.code=numerique'
-  )
+  modes_motorise.value = await getModes({ 'categoryTypeEquipement.code': 'motorise' })
+  modes_numerique.value = await getModes({ 'categoryTypeEquipement.code': 'numerique' })
   parametre_config_equipements_motorises.value = (
     await getParametres({page: 1, code: 'config_des_equipements_motorises'})
   ).shift()

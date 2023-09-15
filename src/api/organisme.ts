@@ -3,10 +3,10 @@ import {defaultHeaders, get} from './api.js'
 import $fetch from './refreshToken.js'
 
 export const selectOrganismes = async () => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/select/organismes`)
+  return await get('/api/select/organismes')
 }
 
-export async function getOrganismes(page = 1, query = '?order=asc'): Promise<Organisme[]> {
+export async function getOrganismes(page = 1, query = '&order=asc'): Promise<Organisme[]> {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/organismes?page=${page}${query}`,
     {
@@ -39,7 +39,7 @@ export async function getOrganismesSelect(page = 1, query = ''): Promise<Organis
 }
 
 export async function getOrganismesParClient(id: number): Promise<Organisme[]> {
-  return await get(`${import.meta.env.VITE_API_URL}/api/clients/${id}/organismes`)
+  return await get(`/api/clients/${id}/organismes`)
 }
 
 export const postOrganismes = async (organisme) => {

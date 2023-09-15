@@ -1,4 +1,4 @@
-import { getAnimateursOrganisme } from '@api/animateur'
+import { getAnimateursParOrganisme } from '@api/animateur'
 import {
   default_seance,
   parseSeance,
@@ -61,7 +61,7 @@ export const useSeanceStore = defineStore('seance', {
       }
     },
     async fetchAnimateurs(id_organisme: number) {
-      this.animateurs = await getAnimateursOrganisme(id_organisme)
+      this.animateurs = await getAnimateursParOrganisme(id_organisme)
       this.selected_animateurs = this.animateurs.map(() => {
         return false
       })

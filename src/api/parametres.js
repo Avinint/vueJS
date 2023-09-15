@@ -1,9 +1,9 @@
-import { defaultHeaders, get, getQuery } from './api.js'
+import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
 export const getParametres = async (query = {page: 1}) => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/parametres${getQuery(query)}`)
+  return await get(`/api/parametres`, query)
 }
 
 export const getParametresById = async (id) => {

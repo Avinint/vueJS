@@ -480,7 +480,7 @@ const templatePDFVisible = computed(() => donneesPDF.value !== null)
 
 onMounted(async () => {
   try {
-    clients.value = await getClients(1)
+    clients.value = await getClients()
   } catch (e) {
     console.error(e)
   }
@@ -659,7 +659,7 @@ const deleteClientValidation = async (id) => {
 
   delete_modal.value = false
   deleteClientId.value = 0
-  clients.value = await getClients(1)
+  clients.value = await getClients()
 }
 
 const editClient = (i) => {
@@ -683,7 +683,7 @@ watchDebounced(
 watchDebounced(
   search_name,
   async () => {
-    clients.value = await getClients(1, `&nom=${search_name.value}`)
+    clients.value = await getClients({ nom: search_name.value })
   },
   { debounce: 500, maxWait: 1000 }
 )
