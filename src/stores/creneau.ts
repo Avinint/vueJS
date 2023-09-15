@@ -75,7 +75,7 @@ export const useCreneauStore = defineStore('creneau', {
       if (!this.id) return
 
       const planningStore = usePlanningStore()
-      const contract = makeDemandeCreneauEditContract(fitarena_id, this.$state)
+      const contract = makeCreneauOGEditContract(fitarena_id, this.$state)
       const response = await updateCreneau(this.id, contract)
       planningStore.addCreneaux(ParseDemandeCreneauResponse(response));
     },
