@@ -157,8 +157,11 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
           // },
           {
             label: 'Planning d\'ouverture',
-            path: `/fitarena/${fa.id}/planning`,
-            tag: 1
+            path: `/fitarena/${fa.id}/planning`
+          },
+          {
+            label: 'Supervision de la Fit Arena',
+            path: `/fitarena/${fa.id}/supervision`
           },
 
           // {
