@@ -2,9 +2,7 @@ import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
-export const getParametres = async (query = {page: 1}) => {
-  return await get('/api/parametres', query)
-}
+export const getParametres = async (query = {page: 1}) => await get('/api/parametres', query)
 
 export const getParametresByZone = async (id) => {
   const response = await $fetch(
