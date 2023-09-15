@@ -21,8 +21,9 @@ export const getQuery = (queryParams = {}, ignore = [null, false, '']) => {
 
   return query
 }
-export const get = async (url) => {
+export const get = async (uri, query = null) => {
   const token = useStorage('token', '')
+  const url = import.meta.env.VITE_API_URL + uri + ( query !== null ? getQuery(query) : '')
   const response = await $fetch(url, {
     method: 'get',
     headers: { ...getHeaders, Authorization: `Bearer ${token.value}` },
@@ -32,12 +33,6 @@ export const get = async (url) => {
 }
 
 export const post = async (url, body) => await request(url, body)
-export const upload = async (url, body) => {
-  if (!(body instanceof FormData)) {
-    return await null
-  }
-  return await request(url, body, 'post')
-}
 
 export const put = async (url, body = {}) => await request(url, body, 'put')
 
