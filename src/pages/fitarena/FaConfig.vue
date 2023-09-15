@@ -172,10 +172,10 @@
             <td class="border border-gray-300 px-4">
               <span>Icône</span>
 
-              <label class="upload" :for="'editService' + index">
+              <label class="upload" :for="'edit_service_' + index">
                 <span class="bg-gray-50 mx-2 px-3 py-1 border border-gray-300 inline-block">Choisir un fichier <UploadSVG/></span>
               </label>
-              <input @change="uploadIconeService(services[index], $event)" :id="'editService' + index" class="w-1/2 border-slate-300 border-1 mb-2" type="file" style="display:none;" >
+              <input @change="uploadIconeService(services[index], $event)" :id="'edit_service_' + index" class="w-1/2 border-slate-300 border-1 mb-2" type="file" style="display:none;" >
               <span>Taille maximale : 5 mo</span>
             </td>
           </tr>

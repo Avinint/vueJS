@@ -1,6 +1,7 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders } from './api'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
+import { upload } from "@api/upload"
 
 export async function getActivites(fitArenaId: number, page = 1, query = ''): Promise<Activite[]> {
   const response = await $fetch(
@@ -35,6 +36,14 @@ export const postActivites = async (fa) => {
   )
   if (response.status !== 201) throw response
   return response.json()
+}
+
+export const uploadActivite = async (activite, id) => {
+
+    activite.id = id
+    const url = activite.id ? 'maj' : 'creer'
+
+    return upload(`${import.meta.env.VITE_API_URL}/api/activite/${url}`, activite)
 }
 
 export const postActiviteWithIcone = async (fa) => {

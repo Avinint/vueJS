@@ -32,12 +32,6 @@ export const get = async (url) => {
 }
 
 export const post = async (url, body) => await request(url, body)
-export const upload = async (url, body) => {
-  if (!(body instanceof FormData)) {
-    return await null
-  }
-  return await request(url, body, 'post')
-}
 
 export const put = async (url, body = {}) => await request(url, body, 'put')
 

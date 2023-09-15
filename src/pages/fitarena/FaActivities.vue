@@ -176,6 +176,7 @@
           >Icône</label
         >
         <input
+          @change="chargeFichier"
           id="small_size"
           class="mb-5 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-900 focus:outline-none"
           type="file"
@@ -251,8 +252,8 @@ import {
   deleteActivites,
   getActivites,
   postActivites,
-  updateActivites,
   patchActivites,
+  uploadActivite,
 } from '../../api/activite.ts'
 import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
@@ -289,6 +290,8 @@ const typeActivite = ref({})
 const activite = ref({})
 const activite_selected = ref({})
 const modal_title = ref('')
+
+const file = ref(null)
 
 onMounted(async () => {
   activites.value = await getActivites(props.id, 1, '&order=asc')
@@ -388,9 +391,11 @@ const saveActivite = () => {
   }
 }
 
+const chargeFichier = (e) => {activite.value.icone = e.target.files[0]}
+
 const updateActivityValidation = async () => {
   try {
-    await updateActivites(actTemp.value, id_selected.value)
+    await uploadActivite(actTemp.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')

@@ -1,6 +1,7 @@
-import {defaultHeaders, get, post, put, upload} from './api.js'
+import { defaultHeaders, get, post, put } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
+import { upload } from "@api/upload";
 
 export const getFitArenas = async (page = 1, query = '') => {
   const response = await $fetch(
@@ -18,63 +19,30 @@ export const getFitArenas = async (page = 1, query = '') => {
   return response.json()
 }
 
-export const getFitArena = async (id) => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`)
-}
+export const getFitArena = async (id) =>
+  await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}`)
 
-export const getFitArenaConfig = async(id) => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}/configuration`)
-}
+export const getFitArenaConfig = async (id) =>
+  await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}/configuration`)
 
-export const uploadMiniature = async(id, file) => {
+export const uploadMiniature = async (id, file) =>
+  await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/configuration`, { miniature: file, fitArena: id })
 
-  const formData = new FormData()
-  formData.append('miniature', file)
-  formData.append('fitArena', id)
+export const uploadBandeau = async (id, file) =>
+  await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/configuration`, { bandeau: file, fitArena: id })
 
-  return await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/configuration`, formData)
-}
 
-export const uploadBandeau = async(id, file) => {
+export const uploadIconeService = async (service) =>
+  await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/service`, service)
 
-  const formData = new FormData()
-  formData.append('bandeau', file)
-  formData.append('fitArena', id)
+export const putService = async (service) =>
+  await put(`${import.meta.env.VITE_API_URL}/api/fit_arenas/service/${service.id}`, service)
 
-  return await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/configuration`, formData)
-}
 
-export const uploadIconeService = async(service) => {
+export const postReseauSocial = async (rs) =>
+  await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/reseau-social`, rs)
 
-    const formData = new FormData()
-    formData.append('icone', service.icone)
-    formData.append('fitArenaId', service.fitArenaId)
-    formData.append('libelle', service.libelle)
-
-    if (service.id) { formData.append('id', service.id) }
-
-    return await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/service`, formData)
-}
-
-export const putService = async(service) => {
-  return await put(`${import.meta.env.VITE_API_URL}/api/fit_arenas/service/${service.id}`, service)
-}
-
-export const postReseauSocial = async (rs) => {
-  const formData = new FormData()
-  formData.append('fitArenaId', rs.fitArenaId)
-  formData.append('libelle', rs.libelle)
-  formData.append('url', rs.url)
-
-  // if (rs.iconeId) { formData.append('iconeId', rs.iconeId) }
-  if (rs.id) { formData.append('id', rs.id) }
-
-  return await upload(`${import.meta.env.VITE_API_URL}/api/fit_arenas/reseau-social`, formData)
-}
-
-export const putReseauSocial = async(rs) => {
-    return await put(`${import.meta.env.VITE_API_URL}/api/fit_arenas/reseau-social/${rs.id}`, rs)
-}
+export const putReseauSocial = async(rs) => await put(`${import.meta.env.VITE_API_URL}/api/fit_arenas/reseau-social/${rs.id}`, rs)
 
 export const postFitArenas = async (fa) => {
   const response = await $fetch(
