@@ -1,9 +1,9 @@
-import { defaultHeaders, getHeaders, get, getQuery } from './api.js'
+import { defaultHeaders, getHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
 export const getClients = async (query = {}) =>
-   get( '/api/clients', getQuery({ ...{ page: 1, order: 'asc' }, ...query }))
+   get( '/api/clients',{ ...{ page: 1, order: 'asc' }, ...query })
 
 export const selectClients = async () =>
   get('/api/selects/clients')
