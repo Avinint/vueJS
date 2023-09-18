@@ -1,6 +1,6 @@
 <template>
   <InputLabel v-if="label">{{ label }}</InputLabel>
-  <div v-if="options.length > 0" class="flex gap-4">
+  <div v-if="options.length > 0" class="flex flex-wrap gap-2">
     <div class="input-option" v-for="option in options" :key="option.id">
       <label
         class="rounded-lg block border-none bg-neutral-200 px-6 py-3 text-sm text-black drop-shadow-sm peer-checked:bg-sky-600 peer-checked:text-white"

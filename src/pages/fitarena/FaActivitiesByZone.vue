@@ -7,10 +7,10 @@
 
         <div class="relative overflow-x-auto">
           <table
-            class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
+            class="w-full text-left text-sm text-gray-500"
           >
             <thead
-              class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+              class="text-xs uppercase text-gray-700"
             >
               <tr>
                 <th scope="col" class="px-6 py-3"></th>
@@ -48,7 +48,7 @@
                       @change="modifieActivite(act)"
                     />
                     <div
-                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
                     ></div>
                     <span
                       class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -90,7 +90,7 @@
               id="select_activites"
               v-model="activite_selected"
               :disabled="readonly || activiteZone_selected"
-              class="w-3/12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="w-3/12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option v-for="act of activites" :value="act.id">
                 {{ act.libelle }}
@@ -100,7 +100,7 @@
 
           <div class="flex items-center">
             <div class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-              {{ parametre_config_equipements_motorises.libelle }}
+              {{ parametre_config_equipements_motorises?.libelle }}
             </div>
             <div>
               <InputRadio
@@ -114,7 +114,7 @@
 
           <div class="flex items-center">
             <div class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-              {{ parametre_mode_ecran_interface_video_scoring.libelle }}
+              {{ parametre_mode_ecran_interface_video_scoring?.libelle }}
             </div>
             <div>
               <InputRadio
@@ -275,14 +275,8 @@ const zoneTemp = ref({})
 onMounted(async () => {
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
-  modes_motorise.value = await getModes(
-    1,
-    '&categoryTypeEquipement.code=motorise'
-  )
-  modes_numerique.value = await getModes(
-    1,
-    '&categoryTypeEquipement.code=numerique'
-  )
+  modes_motorise.value = await getModes({ 'categoryTypeEquipement.code': 'motorise' })
+  modes_numerique.value = await getModes({ 'categoryTypeEquipement.code': 'numerique' })
   parametre_config_equipements_motorises.value = (
     await getParametres({page: 1, code: 'config_des_equipements_motorises'})
   ).shift()
@@ -506,6 +500,7 @@ const saveSousZones = async (zoneId, activiteId) => {
         parametres.push({
           id: param.parametre.id,
           valeur: param.valeur,
+          code: param.parametre.code
         })
       })
       const equipements = []

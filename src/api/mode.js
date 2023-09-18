@@ -1,5 +1,3 @@
 import { get } from './api.js'
 
-export const getModes = async (page = 1, query = '') => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/modes?page=${page}${query}`)
-}
+export const getModes = async (query = {}) => await get('/api/modes', { ...{page: 1}, ...query })

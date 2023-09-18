@@ -1,79 +1,84 @@
 <template>
   <nav
-    class="flex space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+    class="flex space-y-3 p-4"
   >
-    <section class="flex w-full flex-wrap gap-5">
+    <section class="flex w-full justify-between gap-2">
       <NavigationSection>
-        <template #title> Zone active </template>
+        <template #title> Zones actives </template>
         <template #content>
-          <Button
+          <div class="flex flex-wrap gap-1">
+            <Button
             v-for="zone in zones"
             :key="zone.id"
             :label="zone.libelle"
             couleur="secondary"
             :submit="false"
+            class="mr-2"
             :class="{ active: planningStore.isZoneActive(zone.id) }"
             @click="filterByZone(zone.id)"
-          />
-        </template>
-      </NavigationSection>
-      <NavigationSection class="justify-center px-4">
-        <template #title> Affichage du planning </template>
-        <template #content>
-          <Button
-            label="Aujourd'hui"
-            couleur="secondary"
-            icon=""
-            :submit="false"
-            @click="today()"
-          />
-          <Button
-            :label="
-              planningStore.currentViewName === 'day'
-                ? 'Journée >'
-                : 'Semaine >'
-            "
-            couleur="secondary"
-            icon=""
-            class="w-24"
-            :submit="false"
-            @click="toggleView()"
-          />
-        </template>
-      </NavigationSection>
-      <NavigationSection class="justify-center">
-        <template #title>Période en cours</template>
-        <template #content>
-          <Button
-            label="<"
-            couleur="secondary"
-            icon="prev"
-            :submit="false"
-            class="m-0"
-            @click="prev()"
-          />
-          <div class="min-w-max cursor-default px-4">
-            {{ planningStore.getCurrentDateStart }}
-            <template v-if="planningStore.currentViewName === 'day'">
-              - {{ planningStore.getCurrentDateEnd }}
-            </template>
+            />
           </div>
-          <Button
-            label=">"
-            couleur="secondary"
-            icon="next"
-            :submit="false"
-            @click="next()"
-          />
-          <Button
-            class="cursor-default"
-            :label="'S' + planningStore.currentWeek"
-            couleur="secondary"
-            icon="next"
-            :submit="false"
-          />
         </template>
       </NavigationSection>
+      <div class="flex">
+        <NavigationSection class="justify-center px-4">
+          <template #title> Affichage du planning </template>
+          <template #content>
+            <Button
+              label="Aujourd'hui"
+              couleur="secondary"
+              icon=""
+              :submit="false"
+              class="mr-2 text-black"
+              @click="today()"
+            />
+            <Button
+              :label="
+                planningStore.currentViewName === 'day'
+                  ? 'Journée >'
+                  : 'Semaine >'
+              "
+              couleur="info"
+              class="w-24"
+              :submit="false"
+              @click="toggleView()"
+            />
+          </template>
+        </NavigationSection>
+        <NavigationSection class="justify-center">
+          <template #title>Période en cours</template>
+          <template #content>
+              <Button
+                label="<"
+                couleur="info"
+                icon="prev"
+                :submit="false"
+                class="m-0"
+                @click="prev()"
+              />
+              <div class="min-w-max h-9 flex items-center cursor-default px-4 bg-gray-300 text-black rounded-lg">
+                {{ planningStore.getCurrentDateStart }}
+                <template v-if="planningStore.currentViewName === 'day'">
+                  - {{ planningStore.getCurrentDateEnd }}
+                </template>
+              </div>
+              <Button
+                label=">"
+                couleur="info"
+                icon="next"
+                :submit="false"
+                @click="next()"
+              />
+              <Button
+                class="cursor-default"
+                :label="'S' + planningStore.currentWeek"
+                couleur="info"
+                icon="next"
+                :submit="false"
+              />
+          </template>
+        </NavigationSection>
+      </div>
     </section>
   </nav>
 </template>
@@ -108,18 +113,26 @@ export default {
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
+    this.$emit('afterFetch');
   },
   methods: {
     today() {
       this.calendarApi.today()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
     },
     prev() {
       this.calendarApi.prev()
-      this.planningStore.fetch()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
     },
     next() {
       this.calendarApi.next()
-      this.planningStore.fetch()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
     },
     updateActivities() {
       this.planningStore.updateActivities()

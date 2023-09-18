@@ -108,7 +108,7 @@
                 :required="true"
                 label="Ville"
                 class="w-full"
-                pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï -]{1,50}"
+                pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï \-]{1,50}"
                 inline
               />
               <Input
@@ -132,6 +132,7 @@
                 pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
               />
             </template>
+              <MentionChampsObligatoires/>
           </td>
         </tr>
         </tbody>
@@ -171,10 +172,10 @@
             <td class="border border-gray-300 px-4">
               <span>Icône</span>
 
-              <label class="upload" :for="'editService' + index">
+              <label class="upload" :for="'edit_service_' + index">
                 <span class="bg-gray-50 mx-2 px-3 py-1 border border-gray-300 inline-block">Choisir un fichier <UploadSVG/></span>
               </label>
-              <input @change="uploadIconeService(services[index], $event)" :id="'editService' + index" class="w-1/2 border-slate-300 border-1 mb-2" type="file" style="display:none;" >
+              <input @change="uploadIconeService(services[index], $event)" :id="'edit_service_' + index" class="w-1/2 border-slate-300 border-1 mb-2" type="file" style="display:none;" >
               <span>Taille maximale : 5 mo</span>
             </td>
           </tr>
@@ -258,6 +259,7 @@ import {toast} from "vue3-toastify";
 import { watchDebounced } from "@vueuse/core";
 import { getAdresses } from "@api/address.js";
 import ValidationModal from "@components/common/ValidationModal.vue";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const route = useRoute()
 const modaleConfirmation = ref(false)
@@ -291,9 +293,11 @@ onMounted(async () => {
 })
 
 watch(() => route.params, async () => {
-  fitArenaConfig.value = await getFitArenaConfig(route.params.id)
-  fitArena.value = await getFitArena(route.params.id)
-  mapApiToData()
+  if (route.params.id) {
+    fitArenaConfig.value = await getFitArenaConfig(route.params.id)
+    fitArena.value = await getFitArena(route.params.id)
+    mapApiToData()
+  }
 })
 
 const nomDepartement = computed(() => address_selected.value.context?.split(',') [1] ?? fitArena.value.adresse?.nomDepartement) ?? ''
@@ -420,7 +424,7 @@ const save = () => {
   fitArenaSave.value.client = '/api/clients/' + fitArenaSave.value.client.id
   fitArenaSave.value.adresse = {
     '@id': '/api/adresses/' + fitArena.value.adresse.id,
-    adresse: address_selected.value.label,
+    adresse: address_selected.value.name,
     complement: complement.value,
     codePostal: address_selected.value.postcode,
     ville: address_selected.value.city,
@@ -461,7 +465,6 @@ const urlService = (service, e) => {
   }
 }
 
-
 watchDebounced(
   address,
   async () => {
@@ -471,6 +474,10 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
+
+const addressSelect = () => {
+  address.value = address_selected.value.name
+}
 </script>
 
 <style scoped>

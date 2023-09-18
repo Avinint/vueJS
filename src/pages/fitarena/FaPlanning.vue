@@ -1,9 +1,11 @@
 <template>
   <div class="fa-planning">
+    <EditOptions ref="edit_options" @on-edit-single="editSingle" @on-edit-multiple="editRecurence"/>
     <PlanningNavigation
       class="mb-6"
       :calendar-api="calendarApi"
       @filter-updated="applyFilter"
+      @after-fetch="redraw_key++"
     />
     <modalCreneau
       v-if="isModalCreneauOpen"
@@ -12,40 +14,19 @@
       @close-modal-creneau="closeModal"
     />
     <div
-      class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+      class="space-y-3 p-4"
     >
       <FullCalendar ref="fullCalendar" :options="calendarOptions">
         <template #eventContent="arg">
-          <div class="flex h-full items-center">
-            <div
-              class="h-full w-2 rounded-l-xl"
-              :class="{
-                'bg-red-600': arg.event.extendedProps.type == 1,
-                'bg-blue-600': arg.event.extendedProps.type == 2,
-              }"
-            ></div>
-            <div class="flex grow justify-between px-3 pr-3 text-xs text-black">
-              <div class="flex flex-col">
-                <span>
-                  {{ $dayjs(arg.event.start).format('H:mm') }} -
-                  {{ $dayjs(arg.event.end).format('H:mm') }}
-                </span>
-                <span class="">{{ arg.event.title }}</span>
-              </div>
-              <div class="flex">
-                <span
-                  v-if="arg.event.extendedProps.activites"
-                  class="mr-2 fill-red-600"
-                ></span>
-                <span
-                  class="text-2xs border-3 flex h-8 w-8 items-center justify-center rounded-full border-red-600 bg-white text-center leading-none"
-                >
-                  Terrain<br />
-                  1/3
-                </span>
-              </div>
-            </div>
-          </div>
+          <Event
+            v-if="arg.event.extendedProps.event_type == 0"
+            :event="arg.event"
+          />
+          <EventDemande
+            v-else-if="arg.event.extendedProps.event_type == 1"
+            :event="arg.event"
+            :key="redraw_key"
+          />
         </template>
       </FullCalendar>
     </div>
@@ -66,11 +47,19 @@ import { useCreneauStore } from '@stores/creneau.ts'
 import { mapStores } from 'pinia'
 import { getZones } from '@api/zone.js'
 
+import EditOptions from '@components/faPlanning/EditOptions.vue'
+import Event from '@components/faPlanning/Event.vue'
+import EventDemande from '@components/faPlanning/EventDemande.vue'
+
+
 export default {
   components: {
     PlanningNavigation,
     modalCreneau,
     FullCalendar,
+    EditOptions,
+    Event,
+    EventDemande,
   },
   data() {
     return {
@@ -94,6 +83,7 @@ export default {
         eventClick: this.eventClick,
         eventResize: this.eventResizeOrDrag,
         eventDrop: this.eventResizeOrDrag,
+        editable: false,
         select: this.select,
         dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'long' },
         nowIndicator: true,
@@ -101,9 +91,9 @@ export default {
         events: [],
         resources: [],
         allDaySlot: false,
-        eventOverlap: false,
-        selectOverlap: false,
-        height: 'auto',
+        eventOverlap: true,
+        selectOverlap: true,
+        height: '80vh',
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         // timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
         slotLabelFormat: {
@@ -115,6 +105,7 @@ export default {
       isModalCreneauOpen: false,
       actionType: '',
       zones: [],
+      redraw_key: 0
     }
   },
   computed: {
@@ -129,6 +120,7 @@ export default {
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
         this.calendarOptions.events = newCreneaux
+        this.redraw_key++
       }
     )
   },
@@ -141,6 +133,7 @@ export default {
     this.calendarOptions.resources = [
       { id: this.zones[0].id, title: this.zones[0].libelle },
     ]
+    this.calendarOptions.scrollTime = this.planningStore.scrollTime
   },
   methods: {
     async closeModal() {
@@ -163,7 +156,24 @@ export default {
     eventClick(eventClickInfo) {
       this.actionType = 'edit'
       this.setSelectedCreneau(eventClickInfo.event)
+      if(eventClickInfo.event.extendedProps.recurrence)
+        this.$refs.edit_options.open();
+      else {
+        this.creneauStore.recurrence = undefined;
+        this.isModalCreneauOpen = true;
+      }
+    },
+    editSingle() {
+      this.creneauStore.recurrence = undefined;
+      this.isModalCreneauOpen = true;
+    },
+    editRecurence() {
       this.isModalCreneauOpen = true
+      if(eventClickInfo.event.extendedProps.event_type == 0) {
+        this.actionType = 'edit'
+        this.setSelectedCreneau(eventClickInfo.event)
+        this.isModalCreneauOpen = true
+      }
     },
     select(selectionInfo) {
       this.actionType = 'create'
@@ -173,6 +183,7 @@ export default {
     },
     eventResizeOrDrag(info) {
       this.creneauStore.editCreneau(info.event)
+      this.redraw_key++
     },
     setSelectedCreneau(fullCalendarCreneau) {
       this.creneauStore.setCreneau(fullCalendarCreneau)

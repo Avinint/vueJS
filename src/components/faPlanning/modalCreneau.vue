@@ -9,6 +9,9 @@
       @cancel="$emit('closeModalCreneau')"
       @delete="delete_creneau"
     >
+      <template #topButtons>
+        <Button v-if="typeAction === 'edit'" test='TcloseModal' @click="delete_creneau" couleur="danger" borderless class="mr-6" label="Supprimer le créneau" />
+      </template>
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Veuillez sélectionner le type créneau.
       </label>
@@ -54,14 +57,14 @@
           />
         </div>
         <div class="ml-20 grow">
-          <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
+          <label class="required mb-2 block w-1/2 text-sm font-medium text-gray-900">
             Plage horaire du créneau
           </label>
           <div class="flex">
             <select
               v-model="creneauStore.heureDebut"
               required
-              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listStart"
@@ -75,7 +78,7 @@
             <select
               v-model="creneauStore.heureFin"
               required
-              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listEnd"
@@ -90,11 +93,18 @@
       </div>
       <FAButton
         v-if="creneauStore.creneauType == 1"
+        class="mr-4"
         label="Paramètres avancés"
         couleur="secondary"
-        @click="advanced_options = !advanced_options"
+        @click="setSubmenu('advanced')"
       />
-      <div v-if="advanced_options" class="flex gap-5">
+      <!-- <FAButton
+        v-if="creneauStore.creneauType && creneauStore.recurrence != undefined"
+        label="Récurrence"
+        couleur="secondary"
+        @click="setSubmenu('recurence')"
+      /> -->
+      <div v-if="submenu == 'advanced'" class="flex gap-5">
         <FAInput
           v-model="creneauStore.dureeActivite"
           :inline="false"
@@ -114,6 +124,7 @@
           type="number"
         />
       </div>
+      <MenuRecurrence v-if="submenu == 'recurence'" />
       <div
         v-if="creneauStore.creneauType != 0"
         class="relative rounded-lg border border-gray-300 p-4"
@@ -134,6 +145,7 @@
                 type="checkbox"
                 :value="zone.id"
                 class="hidden"
+                @click="selectActivities(zone)"
               />
               <label
                 class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
@@ -161,7 +173,7 @@
                       class="hidden"
                     />
                     <label
-                      class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
+                      class="mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-3 text-center text-sm text-black drop-shadow-sm"
                       :class="{
                         'bg-sky-600 text-white': zoneActivite.activite.checked,
                       }"
@@ -181,7 +193,13 @@
             </div>
           </template>
         </div>
+        <div v-if="errorMessage">
+          <p>
+            Vous devez sélectionner au moins une activité pour créer le créneau.
+          </p>
+        </div>
       </div>
+      <MentionChampsObligatoires/>
     </Modal>
   </form>
 </template>
@@ -199,14 +217,20 @@ import InputRadio from '@components/common/InputRadio.vue'
 import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
+import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import Button from "@components/common/Button.vue";
 
 export default {
   components: {
+    Button,
+    MentionChampsObligatoires,
     Modal,
     InputRadio,
     InputSelect,
     FAInput,
     FAButton,
+    MenuRecurrence,
   },
   props: {
     isOpen: {
@@ -230,7 +254,8 @@ export default {
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
       defaultTarif: '20',
-      advanced_options: false,
+      submenu: 'none',
+      errorMessage: false
     }
   },
   computed: {
@@ -240,11 +265,11 @@ export default {
     modalTitle() {
       switch (this.typeAction) {
         case 'create':
-          return 'Création de creneau'
+          return 'Création de créneau'
         case 'edit':
-          return 'Modifier un creneau'
+          return 'Modifier un créneau'
         default:
-          return 'Modifier un creneau'
+          return 'Modifier un créneau'
       }
     },
     getOrganismesOptions() {
@@ -298,6 +323,9 @@ export default {
     isOneZoneChecked() {
       return this.creneauStore.zones.length > 0
     },
+    isOneActivityChecked() {
+      return this.creneauStore.activites.length > 0
+    },
     isNotOrganismeOrMaintenance() {
       return (
         this.creneauStore.creneauType !== 2 &&
@@ -326,6 +354,31 @@ export default {
     }
   },
   methods: {
+    /**
+     * Open the submenu that contains additional inputs 
+     * @param {'advanced' | 'recurence' | 'none'} menu 
+     */
+    setSubmenu(type) {
+      if(this.submenu == type) {
+        this.submenu = 'none';
+        return;
+      }
+
+      this.submenu = type;
+    },
+    selectActivities(zone) {
+      const isChecked = this.isZoneChecked(zone.id); 
+      console.log(zone);
+      if(!isChecked) {
+        for(const activity of zone.zoneActivites) {
+          activity.activite.checked = true;
+        }
+      } else {
+        for(const activity of zone.zoneActivites) {
+          activity.activite.checked = false;
+        }
+      }
+    },
     delete_creneau() {
       if(confirm('Souhaitez vous vraiment supprimer le créneau ?')) {
         this.creneauStore.delete();
@@ -375,27 +428,43 @@ export default {
     submitCreneau() {
       const type_creneau = this.creneauStore.creneauType
 
-      // (REFACTORING)
-      switch (type_creneau) {
-        case 1:
-          // Retreive activity data from the local references
-          // Before sending it to the API. This has to be done
-          // This way because of the unsynchronized data.
-          this.updateActivites()
-
-          if (this.typeAction === 'create') {
-            this.creneauStore.addCreneau()
-          } else this.creneauStore.editCreneau()
-          break
-
-        case 2:
-          if (this.typeAction === 'create') {
-            this.creneauStore.addCreneauOrganisme()
-          } else this.creneauStore.editCreneauOrganisme()
-          break
+      if (this.creneauStore.recurrence) {
+        if (this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "") {
+          this.creneauStore.recurrence = undefined;
+        }
       }
 
-      this.$emit('closeModalCreneau')
+      const fitarena_id = parseInt(this.$route.params.id);
+
+      if (this.isOneZoneChecked) {
+        switch (type_creneau) {
+          case 1:
+            // Retrieve activity data from the local references
+            // Before sending it to the API. This has to be done
+            // This way because of the unsynchronized data.
+            this.updateActivites()
+
+            if (!this.isOneActivityChecked) {
+              this.errorMessage = true
+              break
+            } else {
+              if (this.typeAction === 'create') {
+                this.creneauStore.addCreneau(fitarena_id)
+              } else this.creneauStore.editCreneau(fitarena_id)
+              this.$emit('closeModalCreneau')
+            }
+            break
+  
+          case 2:
+            if (this.typeAction === 'create') {
+              this.creneauStore.addCreneauOrganisme(fitarena_id)
+            } else this.creneauStore.editCreneauOrganisme(fitarena_id)
+            this.$emit('closeModalCreneau')
+            break
+        }
+      } else {
+        this.errorMessage = true
+      }
     },
     isZoneChecked(zoneId) {
       return this.creneauStore.zones.includes(zoneId)

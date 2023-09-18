@@ -25,14 +25,14 @@ export const getTypeCreneau = async (page = 1, query = '') => {
       id: 2,
       libelle: 'Organisme',
     },
-    {
-      id: 3,
-      libelle: 'Animateur labelisé',
-    },
-    {
-      id: 4,
-      libelle: 'Maintenance',
-    },
+    // {
+    //   id: 3,
+    //   libelle: 'Animateur labelisé',
+    // },
+    // {
+    //   id: 4,
+    //   libelle: 'Maintenance',
+    // },
   ]
 }
 

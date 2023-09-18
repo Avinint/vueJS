@@ -1,11 +1,11 @@
 <template>
   <div class="flex h-full items-center">
     <div
-      class="h-full w-2 rounded-l-xl"
-      :class="{
-        'bg-red-600': event.extendedProps.type == 1,
-        'bg-blue-600': event.extendedProps.type == 2,
-      }"
+    class="h-full w-2 rounded-l-xl"
+    :class="{
+      'bg-red-600': event.extendedProps.type == 1,
+      'bg-blue-600': event.extendedProps.type == 2,
+    }"
     ></div>
     <div class="flex grow justify-between px-3 pr-3 text-xs text-black">
       <div class="flex flex-col">

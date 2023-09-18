@@ -13,30 +13,29 @@ export const getHeaders = {
   'Content-Type': 'application/ld+json',
 }
 
-export const getQuery = (queryParams = {}) => {
+export const getQuery = (queryParams = {}, ignore = [null, false, '']) => {
   let query = ''
   for (const prop in queryParams) {
-    query += (query.length ? '&' : '?') + prop + '=' + queryParams[prop]
+    if ( !ignore.includes(queryParams[prop])) query += (query.length ? '&' : '?') + prop + '=' + queryParams[prop]
   }
 
   return query
 }
-export const get = async (url) => {
+export const get = async (uri, query = null) => {
   const token = useStorage('token', '')
-  const response = await $fetch(url, { method: 'get', headers: { ...getHeaders, Authorization: `Bearer ${token.value}` }})
+  const url = import.meta.env.VITE_API_URL + uri + ( query !== null ? getQuery(query) : '')
+  const response = await $fetch(url, {
+    method: 'get',
+    headers: { ...getHeaders, Authorization: `Bearer ${token.value}` },
+  })
+
   if (response.status !== 200) throw response.json()
   return response.json()
 }
 
 export const post = async (url, body) => await request(url, body)
-export const upload = async (url, body) => {
-  if (!(body instanceof FormData)) {
-    return await null
-  }
-  return await request(url, body, 'post')
-}
 
-export const put = async (url, body) => await request(url, body, 'put')
+export const put = async (url, body = {}) => await request(url, body, 'put')
 
 export const patch = async (url, body) => request(url, body, 'patch')
 
