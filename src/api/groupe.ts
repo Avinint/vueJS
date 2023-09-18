@@ -2,9 +2,7 @@ import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
 
 export const fetchGroupes = async (organismeId: number) =>
-  await get(
-    `${import.meta.env.VITE_API_URL}/api/organismes/${organismeId}/groupes`
-  )
+  await get(`/api/organismes/${organismeId}/groupes`)
 
 export async function postGroup(groupe: GroupeEditContract): Promise<Groupe> {
   const response = await $fetch(

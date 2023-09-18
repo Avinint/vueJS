@@ -15,35 +15,29 @@
           v-for="(equipement, equipementIdx) in type.equipements"
           :key="equipementIdx"
         >
-          <div
-            v-if="isZoneEquipementExist(equipement)"
-            class="flex items-center justify-between"
-          >
-            {{ equipement.libelle }}
-            <div class="flex">
-              <Button
-                label="Détails"
-                couleur="secondary"
-                class="mr-4"
-                @click="detailsEquipement(typeIdx, equipementIdx)"
-              />
-              <Button
-                v-if="!readonly"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click.prevent="
+          <div v-if="isZoneEquipementExist(equipement)" class="flex items-center justify-between">
+            <div class="mr-4">
+              {{ equipement.libelle }}
+            </div>
+            <div class="mr-4">
+              {{ equipement.ip }}
+            </div>
+            <Button
+              v-if="!readonly"
+              borderless
+              icon="delete"
+              couleur="secondary"
+              @click.prevent="
                   removeEquipementFromZone(typeIdx, equipementIdx)
                 "
-              />
-            </div>
+            />
           </div>
         </template>
 
         <select
           v-if="!readonly"
           v-model="equipementSelectionne[typeIdx]"
-          class="mt-2 block w-1/3 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="mt-2 block w-1/3 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           @change="addEquipementToZone(typeIdx)"
         >
           <option value="" selected="selected">Ajouter</option>

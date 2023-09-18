@@ -44,8 +44,6 @@
     </div>
   </Card>
 
-
-
   <CardConditionVisualisationCreneaux  />
   <CardConditionReservationOfSlots />
   <CardKeyMomentDuration/>

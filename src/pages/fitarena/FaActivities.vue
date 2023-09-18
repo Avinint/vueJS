@@ -1,38 +1,33 @@
 <template>
+  <!-- <CrudListAdmin
+    entity="activité"
+    plural="activités pratiquables dans la Fit Arena"
+    :columns="crud_columns"
+    :data="getTableData()"
+    :can-all="isAdmin || isGestCo || isGestOrg"
+    @entity:new="createAnimateur"
+    @entity:edit="editAnimateur"
+    @entity:remove="removeAnimateur"
+  /> -->
   <Card class="space-y-3">
     <h1>Activités pratiquables dans la fit arena</h1>
 
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="text-xs text-gray-700 bg-gray-200"
         >
           <tr>
-            <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">Actif</th>
+            <th scope="col" class="px-6 py-3">Statut</th>
             <th scope="col" class="px-6 py-3">Libellé</th>
             <th scope="col" class="px-6 py-3">Ordre</th>
+            <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(act, i) in activites" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
-              <Button
-                test="TdeleteClient"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeActivite(act.id)"
-              />
-              <Button
-                test="TeditClient"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editActivite(i)"
-              />
-            </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 flex gap-4">
+              <p class="w-16">{{ act.actif ? 'Active' : 'Inactive' }}</p>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input
                   v-model="act.actif"
@@ -42,32 +37,49 @@
                   @change="modifieActivite(act)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
                 ></div>
                 <span
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="ml-3 text-sm font-medium text-gray-900"
                 ></span>
               </label>
             </td>
             <td class="px-6 py-4">{{ act.libelle }}</td>
 
             <td class="px-6 py-4">{{ act.ordre }}</td>
-            <td class="px-6 py-4">
+            <td class="flex items-center justify-end p-3 gap-8">
+              <div @click="showActivite(i)" class="cursor-pointer">
+                <svg width="26" height="26" viewBox="0 0 32 32">
+                  <path
+                  fill="black"
+                  d="M16 4C9.383 4 4 9.383 4 16s5.383 12 12 12s12-5.383 12-12S22.617 4 16 4zm0 2c5.535 0 10 4.465 10 10s-4.465 10-10 10S6 21.535 6 16S10.465 6 16 6zm-1 4v8h2v-8zm0 10v2h2v-2z"
+                  />
+                </svg>
+              </div>
               <Button
-                label="Détails"
+                test="TdeleteActivite"
+                borderless
+                icon="delete"
                 couleur="secondary"
-                @click="showActivite(i)"
+                @click="removeActivite(act.id)"
+              />
+              <Button
+                test="TeditActivite"
+                borderless
+                icon="edit"
+                couleur="secondary"
+                @click="editActivite(i)"
               />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <Button
+    <ButtonRight
       id="TaddActivite"
       label="Ajouter une activité"
       icon="add"
-      couleur="secondary"
+      couleur="danger"
       @click="addActivite"
     />
   </Card>
@@ -87,7 +99,7 @@
           id="TTypeActivite"
           v-model="activite_selected"
           :disabled="readonly == true ? true : false"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         >
           <option
             v-for="(typeActivite, i) in typeActivites"
@@ -103,46 +115,44 @@
           id="TActiviteLibelle"
           v-model="activite.libelle"
           :readonly="readonly"
-          :type="'text'"
+          type="text"
           label="Nom"
-          :required="true"
+          :inline="true"
+          required
           class="w-full"
         />
       </div>
       <div class="flex items-center">
-        <!-- <Input :readonly="readonly" id="small_size" :type="'file'" label="Icône" class="w-full" /> -->
-        <label
-          class="mb-2 block pr-3 text-sm font-medium text-gray-900 dark:text-white"
-          for="small_size"
-          >Icône</label
-        >
-        <input
-          id="small_size"
-          class="mb-5 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
-          type="file"
-        />
-      </div>
-      <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Description</label
-        >
-        <textarea
-          id="TActiviteDescription"
-          v-model="activite.description"
-          :readonly="readonly"
-          type="text"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          required
-        ></textarea>
+        <p class="label-text w-1/2">Type de réservation</p>
+        <div class="w-full flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-900"
+            >Réservation individuelle</span
+          >
+          <label class="relative inline-flex cursor-pointer items-center">
+            <input
+              v-model="activite.reservationDeGroupe"
+              :disabled="readonly == true ? true : false"
+              type="checkbox"
+              value="true"
+              class="peer sr-only"
+            />
+            <div
+              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+            ></div>
+          </label>
+          <span class="ml-3 text-sm font-medium text-gray-900"
+            >Réservation de groupe</span
+          >
+        </div>
       </div>
       <div class="flex items-center">
         <Input
           v-if="!readonly"
           id="TActiviteOrdre"
           v-model="activite.ordre"
-          :type="'number'"
+          type="number"
           label="Ordre"
-          :required="true"
+          :inline="true"
           class="w-full"
         />
         <Input
@@ -150,14 +160,40 @@
           id="TActiviteOrdre"
           v-model="activite.ordre"
           readonly
-          :type="'text'"
+          type="text"
           label="Ordre"
           class="w-full"
         />
       </div>
       <div class="flex items-center">
-        <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Actif :
+        <!-- <Input :readonly="readonly" id="small_size" :type="'file'" label="Icône" class="w-full" /> -->
+        <label
+          class="mb-2 block pr-3 w-1/2 text-sm font-medium text-gray-900"
+          for="small_size"
+          >Icône</label
+        >
+        <input
+          @change="chargeFichier"
+          id="small_size"
+          class="mb-5 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-xs text-gray-900 focus:outline-none"
+          type="file"
+        />
+      </div>
+      <div class="flex">
+        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+          >Description</label
+        >
+        <textarea
+          id="TActiviteDescription"
+          v-model="activite.description"
+          :readonly="readonly"
+          rows="8"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+        ></textarea>
+      </div>
+      <div class="flex items-center">
+        <span class="w-1/2 text-sm font-medium text-gray-900"
+          >Rendre active
         </span>
         <label class="relative inline-flex w-full cursor-pointer items-center">
           <input
@@ -168,33 +204,14 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
           ></div>
           <span
-            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+            class="ml-3 text-sm font-medium text-gray-900"
           ></span>
         </label>
       </div>
-      <div class="flex items-center">
-        <span class="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Réservation individuelle</span
-        >
-        <label class="relative inline-flex cursor-pointer items-center">
-          <input
-            v-model="activite.reservationDeGroupe"
-            :disabled="readonly == true ? true : false"
-            type="checkbox"
-            value="true"
-            class="peer sr-only"
-          />
-          <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-          ></div>
-        </label>
-        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Réservation de groupe</span
-        >
-      </div>
+      <MentionChampsObligatoires margin-top="40px"/>
     </Modal>
   </form>
 
@@ -223,18 +240,23 @@ import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
+import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
+// import CrudListAdmin from '@components/molecules/CrudListAdmin.vue'
 import { getTypeActivites } from '../../api/typeActivite.js'
 import {
   deleteActivites,
   getActivites,
   postActivites,
-  updateActivites,
   patchActivites,
+  uploadActivite,
 } from '../../api/activite.ts'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import { useRoute } from 'vue-router'
 
 const props = defineProps(['id'])
 
@@ -243,6 +265,12 @@ const notify = () => {
     autoClose: 1000,
   }) // ToastOptions
 }
+
+// const crud_columns = [
+//   { data: (e) => e.actif, label: 'Statut' },
+//   { data: (e) => e.libelle, label: 'Libellé' },
+//   { data: (e) => e.ordre, label: 'Ordre' }
+// ]
 
 const activite_modal = ref(false)
 const readonly = ref(false)
@@ -254,6 +282,9 @@ const add_modal = ref(false)
 const actTemp = ref({})
 
 const id_selected = ref(0)
+
+const fitArenaId = parseInt(useRoute().params.id)
+
 const activites = ref([])
 const typeActivites = ref([])
 const typeActivite = ref({})
@@ -261,10 +292,26 @@ const activite = ref({})
 const activite_selected = ref({})
 const modal_title = ref('')
 
+const file = ref(null)
+
 onMounted(async () => {
   activites.value = await getActivites(props.id, 1, '&order=asc')
   typeActivites.value = await getTypeActivites()
 })
+
+watch(() => props.id, async (  ) => {
+  activites.value = await getActivites(props.id, 1, '&order=asc')
+})
+
+// function getTableData() {
+//   return activites.value.map((activite) => {
+//     return {
+//       data: activite,
+//       editable: true,
+//       removable: true,
+//     }
+//   })
+// }
 
 const addActivite = () => {
   activite.value = {}
@@ -328,18 +375,14 @@ const mapApiToData = (activiteTemp) => {
 const saveActivite = () => {
   actTemp.value = {
     typeActivite: '/api/type_activites/' + activite_selected.value,
-    fitArena: '/api/fit_arenas/' + props.id,
+    fitArena: '/api/fit_arenas/' + fitArenaId,
     ordre: parseInt(activite.value.ordre),
     libelle: activite.value.libelle,
     description: activite.value.description,
-    actif: activite.value.actif == true ? activite.value.actif : false,
+    actif: activite.value.actif,
     icone: activite.value.icone,
-    reservationDeGroupe:
-      activite.value.reservationDeGroupe == true
-        ? activite.value.reservationDeGroupe
-        : false,
+    reservationDeGroupe: activite.value.reservationDeGroupe,
   }
-
   if (id_selected.value) {
     edit_modal.value = true
   } else {
@@ -347,9 +390,11 @@ const saveActivite = () => {
   }
 }
 
+const chargeFichier = (e) => {activite.value.icone = e.target.files[0]}
+
 const updateActivityValidation = async () => {
   try {
-    await updateActivites(actTemp, id_selected.value)
+    await uploadActivite(actTemp.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -382,3 +427,13 @@ const cancel = () => {
   id_selected.value = 0
 }
 </script>
+
+<style scoped>
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+</style>
