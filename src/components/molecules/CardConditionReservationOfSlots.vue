@@ -72,25 +72,14 @@
       @cancel="conditionReservation_modal = false"
     >
       <div>
-        <p class="mb-2 block text-sm font-medium text-gray-900">
-          Accès à la Fit Arena réservé uniquement pour certains profils :
-        </p>
+
         <!-- ajouter les profils en dynamique quand le back aura rajouté cette propriété dans le WS -->
 
         <!-- <div class="w-2/12 bg-light-blue text-center block mb-4 text-sm font-medium text-light-blue rounded-lg">
                     <p class="p-2">Adhérents</p>
                 </div> -->
 
-        <div class="mb-6 flex w-4/12 items-center">
-          <select
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          >
-            <option value="" disabled selected>Ajouter un profil</option>
-            <option v-for="(profil, i) in profils" :key="i" :value="profil.id">
-              {{ profil.libelle }}
-            </option>
-          </select>
-        </div>
+
         <div class="mb-6 flex items-center">
           <label class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
             >Zone</label
@@ -99,7 +88,7 @@
             v-if="zoneParents.length"
             id="TfaSelectZone"
             v-model="zone_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
             <option
               v-for="(zoneParent, i) in zoneParents"
@@ -117,7 +106,7 @@
           <select
             v-if="nbCreneaux.length"
             v-model="valeur_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           >
             <option
               v-for="(creneau, i) in nbCreneaux"
@@ -142,7 +131,7 @@ import ButtonRight from '../../components/common/Button.vue'
 import { getParametres, getParametresById } from '../../api/parametres.js'
 import { getProfils } from '../../api/profil.js'
 import { getZones } from '../../api/zone.js'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -177,13 +166,14 @@ const formulaireParZone = reactive({
 
 })
 
+const parametreZones = computed(() => params.parametres.parametreZones)
+
+
 onMounted(async () => {
   parametres.value = await getParametresById(13)
   profils.value = await getProfils()
-  zoneParents.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + idFitArena.value
-  )
+  zoneParents.value = await getZones({ "typeZone.code": "espace", fitArena: idFitArena.value })
+
 })
 
 
@@ -204,15 +194,6 @@ const addConditionVisualisation = () => {
 }
 
 const modifConditionReservation = async ({ actif, id }) => {
-  try {
-    await patchParametreZone({ actif }, id)
-    toast.success('Modification du paramètre effectuée avec succès')
-  } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
-  }
-}
-
-const modifVisualisationReservation = async ({ actif, id }) => {
   try {
     await patchParametreZone({ actif }, id)
     toast.success('Modification du paramètre effectuée avec succès')
