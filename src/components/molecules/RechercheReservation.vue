@@ -2,7 +2,7 @@
   <ButtonRight icon="filter" label="Filtrer" couleur="secondary" @click="afficherCalqueRecherche = true" />
   <Modal v-if="afficherCalqueRecherche" title="FILTRE RÉSERVATION" @cancel="afficherCalqueRecherche = false" @confirm="filtrer" confirmButtonText="Filtrer">
     <template #actions>
-      <Button test='TresetRechResa' @click="resetRecherche" label="reset" couleur="danger"/>
+      <Button test='TresetRechResa' @click="resetRecherche" label="reset" couleur="danger" />
     </template>
     <div class="pl-4">
       <div class="flex items-center mb-10">
