@@ -23,7 +23,7 @@ export const getQuery = (queryParams = {}, ignore = [null, false, '']) => {
 }
 export const get = async (uri, query = null) => {
   const token = useStorage('token', '')
-  const url = import.meta.env.VITE_API_URL + uri + ( query !== null ? getQuery(query) : '')
+  const url =  (uri.startsWith('http') ? uri : import.meta.env.VITE_API_URL + uri) + ( query !== null ? getQuery(query) : '')
   const headers = { ...getHeaders, Authorization: `Bearer ${token.value}` }
   const response = await $fetch(url, { method: 'get', headers })
 
@@ -39,8 +39,9 @@ export const patch = async (url, body) => request(url, body, 'patch')
 
 export const del = async (url) => request(url, {}, 'delete')
 
-export const request = async (url, requestBody, method = 'post') => {
+export const request = async (uri, requestBody, method = 'post') => {
   const { body, options } = prepareRequest(requestBody, method)
+  const url = uri.startsWith('http') ? uri : import.meta.env.VITE_API_URL + uri
   const response = await fetchResponse(url, method, options, body);
   if (response.status !== successCodes[method]) throw response.json()
   return ['patch', 'delete'].includes(method) ? {} : await response.json()

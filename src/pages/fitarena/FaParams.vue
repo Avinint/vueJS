@@ -1,13 +1,12 @@
 <template>
+  <div class="space-y-10">
   <CardReservationDuration />
 
-  <Card>
-    <h1>Accès à la fit arena</h1>
-  </Card>
+  <CardModalSection title="Accès à la fit arena">
+  </CardModalSection>
 
-  <Card>
-    <h1>Annulation d'une réservation</h1>
-    <div class="relative my-4 overflow-x-auto text-black">
+  <CardModalSection title="Annulation d'une réservation">
+    <div class="relative ml-9 my-4 overflow-x-auto text-black">
       <div class="flex bg-white">
         <div class="flex w-1/12 items-center justify-start">
           <Button
@@ -42,24 +41,29 @@
         </div>
       </div>
     </div>
-  </Card>
+  </CardModalSection>
 
-  <CardConditionVisualisationCreneaux  />
-  <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration/>
+  <CardConditionVisualisationCreneaux @suppression="supprimer" />
+  <CardConditionReservationCreneaux @suppression="supprimer"/>
+  <CardKeyMomentDuration  @suppression="supprimer"/>
 
-  <Card>
-    <h1>Invitation à une réservation</h1>
-  </Card>
+  <CardModalSection title="Invitation à une réservation">
+  </CardModalSection>
+  </div>
+
+  <form @submit.prevent="confirmation()">
+    <ValidationModal
+      v-if="modaleConfirmation"
+      type="delete"
+      @cancel="modaleConfirmation = false"
+    >
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
-import Card from '../../components/common/Card.vue'
 import Button from '../../components/common/Button.vue'
-import Modal from '../../components/common/Modal.vue'
-import Switch from '../../components/common/Switch.vue'
 import Input from '../../components/common/Input.vue'
-import CardConditionReservationOfSlots from '../../components/molecules/CardConditionReservationOfSlots.vue'
 import CardKeyMomentDuration from '../../components/molecules/CardKeyMomentDuration.vue'
 import CardReservationDuration from '../../components/molecules/CardReservationDuration.vue'
 import {
@@ -73,33 +77,60 @@ import { getParametres, postParametres, getParametresParFitArena } from '@api/pa
 import { useParamStore } from '@stores/parametre.js'
 import { getProfils } from "@api/profil.js";
 import CardConditionVisualisationCreneaux from "@components/molecules/CardConditionVisualisationCreneaux.vue";
-
-const ID_VISU_CRENEAU = 16
+import CardModalSection from "@components/common/CardModalSection.vue";
+import CardConditionReservationCreneaux from "@components/molecules/CardConditionReservationCreneaux.vue";
+import { toast } from "vue3-toastify";
+import ValidationModal from "@components/common/ValidationModal.vue";
 
 const route = useRoute()
 const  params = useParamStore()
-
-
-const visualisation_creneaux = ref({})
+const { fetchParametres, fetchActivites } = params
+const modaleConfirmation = ref(false)
 
 const editCancelBooking = ref(false)
 
 const cancelSessionTime = ref(1)
+let callbackConfirmation = null
+let argumentCallback = null
 
 onBeforeRouteUpdate(async (to, from) => {
-    await params.fetchActivites(to.params.id)
-    await params.fetchParametres(to.params.id)
+    await fetchActivites(to.params.id)
+    await fetchParametres(to.params.id)
 })
 
 onBeforeMount(async () => {
   // SEARCH ALL PARAMS FO THIS FIT ARENA
-  await params.fetchActivites(route.params.id)
-  await params.fetchParametres(route.params.id)
+  await fetchActivites(route.params.id)
+  await fetchParametres(route.params.id)
 
   // PARAMETRE ANNULATION DES CRENEAUX
   cancelSessionTime.value = params.parametreFitarenas?.['condition-annulation-des-creneaux'].valeur ?? 1
 })
 
+const supprimer = (id, func) => {
+  modaleConfirmation.value = true
+  callbackConfirmation = func
+  argumentCallback = id
+}
+
+const confirmation = async () => {
+  try {
+    if (Array.isArray(argumentCallback)) {
+      for (const argument of argumentCallback) {
+        await callbackConfirmation(argument)
+      }
+    } else {
+      await callbackConfirmation(argumentCallback)
+    }
+
+    await rafraichir()
+    toast.success('Succès de la suppression')
+  } catch (e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur')
+  }
+
+  modaleConfirmation.value = false
+}
 
 const createParamsForFitArena = async (id_fa, code, value) => {
   // CREATE GENERIC PARAMS
@@ -121,12 +152,16 @@ const setCancelBooking = async () => {
   editCancelBooking.value = !editCancelBooking.value
   if (!editCancelBooking.value) {
     // RETURN TO READONLY MODE -> SAVE INPUT VIA API
-    const  id = parametreFitarenas['condition-annulation-des-creneaux'].id
+    const  id = params.parametreFitarenas['condition-annulation-des-creneaux'].id
     await patchParametreFitArena(id, {
       fitArena: 'api/fit_arenas/' + route.params.id,
       parametre: 'api/parametres/' + id,
       valeur: '' + cancelSessionTime.value,
     })
   }
+}
+
+const rafraichir = async () => {
+  await params.fetchParametres(route.params.id)
 }
 </script>

@@ -1,7 +1,6 @@
 <template>
-  <Card>
-    <h1>Condition de visualisation des créneaux</h1>
-    <div class="my-4 rounded-lg border">
+  <CardModalSection title="Condition de visualisation des créneaux">
+    <div class="ml-9 my-4 rounded-lg border">
       <div v-if="parametreFitArena" class="relative overflow-x-auto text-black">
         <div class="flex items-center font-light">
           <p class="p-2 bg-grey flex items-center w-5/12 justify-start">Nombre de jours visibles pour la réservation de
@@ -22,10 +21,9 @@
               class="ml-3 text-sm font-medium text-gray-900"
             ></span>
           </label>
-          <div class="bg-grey  mx-1 px-4 flex justify-end rounded-lg">
-            <p class="flex p-2">{{ parametreFitArena.valeur }} {{ parametreFitArena.valeur > 1 ? 'jours' : 'jour&nbsp;&nbsp;' }}</p>
-          </div>
-          <div class="w-1/12"></div>
+          <p class="bg-grey mx-1 px-4 py-2 flex justify-end rounded-lg">{{ parametreFitArena.valeur }} jour{{ parametreFitArena.valeur > 1 ? 's' : '&nbsp;&nbsp;' }}</p>
+
+          <div class="grow flex justify-end">
           <Button
             test="TeditKeyMoment"
             borderless
@@ -33,6 +31,8 @@
             couleur="secondary"
             @click="editParDefaut(parametreFitArena)"
           />
+          </div>
+          <div class=" flex-none w-9"></div>
         </div>
       </div>
 
@@ -42,8 +42,9 @@
 
           <div class="flex items-center font-light">
             <p class="p-2 bg-grey flex items-center w-5/12 justify-start">{{ parametre[0].parametre.libelle }}</p>
-            <p class="px-6">Actif</p>
-            <label class="relative  inline-flex cursor-pointer">
+            <p v-if="parametre[0].parametre.actif" class="px-6">Actif</p>
+            <p v-else class="px-6">Inactif</p>
+            <label class="relative inline-flex cursor-pointer">
               <input
                 :checked="parametre[0].parametre.actif"
                 type="checkbox"
@@ -58,28 +59,27 @@
                 class="ml-3 text-sm font-medium text-gray-900"
               ></span>
             </label>
-            <div class="bg-grey  mx-1 px-4 flex justify-end rounded-lg">
-              <p class="flex p-2">{{ index }} {{ index > 1 ? 'jours' : 'jour&nbsp;&nbsp;' }}</p>
-            </div>
+            <p class="bg-grey mx-1 px-4 py-2 flex justify-end rounded-lg">{{ index }} jour{{ index > 1 ? 's' : '&nbsp;&nbsp;' }}</p>
             <div class="w-1/12"></div>
-            <Button
-              test="TeditKeyMoment"
-              borderless
-              icon="edit"
-              couleur="secondary"
-              @click="editAvecProfils(parametre)"
-            />
-            <Button
-              test="TdeleteKeyMoment"
-              borderless
-              icon="delete"
-              couleur="secondary"
-              class="flex justify-end"
-              @click="supprimer(parametre)"
-            />
+            <div class="grow flex justify-end">
+              <Button
+                test="TeditKeyMoment"
+                borderless
+                icon="edit"
+                couleur="secondary"
+                @click="editAvecProfils(parametre)"
+              />
+              <Button
+                test="TdeleteKeyMoment"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                @click="supprimer(parametre)"
+              />
+            </div>
+
           </div>
           <div class="my-3">
-
             <div v-for="param in parametre" class="w-auto text-lg inline-flex items-center px-2 py-1 mr-2 bg-sky-200 text-sky-600">
               {{ param.profil.libelle}}
             </div>
@@ -87,15 +87,16 @@
         </div>
       </template>
     </div>
-    <Button v-if="isAjoutPossible"
-      class="font-bold font-black"
+    <Button
+      v-if="isAjoutPossible"
       label="Ajouter une condition de visualisation des créneaux"
       icon="add"
-      couleur="secondary"
+      couleur="danger"
+      class="ml-9"
       @click="add()"
     />
 
-  </Card>
+  </CardModalSection>
   <form @submit.prevent="save">
     <Modal
       v-if="modaleVisible"
@@ -138,33 +139,30 @@
 
 <script setup>
 
-import Card from "@components/common/Card.vue";
-import Switch from "@components/common/Switch.vue";
 import Modal from "@components/common/Modal.vue";
 import Button from "@components/common/Button.vue";
-import { computed, nextTick, onMounted, reactive, ref, watchEffect } from "vue";
-import { getParametresById } from "@api/parametres.js";
+import { computed, onMounted, reactive, ref } from "vue";
 import { getProfils } from "@api/profil.js";
 import { useRoute } from "vue-router";
-import { patchParametreActivite } from "@api/parametreActivite.js";
 import { toast } from "vue3-toastify";
 import {
   deleteParametreFitArenaProfil,
   patchParametreFitArena,
   patchParametreFitArenaProfil,
-  postParametreFitArena, postParametreFitArenaProfil, putParametreFitArenaProfil,
+  postParametreFitArenaProfil,
+  putParametreFitArenaProfil,
   updateParametreFitArena
 } from "@api/parametreFitArena.js";
 
 import { useParamStore } from "@stores/parametre.js";
 import DeleteSVG from "@components/svg/DeleteSVG.vue";
+import CardModalSection from "@components/common/CardModalSection.vue";
 
 const params = useParamStore()
 const PARAM_NB_JOURS_VISIBLES = 'nombre_de_jours_visibles_pour_la_reservation_de_creneaux_par_les_utilisateurs_grand_public'
 const PARAM_NB_JOURS_VISIBLES_PROFIL = 'nombre_de_jours_visibles_pour_la_reservation_de_creneaux_par_profil'
 const idFitArena = computed(() =>  useRoute().params.id)
 const fitArena = computed(() =>  '/api/fit_arenas/' + idFitArena.value)
-const profilsExistant = ref([])
 const profils = ref([])
 const modal_title = ref('')
 const modaleVisible = ref(false)
@@ -180,17 +178,14 @@ const formulaire = reactive({
   profilsASupprimer: []
 })
 
-const parametreFitArena = computed(() => params.parametres.parametreFitArenas?.[PARAM_NB_JOURS_VISIBLES])
-const parametreFitArenaProfils = computed(() => params.parametres.parametreFitArenaProfils)
-// const parametres = computed(() => pr ops.params)
+const emits = defineEmits(['suppression'])
 
-watchEffect(() => parametreFitArena.value, () => { console.log(parametreFitArena.value) })
+const parametreFitArena = computed(() => useParamStore().parametreFitArenas?.[PARAM_NB_JOURS_VISIBLES])
+const parametreFitArenaProfils = computed(() => useParamStore().parametreFitArenaProfils)
 
 onMounted(async () => {
-  // parametres.value = await getParametresById(13)
   profils.value = await getProfils()
 
-  setTimeout(() => console.log(parametreFitArenaProfils.value), 500)
 })
 
 const profilsSelectables = computed(() =>   [{id: null, iri: null,  libelle: "- Ajouter un profil -"}, ...profils.value])
@@ -237,21 +232,10 @@ const modificationStatusParProfils = async (parametres) => {
 }
 
 const supprimer = async(parametres) => {
-  try {
+  const ids = parametres.map(param => param.parametre.id);
 
-    for (const param of parametres) {
-      await deleteParametreFitArenaProfil(param.parametre.id)
-    }
-
-    toast.success('Paramètre supprimé')
-    await rafraichir()
-    closeModal()
-  } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
-  }
+  await emits('suppression', ids, deleteParametreFitArenaProfil)
 }
-
-
 
 const editAvecProfils = async (parametres) => {
 
@@ -269,7 +253,7 @@ const editAvecProfils = async (parametres) => {
   modal_title.value = 'Modifier une condition de visualisation des créneaux'
 }
 
-const initFormulaire = async(parametre) => {
+const initFormulaire = (parametre) => {
   formulaire.parametre = parametre.iri
   formulaire.valeur =  parametre.valeur
   formulaire.actif = parametre.actif
@@ -316,9 +300,9 @@ async function supprimerProfil(id)
 
 const save = async () => {
   if (modeFormulaire.value === "par_profils") {
-    saveParProfils()
+    await saveParProfils()
   } else if (modeFormulaire.value ==="par_defaut") {
-    saveParDefaut()
+    await saveParDefaut()
   }
 }
 
@@ -342,7 +326,7 @@ const saveParDefaut = async () => {
     }
 
     toast.success('Paramètre sauvegardé')
-    rafraichir()
+    await rafraichir()
     closeModal()
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
@@ -359,11 +343,10 @@ const saveParProfils = async () => {
   }
 
   try {
-    console.log("1 tour")
     if (formulaire.id) {
       await miseAJourParProfil(corps);
     } else {
-      await AjoutParProfil(corps);
+      await ajoutParProfil(corps);
     }
 
     await rafraichir()
@@ -403,7 +386,7 @@ console.log(formulaire)
   }
 }
 
-async function AjoutParProfil(corps) {
+async function ajoutParProfil(corps) {
   if (formulaire.profil) {
     corps.profil = formulaire.profil
   }
@@ -422,7 +405,7 @@ const profilsUtilises = computed(() => {
   return profils
 })
 
-// Si les données ne sont pas chargeées je ne veux pas afficher le bouton d'ajout
+// Si les données ne sont pas chargeées, je ne veux pas afficher le bouton d'ajout
 const isAjoutPossible = computed(() => (profilsUtilises.value?.length ?? 1) === 0 || (profilsUtilises.value?.length ?? 1000) < (profils.value?.length ?? 0))
 
 const isProfilDisponible = (leProfil) => {

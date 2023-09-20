@@ -41,7 +41,7 @@ import { computed } from 'vue'
 
   interface Props {
     label?: string,
-    icon_placement?: string
+    icon_placement?: 'left' | 'right'
     icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | 'delete' | 'print' | 'search' | '',
     couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
     borderless: boolean,
@@ -50,7 +50,8 @@ import { computed } from 'vue'
 
   const props = withDefaults(defineProps<Props>(), {
     borderless: false,
-    submit: false
+    submit: false,
+    icon_placement: 'right'
   });
 
   const icon: string = ICON[props.icon ?? '']
