@@ -1,5 +1,5 @@
 <template>
-  <div class="pl-4">
+  <div>
     <HeaderModal :text="title" :uppercase="!normalcase"/>
     <div class="mt-6">
       <slot name="content">

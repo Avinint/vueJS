@@ -1,7 +1,7 @@
 <template>
   <CrudList
     entity="réservation"
-    plural="réservations"
+    plural="liste des réservations"
     :columns="colonnesReservations"
     :data="getTableData()"
     :can-remove="true"
@@ -11,7 +11,7 @@
     @entity:read="consulterResa"
   >
     <template #recherche>
-      <RechercheReservation @chargement-liste="chargeReservations"/>
+      <RechercheReservation @chargement-liste="chargeReservations" />
     </template>
   </CrudList>
 
@@ -87,7 +87,6 @@
       <Table
         :columns="getColonnesParticipants(details.participants)"
         :data="creerLigneParticipant(details.participants)"
-
       />
     </Card>
     <template #but>
@@ -98,10 +97,9 @@
   <form @submit.prevent="annulerResaConfirmation(index)">
     <ValidationModal
       v-if="calqueConfirmationVisible"
-      type="edit"
+      type="delete"
       @cancel="calqueConfirmationVisible = false"
     >
-      Voulez-vous valider l'annulation ?
     </ValidationModal>
   </form>
 </template>
@@ -157,12 +155,12 @@ const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
 onMounted(async () => {
-   await chargeReservations()
+  await chargeReservations()
 })
 
 watch(() => idFA.value, () => chargeReservations())
 
-const chargeReservations = async(params = {}) => { reservations.value = await getReservations({idFA : idFA.value, page: 1, ...params}) }
+const chargeReservations = async(params = {}) => { reservations.value = await getReservations({ idFA: idFA.value, page: 1, ...params }) }
 
 function getTableData() {
   return reservations.value.map((resa) => {
@@ -176,8 +174,7 @@ function getTableData() {
   })
 }
 
-const consulterResa = async(reservation) => {
-
+const consulterResa = async(reservation: any) => {
   if (details.value.id !== reservation.id || details.value.participants === undefined) {
     details.value = await getReservation(reservation.id)
     details.value = {...details.value,
@@ -186,7 +183,6 @@ const consulterResa = async(reservation) => {
       dateFin: dayjs(details.value.dateFin).format('- HH[h]mm')
     }
   }
-
   calqueFormulaireVisible.value = true
 }
 
@@ -204,7 +200,7 @@ const annulerResaConfirmation = () => {
     fermerCalqueFormulaire()
     toast.success("Réservation annulée avec succès")
   } catch(e) {
-    toast.error("Erreur, Veuillez contacter votre administrateur")
+    toast.error("Erreur, veuillez contacter votre administrateur")
   }
 }
 
@@ -215,6 +211,6 @@ const fermerCalqueFormulaire = () => {
 
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

@@ -22,7 +22,7 @@ export const useMenuStore = defineStore('menu', () => {
     fitArena.open = open
   }
 
-  const fetchMenu = async() => {
+  const fetchMenu = async () => {
     ({
       menu: {
         clients: clients.value = [],

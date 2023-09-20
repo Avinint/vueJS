@@ -12,7 +12,7 @@
 import { computed } from 'vue'
 
   const ICON = {
-   search: '<svg aria-hidden="true" class="h-5 w-5 currentColor0" fill="none" stroke="currentColor" viewBox="0 0 24 24"xmlns="http://www.w3.org/2000/svg">' +
+    search: '<svg aria-hidden="true" class="h-5 w-5 currentColor0" fill="none" stroke="currentColor" viewBox="0 0 24 24"xmlns="http://www.w3.org/2000/svg">' +
     '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" ></path>' +
     '</svg>',
     print: '<svg class="w-6 h-6 text-gray-800 dark:text-white" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 20 20">\n' +
@@ -26,6 +26,7 @@ import { computed } from 'vue'
     export: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="m16.2 20.5l2.8-2.8V20h1v-4h-4v1h2.3l-2.8 2.8ZM5 21q-.825 0-1.413-.587Q3 19.825 3 19V5q0-.825.587-1.413Q4.175 3 5 3h14q.825 0 1.413.587Q21 4.175 21 5v6.7q-.475-.225-.975-.388q-.5-.162-1.025-.237V5H5v14h6.05q.075.55.238 1.05q.162.5.387.95Zm0-3v1V5v6.075V11v7Zm2-1h4.075q.075-.525.237-1.025q.163-.5.363-.975H7Zm0-4h6.1q.8-.75 1.787-1.25q.988-.5 2.113-.675V11H7Zm0-4h10V7H7Zm11 14q-2.075 0-3.537-1.462Q13 20.075 13 18q0-2.075 1.463-3.538Q15.925 13 18 13t3.538 1.462Q23 15.925 23 18q0 2.075-1.462 3.538Q20.075 23 18 23Z"/></svg>',
     logout: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="transform -rotate-90"><path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2a9.985 9.985 0 0 1 8 4h-2.71a8 8 0 1 0 .001 12h2.71A9.985 9.985 0 0 1 12 22zm7-6v-3h-8v-2h8V8l5 4l-5 4z"/></svg>',
     cross: '<svg aria-hidden="true" class="w-5 h-5" fill="black" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>',
+    filter: '<svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.61292 14.3927C0.688316 14.1562 3.96052e-07 13.2569 4.42864e-07 12.186C4.89694e-07 11.1146 0.688777 10.216 1.61293 9.97948L1.61293 1.02315C1.61293 0.734081 1.82939 0.5 2.09671 0.5C2.36403 0.5 2.58049 0.734081 2.58049 1.02315L2.58049 9.97948C3.5051 10.216 4.19342 11.1151 4.19342 12.186C4.19342 13.2576 3.50464 14.1562 2.58049 14.3927L2.58049 14.9767C2.58049 15.2658 2.36403 15.4999 2.09671 15.4999C1.82939 15.4999 1.61292 15.2658 1.61292 14.9767L1.61292 14.3927ZM3.22585 12.186C3.22585 11.5129 2.71956 10.9652 2.09669 10.9652C1.47427 10.9652 0.967524 11.5124 0.967524 12.186C0.967524 12.859 1.47381 13.407 2.09669 13.407C2.7191 13.407 3.22585 12.8595 3.22585 12.186ZM7.41928 6.02052C6.4949 5.784 5.80636 4.88494 5.80636 3.81402C5.80636 2.74241 6.49536 1.84379 7.41928 1.60726L7.41928 1.02328C7.41928 0.734205 7.63597 0.500124 7.90329 0.500124C8.17039 0.500124 8.38708 0.734205 8.38708 1.02328L8.38708 1.60726C9.31168 1.84378 10 2.74309 10 3.81402C10 4.88538 9.31122 5.784 8.38708 6.02052L8.38707 14.9768C8.38707 15.2659 8.17038 15.5 7.90329 15.5C7.63597 15.5 7.41928 15.2659 7.41928 14.9768L7.41928 6.02052ZM9.03221 3.81402C9.03221 3.14095 8.52614 2.59297 7.90327 2.59297C7.28086 2.59297 6.77411 3.14046 6.77411 3.81402C6.77411 4.48708 7.2804 5.03481 7.90327 5.03481C8.52569 5.03481 9.03221 4.48757 9.03221 3.81402Z" fill="#161616"/></svg>',
     '': ''
   }
 
@@ -42,7 +43,7 @@ import { computed } from 'vue'
   interface Props {
     label?: string,
     icon_placement?: string
-    icon?: 'reload' | 'edit' | 'add' | 'export' | 'logout' | 'cross' | 'delete' | 'print' | 'search' | '',
+    icon?: 'search' | 'print' | 'add' | 'reload' | 'edit' | 'delete' | 'export' | 'logout' | 'cross' | 'filter' | '',
     couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
     borderless: boolean,
     submit: boolean,

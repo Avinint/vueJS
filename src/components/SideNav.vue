@@ -7,6 +7,7 @@
           <img :src="`${imgSrc}logo.png`" class="h-5 ml-10" alt="logo">
         </router-link>
       </div>
+
       <div v-if="isAdmin" class="mt-4">
         <div class="pl-8 mb-2">
           <p class="text-red-600 text-xl">Administrateur</p>
@@ -20,6 +21,7 @@
           </div>
         </div>
       </div>
+
       <div class="h-full overflow-y-auto bg-white">
         <template v-for="(links_by_type, type) in links">
           <div v-for="(link, i) in links_by_type" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900">
@@ -66,21 +68,20 @@ import Link from '../types/Link'
 
 import { useUserStore } from "@/stores/user.js";
 import { useMenuStore } from "@/stores/menu.js";
-import { getFitArenas } from '../api/fit-arena.js'
-import { getClients } from '../api/client.js'
 
-import { getOrganismes } from "@api/organisme";
-import { getFitArena } from "@api/fit-arena";
+import { computed, onMounted } from "vue"
 
-import { computed, onMounted, ref } from "vue"
-
-const { toggleOrganisme, toggleFitArena, toggleClient, fetchMenu  } = useMenuStore()
-const { isAdmin, isGestCo, isGestOrg } = useUserStore();
+const { toggleOrganisme, toggleFitArena, toggleClient, fetchMenu } = useMenuStore()
+const { isAdmin, isGestOrg } = useUserStore();
 
 const imgSrc = "/src/assets/"
 
 onMounted(async () => {
   await fetchMenu()
+})
+
+const links = computed(() =>  {
+  return { clients: clientLinks.value, fit_arenas: fitArenaLinks.value, organismes: organismeLinks.value }
 })
 
 const openSubLinks = (link, type) => {
@@ -104,7 +105,6 @@ const openSubSubLinks = (i, sub_i) => {
   sub_links[sub_i].sub_links_open = !sub_links[sub_i].sub_links_open
 }
 // let links: Link[] = reactive([])
-
 
 const adminLinks = [
   {
@@ -301,8 +301,4 @@ const organismeLinks = computed(() => isGestOrg ?
       })
       ] : []
 )
-
-const links = computed(() =>  {
-  return { clients: clientLinks.value, fit_arenas: fitArenaLinks.value, organismes: organismeLinks.value }
-})
 </script>

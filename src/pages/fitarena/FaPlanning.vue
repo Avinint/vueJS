@@ -247,6 +247,10 @@ export default {
   .fc-scrollgrid-sync-inner {
     @apply text-sm;
   }
+
+  .fc-timegrid-slot-minor {
+    border-top-style: none;
+  }
 }
 
 .fc-direction-ltr .fc-timegrid-col-events {
