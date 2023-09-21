@@ -49,12 +49,7 @@
             <td class="px-6 py-4">{{ act.ordre }}</td>
             <td class="flex items-center justify-end p-3 gap-8">
               <div @click="showActivite(i)" class="cursor-pointer">
-                <svg width="26" height="26" viewBox="0 0 32 32">
-                  <path
-                  fill="black"
-                  d="M16 4C9.383 4 4 9.383 4 16s5.383 12 12 12s12-5.383 12-12S22.617 4 16 4zm0 2c5.535 0 10 4.465 10 10s-4.465 10-10 10S6 21.535 6 16S10.465 6 16 6zm-1 4v8h2v-8zm0 10v2h2v-2z"
-                  />
-                </svg>
+                <img src="/src/assets/info.svg" />
               </div>
               <Button
                 test="TdeleteActivite"
