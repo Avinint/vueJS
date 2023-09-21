@@ -35,7 +35,8 @@
       </div>
     </div>
   </CardModalSection>
-
+  <CardModalSection title="Accès à la fit arena">
+  </CardModalSection>
   <form @submit.prevent="saveDurationSlot">
     <Modal
       v-if="durationSlot_modal"
@@ -122,6 +123,10 @@ import { getEquipements } from '../../api/equipement'
 import { getTypeEquipements } from '../../api/typeEquipement'
 import CardModalSection from "@components/common/CardModalSection.vue";
 
+const PARAM_DUREE_CRENEAU = 'duree_du_creneau'
+const PARAM_DUREE_INTER = 'duree_inter_creneau'
+const PARAM_AVANT_RESA = 'temps_d_acces_avant_la_reservation'
+const PARAM_APRES_RESA = 'temps_d_acces_apres_la_reservation'
 const props = defineProps(['id'])
 const route = useRoute()
 const idFitArena = ref(route.params.id)
