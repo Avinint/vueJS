@@ -2,9 +2,6 @@
   <div class="space-y-10">
   <CardReservationDuration />
 
-  <CardModalSection title="Accès à la fit arena">
-  </CardModalSection>
-
   <CardModalSection title="Annulation d'une réservation">
     <div class="relative ml-9 my-4 overflow-x-auto text-black">
       <div class="flex bg-white">
