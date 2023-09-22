@@ -178,7 +178,6 @@
 
 <script setup lang="ts">
 import Card from '../../components/common/Card.vue'
-import CardConfiguration from '../../components/common/CardConfiguration.vue'
 import Modal from '../../components/common/Modal.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
@@ -201,11 +200,13 @@ import { getTypeEquipements } from '@api/typeEquipement.js'
 import { getModes } from "@api/mode.js";
 
 import { useRoute } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
-const fitArenaId = parseInt(useRoute().params.id)
+const route = useRoute()
+
+const fitArenaId = computed(() => route.params.id)
 const delete_modal = ref(false)
 const deleteEquipmentId = ref(0)
 const edit_modal = ref(false)
@@ -227,34 +228,16 @@ const modal_title = ref('')
 const validation = ref({})
 const selectableModes = ref([])
 
-function getGroupTableData(typeEquipement) {
-  return typeEquipement.equipements.map((type: any) => {
-    return {
-      id: type.id,
-      data: type,
-      editable: true,
-      removable: true,
-      readable: true
-    }
-  })
-}
-
-const table_columns = [
-  { label: 'Actif', data: (e) => e.statut },
-  { label: 'Libellé', data: (e) => e.libelle },
-  { label: 'Adresse IP', data: (e) => e.ip }
-]
-
 onMounted(async () => {
   equipements.value = await getEquipements(
-    fitArenaId,
+    fitArenaId.value,
     1,
-      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId
+      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId.value
   )
   typeEquipements.value = setEquipementModes(
     await getTypeEquipements(
       1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + fitArenaId
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + fitArenaId.value
     ), setProprieteReadonly)
 
   typeEquipementsSelects.value = await getTypeEquipements(
@@ -304,13 +287,13 @@ const deleteEquipmentValidation = async (id) => {
   deleteEquipmentId.value = 0
   cancel()
   equipements.value = await getEquipements(
-    props.id,
+    fitArenaId.value,
     1,
     '&typeEquipement.categoryTypeEquipement.code=numerique'
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId.value
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
@@ -350,23 +333,12 @@ const mapApiToData = (equipementTemp) => {
   equipement_selected.value = equipementTemp.typeEquipement.id
 }
 
-const addEquipementConfiguration = () => {
-  const mode = { libelle: '', type: '', readonly: false }
-  if (!equipement.value.hasOwnProperty('equipementModes'))
-    equipement.value.equipementModes = []
-  equipement.value.equipementModes.push(mode)
-}
-
-const removeEquipementConfiguration = (equipementModes, i) => {
-  equipementModes.splice(i, 1)
-}
-
 const saveEquipement = () => {
   if (!isValid(validation)) return
 
   equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
-    fitArena: '/api/fit_arenas/' + fitArenaId,
+    fitArena: '/api/fit_arenas/' + fitArenaId.value,
     libelle: equipement.value.libelle,
     statut: equipement.value.statut == true ? equipement.value.statut : false,
     ip: equipement.value.ip,
@@ -392,13 +364,13 @@ const updateEquipmentValidation = async () => {
   equipement_modal.value = false
   cancel()
   equipements.value = await getEquipements(
-    fitArenaId,
+    fitArenaId.value,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId
+    '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId.value
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId.value
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
@@ -418,13 +390,13 @@ const addEquipmentValidation = async () => {
   equipement_modal.value = false
   cancel()
   equipements.value = await getEquipements(
-    props.id,
+    fitArenaId.value,
     1,
-      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId
+      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId.value
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId.value
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,

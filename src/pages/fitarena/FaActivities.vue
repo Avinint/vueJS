@@ -237,7 +237,8 @@ import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
 import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
-// import CrudListAdmin from '@components/molecules/CrudListAdmin.vue'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+
 import { getTypeActivites } from '../../api/typeActivite.js'
 import {
   deleteActivites,
@@ -246,11 +247,11 @@ import {
   patchActivites,
   uploadActivite,
 } from '../../api/activite.ts'
-import { onMounted, ref, watch } from 'vue'
+
+import { computed, onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
-import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 import { useRoute } from 'vue-router'
 
 const props = defineProps(['id'])
@@ -267,6 +268,8 @@ const notify = () => {
 //   { data: (e) => e.ordre, label: 'Ordre' }
 // ]
 
+const route = useRoute()
+
 const activite_modal = ref(false)
 const readonly = ref(false)
 
@@ -275,18 +278,14 @@ const deleteActivityId = ref(0)
 const edit_modal = ref(false)
 const add_modal = ref(false)
 const actTemp = ref({})
-
 const id_selected = ref(0)
-
-const fitArenaId = parseInt(useRoute().params.id)
-
+const fitArenaId = computed(() => route.params.id)
 const activites = ref([])
 const typeActivites = ref([])
 const typeActivite = ref({})
 const activite = ref({})
 const activite_selected = ref({})
 const modal_title = ref('')
-
 const file = ref(null)
 
 onMounted(async () => {
@@ -370,7 +369,7 @@ const mapApiToData = (activiteTemp) => {
 const saveActivite = () => {
   actTemp.value = {
     typeActivite: '/api/type_activites/' + activite_selected.value,
-    fitArena: '/api/fit_arenas/' + fitArenaId,
+    fitArena: '/api/fit_arenas/' + fitArenaId.value,
     ordre: parseInt(activite.value.ordre),
     libelle: activite.value.libelle,
     description: activite.value.description,
