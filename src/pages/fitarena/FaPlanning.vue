@@ -113,7 +113,6 @@ export default {
       if (idActuel !== avant) {
         await this.initZones();
       }
-      console.log(idActuel);
     }
   },
   computed: {

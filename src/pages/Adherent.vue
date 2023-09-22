@@ -388,7 +388,6 @@ onMounted(async () => await fetchDonnees())
 watch(() => route.params?.id, async() => await fetchDonnees())
 
 const startFrom = (value) => {
-  let date;
   if (value === null || value.length === 0) {
     return dayjs().date(1);
   }
