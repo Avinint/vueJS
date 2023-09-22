@@ -3,7 +3,7 @@ import { get, put } from './api.js'
 export const getReservations = async (query = {page: 1}) => {
 
   if (!query.idFA) {
-    throw 'Requête invalide car la fit arena est inconnue.'
+    throw 'Requête invalide car la Fit Arena est inconnue.'
   }
 
   return (await get('/api/reservation/liste', query)).reservationsListe

@@ -48,8 +48,8 @@ import { getTypeEquipements } from '@api/typeEquipement.js'
 
 import { onMounted, ref, watch } from 'vue'
 
-
 const props = defineProps(['id'])
+
 const fit_arena = ref({})
 const typeEquipements = ref({})
 const controleAcces = ref({})
@@ -59,7 +59,7 @@ const controleAccesId = ref(0)
 const controleAccesLibelle = ref('')
 const message = ref('')
 
-async function fetchDonnees() {
+const fetchDonnees = async () => {
   fit_arena.value = await getFitArena(props.id)
   typeEquipements.value =
     await getTypeEquipements(

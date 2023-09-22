@@ -1,7 +1,7 @@
 <template>
    <CrudList
     entity="adhérent"
-    plural="adhérents"
+    plural="mes adhérents"
     :columns="crud_columns"
     :data="getTableData()"
     :can-all="isAdmin || isGestCo || isGestOrg"

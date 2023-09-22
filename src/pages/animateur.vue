@@ -1,7 +1,7 @@
 <template>
   <CrudList
     entity="animateur"
-    plural="animateurs"
+    plural="mes animateurs"
     :columns="crud_columns"
     :data="getTableData()"
     :can-all="isAdmin || isGestCo || isGestOrg"

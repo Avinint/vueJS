@@ -2,7 +2,7 @@
   <Card>
     <div class="mb-6 flex justify-between items-center">
       <div class="w-full">
-        <h1 class="uppercase">MES {{ plural }}</h1>
+        <h1 class="uppercase">{{ plural }}</h1>
         <div class="mt-4 w-full">
           <slot name="recherche" v-if="canFilter">
             <Input placeholder="Recherche"/>
