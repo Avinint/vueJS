@@ -12,7 +12,6 @@
             <th scope="col" class="px-6 py-3">Code postal</th>
             <th scope="col" class="px-6 py-3">Ville</th>
             <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
         <tbody>

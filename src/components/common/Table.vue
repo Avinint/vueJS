@@ -48,8 +48,8 @@
         <td v-if="readable && item.readable">
           <Button
             test="TreadElement"
-            borderless
-            label="détails"
+            label="Détails"
+            class="border border-gray-300"
             couleur="secondary"
             @click="emits('entity:read', item.data)"
           />

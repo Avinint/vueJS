@@ -115,19 +115,21 @@ import Card from '../components/common/Card.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
-import { useRoute } from 'vue-router'
-import { deleteGroup, fetchGroupes, postGroup, putGroup } from '../api/groupe'
 import ButtonRight from '@components/common/ButtonRight.vue'
 import InputOptions from '../components/common/InputOptions.vue'
-import { onMounted, reactive, ref } from 'vue'
-import 'vue3-toastify/dist/index.css'
-import Table, { type FaTableColumnData } from '../components/common/Table.vue'
-import { getDateDMY } from '../services/date_service'
-import type { FaTableRow } from '../components/common/Table.vue'
 import LabelText from '@components/common/LabelText.vue'
+import Table, { type FaTableColumnData } from '../components/common/Table.vue'
+import type { FaTableRow } from '../components/common/Table.vue'
+
+import { useRoute } from 'vue-router'
+import { deleteGroup, fetchGroupes, postGroup, putGroup } from '../api/groupe'
 import { getAnimateursParOrganisme } from '@api/animateur'
 import { getAdherentsParOrganisme } from '@api/adherent'
-import {toast} from "vue3-toastify";
+
+import { onMounted, reactive, ref } from 'vue'
+import { getDateDMY } from '../services/date_service'
+import 'vue3-toastify/dist/index.css'
+import { toast } from "vue3-toastify";
 
 const table_columns: FaTableColumnData<Adherent>[] = [
   { label: 'Nom et Prénom', data: (e) => `${e.nom} ${e.prenom}` },

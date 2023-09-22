@@ -221,6 +221,10 @@ export default {
   font-size: 8px;
 }
 
+tr {
+  height: 5vh;
+}
+
 // END-TODROP
 .fc {
   .fc-scrollgrid {
@@ -246,6 +250,10 @@ export default {
 
   .fc-scrollgrid-sync-inner {
     @apply text-sm;
+  }
+
+  .fc-timegrid-slot-minor {
+    border-top-style: none;
   }
 }
 

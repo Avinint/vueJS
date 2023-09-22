@@ -1,7 +1,7 @@
 <template>
   <CrudList
     entity="réservation"
-    plural="réservations"
+    plural="liste des réservations"
     :columns="colonnesReservations"
     :data="getTableData()"
     :can-remove="true"
@@ -11,7 +11,7 @@
     @entity:read="consulterResa"
   >
     <template #recherche>
-      <RechercheReservation @chargement-liste="chargeReservations"/>
+      <RechercheReservation @chargement-liste="chargeReservations" />
     </template>
   </CrudList>
 
@@ -22,105 +22,101 @@
     @confirm="annulerResa(details)"
     cancel-button-text="Fermer"
     confirm-button-text="Annuler la réservation"
-    size="4xl"
+    size="5xl"
   >
-    <Card class="space-y-2">
-      <div class="flex items-center">
-        <div class="w-1/5 mb-3">
-          Référence
+    <div class="pl-4 pr-10">
+      <div class="infos-section">
+        <div class="flex items-center w-5/12">
+          <p class="label-text">Référence</p>
+          <div class="infos">
+            {{ details.uuid }}
+          </div>
         </div>
-        <div class="w-2/5 bg-gray-50 text-gray-700 text-sm mb-3">
-          {{ details.uuid }}
-        </div>
-
-        <div class=" w-1/5 mb-3">
-          Organisateur
-        </div>
-        <div class="w-1/5 bg-gray-50 text-gray-700 mb-3">
-          {{ details.prenomOrganisateur + ' ' + details.nomOrganisateur }}
-        </div>
-      </div>
-
-      <div class="flex items-center">
-        <div class="w-1/5 mb-3">
-          Date de réservation
-        </div>
-
-        <div class="w-2/5 bg-gray-50 text-gray-700 mb-3">
-          {{ details.dateCreation }}
-        </div>
-        <div class="w-1/5 mb-3">
-          Montant
-        </div>
-
-        <div class="w-1/5 bg-gray-50 text-gray-700 mb-3">
-          {{ details.tarif }} €
+        <div class="flex items-center w-5/12">
+          <p class="label-text">Montant</p>
+          <div class="infos">
+            {{ details.tarif }}€
+          </div>
         </div>
       </div>
-
-      <div class="flex items-center">
-        <div class="w-1/5 mb-3">
-          Sport
+      <div class="infos-section">
+        <div class="flex items-center w-5/12">
+          <p class="label-text">Date de réservation</p>
+          <div class="infos">
+            {{ details.dateCreation }}
+          </div>
         </div>
-        <div class="w-2/5 bg-gray-50 text-gray-700 mb-3">
-          {{ details.sport ?? 'football' }}
-        </div>
-        <div class="w-1/5 mb-3">
-          Statut
-        </div>
-        <div class="w-1/5 bg-gray-50 text-gray-700 mb-3">
-          {{ details.statut }}
-        </div>
-      </div>
-
-      <div class="flex items-center">
-        <div class="w-1/5 mb-3">
-          Créneau
-        </div>
-        <div class="w-2/5 bg-gray-50 text-gray-700 mb-3">
-          {{ details.dateDebut + ' ' + details.dateFin }}
+        <div class="flex items-center w-5/12">
+          <p class="label-text">Statut</p>
+          <div class="infos">
+            {{ details.statut }}
+          </div>
         </div>
       </div>
-      <div class="h-6"></div>
-      <LabelText :text="`[${details.participants.length}] Équipiers`"/>
-
-      <Table
-        :columns="getColonnesParticipants(details.participants)"
-        :data="creerLigneParticipant(details.participants)"
-
-      />
-    </Card>
+      <div class="infos-section">
+        <div class="flex items-center w-5/12">
+          <p class="label-text">Sport</p>
+          <div class="infos">
+            {{ details.sport ?? '...' }}
+          </div>
+        </div>
+        <div class="flex items-center w-5/12">
+          <p class="label-text">Créneau</p>
+          <div class="infos">
+            {{ details.dateDebut + ' ' + details.dateFin }}
+          </div>
+        </div>
+      </div>
+      <div class="infos-section">
+        <div class="flex items-center w-5/12">
+          <p class="label-text">Organisateur(s)</p>
+          <div class="infos">
+            {{ orga }}
+          </div>
+        </div>
+      </div>
+      <div class="mt-20">
+        <CardModalSection :title="`(${details.participants.length}) Équipiers`">
+          <template #content>
+            <Table
+              :columns="getColonnesParticipants(details.participants)"
+              :data="creerLigneParticipant(details.participants)"
+            />
+          </template>
+        </CardModalSection>
+      </div>
+    </div>
     <template #but>
       <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Annuler la réservation"
-              class="bg-red-600 hover:bg-red-800"/>
+              class="bg-red-600 hover:bg-red-800" />
     </template>
   </Modal>
   <form @submit.prevent="annulerResaConfirmation(index)">
     <ValidationModal
       v-if="calqueConfirmationVisible"
-      type="edit"
+      type="delete"
       @cancel="calqueConfirmationVisible = false"
     >
-      Voulez-vous valider l'annulation ?
     </ValidationModal>
   </form>
 </template>
 
 <script setup lang="ts">
-
 import CrudList from "@components/molecules/CrudList.vue";
-import {computed, nextTick, onMounted, reactive, ref, watch, toRaw} from "vue";
-import dayjs from 'dayjs'
-import { useRoute } from 'vue-router'
-import {annulerReservation, getReservation, getReservations, getStatuts, getTypes} from "@api/reservation";
-import {toast} from "vue3-toastify";
 import Modal from "@components/common/Modal.vue";
-import LabelText from "@components/common/LabelText.vue";
-import Card from "@components/common/Card.vue";
+import CardModalSection from '@components/common/CardModalSection.vue'
 import Table from "@components/common/Table.vue";
 import ValidationModal from "@components/common/ValidationModal.vue";
 import Button from "@components/common/Button.vue";
 import RechercheReservation from "@components/molecules/RechercheReservation.vue";
+
+import { annulerReservation, getReservation, getReservations } from "@api/reservation";
+
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute } from 'vue-router'
+
+import { toast } from "vue3-toastify";
+import dayjs from 'dayjs'
 
 const route = useRoute()
 const colonnesReservations = [
@@ -130,39 +126,41 @@ const colonnesReservations = [
   { data: (e): string => dayjs(e.dateDebut).format('D MMMM YYYY HH[h]mm'), label: 'Date - Début de séance' },
   { data: (e): string => dayjs(e.dateFin).format('D MMMM YYYY HH[h]mm'), label: 'Date - Fin de séance' },
   { data: (e): string => e.valorisation, label: 'Valorisation' },
-  { data: (e): string => e.statut, label: 'Statut' },
+  { data: (e): string => e.statut, label: 'Statut' }
 ]
 
 const getColonnesParticipants = (e) => {
   return [
-    {data: (e): string => e.nom + ' ' + e.prenom, label: 'Nom prénom'},
+    {data: (e): string => e.nom + ' ' + e.prenom, label: 'Nom Prénom'},
     {data: (e): string => e.email, label: 'Adresse email'},
-    {data: (e): string => e.portable, label: 'Numéro de téléphone'},
+    {data: (e): string => e.portable, label: 'Numéro de téléphone'}
   ]
 }
 
 const creerLigneParticipant = (data) => {
-  return  data.map((ligne) => ({
+  return data.map((ligne) => ({
     id: ligne.id,
     data: ligne,
     editable: false,
-    removable: false}))
+    removable: false
+  }))
 }
 
 const reservations = ref([])
 const details = ref({})
+const orga = ref('')
 
 const idFA = computed(() => route.params.id)
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
 onMounted(async () => {
-   await chargeReservations()
+  await chargeReservations()
 })
 
 watch(() => idFA.value, () => chargeReservations())
 
-const chargeReservations = async(params = {}) => { reservations.value = await getReservations({idFA : idFA.value, page: 1, ...params}) }
+const chargeReservations = async(params = {}) => { reservations.value = await getReservations({ idFA: idFA.value, page: 1, ...params }) }
 
 function getTableData() {
   return reservations.value.map((resa) => {
@@ -176,17 +174,24 @@ function getTableData() {
   })
 }
 
-const consulterResa = async(reservation) => {
-
+const consulterResa = async(reservation: any) => {
   if (details.value.id !== reservation.id || details.value.participants === undefined) {
     details.value = await getReservation(reservation.id)
     details.value = {...details.value,
       dateCreation: dayjs(details.value.dateCreation).format('D MMMM YYYY'),
-      dateDebut: dayjs(details.value.dateDebut).format('dddd D MMMM YYYY /  HH[h]mm'),
+      dateDebut: dayjs(details.value.dateDebut).format('dddd D MMMM YYYY / HH[h]mm'),
       dateFin: dayjs(details.value.dateFin).format('- HH[h]mm')
     }
   }
-
+  if (details.value.organisateurs.length > 0) {
+    for (let i = 0; i < details.value.organisateurs.length; i++) {
+      if (i > 0) {
+        orga.value += ', ' + details.value.organisateurs[i].nom.toUpperCase() + ' ' + details.value.organisateurs[i].prenom
+      } else {
+        orga.value += details.value.organisateurs[i].nom.toUpperCase() + ' ' + details.value.organisateurs[i].prenom
+      }
+    }
+  }
   calqueFormulaireVisible.value = true
 }
 
@@ -197,24 +202,49 @@ const annulerResa = (reservation) => {
   }
 }
 const annulerResaConfirmation = () => {
-  try{
+  try {
     const index = reservations.value.findIndex(ligne => ligne.id === details.value.id)
-    annulerReservation( details.value.id)
+    annulerReservation(details.value.id)
     reservations.value[index].statut = 'Annulée'
     fermerCalqueFormulaire()
     toast.success("Réservation annulée avec succès")
   } catch(e) {
-    toast.error("Erreur, Veuillez contacter votre administrateur")
+    toast.error("Erreur, veuillez contacter votre administrateur")
   }
 }
 
 const fermerCalqueFormulaire = () => {
   calqueFormulaireVisible.value = false
   calqueConfirmationVisible.value = false
+  orga.value = ''
 }
 
 </script>
 
-<style scoped lang="scss">
+<style scoped>
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  width: 50%;
+}
 
+.infos {
+  background-color: #F9FAFB;
+  width: 100%;
+  color: #000;
+  border: 1px solid #E9E9E9;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+}
+
+.infos-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
 </style>

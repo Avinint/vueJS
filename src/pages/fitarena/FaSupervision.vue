@@ -49,7 +49,8 @@ import { getTypeEquipements } from '@api/typeEquipement.js'
 import { onMounted, ref } from 'vue'
 import { useRoute } from "vue-router";
 
-const fitArenaId = parseInt(useRoute().params.id)
+const route = useRoute()
+const fitArenaId = computed(() => route.params.id)
 const fit_arena = ref({})
 const typeEquipements = ref({})
 const controleAcces = ref({})
@@ -60,11 +61,11 @@ const controleAccesLibelle = ref('')
 const message = ref('')
 
 onMounted(async () => {
-  fit_arena.value = await getFitArena(fitArenaId)
+  fit_arena.value = await getFitArena(fitArenaId.value)
   typeEquipements.value =
     await getTypeEquipements(
       1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + fitArenaId
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + fitArenaId.value
     )
   controleAcces.value = typeEquipements.value.find(te => te.code == 'controle_acces')
 })
@@ -77,7 +78,7 @@ const openCA = (caId, caLibelle) => {
 
 const validationOpenCA = async () => {
   const data = {
-    id_arena: fitArenaId,
+    id_arena: fitArenaId.value,
     id_ca: controleAccesId.value
   }
 
