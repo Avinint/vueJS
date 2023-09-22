@@ -224,7 +224,7 @@ import {
   deleteZoneEquipement,
   postZoneEquipement,
 } from '../../api/zoneEquipement.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
@@ -252,7 +252,7 @@ const modal_title = ref('')
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
-onMounted(async () => {
+const fetchDonnees = async() => {
   subEspaces.value = await getZones(
     1,
     '&typeZone.code=sous_espace&fitArena=' + props.id
@@ -261,8 +261,14 @@ onMounted(async () => {
     1,
     '&typeZone.code=espace&fitArena=' + props.id
   )
+}
+
+onMounted(async () => {
+  await fetchDonnees()
   typeZones.value = await getTypeZone()
 })
+
+watch(() => props.id, async () => await fetchDonnees())
 
 const addEspace = () => {
   cancel()

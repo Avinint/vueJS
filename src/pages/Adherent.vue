@@ -375,12 +375,17 @@ function getGroupes() {
   })
 }
 
-onMounted(async () => {
+ const fetchDonnees = async () => {
   organismeId.value = parseInt(route.params?.id)
   if (organismeId.value > 0) {
     adherents.value = await getAdherentsParOrganisme(organismeId.value)
-    listeGroupes.value = (await selectGroupes(organismeId.value)).map(g => ({id: g.id, libelle: g.libelle}))
-  }})
+    listeGroupes.value = (await selectGroupes(organismeId.value)).map(g => ({ id: g.id, libelle: g.libelle }))
+  }
+}
+
+onMounted(async () => await fetchDonnees())
+
+watch(() => route.params?.id, async() => await fetchDonnees())
 
 const startFrom = (value) => {
   let date;

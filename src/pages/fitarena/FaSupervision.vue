@@ -42,14 +42,14 @@ import Card from '../../components/common/Card.vue'
 import Button from '../../components/common/Button.vue'
 import Modal from '../../components/common/Modal.vue'
 
-import { getFitArena } from '../../api/fit-arena.js'
-import { postControleAcces } from '../../api/controleAcces.js'
+import { getFitArena } from '@api/fit-arena.js'
+import { postControleAcces } from '@api/controleAcces.js'
 import { getTypeEquipements } from '@api/typeEquipement.js'
 
-import { onMounted, ref } from 'vue'
-import { useRoute } from "vue-router";
+import { onMounted, ref, watch } from 'vue'
 
-const fitArenaId = parseInt(useRoute().params.id)
+
+const props = defineProps(['id'])
 const fit_arena = ref({})
 const typeEquipements = ref({})
 const controleAcces = ref({})
@@ -59,15 +59,19 @@ const controleAccesId = ref(0)
 const controleAccesLibelle = ref('')
 const message = ref('')
 
-onMounted(async () => {
-  fit_arena.value = await getFitArena(fitArenaId)
+async function fetchDonnees() {
+  fit_arena.value = await getFitArena(props.id)
   typeEquipements.value =
     await getTypeEquipements(
       1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + fitArenaId
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + props.id
     )
-  controleAcces.value = typeEquipements.value.find(te => te.code == 'controle_acces')
-})
+  controleAcces.value = typeEquipements.value.find(te => te.code === 'controle_acces')
+}
+
+onMounted(async () => await fetchDonnees())
+
+watch(() => props.id, async() => await fetchDonnees())
 
 const openCA = (caId, caLibelle) => {
   controleAccesId.value = caId
@@ -77,7 +81,7 @@ const openCA = (caId, caLibelle) => {
 
 const validationOpenCA = async () => {
   const data = {
-    id_arena: fitArenaId,
+    id_arena: props.id,
     id_ca: controleAccesId.value
   }
 

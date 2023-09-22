@@ -73,7 +73,6 @@ export default {
         headerToolbar: false,
         initialView: 'timeGridWeek',
         locale: frLocale,
-        editable: true,
         selectable: true,
         selectMirror: true,
         dayMaxEvents: true,
@@ -108,9 +107,22 @@ export default {
       redraw_key: 0
     }
   },
+
+  watch: {
+    async idFitArena(idActuel, avant) {
+      if (idActuel !== avant) {
+        await this.initZones();
+      }
+      console.log(idActuel);
+    }
+  },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
+
+    idFitArena() {
+       return this.$route.params.id
+    }
   },
   async created() {
     this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
@@ -126,16 +138,19 @@ export default {
   },
   async mounted() {
     this.calendarApi = this.$refs.fullCalendar.getApi()
-    this.zones = await getZones(
-      1,
-      '&typeZone.code=zone&fitArena=' + this.$route.params.id
-    )
-    this.calendarOptions.resources = [
-      { id: this.zones[0].id, title: this.zones[0].libelle },
-    ]
+    await this.initZones();
     this.calendarOptions.scrollTime = this.planningStore.scrollTime
   },
   methods: {
+    initZones: async function () {
+      this.zones = await getZones(
+        1,
+        '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      )
+      this.calendarOptions.resources = [
+        { id: this.zones[0].id, title: this.zones[0].libelle },
+      ]
+    },
     async closeModal() {
       this.isModalCreneauOpen = false
     },

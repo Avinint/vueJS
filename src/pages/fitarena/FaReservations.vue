@@ -11,7 +11,7 @@
     @entity:read="consulterResa"
   >
     <template #recherche>
-      <RechercheReservation @chargement-liste="chargeReservations"/>
+      <RechercheReservation @chargement-liste="fetchDonnees"/>
     </template>
   </CrudList>
 
@@ -111,7 +111,6 @@
 import CrudList from "@components/molecules/CrudList.vue";
 import {computed, nextTick, onMounted, reactive, ref, watch, toRaw} from "vue";
 import dayjs from 'dayjs'
-import { useRoute } from 'vue-router'
 import {annulerReservation, getReservation, getReservations, getStatuts, getTypes} from "@api/reservation";
 import {toast} from "vue3-toastify";
 import Modal from "@components/common/Modal.vue";
@@ -122,7 +121,8 @@ import ValidationModal from "@components/common/ValidationModal.vue";
 import Button from "@components/common/Button.vue";
 import RechercheReservation from "@components/molecules/RechercheReservation.vue";
 
-const route = useRoute()
+const props = defineProps(['id'])
+
 const colonnesReservations = [
   { data: (e): string => e.type, label: 'Type' },
   { data: (e): string => e.responsable, label: 'Responsable' },
@@ -152,17 +152,14 @@ const creerLigneParticipant = (data) => {
 const reservations = ref([])
 const details = ref({})
 
-const idFA = computed(() => route.params.id)
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
-onMounted(async () => {
-   await chargeReservations()
-})
+const fetchDonnees = async(params = {}) => { reservations.value = await getReservations({idFA : props.id, page: 1, ...params}) }
 
-watch(() => idFA.value, () => chargeReservations())
+onMounted(async () => await fetchDonnees())
 
-const chargeReservations = async(params = {}) => { reservations.value = await getReservations({idFA : idFA.value, page: 1, ...params}) }
+watch(() => props.id, () => fetchDonnees())
 
 function getTableData() {
   return reservations.value.map((resa) => {

@@ -119,7 +119,7 @@ import { useRoute } from 'vue-router'
 import { deleteGroup, fetchGroupes, postGroup, putGroup } from '../api/groupe'
 import ButtonRight from '@components/common/ButtonRight.vue'
 import InputOptions from '../components/common/InputOptions.vue'
-import { onMounted, reactive, ref } from 'vue'
+import {onMounted, reactive, ref, watch} from 'vue'
 import 'vue3-toastify/dist/index.css'
 import Table, { type FaTableColumnData } from '../components/common/Table.vue'
 import { getDateDMY } from '../services/date_service'
@@ -165,14 +165,18 @@ const form = reactive<{
 
 const route = useRoute()
 
-onMounted(async () => {
+const fetchDonnees = async () => {
   organismeId.value = parseInt(route.params?.id as string)
   if (organismeId.value != 0) {
     groupes.value = await fetchGroupes(organismeId.value)
     animateurs.value = await getAnimateursParOrganisme(organismeId.value)
     adherents.value = await getAdherentsParOrganisme(organismeId.value)
   }
-})
+}
+
+onMounted(async () => await fetchDonnees())
+
+watch(() => route.params?.id, async() => await fetchDonnees())
 
 function removeAdherent(entity: Adherent) {
   for (let i = 0; i < adherents_groupe.value.length; i++) {

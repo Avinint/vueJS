@@ -18,7 +18,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(esp, i) in subEspaces" :key="i" class="bg-white">
+          <tr v-for="(esp, i) in zones" :key="i" class="bg-white">
             <td class="flex items-center justify-center p-3">
               <Button
                 test="TdeleteClient"
@@ -213,7 +213,7 @@ import {
 } from '../../api/zoneEquipement.js'
 import { getTypeZone } from '../../api/typeZone.js'
 import { toast } from 'vue3-toastify'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const props = defineProps(['id'])
@@ -228,7 +228,7 @@ const add_modal = ref(false)
 const espTemp = ref({})
 
 const id_selected = ref(0)
-const subEspaces = ref([])
+const zones = ref([])
 const typeZones = ref([])
 const subEspace = ref({})
 const espaceParents = ref([])
@@ -237,8 +237,8 @@ const modal_title = ref('')
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
-onMounted(async () => {
-  subEspaces.value = await getZones(
+async function fetchDonnees() {
+  zones.value = await getZones(
     1,
     '&typeZone.code=zone&fitArena=' + props.id
   )
@@ -246,8 +246,14 @@ onMounted(async () => {
     1,
     '&typeZone.code=sous_espace&fitArena=' + props.id
   )
+}
+
+onMounted(async () => {
+  await fetchDonnees()
   typeZones.value = await getTypeZone()
 })
+
+watch(() => props.id, async () => await fetchDonnees())
 
 const addEspace = () => {
   cancel()
@@ -272,7 +278,7 @@ const deleteZoneValidation = async (id) => {
   delete_modal.value = false
   deleteZoneId.value = 0
   cancel()
-  subEspaces.value = await getZones(
+  zones.value = await getZones(
     1,
     '&typeZone.code=zone&fitArena=' + props.id
   )
@@ -289,7 +295,7 @@ const modifieEspace = async ({ actif, id }) => {
 }
 
 const editEspace = (i) => {
-  const espaceTemp = subEspaces.value[i]
+  const espaceTemp = zones.value[i]
   mapApiToData(espaceTemp)
   subEspace_modal.value = true
   readonly.value = false
@@ -297,7 +303,7 @@ const editEspace = (i) => {
 }
 
 const showEspace = (i) => {
-  const espaceTemp = subEspaces.value[i]
+  const espaceTemp = zones.value[i]
   mapApiToData(espaceTemp)
   subEspace_modal.value = true
   readonly.value = true
@@ -350,7 +356,7 @@ const updateZoneValidation = async () => {
   edit_modal.value = false
   subEspace_modal.value = false
   cancel()
-  subEspaces.value = await getZones(
+  zones.value = await getZones(
     1,
     '&typeZone.code=zone&fitArena=' + props.id
   )
@@ -374,7 +380,7 @@ const addZoneValidation = async () => {
   add_modal.value = false
   subEspace_modal.value = false
   cancel()
-  subEspaces.value = await getZones(
+  zones.value = await getZones(
     1,
     '&typeZone.code=zone&fitArena=' + props.id
   )
