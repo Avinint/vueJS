@@ -197,16 +197,11 @@ import {
 } from '@api/equipement.js'
 import { isValid, ipValidation } from '@/validation.js'
 import { getTypeEquipements } from '@api/typeEquipement.js'
-import { getModes } from "@api/mode.js";
-
-import { useRoute } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
+import { getModes } from "@api/mode"
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
-const route = useRoute()
-
-const fitArenaId = computed(() => route.params.id)
 const delete_modal = ref(false)
 const deleteEquipmentId = ref(0)
 const edit_modal = ref(false)
@@ -219,7 +214,6 @@ const id_selected = ref(0)
 const equipements = ref([])
 const typeEquipements = ref([])
 const typeEquipementsSelects = ref([])
-const typeEquipementsSelect = ref([])
 const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
@@ -228,24 +222,31 @@ const modal_title = ref('')
 const validation = ref({})
 const selectableModes = ref([])
 
-onMounted(async () => {
+const props = defineProps(['id'])
+
+const fetchDonnees = async () => {
   equipements.value = await getEquipements(
-    fitArenaId.value,
+    props.id,
     1,
-      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId.value
+    '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id=' + props.id
   )
   typeEquipements.value = setEquipementModes(
     await getTypeEquipements(
       1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + fitArenaId.value
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena=' + props.id
     ), setProprieteReadonly)
+}
 
+onMounted(async () => {
+  fetchDonnees()
   typeEquipementsSelects.value = await getTypeEquipements(
     1,
     '&categoryTypeEquipement.code=numerique'
   )
   selectableModes.value = await getModes({ 'categoryTypeEquipement.code': 'numerique' })
 })
+
+watch(() => props.id, async() => await fetchDonnees())
 
 const setEquipementModes = (typeEquipements, setter) => {
   for (let typeEquipement of typeEquipements) {
@@ -287,13 +288,13 @@ const deleteEquipmentValidation = async (id) => {
   deleteEquipmentId.value = 0
   cancel()
   equipements.value = await getEquipements(
-    fitArenaId.value,
+    props.id,
     1,
     '&typeEquipement.categoryTypeEquipement.code=numerique'
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId.value
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ props.id
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
@@ -338,7 +339,7 @@ const saveEquipement = () => {
 
   equipmentTemp.value = {
     typeEquipement: '/api/type_equipements/' + equipement_selected.value,
-    fitArena: '/api/fit_arenas/' + fitArenaId.value,
+    fitArena: '/api/fit_arenas/' + props.id,
     libelle: equipement.value.libelle,
     statut: equipement.value.statut == true ? equipement.value.statut : false,
     ip: equipement.value.ip,
@@ -364,13 +365,13 @@ const updateEquipmentValidation = async () => {
   equipement_modal.value = false
   cancel()
   equipements.value = await getEquipements(
-    fitArenaId.value,
+    props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId.value
+    '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ props.id
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId.value
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ props.id
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
@@ -390,13 +391,13 @@ const addEquipmentValidation = async () => {
   equipement_modal.value = false
   cancel()
   equipements.value = await getEquipements(
-    fitArenaId.value,
+    props.id,
     1,
-      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ fitArenaId.value
+      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ props.id
   )
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ fitArenaId.value
+      '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ props.id
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,

@@ -108,14 +108,33 @@ export default {
   },
   computed: {
     ...mapStores(usePlanningStore),
+    idFitArena() {
+      return this.$route.params.id
+    },
+    idOrganisme() {
+      return this.$route.params.id
+    }
   },
   async mounted() {
-    await this.setZones()
-    this.viewWeek()
-    await this.planningStore.fetch()
-    this.$emit('afterFetch');
+    this.fetchDonnees()
+  },
+
+  watch: {
+    async idFitArena() {
+      this.fetchDonnees()
+    },
+    async idOrganisme() {
+      this.fetchDonnees()
+    }
   },
   methods: {
+    async fetchDonnees() {
+      await this.setZones()
+      this.viewWeek()
+      await this.planningStore.fetch()
+      this.$emit('afterFetch');
+    },
+
     today() {
       this.calendarApi.today()
       this.planningStore.fetch().then(() => {
