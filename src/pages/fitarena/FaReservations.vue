@@ -11,7 +11,7 @@
     @entity:read="consulterResa"
   >
     <template #recherche>
-      <RechercheReservation @chargement-liste="chargeReservations" />
+      <RechercheReservation @chargement-liste="fetchDonnees"/>
     </template>
   </CrudList>
 
@@ -79,19 +79,15 @@
         <CardModalSection :title="`(${details.participants.length}) Équipiers`">
           <template #content>
             <Table
-              :columns="getColonnesParticipants(details.participants)"
+              :columns="getColonnesParticipants()"
               :data="creerLigneParticipant(details.participants)"
             />
           </template>
         </CardModalSection>
       </div>
     </div>
-    <template #but>
-      <Button submit test='TconfirmModal' @click="emit('confirm', $event)" label="Annuler la réservation"
-              class="bg-red-600 hover:bg-red-800" />
-    </template>
   </Modal>
-  <form @submit.prevent="annulerResaConfirmation(index)">
+  <form @submit.prevent="annulerResaConfirmation()">
     <ValidationModal
       v-if="calqueConfirmationVisible"
       type="delete"
@@ -103,6 +99,12 @@
 
 <script setup lang="ts">
 import CrudList from "@components/molecules/CrudList.vue";
+
+import { onMounted, ref, watch } from "vue";
+import dayjs from 'dayjs'
+import { annulerReservation, getReservation, getReservations } from "@api/reservation";
+import { toast } from "vue3-toastify";
+
 import Modal from "@components/common/Modal.vue";
 import CardModalSection from '@components/common/CardModalSection.vue'
 import Table from "@components/common/Table.vue";
@@ -110,15 +112,8 @@ import ValidationModal from "@components/common/ValidationModal.vue";
 import Button from "@components/common/Button.vue";
 import RechercheReservation from "@components/molecules/RechercheReservation.vue";
 
-import { annulerReservation, getReservation, getReservations } from "@api/reservation";
+const props = defineProps(['id'])
 
-import { computed, onMounted, ref, watch } from "vue";
-import { useRoute } from 'vue-router'
-
-import { toast } from "vue3-toastify";
-import dayjs from 'dayjs'
-
-const route = useRoute()
 const colonnesReservations = [
   { data: (e): string => e.type, label: 'Type' },
   { data: (e): string => e.responsable, label: 'Responsable' },
@@ -129,7 +124,7 @@ const colonnesReservations = [
   { data: (e): string => e.statut, label: 'Statut' }
 ]
 
-const getColonnesParticipants = (e) => {
+const getColonnesParticipants = () => {
   return [
     {data: (e): string => e.nom + ' ' + e.prenom, label: 'Nom Prénom'},
     {data: (e): string => e.email, label: 'Adresse email'},
@@ -150,17 +145,14 @@ const reservations = ref([])
 const details = ref({})
 const orga = ref('')
 
-const idFA = computed(() => route.params.id)
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
-onMounted(async () => {
-  await chargeReservations()
-})
+const fetchDonnees = async(params = {}) => { reservations.value = await getReservations({idFA : props.id, page: 1, ...params}) }
 
-watch(() => idFA.value, () => chargeReservations())
+onMounted(async () => await fetchDonnees())
 
-const chargeReservations = async(params = {}) => { reservations.value = await getReservations({ idFA: idFA.value, page: 1, ...params }) }
+watch(() => props.id, () => fetchDonnees())
 
 function getTableData() {
   return reservations.value.map((resa) => {

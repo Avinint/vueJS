@@ -8,6 +8,7 @@
       <col v-if="removable" style="width: 75px" />
     </colgroup>
     <thead class="h-10 w-full bg-gray-100 text-sm text-gray-700">
+    <tr>
       <th></th>
       <th v-for="column in columns" :key="column.label">
         {{ column.label }}
@@ -15,6 +16,7 @@
       <th v-if="editable"></th>
       <th v-if="readable"></th>
       <th v-if="removable"></th>
+    </tr>
     </thead>
     <tbody>
       <tr

@@ -113,6 +113,12 @@ export default {
   },
   computed: {
     ...mapStores(usePlanningStore),
+    idFitArena() {
+      return this.$route.params.id
+    },
+    idOrganisme() {
+      return this.$route.params.id
+    },
     formatDate() {
       return { startDate: 'YYYY-MM-DD', month: 'MMMM' }
     }
@@ -121,9 +127,16 @@ export default {
     startDate (value) {
       value = dayjs(value).format('YYYY-MM-DD')
       this.changeData(value)
+    },
+    async idFitArena() {
+      this.fetchDonnees()
+    },
+    async idOrganisme() {
+      this.fetchDonnees()
     }
   },
   async mounted() {
+    await this.fetchDonnees()
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
@@ -210,6 +223,12 @@ export default {
       this.planningStore.filters.duree = 1
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'week'
+    },
+    async fetchDonnees() {
+      await this.setZones()
+      this.viewWeek()
+      await this.planningStore.fetch()
+      this.$emit('afterFetch');
     },
   },
 }
