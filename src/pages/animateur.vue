@@ -1,7 +1,7 @@
 <template>
   <CrudList
     entity="animateur"
-    plural="animateurs"
+    plural="mes animateurs"
     :columns="crud_columns"
     :data="getTableData()"
     :can-all="isAdmin || isGestCo || isGestOrg"
@@ -238,11 +238,16 @@ function getTableData() {
 }
 
 const route = useRoute()
-onMounted(async () => {
+
+const fetchDonnees = async () => {
   organismes.value = await selectOrganismes()
   organismeId.value = route.params?.id ? parseInt(route.params?.id) : null
   animateurs.value = organismeId.value ? await getAnimateursParOrganisme(organismeId.value) : await getAnimateurs()
-})
+}
+
+onMounted(async () => await fetchDonnees())
+
+watch(() => route.params?.id, async() => await fetchDonnees())
 
 const createAnimateur = () => {
   reset()

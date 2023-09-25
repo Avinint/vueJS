@@ -7,6 +7,7 @@
           <h3 class="text-xl text-red-600 uppercase">
             {{ props.title }}
           </h3>
+          <slot name="topParams"></slot>
           <div class="flex align-center">
             <slot name="topButtons"></slot>
             <Button test='TcloseModal' @click="emit('cancel', $event)" couleur="secondary" icon="cross" />

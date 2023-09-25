@@ -188,7 +188,7 @@ import {
   postZoneEquipement,
 } from '../../api/zoneEquipement.js'
 import { getTypeZone } from '../../api/typeZone.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
@@ -212,13 +212,16 @@ const espace_selected = ref({})
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
+const fetchDonnees = async() => {
+  espaces.value = await getZones(1, '&typeZone.code=espace&fitArena=' + props.id)
+}
+
 onMounted(async () => {
-  espaces.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+ await fetchDonnees()
   typeZones.value = await getTypeZone()
 })
+
+watch(() => props.id, async() => await fetchDonnees())
 
 const addEspace = () => {
   cancel()
