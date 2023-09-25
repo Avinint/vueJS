@@ -44,31 +44,9 @@
     </div>
   </Card>
 
-  <Card>
-    <h1>Condition de visualisation des créneaux</h1>
-    <div class="flex items-center space-x-2">
-      <Button icon="edit" couleur="secondary" borderless></Button>
-      <div class="flex items-center">
-        <div class="mr-2">Actif</div>
-        <Switch />
-      </div>
-      <div class="text-sm">
-        Nombre de jours visibles pour la réservation de créneaux par les
-        utilisateurs Grand Public
-      </div>
-      <Button label="Détails" couleur="secondary" />
-    </div>
-    <Button
-      class="font-bold font-black"
-      label="Ajouter une condition de visualisation des créneaux"
-      icon="add"
-      couleur="secondary"
-    />
-    <Modal v-if="false"> </Modal>
-  </Card>
-
+  <CardConditionVisualisationCreneaux  />
   <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration :params="parametres" @refresh="loadParams"/>
+  <CardKeyMomentDuration/>
 
   <Card>
     <h1>Invitation à une réservation</h1>
@@ -85,20 +63,22 @@ import CardConditionReservationOfSlots from '../../components/molecules/CardCond
 import CardKeyMomentDuration from '../../components/molecules/CardKeyMomentDuration.vue'
 import CardReservationDuration from '../../components/molecules/CardReservationDuration.vue'
 import {
-  getParametreFitArena,
+
   patchParametreFitArena,
   postParametreFitArena,
 } from '@api/parametreFitArena.js'
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { getParametres, postParametres } from '@api/parametres.js'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+import { getParametres, postParametres, getParametresParFitArena } from '@api/parametres.js'
+import { useParamStore } from '@stores/parametre.js'
 import { getProfils } from "@api/profil.js";
+import CardConditionVisualisationCreneaux from "@components/molecules/CardConditionVisualisationCreneaux.vue";
 
 const ID_VISU_CRENEAU = 16
 
 const route = useRoute()
+const  params = useParamStore()
 
-const parametres = ref([])
 
 const visualisation_creneaux = ref({})
 
@@ -106,31 +86,20 @@ const editCancelBooking = ref(false)
 
 const cancelSessionTime = ref(1)
 
-const profils = ref([])
-
-onMounted(async () => {
-  profils.value = await getProfils()
-  // SEARCH ALL PARAMS FOR THIS FIT ARENA
-  await loadParams()
-
-  // PARAMETRE ANNULATION DES CRENEAUX
-  cancelSessionTime.value = await getParameterByCode(
-    'condition-annulation-des-creneaux'
-  ).valeur
+onBeforeRouteUpdate(async (to, from) => {
+    await params.fetchActivites(to.params.id)
+    await params.fetchParametres(to.params.id)
 })
 
-const loadParams = async () => {
-  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
-}
+onBeforeMount(async () => {
+  // SEARCH ALL PARAMS FO THIS FIT ARENA
+  await params.fetchActivites(route.params.id)
+  await params.fetchParametres(route.params.id)
 
-const getParameterByCode = async (code, value = 0) => {
-  let parametre = parametres.value.find((el) => el.parametre.code === code)
-  // if (!parametre) {
-  //   await createParamsForFitArena(route.params.id, code, value)
-  // }
-  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
-  return parametres.value.find((el) => el.parametre.code === code)
-}
+  // PARAMETRE ANNULATION DES CRENEAUX
+  cancelSessionTime.value = params.parametreFitarenas?.['condition-annulation-des-creneaux'].valeur ?? 1
+})
+
 
 const createParamsForFitArena = async (id_fa, code, value) => {
   // CREATE GENERIC PARAMS
@@ -152,9 +121,7 @@ const setCancelBooking = async () => {
   editCancelBooking.value = !editCancelBooking.value
   if (!editCancelBooking.value) {
     // RETURN TO READONLY MODE -> SAVE INPUT VIA API
-    const { id } = (
-      await getParametres({page: 1, code: 'condition-annulation-des-creneaux'})
-    )[0]
+    const  id = parametreFitarenas['condition-annulation-des-creneaux'].id
     await patchParametreFitArena(id, {
       fitArena: 'api/fit_arenas/' + route.params.id,
       parametre: 'api/parametres/' + id,

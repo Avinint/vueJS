@@ -6,6 +6,10 @@ export const getParametres = async (query = {page: 1}) => {
   return await get(`/api/parametres`, query)
 }
 
+export const getParametresParFitArena = async (id) => {
+  return await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}/parametres`)
+}
+
 export const getParametresById = async (id) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/parametres/${id}`,
