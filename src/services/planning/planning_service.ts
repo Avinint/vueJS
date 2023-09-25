@@ -113,7 +113,12 @@ export function parseDemandeToEvent(demande: Creneau): CalendarEvent {
 }
 
 export const planning_configuration: CalendarOptions = {
-  plugins: [dayGridPlugin, timeGridPlugin, resourceTimeGridPlugin],
+  plugins: [
+    dayGridPlugin,
+    timeGridPlugin,
+    resourceTimeGridPlugin,
+    interactionPlugin,
+  ],
   headerToolbar: false,
   initialView: 'timeGridWeek',
   locale: frLocale,

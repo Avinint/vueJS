@@ -43,6 +43,11 @@ type Zone = {
   libelle: string
 }
 
+type DemandeEditContract = {
+    creneau: CreneauOGEditContract,
+    commentaire: string,
+}
+
 type CreneauOGEditContract = {
   creneauType: 2
   zoneId: number
@@ -112,6 +117,13 @@ type GroupeEditContract = {
   idOrganisme: number
   animateurs: { id: number }[]
   adherents: { id: number }[]
+}
+
+type CreneauDemandePostResponse = {
+    creneau: {
+        creneaux: Creneau[],
+    },
+    commentaire: string,
 }
 
 type CreneauEditResponse = {
