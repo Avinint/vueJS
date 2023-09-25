@@ -139,12 +139,13 @@
       </table>
     </div>
 
-    <div>
+    <div class="w-full flex justify-center">
       <Button
+        class="my-3"
         id="TconfigFitArena"
         label="Configurer la Fit Arena"
         icon="add"
-        couleur="secondary"
+        couleur="danger"
         @click="save"
       />
     </div>
