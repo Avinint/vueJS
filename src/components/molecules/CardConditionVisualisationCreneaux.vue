@@ -80,7 +80,7 @@
 
           </div>
           <div class="my-3">
-            <div v-for="param in parametre" class="w-auto text-lg inline-flex items-center px-2 py-1 mr-2 bg-sky-200 text-sky-600">
+            <div v-for="param in parametre" class="w-auto inline-flex items-center px-2 py-1 mr-2 bg-blue-500 text-white">
               {{ param.profil.libelle}}
             </div>
           </div>

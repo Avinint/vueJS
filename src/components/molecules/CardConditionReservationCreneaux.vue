@@ -7,30 +7,27 @@
           :key="i"
           class="flex items-center font-light"
         >
-
-            <p class="p-2 bg-grey flex items-center w-5/12 justify-start">
-              Nombre de créneaux réservables par semaine (du lundi au vendredi)
-              et par zone
-            </p>
-<!--            <div class="flex w-2/12 px-6 py-4">-->
-              <p v-if="param.actif" class="px-6">Actif</p>
-              <p v-else class="px-6">Inactif</p>
-              <label class="relative inline-flex cursor-pointer">
-                <input
-                  v-model="param.actif"
-                  type="checkbox"
-                  value="true"
-                  class="peer sr-only"
-                  @change="modifConditionReservation(param)"
-                />
-                <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-                ></div>
-                <span
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                ></span>
-              </label>
-<!--            </div>-->
+          <p class="p-2 bg-grey flex items-center w-5/12 justify-start">
+            Nombre de créneaux réservables par semaine (du lundi au vendredi)
+            et par zone
+          </p>
+          <p v-if="param.actif" class="px-6">Actif</p>
+          <p v-else class="px-6">Inactif</p>
+          <label class="relative inline-flex cursor-pointer">
+            <input
+              v-model="param.actif"
+              type="checkbox"
+              value="true"
+              class="peer sr-only"
+              @change="modifConditionReservation(param)"
+            />
+            <div
+              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            ></div>
+            <span
+              class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+            ></span>
+          </label>
           <p class="bg-grey mx-1 px-4 py-2 flex justify-end rounded-lg">{{ param.zone.libelle }}</p>
           <p class="bg-grey mx-1 px-4 py-2 flex justify-end rounded-lg">
             {{ param.valeur }} créneau{{ param.valeur > 1 ? 'x' : '&nbsp;&nbsp;' }}

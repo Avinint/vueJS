@@ -1,96 +1,64 @@
 <template>
   <CardModalSection title="Durée Réservation">
     <div class="relative ml-9 my-4 overflow-x-auto text-black">
-      <div class="flex bg-white">
-        <div class="flex w-1/12 items-center justify-start">
+      <div class="flex bg-white" v-for="parametre in ['duree_creneau', 'duree_inter_creneau']">
+
+        <div class="flex w-full items-center">
+          <p class="p-2 bg-grey flex items-center w-5/12 justify-start">{{ PARAM_TEXTES[parametre].label }}</p>
+          <p class="py-4 px-6">{{ formatMinutes(parametres?.[parametre]?.valeur ?? 0) }}</p>
+        </div>
+        <div class="grow flex justify-end">
           <Button
             test="TeditSlot"
             borderless
             icon="edit"
             couleur="secondary"
             class="pl-0"
-            @click="editDurationSlot()"
+            @click="editParametre(parametre)"
           />
         </div>
-        <div class="flex w-full items-center">
-          <p class="w-4/12 py-4">Durée d'un créneau par défaut</p>
-          <p class="py-4">1 h</p>
-        </div>
+        <div class=" flex-none w-9"></div>
       </div>
-      <div class="flex bg-white">
-        <div class="flex w-1/12 items-center justify-start">
+    </div>
+  </CardModalSection>
+  <CardModalSection title="Accès à la fit arena">
+    <div class="relative ml-9 my-4 overflow-x-auto text-black">
+      <div class="flex bg-white" v-for="parametre in ['acces_avant_reservation', 'acces_apres_reservation']">
+
+        <div class="flex w-full items-center">
+          <p class="p-2 bg-grey flex items-center w-5/12 justify-start">{{ PARAM_TEXTES[parametre].label }}</p>
+          <p class="py-4 px-6">{{ formatMinutes(parametres?.[parametre]?.valeur ?? 0) }}</p>
+        </div>
+        <div class="grow flex justify-end">
           <Button
-            test="TeditInterslot"
+            test="TeditSlot"
             borderless
             icon="edit"
             couleur="secondary"
             class="pl-0"
-            @click="editDurationInterslot(i)"
+            @click="editParametre(parametre)"
           />
         </div>
-        <div class="flex w-full items-center">
-          <p class="w-4/12 py-4">Durée d'inter-créneau par défaut</p>
-          <p class="py-4">1 min</p>
-        </div>
+        <div class=" flex-none w-9"></div>
       </div>
     </div>
   </CardModalSection>
 
-  <form @submit.prevent="saveDurationSlot">
+  <form @submit.prevent="saveParametre">
     <Modal
-      v-if="durationSlot_modal"
-      title="Modifier la durée d'un créneau par défaut"
-      @cancel="durationSlot_modal = false"
+      v-if="modale"
+      :title="PARAM_TEXTES[modale].title"
+      @cancel="modale = false"
     >
       <div>
-        <div class="mb-6 flex items-center">
-          <label class="mb-2 block pr-4 text-sm font-medium text-gray-900"
-            >Durée d'un créneau par défaut</label
-          >
-          <select
-            v-model="durationSlot_selected"
-            class="block w-2/12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          >
-            <option
-              v-for="(duration, i) in durationSlot"
-              :key="i"
-              :value="duration"
-            >
-              {{ duration }}
-            </option>
-          </select>
-        </div>
-        <p class="text-light-blue">
-          Cette modification ne sera pas appliquée sur les créneaux créés
-          précédemment.
-        </p>
-      </div>
-    </Modal>
-  </form>
-
-  <form @submit.prevent="saveDurationInterslot">
-    <Modal
-      v-if="durationInterslot_modal"
-      title="Modifier la durée d'inter-créneau par défaut"
-      @cancel="durationInterslot_modal = false"
-    >
-      <div>
-        <div class="mb-6 flex items-center">
-          <label class="mb-2 block pr-4 text-sm font-medium text-gray-900"
-            >Durée d'inter-créneau par défaut</label
-          >
-          <select
-            v-model="durationInterslot_selected"
-            class="block w-2/12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          >
-            <option
-              v-for="(duration, i) in durationInterslot"
-              :key="i"
-              :value="duration"
-            >
-              {{ duration }}
-            </option>
-          </select>
+        <div class="mb-6 ">
+          <Input
+            :id="'T' + modale"
+            type="number"
+            :label="PARAM_TEXTES[modale].label"
+            v-model="formulaire[modale]"
+            required
+          />
         </div>
         <p class="text-light-blue">
           Cette modification ne sera pas appliquée sur les créneaux créés
@@ -102,86 +70,100 @@
 </template>
 
 <script setup>
-import Card from '../common/Card.vue'
 import Modal from '../common/Modal.vue'
 import Button from '../common/Button.vue'
+import Input from "../common/Input.vue";
 
-import { getParametres, getParametresById } from '../../api/parametres.js'
-import { onMounted, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-import {
-  deleteParametreFitArena,
-  getParametreFitArena,
-  updateParametreFitArena,
-  postParametreFitArena,
-  patchParametreFitArena,
-} from '../../api/parametreFitArena.js'
-import { getEquipements } from '../../api/equipement'
-import { getTypeEquipements } from '../../api/typeEquipement'
+import { updateParametreFitArena } from '@api/parametreFitArena.js'
+
 import CardModalSection from "@components/common/CardModalSection.vue";
+import { useParamStore } from "@stores/parametre.js";
+
+const MODES = ['duree_creneau', 'duree_inter_creneau', 'acces_avant_reservation', 'acces_apres_reservation']
+const PARAM_TEXTES = {
+  duree_creneau: {
+    title: "Modifier la durée d'un créneau par défaut",
+    label: "Durée d'un créneau par défaut",
+  },
+  duree_inter_creneau: {
+    title: "Modifier la durée d'inter-créneau par défaut",
+    label: "Durée d'inter-créneau par défaut",
+  },
+  acces_avant_reservation: {
+    title: "Modifier le temps d'accès avant la réservation",
+    label: "Temps d'accès avant la réservation",
+  },
+  acces_apres_reservation: {
+    title: "Modifier le temps d'accès après la réservation",
+    label: "Temps d'accès après la réservation",
+  }
+}
 
 const props = defineProps(['id'])
 const route = useRoute()
-const idFitArena = ref(route.params.id)
-const parametresSlot = ref({})
-const parametresInterslot = ref({})
-const durationSlot_modal = ref(false)
-const durationInterslot_modal = ref(false)
-const durationSlot = ['30 min', '1h', '1h30', '2h']
-const durationInterslot = ['1 min', '1min30', '2 min', '2min30']
-const durationSlot_selected = ref({})
-const durationInterslot_selected = ref({})
-const durationTemp = ref({})
-const durationTempInter = ref({})
+const params = useParamStore()
 
-const editDurationSlot = () => {
-  durationSlot_modal.value = true
+const parametres = computed(() => {
+  const {
+    duree_du_creneau: duree_creneau,
+    duree_inter_creneau,
+    temps_d_acces_avant_la_reservation: acces_avant_reservation,
+    temps_d_acces_apres_la_reservation: acces_apres_reservation
+  } = params.parametreFitArenas ?? {}
+
+  return { duree_creneau, duree_inter_creneau, acces_avant_reservation, acces_apres_reservation }
+})
+
+const modale = ref(false)
+
+const formulaire = reactive({
+  duree_creneau:  null,
+  duree_inter_creneau: null,
+  temps_acces_avant_resa: null,
+  temps_acces_apres_resa: null,
+})
+
+watch(() => parametres.value, async () => {
+  console.log(parametres.value)
+})
+
+const rafraichir = async () => {
+  await params.fetchParametres(route.params.id)
 }
 
-const editDurationInterslot = () => {
-  durationInterslot_modal.value = true
+const editParametre = async (mode) => {
+  modale.value = mode
+  formulaire[mode] = parametres.value[mode].valeur
 }
 
-const saveDurationSlot = async (i) => {
-  console.error(durationTemp.value[0].parametre.id)
-  //Je recupere la donnée de la durée du creneau
-  const paramTemp = {
-    fitArena: '/api/fit_arenas/' + idFitArena.value,
-    parametre: '/api/parametres/' + durationTemp.value[0].parametre.id,
-    valeur: durationSlot_selected.value,
+const saveParametre = async () => {
+  const params = {
+    fitArena: '/api/fit_arenas/' + route.params.id,
+    parametre: parametres.value[modale.value].parametre,
+    valeur: formulaire[modale.value],
   }
-  try {
-    const { data } = await postParametreFitArena(paramTemp)
-  } catch (e) {
-    console.error(e)
-    toast.error('Erreur, Veuillez contacter votre administrateur')
-  }
-  durationSlot_modal.value = false
-  //toast.success('Enregistrement du paramètre avec succès')
-}
-const saveDurationInterslot = async (i) => {
-  const paramTemp = {
-    fitArena: '/api/fit_arenas/' + idFitArena.value,
-    parametre: '/api/parametres/' + durationTempInter.value.parametre.id,
-    valeur: durationInterslot_selected.value,
-  }
-
-  // à voir pour les fonctions à utiliser, j'ai l'impression qu'elles ne sont pas encore configurées (ParametreFitArena sur le swagger)
 
   try {
-    const { data } = await post(paramTemp)
+     await updateParametreFitArena(params, parametres.value[modale.value].id)
+    rafraichir()
     toast.success('Enregistrement du paramètre avec succès')
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }
-  durationInterslot_modal.value = false
+
+  modale.value = false
 }
 
-onMounted(async () => {
-  const params = { page: 1, 'fitArena.id': props.id }
-  durationTempInter.value = await getParametreFitArena({ 'parametre.code': 'duree-inter-creneau', ...params })
-  durationTemp.value = await getParametreFitArena({ 'parametre.code': 'duree-du-creneau', ...params })
-})
+const formatMinutes = (dureeMinutes) => {
+  if (dureeMinutes < 60) {
+    return dureeMinutes + 'm'
+  } else {
+    const minutes = dureeMinutes % 60
+    return ~~(dureeMinutes / 60) + 'h ' + (minutes > 0 ? minutes.toString().padStart(2, '0') : '')
+  }
+}
 </script>
