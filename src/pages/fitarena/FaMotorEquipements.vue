@@ -183,7 +183,7 @@
           />
         </div>
       </div>
-      <CardModalSection title="CONFIGURATION ÉQUIPEMENTS" class="pl-4" v-if="equipement.equipementModes.length > 0">
+      <CardModalSection title="CONFIGURATION ÉQUIPEMENTS" class="pl-4" v-if="equipement.equipementModes?.length > 0">
         <table
           class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
         >
