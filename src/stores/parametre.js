@@ -9,6 +9,7 @@ export const useParamStore = defineStore('params', () => {
   const parametreFitArenas = computed(() => parametres.value.parametreFitArenas)
   const parametreActivites = computed(() => parametres.value.parametreActivites)
   const parametreFitArenaProfils = computed(() => parametres.value.parametreFitArenaProfils)
+  const parametreZones = computed(() => parametres.value.parametreZones)
 
   async function fetchParametres(id) {
     parametres.value = await getParametresParFitArena(id)
@@ -19,6 +20,6 @@ export const useParamStore = defineStore('params', () => {
     return activites.value
   }
 
-  return { fetchParametres, fetchActivites,  activites, parametres, parametreFitArenas, parametreActivites, parametreFitArenaProfils }
+  return { fetchParametres, fetchActivites,  activites, parametres, parametreFitArenas, parametreActivites, parametreFitArenaProfils, parametreZones }
 
 })

@@ -6,25 +6,10 @@ export const getParametres = async (query = {page: 1}) => {
   return await get(`/api/parametres`, query)
 }
 
-export const getParametresParFitArena = async (id) => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/fit_arenas/${id}/parametres`)
-}
+export const getParametresParFitArena = async (id) => await get(`/api/fit_arenas/${id}/parametres`)
 
-export const getParametresById = async (id) => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametres/${id}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
-}
+
+export const getParametresById = async (id) => await get(`/api/parametres/${id}`)
 
 export const postParametres = async (param) => {
   const response = await $fetch(

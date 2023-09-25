@@ -1,5 +1,5 @@
 <template>
-  <button :class="[couleur, icon_placement, border]" :type="submit ? 'submit' : 'button'" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
+  <button :class="[couleur, border]" :type="submit ? 'submit' : 'button'" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center rounded-lg">
     <div v-if="icon" v-html="icon"></div>
     <div v-if="props.label">
       {{props.label}}
@@ -42,7 +42,6 @@ const TYPE = {
 
 interface Props {
   label?: string,
-  icon_placement?: string
   icon?: 'search' | 'print' | 'add' | 'reload' | 'edit' | 'delete' | 'export' | 'logout' | 'cross' | 'filter' | 'info' | '',
   couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
   borderless: boolean,
@@ -57,6 +56,5 @@ const props = withDefaults(defineProps<Props>(), {
 const icon: string = ICON[props.icon ?? '']
 const couleur: string = TYPE[props.couleur ?? '']
 const border: string = props.borderless ? '' : 'border'
-const icon_placement: string = props.icon_placement === 'left' ? 'row-reverse' : ''
 
 </script>

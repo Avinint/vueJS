@@ -1,7 +1,6 @@
 <template>
-  <Card>
-    <h1>Durée Réservation</h1>
-    <div class="relative my-4 overflow-x-auto text-black">
+  <CardModalSection title="Durée Réservation">
+    <div class="relative ml-9 my-4 overflow-x-auto text-black">
       <div class="flex bg-white">
         <div class="flex w-1/12 items-center justify-start">
           <Button
@@ -35,7 +34,7 @@
         </div>
       </div>
     </div>
-  </Card>
+  </CardModalSection>
 
   <form @submit.prevent="saveDurationSlot">
     <Modal
@@ -121,6 +120,7 @@ import {
 } from '../../api/parametreFitArena.js'
 import { getEquipements } from '../../api/equipement'
 import { getTypeEquipements } from '../../api/typeEquipement'
+import CardModalSection from "@components/common/CardModalSection.vue";
 
 const props = defineProps(['id'])
 const route = useRoute()
