@@ -198,7 +198,7 @@ import dayjs from "dayjs";
 
 const { getOrganismes } = useMenuStore()
 const selectOrganismes = computed(() => getOrganismes().map(({id, libelle}) => ({id, libelle})))
-const datePickerFormat = {date: 'DD/MM/YYYY', month: 'MMM'}
+const datePickerFormat = { date: 'DD/MM/YYYY', month: 'MMM' }
 const selectStatuts = ref([])
 const datepickerSeance = ref()
 const datepickerReservation = ref()
