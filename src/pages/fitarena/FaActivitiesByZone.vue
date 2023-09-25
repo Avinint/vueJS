@@ -216,7 +216,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 
 import Card from '../../components/common/Card.vue'
@@ -272,9 +272,13 @@ const edit_modal = ref(false)
 const add_modal = ref(false)
 const zoneTemp = ref({})
 
-onMounted(async () => {
+async function fetchDonnees() {
   zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
   activites.value = await getActivites(props.id)
+}
+
+onMounted(async () => {
+  await fetchDonnees();
   modes_motorise.value = await getModes({ 'categoryTypeEquipement.code': 'motorise' })
   modes_numerique.value = await getModes({ 'categoryTypeEquipement.code': 'numerique' })
   parametre_config_equipements_motorises.value = (
@@ -289,6 +293,8 @@ onMounted(async () => {
   await fetchSousZoneParametres()
   await fetchZoneEquipements()
 })
+
+watch(() => props.id, () => fetchDonnees())
 
 const modifieActivite = async ({ actif, id }) => {
   try {

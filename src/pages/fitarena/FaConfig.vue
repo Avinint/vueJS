@@ -139,12 +139,13 @@
       </table>
     </div>
 
-    <div>
+    <div class="w-full flex justify-center">
       <Button
+        class="my-3"
         id="TconfigFitArena"
-        label="Configurer la Fit arena"
+        label="Configurer la Fit Arena"
         icon="add"
-        couleur="secondary"
+        couleur="danger"
         @click="save"
       />
     </div>
@@ -153,7 +154,7 @@
       <img :src="asset(urlBandeau)" class="bandeau" alt="bandeau" v-if="urlBandeau">
     </div>
 
-    <div class="p-6  w-full">
+    <div class="p-6 w-full">
       <LabelText text="Services"/>
     </div>
     <div class="flex relative my-4 mx-6 overflow-x-auto text-gray-400">
@@ -167,7 +168,7 @@
           <tr v-for="(service, index) in services" :key="index">
 
             <td class="border border-gray-300">
-              <input @keydown.enter="enregistrerService(service, index)" v-model="service.libelle" class="border border-gray-50 bg-gray-100" placeholder="Libellé " type="text">
+              <input @keydown.enter="enregistrerService(service, index)" v-model="service.libelle" class="border border-gray-50 bg-gray-100" placeholder="Libellé" type="text">
             </td>
             <td class="border border-gray-300 px-4">
               <span>Icône</span>
@@ -192,7 +193,7 @@
       />
     </div>
 
-    <div class="p-6  w-full">
+    <div class="p-6 w-full">
       <LabelText text="Réseaux sociaux"/>
     </div>
     <div class="flex relative my-4 mx-6 overflow-x-auto text-gray-400">
@@ -206,7 +207,7 @@
         <tr v-for="(reseau, index) in reseauxSociaux" :key="index">
 
           <td class="border border-gray-300">
-            <input @keydown.enter="enregistrerReseauSocial(reseau, index)" v-model="reseau.libelle" class="border border-gray-50 bg-gray-100" placeholder="Libellé " type="text">
+            <input @keydown.enter="enregistrerReseauSocial(reseau, index)" v-model="reseau.libelle" class="border border-gray-50 bg-gray-100" placeholder="Libellé" type="text">
           </td>
           <td class="border border-gray-300">
             <input @keydown.enter="enregistrerReseauSocial(reseau, index)" v-model="reseau.url" class="border border-gray-50 bg-gray-100" placeholder="URL" type="text">
@@ -287,7 +288,7 @@ const departement = ref([])
 const fitArenaSave = ref({})
 
 onMounted(async () => {
-  fitArenaConfig.value  = await getFitArenaConfig(route.params.id)
+  fitArenaConfig.value = await getFitArenaConfig(route.params.id)
   fitArena.value = await getFitArena(route.params.id)
   mapApiToData()
 })
@@ -337,7 +338,7 @@ const refreshFitArena = () => {
 const refreshFitArenaConfig = () => {
   urlMiniature.value = fitArenaConfig.value.urlMiniature
   urlBandeau.value = fitArenaConfig.value.urlBandeau
-  services.value =  fitArenaConfig.value.services?.map((service) => ({...service}) ) ?? []
+  services.value = fitArenaConfig.value.services?.map((service) => ({...service}) ) ?? []
   reseauxSociaux.value = fitArenaConfig.value.reseauxSociaux?.map((rs) => ({ ...rs})) ?? []
 
 }
@@ -451,7 +452,7 @@ const saveConfirmation = async () => {
 }
 
 // const rsModifie = (rs) => fitArenaConfig.value.reseauxSociaux.find(
-//   (el) => el.id === rs.id && el.libelle === rs.libelle && el.url === rs.url) === undefined
+// (el) => el.id === rs.id && el.libelle === rs.libelle && el.url === rs.url) === undefined
 
 const objetModifie = (obj, liste) => liste.some(
   (el) => {

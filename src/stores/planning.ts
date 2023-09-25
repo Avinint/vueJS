@@ -25,10 +25,10 @@ export const usePlanningStore = defineStore('planning', {
       return state.filters.zone
     },
     getCurrentDateStart(state) {
-      return dayjs(state.currentDateStart).format('D MMMM')
+      return dayjs(state.currentDateStart).format('YYYY-MM-DD')
     },
     getCurrentDateEnd(state) {
-      return dayjs(state.currentDateEnd - 1).format('D MMMM YYYY')
+      return dayjs(state.currentDateEnd - 1).format('YYYY-MM-DD')
     },
     getDebutOfWeek(state) {
       const firstDayOfWeek = new Date(

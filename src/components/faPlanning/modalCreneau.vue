@@ -476,6 +476,7 @@ export default {
 option {
   text-align: center;
 }
+
 .max-w-4xl {
   max-width: 56rem;
 }

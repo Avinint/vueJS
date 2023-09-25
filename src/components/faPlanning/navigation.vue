@@ -56,12 +56,14 @@
                 class="m-0"
                 @click="prev()"
               />
-              <div class="min-w-max h-9 flex items-center cursor-default px-4 bg-gray-300 text-black rounded-lg">
-                {{ planningStore.getCurrentDateStart }}
-                <template v-if="planningStore.currentViewName === 'day'">
-                  - {{ planningStore.getCurrentDateEnd }}
-                </template>
-              </div>
+              <vue-tailwind-datepicker
+                input-classes="bg-gray-300 border border-gray-300 rounded-lg py-1.5 text-black w-56"
+                v-model="startDate"
+                i18n="fr"
+                as-single
+                :placeholder="`${startDate} - ${endDate}`"
+                :formatter="formatDate"
+              />
               <Button
                 label=">"
                 couleur="info"
@@ -89,6 +91,7 @@ import { getZones } from '@api/zone.js'
 import NavigationSection from '@components/faPlanning/navigationSection.vue'
 import { usePlanningStore } from '@stores/planning.ts'
 import { mapStores } from 'pinia'
+import dayjs from "dayjs";
 
 export default {
   components: {
@@ -104,35 +107,76 @@ export default {
   data() {
     return {
       zones: [],
+      startDate: '',
+      endDate: '',
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
+    idFitArena() {
+      return this.$route.params.id
+    },
+    idOrganisme() {
+      return this.$route.params.id
+    },
+    formatDate() {
+      return { startDate: 'YYYY-MM-DD', month: 'MMMM' }
+    }
+  },
+  watch: {
+    startDate (value) {
+      value = dayjs(value).format('YYYY-MM-DD')
+      this.changeData(value)
+    },
+    async idFitArena() {
+      this.fetchDonnees()
+    },
+    async idOrganisme() {
+      this.fetchDonnees()
+    }
   },
   async mounted() {
+    await this.fetchDonnees()
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
     this.$emit('afterFetch');
+    this.setDate()
   },
   methods: {
+    setDate() {
+      this.startDate = this.planningStore.getCurrentDateStart
+      this.endDate = this.planningStore.getCurrentDateEnd
+      this.startDate = dayjs(this.startDate).format('YYYY-MM-DD')
+      this.endDate = dayjs(this.endDate).format('YYYY-MM-DD')
+    },
+    changeData(date) {
+      this.calendarApi.gotoDate(date)
+      this.setDate()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
+    },
     today() {
       this.calendarApi.today()
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
       })
+      this.setDate()
     },
     prev() {
       this.calendarApi.prev()
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
       })
+      this.setDate()
     },
     next() {
       this.calendarApi.next()
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
       })
+      this.setDate()
     },
     updateActivities() {
       this.planningStore.updateActivities()
@@ -180,9 +224,16 @@ export default {
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'week'
     },
+    async fetchDonnees() {
+      await this.setZones()
+      this.viewWeek()
+      await this.planningStore.fetch()
+      this.$emit('afterFetch');
+    },
   },
 }
 </script>
+
 <style scoped lang="scss">
 .active {
   background-color: #0b83d9;

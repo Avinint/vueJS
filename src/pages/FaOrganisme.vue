@@ -470,6 +470,7 @@ const deleteOrganismeValidation = async (id) => {
   }
   modaleConfirmation.value = false
   deleteOrganismeId.value = 0
+  cancel()
   organismes.value = await getOrganismesParClient(idClient.value)
 }
 
@@ -489,7 +490,6 @@ const showOrganisme = async (i) => {
 }
 
 const mapApiToData = (organisme) => {
-
   name.value = organisme.libelle
   actif.value = organisme.actif
   client.value = idClient.value
@@ -614,8 +614,16 @@ const addressSelect = (event) => {
 </script>
 
 <style scoped>
- .offset {
-   position: absolute;
-   right: -2000px;
- }
+.offset {
+  position: absolute;
+  right: -2000px;
+}
+
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
 </style>

@@ -170,12 +170,30 @@ const modifiePMRUser = async ({ pmr, id }) => {
 const previousPage = async () => {
   page.value = page.value - 1
   users.value = await getUsers(page.value)
+  users.value.sort(function compare(a, b) {
+    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
+      return -1
+    }
+    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
+      return 1
+    }
+    return 0
+  })
   window.scroll(0, 0)
 }
 
 const nextPage = async () => {
   page.value = page.value + 1
   users.value = await getUsers(page.value)
+  users.value.sort(function compare(a, b) {
+    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
+      return -1
+    }
+    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
+      return 1
+    }
+    return 0
+  })
   window.scroll(0, 0)
 }
 </script>

@@ -11,7 +11,6 @@
             <th scope="col" class="px-6 py-3">Code postal</th>
             <th scope="col" class="px-6 py-3">Ville</th>
             <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
         <tbody>
@@ -21,18 +20,18 @@
             <td class="px-6 py-4">{{ client.adresse.ville }}</td>
             <td class="flex items-center justify-center p-3">
               <Button
-                test="TdeleteClient"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeClient(client.id)"
-              />
-              <Button
                 test="TeditClient"
                 borderless
                 icon="edit"
                 couleur="secondary"
                 @click="editClient(i)"
+              />
+              <Button
+                test="TdeleteClient"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                @click="removeClient(client.id)"
               />
             </td>
             <!-- <td class="px-6 py-4">
@@ -314,7 +313,7 @@
                   :validation="[emailValidation]"
                 />
               </div>
-              <div class="h-4"/>
+              <div class="h-4" />
               <CardModalSection title="Carte d'accès">
                 <div class="my-6 flex items-center">
                   <p class="w-4/12 label-text"
@@ -333,7 +332,7 @@
                     ></div>
                   </label>
                 </div>
-                <div class="flex items-center"  v-if="gestionnaire.titulaireCarte">
+                <div class="flex items-center" v-if="gestionnaire.titulaireCarte">
                   <Input
                     id="TcodePin"
                     v-model="gestionnaire.codePin"
@@ -658,6 +657,7 @@ const deleteClientValidation = async (id) => {
   menuClients.splice(indexAncienClient, 1)
 
   delete_modal.value = false
+  cancel()
   deleteClientId.value = 0
   clients.value = await getClients()
 }
@@ -707,5 +707,13 @@ const imprimerPdf = async (gestionnaire) => {
 .offset {
   position: absolute;
   right: -2000px;
+}
+
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 </style>
