@@ -22,20 +22,8 @@ export async function getOrganismes(page = 1, query = '&order=asc'): Promise<Org
   return response.json()
 }
 
-export async function getOrganismesSelect(page = 1, query = ''): Promise<Organisme[]> {
-  const response = await $fetch(
-  `${import.meta.env.VITE_API_URL}/api/select/organismes?${query}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      }
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
+export async function getOrganismesSelect(query = {}): Promise<Organisme[]> {
+    return await get('/api/select/organismes', { page: 1, ...query })
 }
 
 export async function getOrganismesParClient(id: number): Promise<Organisme[]> {
