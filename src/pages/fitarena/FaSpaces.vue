@@ -1,40 +1,22 @@
 <template>
-  <Card>
+  <Card class="space-y-3">
     <h1>Espaces</h1>
-    <span class="text-sm font-bold"
-      >Espaces : Ensemble de sous espace dont l'accès est contrôlé.</span
-    >
+
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs uppercase text-gray-700"
+          class="text-xs text-gray-700 bg-gray-200"
         >
           <tr>
+            <th scope="col" class="px-6 py-3">Statut</th>
+            <th scope="col" class="px-6 py-3">Espace</th>
             <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">Actif</th>
-            <th scope="col" class="px-6 py-3">Libellé</th>
-            <th scope="col" class="px-6 py-3">Ordre</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(esp, i) in espaces" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
-              <Button
-                test="TdeleteClient"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeEspace(esp.id)"
-              />
-              <Button
-                test="TeditClient"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editEspace(i)"
-              />
-            </td>
-            <td class="px-6 py-4">
+          <tr v-for="(esp, i) in espaces" :key="`spaces-`+ i" class="bg-white">
+            <td class="px-6 py-4 flex gap-4">
+              <p class="w-16">{{ esp.actif ? 'Actif' : 'Inactif' }}</p>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input
                   v-model="esp.actif"
@@ -52,19 +34,34 @@
               </label>
             </td>
             <td class="px-6 py-4">{{ esp.libelle }}</td>
-            <td class="px-6 py-4">{{ esp.ordre }}</td>
-            <td class="px-6 py-4">
-              <Button label="Détails" couleur="secondary" @click="showEspace(i)" />
+            <td class="flex items-center justify-end p-3 gap-10">
+              <div @click="showEspace(i)" class="cursor-pointer px-3 py-2">
+                <img src="/src/assets/info.svg" />
+              </div>
+              <Button
+                test="TeditEspace"
+                borderless
+                icon="edit"
+                couleur="secondary"
+                @click="editEspace(i)"
+              />
+              <Button
+                test="TdeleteEspace"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                @click="removeEspace(esp.id)"
+              />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <Button
+    <ButtonRight
       id="TaddEspace"
       label="Ajouter un espace"
-      couleur="secondary"
       icon="add"
+      couleur="danger"
       @click="addEspace"
     />
   </Card>
@@ -174,6 +171,7 @@ import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
+import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import {

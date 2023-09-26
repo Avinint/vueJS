@@ -4,7 +4,7 @@ import { useStorage } from '@vueuse/core'
 
 export const getZones = async (query = {}) => await get('/api/zones', {page: 1,  ...query })
 
-export const getZone = async (id = 1) => {
+export const getZone = async (id) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/zones/${id}`,
     {
