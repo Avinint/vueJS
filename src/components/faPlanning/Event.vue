@@ -11,7 +11,7 @@
       <div class="flex flex-col">
         <span v-if="Object.entries(event.extendedProps).length !== 0">
           {{ dayjs(event.extendedProps.dateDebut).format('H:mm') }} -
-          {{ dayjs(event.extendedProps.dateSortie).format('H:mm') }}
+          {{ dayjs(event.extendedProps.dateFinCreneau).format('H:mm') }}
         </span>
         <span v-else>
           {{ dayjs(event.start).format('H:mm') }} -
