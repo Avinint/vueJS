@@ -1,9 +1,8 @@
 <template>
   <Card>
     <h1 class="mb-6">équipements motorisés de la fit arena</h1>
-
-    <div v-for="(typeEquipement, i) in typeEquipements" :key="`type_equipement-`+ i">
-      <div v-for="(equipement, i) in typeEquipement.equipements" :key="`type_equipement-equipements-`+ i">
+    <div>
+      <div v-for="(equipement, i) in equipements" :key="`type_equipement-equipements-`+ i">
         <CardModalSection :title="equipement.libelle" :params="true" class="border border-gray-200 pr-6 py-6 rounded-lg mb-6">
           <template #topParams>
             <div class="px-6 py-4 flex items-center ml-8">
@@ -335,11 +334,8 @@ const selectableModes = ref([])
 const props = defineProps({ id: String })
 
 const fetchDonnees = async () => {
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ props.id
-  )
+  equipements.value = await getEquipements(props.id, {categorie: 'motorise'})
+  
   typeEquipements.value = setEquipementModes(
     await getTypeEquipements(
       1,
@@ -348,7 +344,7 @@ const fetchDonnees = async () => {
 }
 
 onMounted(async () => {
-  fetchDonnees()
+  await fetchDonnees()
   typeEquipementsSelects.value = await getTypeEquipements(
     1,
     '&categoryTypeEquipement.code=motorise'
@@ -397,11 +393,8 @@ const deleteEquipmentValidation = async (id) => {
   delete_modal.value = false
   deleteEquipmentId.value = 0
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
-  )
+  equipements.value = await getEquipements(props.id, { categorie: 'motorise' })
+
   typeEquipements.value = await getTypeEquipements(
     1,
       '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ props.id
@@ -485,11 +478,7 @@ const updateEquipmentValidation = async () => {
   edit_modal.value = false
   equipement_modal.value = false
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ props.id
-  )
+  equipements.value = await getEquipements(props.id, { categorie: 'motorise' })
   typeEquipements.value = await getTypeEquipements(
     1,
       '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ props.id
@@ -511,11 +500,7 @@ const addEquipmentValidation = async () => {
   add_modal.value = false
   equipement_modal.value = false
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-      '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ props.id
-  )
+  equipements.value = await getEquipements(props.id, { categorie: 'motorise' })
   typeEquipements.value = await getTypeEquipements(
     1,
       '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ props.id
