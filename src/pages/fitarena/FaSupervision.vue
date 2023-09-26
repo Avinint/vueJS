@@ -81,7 +81,7 @@ const openCA = (caId, caLibelle) => {
 
 const validationOpenCA = async () => {
   const data = {
-    id_arena: props.id,
+    id_arena: parseInt(props.id),
     id_ca: controleAccesId.value
   }
 

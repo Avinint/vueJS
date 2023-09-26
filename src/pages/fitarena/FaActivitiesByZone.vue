@@ -273,8 +273,9 @@ const add_modal = ref(false)
 const zoneTemp = ref({})
 
 async function fetchDonnees() {
-  zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
+  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
   activites.value = await getActivites(props.id)
+  await fetchZoneEquipements()
 }
 
 onMounted(async () => {
@@ -291,7 +292,6 @@ onMounted(async () => {
   let data = await getTypeZone(1, '&code=sous_zone')
   id_type_sous_zone.value = data[0]?.id
   await fetchSousZoneParametres()
-  await fetchZoneEquipements()
 })
 
 watch(() => props.id, () => fetchDonnees())
@@ -376,7 +376,7 @@ const deleteActivityValidation = async (zoneId, activiteId) => {
   cancel()
   activiteZone_modal.value = false
   delete_modal.value = false
-  zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
+  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
 }
 
 const editActiviteZone = async (i) => {
@@ -399,10 +399,8 @@ const showActiviteZone = async (i) => {
 // récupération de la liste des sous-zones d'une zone+activité
 const getSousZones = async (zoneId, activiteId) => {
   const sousZones = []
-  const data = await getZones(
-    1,
-    '&zoneParent=' + zoneId + '&zoneActivites.activite.id=' + activiteId
-  )
+  const data = await getZones({ page: 1, 'zoneParent': zoneId, 'zoneActivites.activite.id': activiteId })
+
   data.forEach((datum) => {
     sousZones.push(datum)
   })
@@ -462,7 +460,7 @@ const activityValidation = async (msgOk, msgNoOk) => {
   add_modal.value = false
   activiteZone_modal.value = false
   cancel()
-  zones.value = await getZones(1, '&typeZone.code=zone&fitArena=' + props.id)
+  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
 }
 
 const newSousZone = (libelle) => {

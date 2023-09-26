@@ -142,10 +142,7 @@ export default {
   },
   methods: {
     initZones: async function () {
-      this.zones = await getZones(
-        1,
-        '&typeZone.code=zone&fitArena=' + this.$route.params.id
-      )
+      this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
       this.calendarOptions.resources = [
         { id: this.zones[0].id, title: this.zones[0].libelle },
       ]
