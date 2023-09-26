@@ -43,6 +43,28 @@ type Zone = {
   libelle: string
 }
 
+type DemandeEditContract = {
+  creneau: {
+    creneauType: number
+    zones: { id: number; activites: { activiteId: number; tarif: number }[] }[]
+    titre: string
+    date: string
+    heureDebut: string
+    heureFin: string
+    dureeActivite: number
+    dureeInterCreneau: number
+    description: string
+    organisme: number
+    animateurLabellise: number
+    niveauPratique: number
+    tarifHoraire: number
+    nbParticipants: number
+    recurrence: Recurrence
+  }
+  commentaire: string
+  fitArenaId: number
+}
+
 type CreneauOGEditContract = {
   creneauType: 2
   zoneId: number
@@ -112,6 +134,14 @@ type GroupeEditContract = {
   idOrganisme: number
   animateurs: { id: number }[]
   adherents: { id: number }[]
+}
+
+type CreneauDemandePostResponse = {
+    creneau: {
+        creneaux: Creneau[],
+    },
+    commentaire: string,
+    fitarenaId: number
 }
 
 type CreneauEditResponse = {

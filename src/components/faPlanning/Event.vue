@@ -9,7 +9,11 @@
     ></div>
     <div class="flex grow justify-between px-3 pr-3 text-xs text-black">
       <div class="flex flex-col">
-        <span>
+        <span v-if="Object.entries(event.extendedProps).length !== 0">
+          {{ dayjs(event.extendedProps.dateDebut).format('H:mm') }} -
+          {{ dayjs(event.extendedProps.dateSortie).format('H:mm') }}
+        </span>
+        <span v-else>
           {{ dayjs(event.start).format('H:mm') }} -
           {{ dayjs(event.end).format('H:mm') }}
         </span>
@@ -35,6 +39,6 @@
 import dayjs from 'dayjs'
 
 defineProps<{
-    event: CalendarEvent
+  event: CalendarEvent
 }>();
 </script>

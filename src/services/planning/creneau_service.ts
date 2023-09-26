@@ -1,5 +1,14 @@
 import { getCreneauDuration, getDateStringHour } from '../date_service'
 
+type DemandeForm = {
+  title: string,
+  date: string,
+  start_time: string,
+  end_time: string,
+  people_count: string,
+  zones: number[],
+}
+
 /**
  * Generate an ``grand public`` type creneau edit contract that is properly typed to be used by the API
  * Only retreive the activities that are in the given zone_id, and set the zoneId of the
@@ -187,6 +196,39 @@ export function ParseDemandeCreneauResponse(response: DemandeCreneauEditResponse
 
     return value;
   })
+}
+
+export function makeDemandeEditContract(fitarena_id: number, organisme_id: number, form: any): DemandeEditContract {
+  if (form.recurrence) {
+    form.recurrence.dateDebut = form.date
+  }
+
+  const zones = []
+  for (const zone_id of form.zones) {
+    zones.push({ id: zone_id, activites: [] })
+  }
+
+  return {
+    creneau: {
+      titre: form.title,
+      date: form.date,
+      description: '',
+      animateurLabellise: 0,
+      creneauType: 2,
+      dureeActivite: 0,
+      dureeInterCreneau: 0,
+      nbParticipants: form.people_count,
+      niveauPratique: 0,
+      tarifHoraire: 0,
+      heureDebut: `${form.start_time}:00`,
+      heureFin: `${form.end_time}:00`,
+      organisme: organisme_id,
+      zones: zones,
+      recurrence: form.recurrence,
+    },
+    commentaire: form.commentaire,
+    fitArenaId: fitarena_id
+  }
 }
 
 export const default_creneau = (): Creneau => ({

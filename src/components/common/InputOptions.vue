@@ -13,7 +13,7 @@
           :value="option.id"
           @input="update"
         >
-        {{ option.label }}
+        {{ option.label ?? option.libelle }}
       </label>
     </div>
   </div>
@@ -35,6 +35,7 @@ const props = defineProps<{
   options: SelectOption[],
   modelValue?: number[],
   label?: string,
+  libelle?: string,
 }>()
 
 const model = ref(props.modelValue ?? [])

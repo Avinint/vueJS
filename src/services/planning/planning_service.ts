@@ -113,7 +113,12 @@ export function parseDemandeToEvent(demande: Creneau): CalendarEvent {
 }
 
 export const planning_configuration: CalendarOptions = {
-  plugins: [dayGridPlugin, timeGridPlugin, resourceTimeGridPlugin],
+  plugins: [
+    dayGridPlugin,
+    timeGridPlugin,
+    resourceTimeGridPlugin,
+    interactionPlugin,
+  ],
   headerToolbar: false,
   initialView: 'timeGridWeek',
   locale: frLocale,
@@ -131,7 +136,8 @@ export const planning_configuration: CalendarOptions = {
   allDaySlot: false,
   eventOverlap: false,
   selectOverlap: false,
-  height: 'auto',
+  height: '80vh',
+  scrollTime: '07:00',
   schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
   // timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
   slotLabelFormat: {
