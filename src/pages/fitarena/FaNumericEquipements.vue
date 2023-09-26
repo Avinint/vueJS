@@ -17,7 +17,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(type, i) in typeEquipement.equipements" :key="`type_equipement-equipements-` + i" class="bg-white">
+                <tr v-for="(type, i) in equipmentsByType[typeEquipement.id]" :key="`type_equipement-equipements-` + i" class="bg-white">
                   <td class="px-6 py-4 flex gap-4">
                     <p class="w-16">{{ type.statut ? 'Actif' : 'Inactif' }}</p>
                     <label class="relative inline-flex cursor-pointer items-center">
@@ -198,7 +198,7 @@ import {
 import { isValid, ipValidation } from '@/validation.js'
 import { getTypeEquipements } from '@api/typeEquipement.js'
 import { getModes } from "@api/mode"
-import { onMounted, ref, watch } from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
@@ -224,11 +224,21 @@ const selectableModes = ref([])
 
 const props = defineProps(['id'])
 
+const groupBy = (liste, critere) => liste.reduce((listeClassee, element) => ({
+  ...listeClassee,
+  [critere(element)]: [
+    ...(listeClassee[critere(element)] || []),
+    element,
+  ],
+}), {})
+
+const equipmentsByType = computed(() => groupBy(equipements.value, (e) => e.typeEquipement.id))
+
 const fetchDonnees = async () => {
   equipements.value = await getEquipements(
     props.id,
     1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id=' + props.id
+    '&order[typeEquipement.id]=asc&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id=' + props.id
   )
   typeEquipements.value = setEquipementModes(
     await getTypeEquipements(
@@ -238,7 +248,7 @@ const fetchDonnees = async () => {
 }
 
 onMounted(async () => {
-  fetchDonnees()
+  await fetchDonnees()
   typeEquipementsSelects.value = await getTypeEquipements(
     1,
     '&categoryTypeEquipement.code=numerique'
