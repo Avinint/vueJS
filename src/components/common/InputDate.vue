@@ -7,9 +7,8 @@
       v-model="value"
       i18n="fr"
       as-single
-      :formatter="{ date: 'DD / MM / YYYY' }"
+      :formatter="{ date: 'DD-MM-YYYY' }"
       class="bg-gray-50 text-center"
-      @select:month="update"
     />
   </div>
 </template>

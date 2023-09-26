@@ -198,21 +198,36 @@ export function ParseDemandeCreneauResponse(response: DemandeCreneauEditResponse
   })
 }
 
-export function makeDemandeEditContract(zone_id: number, organisme_id: number, form: DemandeForm): DemandeEditContract {
+export function makeDemandeEditContract(fitarena_id: number, organisme_id: number, form: any): DemandeEditContract {
+  if (form.recurrence) {
+    form.recurrence.dateDebut = form.date
+  }
+
+  const zones = []
+  for (const zone_id of form.zones) {
+    zones.push({ id: zone_id, activites: [] })
+  }
+
   return {
     creneau: {
-      zoneId: zone_id,
       titre: form.title,
       date: form.date,
-      heureDebut: form.start_time,
-      heureFin: form.end_time,
+      description: '',
+      animateurLabellise: 0,
+      creneauType: 2,
       dureeActivite: 0,
       dureeInterCreneau: 0,
-      description: '',
+      nbParticipants: form.people_count,
+      niveauPratique: 0,
+      tarifHoraire: 0,
+      heureDebut: `${form.start_time}:00`,
+      heureFin: `${form.end_time}:00`,
       organisme: organisme_id,
-      creneauType: 2,
+      zones: zones,
+      recurrence: form.recurrence,
     },
-    commentaire: ''
+    commentaire: form.commentaire,
+    fitArenaId: fitarena_id
   }
 }
 

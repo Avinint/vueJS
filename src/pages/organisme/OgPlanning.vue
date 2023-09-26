@@ -1,7 +1,7 @@
 <template>
   <div class="fa-planning">
     <ModalSeance ref="modal" />
-    <ModalDemande ref="modal_demande" />
+    <ModalDemande ref="modal_demande" :zones="zones" />
     <PlanningNavigation
       v-if="calendar_api"
       class="mb-6"
@@ -21,21 +21,24 @@
 
 <script setup lang="ts">
 import PlanningNavigation from '@components/faPlanning/navigation.vue' // PlanningNavigation as navigation is an html reserved tag
+import Event from '@components/faPlanning/Event.vue'
+import ModalSeance from '@components/faPlanning/ModalSeance.vue'
+import ModalDemande from '@components/faPlanning/ModalDemande.vue'
+
 import FullCalendar from '@fullcalendar/vue3'
+import { EventSourceInput } from '@fullcalendar/core'
+import type { EventClickArg } from '@fullcalendar/core'
+import { type CalendarOptions } from '@fullcalendar/core'
+import type { DateSelectArg } from '@fullcalendar/core'
+
 import { usePlanningStore } from '@stores/planning'
 import { useCreneauStore } from '@stores/creneau'
 import { getZones } from '@api/zone.js'
 import { planning_configuration } from '../../services/planning/planning_service'
+import { getWeekNumber } from '../../services/date_service'
+
 import { onBeforeMount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getWeekNumber } from '../../services/date_service'
-import type { EventSourceInput } from '@fullcalendar/core'
-import Event from '@components/faPlanning/Event.vue'
-import ModalSeance from '@components/faPlanning/ModalSeance.vue'
-import type { EventClickArg } from '@fullcalendar/core'
-import { type CalendarOptions } from '@fullcalendar/core'
-import type { DateSelectArg } from '@fullcalendar/core'
-import ModalDemande from '@components/faPlanning/ModalDemande.vue'
 
 const planning_store = usePlanningStore()
 const creneau_store = useCreneauStore()

@@ -15,7 +15,6 @@ export default {
  defineProps({
    text: String,
    uppercase: {type: Boolean, default: false},
-
  })
 </script>
 

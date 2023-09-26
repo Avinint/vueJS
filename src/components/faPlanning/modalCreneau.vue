@@ -205,14 +205,14 @@
 </template>
 
 <script>
-import Modal from '@components/common/Modal.vue'
-import { mapStores } from 'pinia'
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
 import { useOrganismeStore } from '@stores/organisme.ts'
 import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
+
+import Modal from '@components/common/Modal.vue'
 import InputRadio from '@components/common/InputRadio.vue'
 import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
@@ -220,6 +220,8 @@ import FAButton from '@components/common/Button.vue'
 import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 import Button from "@components/common/Button.vue";
+
+import { mapStores } from 'pinia'
 
 export default {
   components: {
