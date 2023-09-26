@@ -391,10 +391,7 @@ export default {
       return this.creneauStore.zones.includes(zone.id)
     },
     async fetchZones() {
-      this.zones = await getZones(
-        1,
-        '&typeZone.code=zone&fitArena=' + this.$route.params.id
-      )
+      this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
       this.checkActivites()
     },
     updateActivites() {

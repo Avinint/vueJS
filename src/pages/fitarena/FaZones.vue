@@ -238,14 +238,8 @@ const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
 async function fetchDonnees() {
-  zones.value = await getZones(
-    1,
-    '&typeZone.code=zone&fitArena=' + props.id
-  )
-  espaceParents.value = await getZones(
-    1,
-    '&typeZone.code=sous_espace&fitArena=' + props.id
-  )
+  zones.value = await getZones( { page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
 }
 
 onMounted(async () => {
@@ -278,10 +272,8 @@ const deleteZoneValidation = async (id) => {
   delete_modal.value = false
   deleteZoneId.value = 0
   cancel()
-  zones.value = await getZones(
-    1,
-    '&typeZone.code=zone&fitArena=' + props.id
-  )
+  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+
   subEspace_modal.value = false
 }
 
@@ -356,14 +348,8 @@ const updateZoneValidation = async () => {
   edit_modal.value = false
   subEspace_modal.value = false
   cancel()
-  zones.value = await getZones(
-    1,
-    '&typeZone.code=zone&fitArena=' + props.id
-  )
-  espaceParents.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+  zones.value = await getZones(  { page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
@@ -380,14 +366,8 @@ const addZoneValidation = async () => {
   add_modal.value = false
   subEspace_modal.value = false
   cancel()
-  zones.value = await getZones(
-    1,
-    '&typeZone.code=zone&fitArena=' + props.id
-  )
-  espaceParents.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+  zones.value = await getZones(  { page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+  espaceParents.value = await getZones(  { page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 

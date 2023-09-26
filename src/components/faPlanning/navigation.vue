@@ -182,10 +182,7 @@ export default {
       this.planningStore.updateActivities()
     },
     async setZones() {
-      this.zones = await getZones(
-        1,
-        '&typeZone.code=zone&fitArena=' + this.$route.params.id
-      )
+      this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
     },
     async filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
