@@ -213,7 +213,7 @@ const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
 const fetchDonnees = async() => {
-  espaces.value = await getZones(1, '&typeZone.code=espace&fitArena=' + props.id)
+  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
 }
 
 onMounted(async () => {
