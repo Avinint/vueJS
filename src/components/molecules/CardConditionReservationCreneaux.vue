@@ -133,8 +133,6 @@ import {
   postParametreFitArena,
   patchParametreFitArena,
 } from '../../api/parametreFitArena.js'
-import { getEquipements } from '../../api/equipement'
-import { getTypeEquipements } from '../../api/typeEquipement'
 import { deleteParametreZone, patchParametreZone, postParametreZone, updateParametreZone } from "@api/parametreZone.js";
 import CardModalSection from "@components/common/CardModalSection.vue";
 

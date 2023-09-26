@@ -235,11 +235,7 @@ const groupBy = (liste, critere) => liste.reduce((listeClassee, element) => ({
 const equipmentsByType = computed(() => groupBy(equipements.value, (e) => e.typeEquipement.id))
 
 const fetchDonnees = async () => {
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&order[typeEquipement.id]=asc&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id=' + props.id
-  )
+  equipements.value = await getEquipements(props.id, {categorie: 'numerique', fitArena: props.id}, {type: 'asc'})
   typeEquipements.value = setEquipementModes(
     await getTypeEquipements(
       1,
@@ -297,11 +293,7 @@ const deleteEquipmentValidation = async (id) => {
   delete_modal.value = false
   deleteEquipmentId.value = 0
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique'
-  )
+  equipements.value = await getEquipements(props.id, { categorie: 'numerique' }, {type: 'asc'})
   typeEquipements.value = await getTypeEquipements(
     1,
       '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ props.id
@@ -374,11 +366,7 @@ const updateEquipmentValidation = async () => {
   edit_modal.value = false
   equipement_modal.value = false
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ props.id
-  )
+  equipements.value = await getEquipements(props.id, {categorie: 'numerique', fitArena: props.id}, {type: 'asc'})
   typeEquipements.value = await getTypeEquipements(
     1,
       '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ props.id
@@ -400,11 +388,7 @@ const addEquipmentValidation = async () => {
   add_modal.value = false
   equipement_modal.value = false
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-      '&typeEquipement.categoryTypeEquipement.code=numerique&fitArena.id='+ props.id
-  )
+  equipements.value = await getEquipements(props.id, {categorie: 'numerique', fitArena: props.id}, {type: 'asc'})
   typeEquipements.value = await getTypeEquipements(
     1,
       '&categoryTypeEquipement.code=numerique&equipements.fitArena='+ props.id
