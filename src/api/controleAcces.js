@@ -2,7 +2,7 @@ import { defaultHeaders } from './api.js'
 
 export const postControleAcces = async (data) => {
   const response = await fetch(
-    'https://admin-dev.fit-arena.fr/fitarena/ca/open',
+    'http://superviseurv2-recette.fit-arena.fr/fitarena/ca/open',
     {
       method: 'post',
       headers: {
