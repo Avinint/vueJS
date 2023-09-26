@@ -287,10 +287,7 @@ const deleteSubspaceValidation = async (id) => {
   delete_modal.value = false
   deleteSubspaceId.value = 0
   cancel()
-  subEspaces.value = await getZones(
-    1,
-    '&typeZone.code=sous_espace&fitArena=' + props.id
-  )
+  subEspaces.value = await getZones(  { page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
   subEspace_modal.value = false
 }
 
@@ -365,14 +362,8 @@ const updateSubspaceValidation = async () => {
   edit_modal.value = false
   subEspace_modal.value = false
   cancel()
-  subEspaces.value = await getZones(
-    1,
-    '&typeZone.code=sous_espace&fitArena=' + props.id
-  )
-  espaceParents.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+  subEspaces.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
+  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
@@ -389,14 +380,9 @@ const addSubspaceValidation = async () => {
   add_modal.value = false
   subEspace_modal.value = false
   cancel()
-  subEspaces.value = await getZones(
-    1,
-    '&typeZone.code=sous_espace&fitArena=' + props.id
+  subEspaces.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id }
   )
-  espaceParents.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
