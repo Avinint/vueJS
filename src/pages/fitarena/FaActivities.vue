@@ -1,14 +1,4 @@
 <template>
-  <!-- <CrudListAdmin
-    entity="activité"
-    plural="activités pratiquables dans la Fit Arena"
-    :columns="crud_columns"
-    :data="getTableData()"
-    :can-all="isAdmin || isGestCo || isGestOrg"
-    @entity:new="createAnimateur"
-    @entity:edit="editAnimateur"
-    @entity:remove="removeAnimateur"
-  /> -->
   <Card class="space-y-3">
     <h1>Activités pratiquables dans la fit arena</h1>
 
@@ -47,23 +37,23 @@
             <td class="px-6 py-4">{{ act.libelle }}</td>
 
             <td class="px-6 py-4">{{ act.ordre }}</td>
-            <td class="flex items-center justify-end p-3 gap-8">
-              <div @click="showActivite(i)" class="cursor-pointer">
+            <td class="flex items-center justify-end p-3 gap-10">
+              <div @click="showActivite(i)" class="cursor-pointer px-3 py-2">
                 <img src="/src/assets/info.svg" />
               </div>
-              <Button
-                test="TdeleteActivite"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeActivite(act.id)"
-              />
               <Button
                 test="TeditActivite"
                 borderless
                 icon="edit"
                 couleur="secondary"
                 @click="editActivite(i)"
+              />
+              <Button
+                test="TdeleteActivite"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                @click="removeActivite(act.id)"
               />
             </td>
           </tr>
@@ -262,12 +252,6 @@ const notify = () => {
   }) // ToastOptions
 }
 
-// const crud_columns = [
-//   { data: (e) => e.actif, label: 'Statut' },
-//   { data: (e) => e.libelle, label: 'Libellé' },
-//   { data: (e) => e.ordre, label: 'Ordre' }
-// ]
-
 const route = useRoute()
 
 const activite_modal = ref(false)
@@ -296,16 +280,6 @@ onMounted(async () => {
 watch(() => props.id, async (  ) => {
   activites.value = await getActivites(props.id, 1, '&order=asc')
 })
-
-// function getTableData() {
-//   return activites.value.map((activite) => {
-//     return {
-//       data: activite,
-//       editable: true,
-//       removable: true,
-//     }
-//   })
-// }
 
 const addActivite = () => {
   activite.value = {}
