@@ -275,6 +275,7 @@ const zoneTemp = ref({})
 async function fetchDonnees() {
   zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
   activites.value = await getActivites(props.id)
+  await fetchZoneEquipements()
 }
 
 onMounted(async () => {
@@ -291,7 +292,6 @@ onMounted(async () => {
   let data = await getTypeZone(1, '&code=sous_zone')
   id_type_sous_zone.value = data[0]?.id
   await fetchSousZoneParametres()
-  await fetchZoneEquipements()
 })
 
 watch(() => props.id, () => fetchDonnees())
