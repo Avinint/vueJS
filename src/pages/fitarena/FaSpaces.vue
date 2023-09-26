@@ -72,59 +72,19 @@
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modal_title"
       @cancel="espace_modal = false"
+      confirm-button-text="Enregistrer"
     >
-      <div class="flex items-center">
-        <Input
-          id="TEspaceLibelle"
-          v-model="espace.libelle"
-          :readonly="readonly"
-          :type="'text'"
-          label="Nom"
-          :required="true"
-          class="w-full"
-        />
-      </div>
-      <div class="flex items-center">
-        <Input
-          v-if="!readonly"
-          id="TEspaceOrdre"
-          v-model="espace.ordre"
-          :type="'number'"
-          label="Ordre"
-          :required="true"
-          class="w-full"
-        />
-        <Input
-          v-else
-          id="TEspaceOrdre"
-          v-model="espace.ordre"
-          readonly
-          :type="'text'"
-          label="Ordre"
-          class="w-full"
-        />
-      </div>
-      <div class="flex items-center">
-        <span class="w-1/2 text-sm font-medium text-gray-900"
-          >Actif :
-        </span>
-        <label class="relative inline-flex w-full cursor-pointer items-center">
-          <input
-            v-model="espace.actif"
-            :disabled="readonly == true ? true : false"
-            type="checkbox"
-            value="true"
-            class="peer sr-only"
+      <div class="pl-4">
+        <div class="flex items-center pb-6">
+          <Input
+            id="TEspaceLibelle"
+            v-model="espace.libelle"
+            :readonly="readonly"
+            type="text"
+            label="Nom"
+            required
           />
-          <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
-          ></div>
-          <span
-            class="ml-3 text-sm font-medium text-gray-900"
-          ></span>
-        </label>
-      </div>
-      <div>
+        </div>
         <AjoutEquipements
           ref="ajoutEquipementsNume"
           type-equipement="numerique"
@@ -132,8 +92,6 @@
           :zone="id_selected"
           :readonly="readonly"
         ></AjoutEquipements>
-      </div>
-      <div>
         <AjoutEquipements
           ref="ajoutEquipementsMoto"
           type-equipement="motorise"
@@ -141,8 +99,8 @@
           :zone="id_selected"
           :readonly="readonly"
         ></AjoutEquipements>
+        <MentionChampsObligatoires />
       </div>
-      <MentionChampsObligatoires/>
     </Modal>
   </form>
 
@@ -340,6 +298,7 @@ const addSpaceValidation = async () => {
 const cancel = () => {
   espace.value = {}
   espace_selected.value = {}
+  espTemp.value = {}
   readonly.value = false
   id_selected.value = 0
 }
