@@ -137,8 +137,8 @@
           Activités
         </label>
         <div class="flex overflow-x-scroll py-3">
-          <template v-for="zone in zones">
-            <div v-if="isZoneEditable(zone)" :key="zone" class="w-80 flex-col">
+          <template v-for="zone in zones" :key="zone">
+            <div v-if="isZoneEditable(zone)" class="w-80 flex-col">
               <input
                 :id="zone.code"
                 v-model="creneauStore.zones"
@@ -376,12 +376,12 @@ export default {
     },
     selectActivities(zone) {
       const isChecked = this.isZoneChecked(zone.id)
-      if(!isChecked) {
-        for(const activity of zone.zoneActivites) {
+      if (!isChecked) {
+        for (const activity of zone.zoneActivites) {
           activity.activite.checked = true;
         }
       } else {
-        for(const activity of zone.zoneActivites) {
+        for (const activity of zone.zoneActivites) {
           activity.activite.checked = false;
         }
       }
@@ -393,12 +393,17 @@ export default {
       }
     },
     isZoneEditable(zone) {
-      if (this.typeAction == 'create') return true
-
+      if (this.typeAction == 'create' || this.typeAction === 'edit') return true
+      
       return this.creneauStore.zones.includes(zone.id)
     },
     async fetchZones() {
-      this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
+      const zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
+      zones.forEach(zone => {
+        if (zone.actif && zone.zoneActivites.length > 0) {
+          this.zones.push(zone)
+        }
+      })
       this.checkActivites()
     },
     updateActivites() {
