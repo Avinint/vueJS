@@ -25,6 +25,16 @@ type Creneau = {
   recurrence: Recurrence
 }
 
+type CreneauAnonyme = {
+  id?: number | string
+  dateDebut: string,
+  dateSortie: string,
+  dateFinCreneau: string,
+  type: number,
+  zones: Array,
+  statut: string
+}
+
 type Recurrence = {
   dateDebut: string
   dateFin?: string
@@ -209,6 +219,7 @@ type PlanningFilters = {
 
 type Planning = {
   creneaux: Creneau[]
+  creneauxAnonymes: CreneauAnonyme[]
   demandes: DemandeCreneau[]
   filters: PlanningFilters
   activites: Activite[]
@@ -237,6 +248,11 @@ type CalendarEvent = {
   editable?: boolean
   selectable?: boolean
   extendedProps?: any
+}
+
+type CalendarEventAnonyme = {
+  start: string
+  end: string
 }
 
 type Participant = {
