@@ -278,9 +278,7 @@ export default {
       return this.typeCreneauStore.typeCreneauListe
     },
     creneauType() {
-      const res = this.typeCreneauListe.find(type => type.id === this.creneauStore.creneauType)?.code ?? null
-      console.log(res)
-      return res
+      return this.typeCreneauListe.find(type => type.id === this.creneauStore.creneauType)?.code ?? null
     },
     getOrganismesOptions() {
       return this.organismeStore.organismes.map((organisme) => {
@@ -377,8 +375,7 @@ export default {
       this.submenu = type;
     },
     selectActivities(zone) {
-      const isChecked = this.isZoneChecked(zone.id); 
-      console.log(zone);
+      const isChecked = this.isZoneChecked(zone.id)
       if(!isChecked) {
         for(const activity of zone.zoneActivites) {
           activity.activite.checked = true;
