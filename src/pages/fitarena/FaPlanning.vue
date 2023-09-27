@@ -44,6 +44,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
+import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { mapStores } from 'pinia'
 import { getZones } from '@api/zone.js'
 
@@ -118,6 +119,7 @@ export default {
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
+    ...mapStores(useTypeCreneauStore),
 
     idFitArena() {
        return this.$route.params.id
@@ -138,6 +140,7 @@ export default {
   async mounted() {
     this.calendarApi = this.$refs.fullCalendar.getApi()
     await this.initZones();
+    await this.typeCreneauStore.fetchTypeCreneaux()
     this.calendarOptions.scrollTime = this.planningStore.scrollTime
   },
   methods: {
