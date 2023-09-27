@@ -19,11 +19,11 @@
         <InputRadio
           v-model="creneauStore.creneauType"
           name="typeCreneau"
-          :list="typeCreneauList"
+          :list="typeCreneauListe"
           required
         />
       </div>
-      <div v-if="creneauStore.creneauType != 0" class="flex gap-3">
+      <div v-if="creneauType !== null" class="flex gap-3">
         <FAInput
           v-model="creneauStore.titre"
           :inline="false"
@@ -34,15 +34,15 @@
           type="text"
         />
         <InputSelect
-          v-if="creneauStore.creneauType == 2"
+          v-if="['organisme', 'maintenance'].includes(creneauType)"
           v-model="creneauStore.organisme"
           :required="true"
-          label="Organisme"
+          :label="creneauType === 'organisme' ? 'Organisme' : 'Prestataire'"
           class="grow"
           :options="getOrganismesOptions"
         />
       </div>
-      <div v-if="creneauStore.creneauType != 0" class="flex w-full">
+      <div v-if="creneauType !== null" class="flex w-full">
         <!-- TODO: update to https://www.vue-tailwind.com/docs/datepicker -->
         <div>
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
@@ -92,19 +92,19 @@
         </div>
       </div>
       <FAButton
-        v-if="creneauStore.creneauType == 1"
+        v-if="creneauType === 'grand_public'"
         class="mr-4"
         label="Paramètres avancés"
         couleur="secondary"
         @click="setSubmenu('advanced')"
       />
       <!-- <FAButton
-        v-if="creneauStore.creneauType && creneauStore.recurrence != undefined"
+        v-if="creneauType && creneauStore.recurrence != undefined"
         label="Récurrence"
         couleur="secondary"
         @click="setSubmenu('recurence')"
       /> -->
-      <div v-if="submenu == 'advanced'" class="flex gap-5">
+      <div v-if="submenu === 'advanced'" class="flex gap-5">
         <FAInput
           v-model="creneauStore.dureeActivite"
           :inline="false"
@@ -124,14 +124,14 @@
           type="number"
         />
       </div>
-      <MenuRecurrence v-if="submenu == 'recurence'" />
+      <MenuRecurrence v-if="submenu === 'recurence'" />
       <div
-        v-if="creneauStore.creneauType != 0"
+        v-if="creneauType !== null"
         class="relative rounded-lg border border-gray-300 p-4"
       >
         <label class="block text-sm font-bold text-gray-900"> Zones </label>
         <label
-          v-if="creneauStore.creneauType != 2 && creneauStore.zones.length > 0"
+          v-if="creneauType !== 'organisme' && creneauStore.zones.length > 0"
           class="absolute top-32 mb-2 block text-sm font-bold text-gray-900"
         >
           Activités
@@ -155,7 +155,7 @@
                 {{ zone.libelle }}
               </label>
               <div
-                v-if="isZoneChecked(zone.id) && creneauStore.creneauType != 2"
+                v-if="isZoneChecked(zone.id) && creneauType !== 'organisme'"
                 class="flex-col pt-10"
               >
                 <div
@@ -207,8 +207,8 @@
 <script>
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
+import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { useOrganismeStore } from '@stores/organisme.ts'
-import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
 
@@ -248,7 +248,6 @@ export default {
   emits: ['closeModalCreneau'],
   data() {
     return {
-      typeCreneauList: [],
       parametres: [],
       zones: [],
       // activites: [],
@@ -263,6 +262,7 @@ export default {
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
+    ...mapStores(useTypeCreneauStore),
     ...mapStores(useOrganismeStore),
     modalTitle() {
       switch (this.typeAction) {
@@ -273,6 +273,12 @@ export default {
         default:
           return 'Modifier un créneau'
       }
+    },
+    typeCreneauListe() {
+      return this.typeCreneauStore.typeCreneauListe
+    },
+    creneauType() {
+      return this.typeCreneauListe.find(type => type.id === this.creneauStore.creneauType)?.code ?? null
     },
     getOrganismesOptions() {
       return this.organismeStore.organismes.map((organisme) => {
@@ -330,8 +336,8 @@ export default {
     },
     isNotOrganismeOrMaintenance() {
       return (
-        this.creneauStore.creneauType !== 2 &&
-        this.creneauStore.creneauType !== 4
+        this.creneauType !== 'organisme' &&
+        this.creneauType !== 'maintenance'
       )
     },
   },
@@ -349,7 +355,7 @@ export default {
     )
     await this.fetchZones()
     await this.organismeStore.fetchOrganismes({'fit_arena.id': this.$route.params.id})
-    this.typeCreneauList = await getTypeCreneau()
+
     this.parametres = await getParametres()
     if (this.typeAction === 'create') {
       this.creneauStore.activites = []
@@ -369,8 +375,7 @@ export default {
       this.submenu = type;
     },
     selectActivities(zone) {
-      const isChecked = this.isZoneChecked(zone.id); 
-      console.log(zone);
+      const isChecked = this.isZoneChecked(zone.id)
       if(!isChecked) {
         for(const activity of zone.zoneActivites) {
           activity.activite.checked = true;
@@ -447,17 +452,18 @@ export default {
               this.errorMessage = true
               break
             } else {
-              if (this.typeAction === 'create') {
-                this.creneauStore.addCreneau(fitarena_id)
-              } else this.creneauStore.editCreneau(fitarena_id)
+              this.typeAction === 'create' ?
+                this.creneauStore.addCreneau(fitarena_id) :
+                this.creneauStore.editCreneau(fitarena_id)
               this.$emit('closeModalCreneau')
             }
             break
   
           case 2:
-            if (this.typeAction === 'create') {
-              this.creneauStore.addCreneauOrganisme(fitarena_id)
-            } else this.creneauStore.editCreneauOrganisme(fitarena_id)
+          case 3:
+            this.typeAction === 'create' ?
+              this.creneauStore.addCreneauOrganisme(fitarena_id) :
+              this.creneauStore.editCreneauOrganisme(fitarena_id)
             this.$emit('closeModalCreneau')
             break
         }

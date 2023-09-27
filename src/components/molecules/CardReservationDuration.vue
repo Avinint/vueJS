@@ -127,10 +127,6 @@ const formulaire = reactive({
   temps_acces_apres_resa: null,
 })
 
-watch(() => parametres.value, async () => {
-  console.log(parametres.value)
-})
-
 const rafraichir = async () => {
   await params.fetchParametres(route.params.id)
 }

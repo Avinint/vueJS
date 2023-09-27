@@ -223,9 +223,6 @@ const formulaire = reactive({
   durationEndId: null
 })
 
-// watch(() => activites.value, () => console.log("activites", activites.value))
-// watch(() => parametreActivites.value, () => console.log("parametreActivites", parametreActivites.value))
-
 const modaleVisible = ref(false)
 const modal_title = ref('')
 const modeFormulaire = ref(["ParActivite"])

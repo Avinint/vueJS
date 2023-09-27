@@ -359,19 +359,15 @@ const saveParProfils = async () => {
   }
 
 }
-
 async function miseAJourParProfil(corps) {
-console.log(formulaire)
   if (formulaire.profil) {
     corps.profil = formulaire.profil
     await postParametreFitArenaProfil(corps)
   }
-  console.log("apres post")
 
   if (formulaire.profilsASupprimer.length) {
     for (const profil of formulaire.profilsASupprimer) {
       await deleteParametreFitArenaProfil(profil.id)
-      console.log("supp")
     }
   }
 
