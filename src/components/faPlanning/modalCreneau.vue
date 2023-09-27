@@ -348,7 +348,7 @@ export default {
       this.datepickerFormat
     )
     await this.fetchZones()
-    await this.organismeStore.fetchOrganismes()
+    await this.organismeStore.fetchOrganismes({'fit_arena.id': this.$route.params.id})
     this.typeCreneauList = await getTypeCreneau()
     this.parametres = await getParametres()
     if (this.typeAction === 'create') {
