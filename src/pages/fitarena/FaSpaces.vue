@@ -202,8 +202,7 @@ const deleteSpaceValidation = async (id) => {
   delete_modal.value = false
   deleteSpaceId.value = 0
   cancel()
-  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id }
-  )
+  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   espace_modal.value = false
 }
 

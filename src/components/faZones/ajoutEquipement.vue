@@ -3,7 +3,7 @@
     <div
       v-for="(type, typeIdx) in typeEquipements"
       :key="typeIdx"
-      class="pl-8"
+      class="px-8"
     >
       <table class="w-full text-left text-sm text-gray-500 border-separate border-spacing-y-2">
         <thead
@@ -15,20 +15,22 @@
             <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
-        <tbody v-for="(equipement, equipementIdx) in type.equipements" :key="equipementIdx">
-          <tr v-if="isZoneEquipementExist(equipement)" class="bg-white">
-            <td class="px-6 py-2 bg-blue text-white rounded-lg">{{ equipement.libelle }}</td>
-            <td class="px-6 py-2">{{ equipement.ip }}</td>
-            <td class="flex items-center justify-end p-3 gap-10">
-              <Button
-                v-if="!readonly"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click.prevent="removeEquipementFromZone(typeIdx, equipementIdx)"
-              />
-            </td>
-          </tr>
+        <tbody>
+          <template v-for="(equipement, equipementIdx) in type.equipements" :key="equipementIdx">
+            <tr v-if="isZoneEquipementExist(equipement)" class="bg-white">
+              <td class="px-6 py-2 bg-blue text-white rounded-lg">{{ equipement.libelle }}</td>
+              <td class="px-6 py-2">{{ equipement.ip }}</td>
+              <td class="flex items-center justify-end p-3 gap-10">
+                <Button
+                  v-if="!readonly"
+                  borderless
+                  icon="delete"
+                  couleur="secondary"
+                  @click.prevent="removeEquipementFromZone(typeIdx, equipementIdx)"
+                />
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
       <select
