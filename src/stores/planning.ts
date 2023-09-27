@@ -7,6 +7,7 @@ import {
   default_planning,
   parseCreneauToEvent,
   parseDemandeToEvent,
+  parseCreneauAnonymeToEvent
 } from '../services/planning/planning_service'
 
 export const usePlanningStore = defineStore('planning', {
@@ -61,11 +62,21 @@ export const usePlanningStore = defineStore('planning', {
       return output
     },
     getCreneauxOrganismesEvents(state): CalendarEvent[] {
-      const output: CalendarEvent[] = []
-      for (const creneau of state.creneaux) {
-        if (creneau.type == 2) {
-          output.push(parseCreneauToEvent(creneau))
-        }
+      const creneaux = state.creneaux.map((creneau) =>
+        parseCreneauToEvent(creneau)
+      )
+      
+      const creneauxAnonymes = state.creneauxAnonymes.map((ca) => 
+        parseCreneauAnonymeToEvent(ca)
+      )
+      
+      const output = creneaux.concat(creneauxAnonymes)
+      return output
+    },
+    getCreneauxAnonymesOrganismesEvents(state): CalendarEventAnonyme[] {
+      const output: CalendarEventAnonyme[] = []
+      for (const creneauAnonyme of state.creneauxAnonymes) {
+        output.push(parseCreneauAnonymeToEvent(creneauAnonyme))
       }
       return output
     },
@@ -88,7 +99,9 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.zone.join(','),
         this.filters.organisme
       )
+
       this.pushCreneaux(response.creneaux)
+      this.pushCreneauxAnonymes(response.creneauxAnonymes)
     },
     async fetchPlanningOrganisme(organisme_id: number) {
       const debut =
@@ -104,8 +117,8 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.zone.join(','),
         organisme_id
       )
-
       this.pushCreneaux(response.creneaux)
+      this.pushCreneauxAnonymes(response.creneauxAnonymes)
     },
     async fetchActivites(id: number) {
       this.activites = await getActivites(id)
@@ -129,6 +142,9 @@ export const usePlanningStore = defineStore('planning', {
     },
     pushCreneaux(creneaux: Creneau[]) {
       this.creneaux = creneaux
+    },
+    pushCreneauxAnonymes(creneaux: CreneauAnonyme[]) {
+      this.creneauxAnonymes = creneaux
     },
     addCreneaux(creneaux: Creneau[]) {
       for (const creneau of creneaux) {

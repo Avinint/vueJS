@@ -12,7 +12,7 @@
     >
       <FullCalendar ref="calendar" :options="calendar_options">
         <template #eventContent="arg">
-          <Event :event="arg.event" />
+          <EventOrga :event="arg.event" />
         </template>
       </FullCalendar>
     </div>
@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import PlanningNavigation from '@components/faPlanning/navigation.vue' // PlanningNavigation as navigation is an html reserved tag
-import Event from '@components/faPlanning/Event.vue'
+import EventOrga from '@components/faPlanning/EventOrga.vue'
 import ModalSeance from '@components/faPlanning/ModalSeance.vue'
 import ModalDemande from '@components/faPlanning/ModalDemande.vue'
 
@@ -62,7 +62,7 @@ onBeforeMount(() => {
   calendar_options.slotMaxTime = planning_store.slotMaxTime
   watch(
     () => planning_store.getCreneauxOrganismesEvents,
-    (events) => {
+    (events: any) => {
       calendar_options.events = events as EventSourceInput
     }
   )
@@ -85,7 +85,9 @@ function refreshDates(dateInfo: any) {
 
 function eventClick(eventClickInfo: EventClickArg) {
   creneau_store.setCreneau(eventClickInfo.event as any) // TODO: improve typing
-  if (modal.value) {
+  if (eventClickInfo.event._def.extendedProps.statut == 'demande' && modal_demande.value) {
+    modal_demande.value.edit(eventClickInfo)
+  } else if (modal.value) {
     modal.value.open_modal()
   }
 }
@@ -97,4 +99,13 @@ function select(event: DateSelectArg) {
 }
 </script>
 
-<style scoped></style>
+<style>
+.fc .fc-event-anonyme {
+  background-color: #DCDCF0;
+  border-radius: 0px;
+}
+
+.fc .fc-event-demande {
+  background-color: #3586E2;
+}
+</style>

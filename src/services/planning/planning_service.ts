@@ -17,6 +17,7 @@ export enum EventType {
 
 export const default_planning: Planning = {
   creneaux: [],
+  creneauxAnonymes: [],
   // (TODO FITE2D-2853): Load data from WS instead of static mock
   demandes: [
     {
@@ -97,18 +98,28 @@ export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
   }
 }
 
+export function parseCreneauAnonymeToEvent(creneau: CreneauAnonyme): CalendarEvent {
+  return {
+    id: creneau.id ?? creneau.dateDebut,
+    start: creneau.dateDebut,
+    end: creneau.dateSortie,
+    title: '',
+    resourceIds: creneau.zones,
+    classNames: ['fc-event-anonyme'],
+    overlap: true
+  }
+}
+
 export function parseDemandeToEvent(demande: Creneau): CalendarEvent {
   return {
     id: demande.id ?? 0,
-    start: demande.heureDebut,
-    end: demande.heureFin,
+    start: demande.dateDebut,
+    end: demande.dateSortie,
     title: demande.titre,
-    resourceIds: [],
+    resourceIds: demande.zones,
     classNames: ['fc-event-demande'],
     overlap: true,
-    editable: false,
-    selectable: false,
-    extendedProps: { ...demande, event_type: EventType.DEMANDE },
+    extendedProps: { ...demande, event_type: EventType.CRENEAU },
   }
 }
 

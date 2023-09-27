@@ -4,17 +4,21 @@
     v-if="state != 'closed'"
     size="4xl"
     type="none"
-    title="Demande de création de créneaux"
+    :title="state == 'create' ? 'Demande de création de créneaux' : 'Modification de demande de créneaux'"
   >
     <div class="pl-4">
       <Input class="max-w-lg" label="Titre du créneau" v-model="form.title" />
-      <div class="flex gap-16 mt-8">
-        <vue-tailwind-datepicker
-          v-model="date"
-          i18n="fr"
-          as-single
-          :formatter="{ date: 'DD-MM-YYYY' }"
-        />
+      <div class="flex gap-16 items-end mt-8">
+        <div class="flex flex-col">
+          <p class="label-text mb-2">Date du créneau</p>
+          <vue-tailwind-datepicker
+            input-classes="border border-gray-300 rounded-lg"
+            v-model="date"
+            i18n="fr"
+            as-single
+            :formatter="{ date: 'DD-MM-YYYY' }"
+          />
+        </div>
         <TimeRange label="Plage horaire du créneau" v-model:start_time="form.start_time" v-model:end_time="form.end_time" />
       </div>
       <div class="flex items-center gap-4 mt-8">
@@ -25,16 +29,33 @@
       <InputOptions :options="props.zones" v-model="form.zones" :value="props.libelle" />
       <CardModalSection title="COMMENTAIRE" class="my-8">
         <template #content>
-          <textarea v-model="form.commentaire" class="rounded-lg w-full text-black border border-gray-300 bg-gray-50" />
+          <div v-if="commentaires.length > 0" class="mb-4 rounded-lg border border-gray-300">
+            <div v-for="com, i in commentaires" :key="`com_`+ i" class="p-4 text-sm">
+              <p class="text-black">
+                {{ com.userEmail }} - 
+                {{ dayjs(com.date_creation).format('DD MMMM YYYY') }} à 
+                {{ dayjs(com.date_creation).format('HH:mm') }}
+              </p>
+              <p class="text-gray-500 mt-2">{{ com.texte }}</p>
+            </div>
+          </div>
+          <textarea v-model="form.commentaire" class="rounded-lg w-full text-black border border-gray-300 bg-gray-50" placeholder="Votre commentaire..." />
         </template>
       </CardModalSection>
-      <div class="flex justify-end">
+      <div class="flex justify-end gap-10">
+        <!-- <Button
+          v-if="state == 'edit'"
+          @click="deleteDemande"
+          label="Annuler une demande"
+          couleur="secondary"
+        /> -->
         <Button
           @click="submitDemande"
           label="Demander une validation"
           couleur="danger"
         />
       </div>
+      <div v-if="errorMessage !== ''" class="text-red-600 mb-4">{{ errorMessage }}</div>
     </div>
   </Modal>
   <Modal
@@ -145,11 +166,11 @@ import CardModalSection from '@components/common/CardModalSection.vue'
 import HeaderModal from '@components/common/HeaderModal.vue'
 import TimeRange from '@components/molecules/TimeRange.vue'
 
-import type { DateSelectArg } from '@fullcalendar/core'
+import type { DateSelectArg, EventClickArg } from '@fullcalendar/core'
 
 import { extractHour, parseDateToInput } from '../../services/date_service'
 import { makeDemandeEditContract } from '../../services/planning/creneau_service'
-import { postCreneauVerifDemande, postCreneauDemande } from '@api/creneau'
+import { postCreneauVerifDemande, postCreneauDemande, updateCreneauDemande, deleteCreneauDemande } from '@api/creneau'
 import { usePlanningStore } from '@stores/planning.ts'
 
 import { reactive, ref, defineProps } from 'vue'
@@ -161,6 +182,9 @@ const verifModal = ref(false)
 const verifCreneaux = ref({})
 const contract = ref({})
 const date = ref('')
+const errorMessage = ref('')
+const eventId = ref(0)
+const commentaires = ref([])
 
 const props = defineProps({
   zones: Object
@@ -186,7 +210,8 @@ const form = reactive<{
   commentaire: string,
 }>({ ...default_form_values })
 
-defineExpose({ create })
+defineExpose({ create, edit })
+
 const state = ref<'create' | 'edit' | 'closed'>('closed')
 
 function create(event: DateSelectArg) {
@@ -199,9 +224,33 @@ function create(event: DateSelectArg) {
   form.start_time = extractHour(event.start)
   form.end_time = extractHour(event.end)
 }
+function edit(event: EventClickArg) {
+  const e = event.event._def
+  state.value = 'edit'
+  form.title = e.title;
+  // form.people_count = e.people_count;
+  eventId.value = e.extendedProps.id;
+  form.zones = e.extendedProps.zones;
+  form.commentaire = default_form_values.commentaire;
+  commentaires.value = e.extendedProps.commentaires;
+  date.value = dayjs(e.extendedProps.dateDebut).format('DD-MM-YYYY');
+  form.start_time = dayjs(e.extendedProps.dateDebut).format('HH:mm')
+  form.end_time = dayjs(e.extendedProps.dateSortie).format('HH:mm')
+}
 
 const submitDemande = async() => {
-  state.value = 'closed';
+  errorMessage.value = ''
+  if (form.zones.length == 0) {
+    errorMessage.value = "Une zone doit être sélectionnée"
+    return
+  } else if (date.value == '') {
+    errorMessage.value = "Une date doit être sélectionnée"
+    return
+  } else if (form.title == '') {
+    errorMessage.value = "Un titre de créneau doit être renseigné"
+    return
+  }
+
   let organisme_id = route.params.org_id as string;
   let fitarena_id = route.params.id as string;
   const day = date.value.split('-')[0]
@@ -209,11 +258,18 @@ const submitDemande = async() => {
   const year = date.value.split('-')[2]
   form.date = `${year}-${month}-${day}`
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
-  verifCreneaux.value = await postCreneauVerifDemande(contract.value);
-  verifModal.value = true
+  
+  if (state.value == 'edit') {
+    verifCreneaux.value = await updateCreneauDemande(contract.value, eventId.value);
+    await refreshPlanning()
+  } else {
+    verifCreneaux.value = await postCreneauVerifDemande(contract.value);
+    verifModal.value = true;
+  }
+    state.value = 'closed';
 }
 
-const submitDemandeValidation = async() => {
+const submitDemandeValidation = async () => {
   await postCreneauDemande(contract.value)
   verifModal.value = false
   state.value = 'closed'
@@ -224,6 +280,10 @@ const modifierDemande = () => {
   verifModal.value = false
   state.value = 'edit'
 }
+
+// const deleteDemande = async () => {
+//   await deleteCreneauDemande(eventId.value)
+// }
 
 const refreshPlanning = async() => {
   await usePlanningStore().fetch()
