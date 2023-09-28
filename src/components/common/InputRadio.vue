@@ -5,7 +5,7 @@
     <label :for="idPrefix + props.default.value">{{ props.default.label }}</label>
   </template>
 
-  <template v-for="elt of props.list">
+  <template v-for="elt of props.list" :key="elt.id">
     <input type="radio" :disabled="props.disabled" :required="props.required" :name="props.name" :value="elt.id"
       :id="idPrefix + elt.id" v-model="modelValue">
     <label :for="idPrefix + elt.id">{{ elt.libelle }}</label>
@@ -13,8 +13,7 @@
 </template>
 
 <script setup lang="ts">
-
-import { ref, withDefaults, computed } from "vue";
+import { ref, withDefaults, computed, defineProps, defineEmits } from "vue";
 
 interface Props {
   disabled?: boolean,

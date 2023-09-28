@@ -1,15 +1,15 @@
 <template>
-  <templace v-for="elt in props.elements">
+  <template v-for="elt in props.elements" :key="elt.id">
     <input
-        :id="idPrefix + elt.id"
-        v-model="modelValue"
-        type="checkbox"
-        :disabled="props.disabled"
-        :value="elt.id"
-        :name="name"
+      :id="idPrefix + elt.id"
+      v-model="modelValue"
+      type="checkbox"
+      :disabled="props.disabled"
+      :value="elt.id"
+      :name="name"
     />
     <label :for="idPrefix + elt.id">{{ elt.libelle }}</label>
-  </templace>
+  </template>
 </template>
 
 <script setup>
