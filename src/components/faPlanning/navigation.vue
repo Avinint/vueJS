@@ -109,6 +109,7 @@ export default {
       zones: [],
       startDate: '',
       endDate: '',
+      formatDate: { date: 'YYYY-MM-DD', month: 'MMMM' }
     }
   },
   computed: {
@@ -119,9 +120,6 @@ export default {
     idOrganisme() {
       return this.$route.params.id
     },
-    formatDate() {
-      return { startDate: 'YYYY-MM-DD', month: 'MMMM' }
-    }
   },
   watch: {
     startDate (value) {
@@ -145,10 +143,8 @@ export default {
   },
   methods: {
     setDate() {
-      this.startDate = this.planningStore.getCurrentDateStart
-      this.endDate = this.planningStore.getCurrentDateEnd
-      this.startDate = dayjs(this.startDate).format('YYYY-MM-DD')
-      this.endDate = dayjs(this.endDate).format('YYYY-MM-DD')
+      this.startDate = dayjs(this.planningStore.getCurrentDateStart).format('YYYY-MM-DD')
+      this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format('YYYY-MM-DD')
     },
     changeData(date) {
       this.calendarApi.gotoDate(date)
