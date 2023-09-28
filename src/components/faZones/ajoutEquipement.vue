@@ -10,9 +10,9 @@
           class="text-xs text-gray-700 bg-gray-200"
         >
           <tr>
-            <th scope="col" class="px-6 py-3">{{ type.libelle }}</th>
-            <th scope="col" class="px-6 py-3">Adresse IP</th>
-            <th scope="col" class="px-6 py-3"></th>
+            <th scope="col" class="px-6 py-3 w-6/12">{{ type.libelle }}</th>
+            <th scope="col" class="px-6 py-3 w-5/12">Adresse IP</th>
+            <th scope="col" class="px-6 py-3 w-1/12"></th>
           </tr>
         </thead>
         <tbody>

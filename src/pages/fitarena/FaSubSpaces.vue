@@ -5,7 +5,7 @@
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs uppercase text-gray-700 bg-gray-200"
+          class="text-xs text-gray-700 bg-gray-200"
         >
           <tr>
             <th scope="col" class="px-6 py-3">Actif</th>
@@ -71,7 +71,7 @@
       v-if="subEspace_modal"
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modal_title"
-      @cancel=";(subEspace_modal = false), cancel()"
+      @cancel="(subEspace_modal = false), cancel()"
     >
       <div class="flex items-center gap-10 pl-4">
         <Input
@@ -142,7 +142,7 @@
           @open-modal-details="openModalDetails"
         ></AjoutEquipements>
       </div>
-      <MentionChampsObligatoires/>
+      <MentionChampsObligatoires />
     </Modal>
   </form>
 
@@ -186,6 +186,8 @@ import Button from '../../components/common/Button.vue'
 import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+
 import {
   deleteZones,
   getZones,
@@ -199,9 +201,9 @@ import {
   deleteZoneEquipement,
   postZoneEquipement,
 } from '../../api/zoneEquipement.js'
+
 import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
-import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const props = defineProps(['id'])
 
@@ -357,10 +359,10 @@ const addSubspaceValidation = async () => {
   typeZones.value = await getTypeZone()
 }
 
-const openModalDetails = (detailsEquipementDataEmitted) => {
-  detailsEquipementData.value = detailsEquipementDataEmitted
-  detailsEquipement_modal.value = true
-}
+// const openModalDetails = (detailsEquipementDataEmitted) => {
+//   detailsEquipementData.value = detailsEquipementDataEmitted
+//   detailsEquipement_modal.value = true
+// }
 
 const cancel = () => {
   espace_selected.value = {}

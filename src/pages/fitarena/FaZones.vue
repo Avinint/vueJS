@@ -1,48 +1,29 @@
 <template>
-  <Card>
+  <Card class="space-y-3">
     <h1>Zones</h1>
-    <span class="text-sm font-bold"
-      >Zones d'activité : ensemble de sous-zones délimitée physiquement sur
-      lequel est praticable une seule activité en même temps
-    </span>
+
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs uppercase text-gray-700"
+          class="text-xs text-gray-700 bg-gray-200"
         >
           <tr>
+            <th scope="col" class="px-6 py-3">Statut</th>
+            <th scope="col" class="px-6 py-3">Zone</th>
             <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">Actif</th>
-            <th scope="col" class="px-6 py-3">Libellé</th>
-            <th scope="col" class="px-6 py-3">Ordre</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(esp, i) in zones" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
-              <Button
-                test="TdeleteZone"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeZone(esp.id)"
-              />
-              <Button
-                test="TeditZone"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editZone(i)"
-              />
-            </td>
-            <td class="px-6 py-4">
+          <tr v-for="(zone, i) in zones" :key="`zone-`+ i" class="bg-white">
+            <td class="px-6 py-4 flex gap-4">
+              <p class="w-16">{{ zone.actif ? 'Active' : 'Inactive' }}</p>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input
-                  v-model="esp.actif"
+                  v-model="zone.actif"
                   type="checkbox"
                   value="true"
                   class="peer sr-only"
-                  @change="modifieZone(esp)"
+                  @change="modifieZone(zone)"
                 />
                 <div
                   class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
@@ -52,19 +33,34 @@
                 ></span>
               </label>
             </td>
-            <td class="px-6 py-4">{{ esp.libelle }}</td>
-            <td class="px-6 py-4">{{ esp.ordre }}</td>
-            <td class="px-6 py-4">
-              <Button label="Détails" couleur="secondary" @click="showZone(i)" />
+            <td class="px-6 py-4">{{ zone.libelle }}</td>
+            <td class="flex items-center justify-end p-3 gap-10">
+              <div @click="showZone(i)" class="cursor-pointer px-3 py-2">
+                <img src="/src/assets/info.svg" />
+              </div>
+              <Button
+                test="TeditZone"
+                borderless
+                icon="edit"
+                couleur="secondary"
+                @click="editZone(i)"
+              />
+              <Button
+                test="TdeleteZone"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                @click="removeZone(zone.id)"
+              />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <Button
+    <ButtonRight
       id="TaddZone"
       label="Ajouter une zone"
-      couleur="secondary"
+      couleur="danger"
       icon="add"
       @click="addZone"
     />
@@ -76,40 +72,38 @@
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modal_title"
       @cancel="(zone_modal = false), cancel()"
+      confirm-button-text="Enregistrer"
     >
-      <div class="flex items-center">
+      <div class="flex items-center gap-10 pl-4">
         <Input
           id="TZoneLibelle"
           v-model="zone.libelle"
           :readonly="readonly"
           type="text"
           label="Nom"
-          :inline="true"
           required
-          class="w-full"
+          class="w-1/3"
         />
-      </div>
-      <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Sous Espace</label
-        >
-        <select
-          v-if="espaceParents.length"
-          id="TfaSelectEspace"
-          v-model="espace_selected"
-          :disabled="readonly == true ? true : false"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-        >
-          <option
-            v-for="(espaceParent, i) in espaceParents"
-            :key="i"
-            :value="espaceParent.id"
+        <div>
+          <label class="mb-2 block text-sm font-medium text-gray-900"
+            >Espace Parent</label
           >
-            {{ espaceParent.libelle }}
-          </option>
-        </select>
-      </div>
-      <div class="flex items-center">
+          <select
+            v-if="espaceParents.length"
+            id="TfaSelectEspace"
+            v-model="espace_selected"
+            :disabled="readonly == true ? true : false"
+            class="rounded-lg w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option
+              v-for="(espaceParent, i) in espaceParents"
+              :key="i"
+              :value="espaceParent.id"
+            >
+              {{ espaceParent.libelle }}
+            </option>
+          </select>
+        </div>
         <Input
           v-if="!readonly"
           id="TZoneOrdre"
@@ -117,8 +111,7 @@
           type="number"
           label="Ordre"
           required
-          :inline="true"
-          class="w-full"
+          class="w-1/3"
         />
         <Input
           v-else
@@ -127,28 +120,8 @@
           readonly
           type="text"
           label="Ordre"
-          class="w-full"
+          class="w-1/3"
         />
-      </div>
-      <div class="flex items-center">
-        <span class="w-1/2 mr-3 text-sm font-medium text-gray-900"
-          >Actif :
-        </span>
-        <label class="relative inline-flex w-full cursor-pointer items-center">
-          <input
-            v-model="zone.actif"
-            :disabled="readonly == true ? true : false"
-            type="checkbox"
-            value="true"
-            class="peer sr-only"
-          />
-          <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
-          ></div>
-          <span
-            class="ml-3 text-sm font-medium text-gray-900"
-          ></span>
-        </label>
       </div>
       <div>
         <AjoutEquipements
@@ -157,6 +130,7 @@
           :fa="props.id"
           :zone="id_selected"
           :readonly="readonly"
+          @open-modal-details="openModalDetails"
         ></AjoutEquipements>
       </div>
       <div>
@@ -166,9 +140,10 @@
           :fa="props.id"
           :zone="id_selected"
           :readonly="readonly"
+          @open-modal-details="openModalDetails"
         ></AjoutEquipements>
       </div>
-      <MentionChampsObligatoires/>
+      <MentionChampsObligatoires />
     </Modal>
   </form>
 
@@ -197,6 +172,7 @@ import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
+import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue"
@@ -303,11 +279,8 @@ const showZone = (i) => {
 }
 
 const mapApiToData = async (zoneTemp) => {
-  await getZone(zoneTemp.id)
-  // espace_selected.value = espaceParent.id
   zone.value = zoneTemp
   id_selected.value = zoneTemp.id
-  // Je cherche l'espace parent s'il existe
 }
 
 const saveZone = async () => {
@@ -319,7 +292,7 @@ const saveZone = async () => {
     ordre: parseInt(zone.value.ordre),
     libelle: zone.value.libelle,
     actif: zone.value.actif == true ? zone.value.actif : false,
-    idZoneParent: espace_selected.value,
+    zoneParent: '/api/zones/' + espace_selected.value,
   }
 
   if (id_selected.value) {
@@ -349,7 +322,7 @@ const updateZoneValidation = async () => {
   zone_modal.value = false
   cancel()
   zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
-  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
+  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
@@ -367,7 +340,7 @@ const addZoneValidation = async () => {
   zone_modal.value = false
   cancel()
   zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
-  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
+  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
@@ -397,6 +370,7 @@ const linkedEquipements = async (typeEquipements, zoneId) => {
 
 const cancel = () => {
   espace_selected.value = {}
+  espTemp.value = {}
   zone.value = {}
   readonly.value = false
   id_selected.value = 0
