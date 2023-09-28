@@ -124,12 +124,9 @@ export default {
       value = dayjs(value, this.formatDateFr).format('YYYY-MM-DD')
       this.changeData(value)
     },
-    async idFitArena() {
+    async id() {
       this.fetchDonnees()
     },
-    async idOrganisme() {
-      this.fetchDonnees()
-    }
   },
   async mounted() {
     await this.fetchDonnees()
