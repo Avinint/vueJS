@@ -138,7 +138,8 @@
         </label>
         <div class="flex overflow-x-scroll py-3">
           <template v-for="zone in zones" :key="zone">
-            <div v-if="isZoneEditable(zone)" class="w-80 flex-col">
+            <!-- v-if="isZoneEditable(zone)" -->
+            <div class="w-80 flex-col">
               <input
                 :id="zone.code"
                 v-model="creneauStore.zones"
@@ -387,16 +388,16 @@ export default {
       }
     },
     delete_creneau() {
-      if(confirm('Souhaitez vous vraiment supprimer le créneau ?')) {
+      if (confirm('Souhaitez-vous vraiment supprimer le créneau ?')) {
         this.creneauStore.delete();
         this.$emit('closeModalCreneau')
       }
     },
-    isZoneEditable(zone) {
-      if (this.typeAction == 'create' || this.typeAction === 'edit') return true
+    // isZoneEditable(zone) {
+    //   if (this.typeAction == 'create' || this.typeAction === 'edit') return true
       
-      return this.creneauStore.zones.includes(zone.id)
-    },
+    //   return this.creneauStore.zones.includes(zone.id)
+    // },
     async fetchZones() {
       const zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
       zones.forEach(zone => {
