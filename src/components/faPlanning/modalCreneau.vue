@@ -399,12 +399,9 @@ export default {
     //   return this.creneauStore.zones.includes(zone.id)
     // },
     async fetchZones() {
-      const zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
-      zones.forEach(zone => {
-        if (zone.actif && zone.zoneActivites.length > 0) {
-          this.zones.push(zone)
-        }
-      })
+      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(
+        zone => zone.actif && zone.zoneActivites.length > 0
+      )
       this.checkActivites()
     },
     updateActivites() {
