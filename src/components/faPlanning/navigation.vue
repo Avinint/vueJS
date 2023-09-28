@@ -9,7 +9,6 @@
           <div class="flex flex-wrap gap-1">
             <template v-for="zone in zones" :key="zone.id">
               <Button
-                v-if="zone.actif && zone.zoneActivites.length > 0"
                 :label="zone.libelle"
                 couleur="secondary"
                 :submit="false"
@@ -183,7 +182,9 @@ export default {
       this.planningStore.updateActivities()
     },
     async setZones() {
-      this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
+      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(
+        zone => zone.actif && zone.zoneActivites.length > 0
+      )
     },
     async filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
