@@ -62,7 +62,7 @@
                 i18n="fr"
                 as-single
                 :placeholder="`${startDate} - ${endDate}`"
-                :formatter="formatDate"
+                :formatter="formatDatepicker"
               />
               <Button
                 label=">"
@@ -109,21 +109,19 @@ export default {
       zones: [],
       startDate: '',
       endDate: '',
-      formatDate: { date: 'YYYY-MM-DD', month: 'MMMM' }
+      formatDateFr: 'DD-MM-YYYY',
+      formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' }
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
-    idFitArena() {
-      return this.$route.params.id
-    },
-    idOrganisme() {
+    id() {
       return this.$route.params.id
     },
   },
   watch: {
     startDate (value) {
-      value = dayjs(value).format('YYYY-MM-DD')
+      value = dayjs(value, this.formatDateFr).format('YYYY-MM-DD')
       this.changeData(value)
     },
     async idFitArena() {
@@ -143,8 +141,8 @@ export default {
   },
   methods: {
     setDate() {
-      this.startDate = dayjs(this.planningStore.getCurrentDateStart).format('YYYY-MM-DD')
-      this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format('YYYY-MM-DD')
+      this.startDate = dayjs(this.planningStore.getCurrentDateStart).format(this.formatDateFr)
+      this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
     },
     changeData(date) {
       this.calendarApi.gotoDate(date)
