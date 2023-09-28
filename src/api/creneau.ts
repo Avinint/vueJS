@@ -53,19 +53,21 @@ export async function updateCreneauDemande(contract: DemandeEditContract, id: nu
   return response.json()
 }
 
-export async function deleteCreneauDemande(id: number) {
+export async function deleteCreneauDemande(event: object, id: number) {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/demande/${id}/annuler`,
     {
       method: 'put',
       headers: {
         ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
+        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + useStorage('token', '').value,
       },
+      body: JSON.stringify(event),
     }
   )
-  if (response.status !== 200) throw response.json()
+  if (response.status !== 200) throw response
+  return response.json()
 }
 
 

@@ -43,12 +43,12 @@
         </template>
       </CardModalSection>
       <div class="flex justify-end gap-10">
-        <!-- <Button
+        <Button
           v-if="state == 'edit'"
           @click="deleteDemande"
           label="Annuler une demande"
           couleur="secondary"
-        /> -->
+        />
         <Button
           @click="submitDemande"
           label="Demander une validation"
@@ -155,6 +155,15 @@
       />
     </div>
   </Modal>
+
+  <form @submit.prevent="removeDemandeValidation()">
+    <ValidationModal
+      v-if="deleteDemande_modal"
+      type="delete"
+      @cancel="deleteDemande_modal = false"
+    >
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -162,6 +171,7 @@ import Button from '@components/common/Button.vue'
 import Input from '@components/common/Input.vue'
 import InputOptions from '@components/common/InputOptions.vue'
 import Modal from '@components/common/Modal.vue'
+import ValidationModal from '@components/common/ValidationModal.vue'
 import CardModalSection from '@components/common/CardModalSection.vue'
 import HeaderModal from '@components/common/HeaderModal.vue'
 import TimeRange from '@components/molecules/TimeRange.vue'
@@ -176,6 +186,7 @@ import { usePlanningStore } from '@stores/planning.ts'
 import { reactive, ref, defineProps } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
+import { toast } from 'vue3-toastify'
 
 const route = useRoute();
 const verifModal = ref(false)
@@ -185,6 +196,7 @@ const date = ref('')
 const errorMessage = ref('')
 const eventId = ref(0)
 const commentaires = ref([])
+const deleteDemande_modal = ref(false)
 
 const props = defineProps({
   zones: Object
@@ -229,7 +241,7 @@ function edit(event: EventClickArg) {
   state.value = 'edit'
   form.title = e.title;
   // form.people_count = e.people_count;
-  eventId.value = e.extendedProps.id;
+  eventId.value = e.extendedProps.demandeId;
   form.zones = e.extendedProps.zones;
   form.commentaire = default_form_values.commentaire;
   commentaires.value = e.extendedProps.commentaires;
@@ -281,9 +293,22 @@ const modifierDemande = () => {
   state.value = 'edit'
 }
 
-// const deleteDemande = async () => {
-//   await deleteCreneauDemande(eventId.value)
-// }
+const deleteDemande = async () => {
+  deleteDemande_modal.value = true
+}
+
+const removeDemandeValidation = async () => {
+  let event = {}
+  try {
+    await deleteCreneauDemande(event, eventId.value)
+    toast.success('Suppression effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
+  }
+  deleteDemande_modal.value = false
+  await refreshPlanning()
+  state.value = 'closed'
+}
 
 const refreshPlanning = async() => {
   await usePlanningStore().fetch()
