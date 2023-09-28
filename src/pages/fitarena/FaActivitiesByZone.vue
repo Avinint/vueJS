@@ -1,5 +1,7 @@
 <template>
-  <Card>
+  <Spinner v-if="spinner" :size="40" />
+
+  <Card v-if="!spinner">
     <h1 class="mb-6">Activités par zone</h1>
     <div v-for="(zoneFit, zoneIdx) of zones" :key="`zone-`+ zoneIdx">
       <CardModalSection :title="zoneFit.libelle" class="border border-gray-200 pr-6 py-6 rounded-lg mb-6">
@@ -83,7 +85,9 @@
         size="4xl"
         confirmButtonText="Enregistrer"
       >
-        <div class="pl-4">
+        <Spinner v-if="spinner_modal" />
+
+        <div v-if="!spinner_modal" class="pl-4">
           <table id="modal" class="w-full text-left text-sm mb-4 text-gray-500 border border-gray-200">
             <thead
               class="hidden"
@@ -228,6 +232,7 @@ import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 
 import Card from '../../components/common/Card.vue'
+import Spinner from '../../components/common/Spinner.vue'
 import Modal from '../../components/common/Modal.vue'
 import CardModalSection from '../../components/common/CardModalSection.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
@@ -281,6 +286,8 @@ const deleteZoneId = ref(0)
 const edit_modal = ref(false)
 const add_modal = ref(false)
 const zoneTemp = ref({})
+const spinner = ref(false)
+const spinner_modal = ref(false)
 
 async function fetchDonnees() {
   zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
@@ -289,6 +296,7 @@ async function fetchDonnees() {
 }
 
 onMounted(async () => {
+  spinner.value = true
   await fetchDonnees();
   modes_motorise.value = await getModes({ 'categoryTypeEquipement.code': 'motorise' })
   modes_numerique.value = await getModes({ 'categoryTypeEquipement.code': 'numerique' })
@@ -302,6 +310,7 @@ onMounted(async () => {
   let data = await getTypeZone(1, '&code=sous_zone')
   id_type_sous_zone.value = data[0]?.id
   await fetchSousZoneParametres()
+  spinner.value = false
 })
 
 watch(() => props.id, () => fetchDonnees())
@@ -390,20 +399,24 @@ const deleteActivityValidation = async (zoneId, activiteId) => {
 }
 
 const editActiviteZone = async (i) => {
+  activiteZone_modal.value = true
+  spinner_modal.value = true
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
   modal_title.value =
     'Modifier une activité de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = false
-  activiteZone_modal.value = true
+  spinner_modal.value = false
 }
 
 const showActiviteZone = async (i) => {
+  activiteZone_modal.value = true
+  spinner_modal.value = true
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
   modal_title.value = 'Information de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = true
-  activiteZone_modal.value = true
+  spinner_modal.value = false
 }
 
 // récupération de la liste des sous-zones d'une zone+activité
