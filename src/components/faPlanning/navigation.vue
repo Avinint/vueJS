@@ -7,16 +7,16 @@
         <template #title> Zones actives </template>
         <template #content>
           <div class="flex flex-wrap gap-1">
-            <Button
-            v-for="zone in zones"
-            :key="zone.id"
-            :label="zone.libelle"
-            couleur="secondary"
-            :submit="false"
-            class="mr-2"
-            :class="{ active: planningStore.isZoneActive(zone.id) }"
-            @click="filterByZone(zone.id)"
-            />
+            <template v-for="zone in zones" :key="zone.id">
+              <Button
+                :label="zone.libelle"
+                couleur="secondary"
+                :submit="false"
+                class="mr-2"
+                :class="{ active: planningStore.isZoneActive(zone.id) }"
+                @click="filterByZone(zone.id)"
+              />
+            </template>
           </div>
         </template>
       </NavigationSection>
@@ -182,7 +182,9 @@ export default {
       this.planningStore.updateActivities()
     },
     async setZones() {
-      this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
+      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(
+        zone => zone.actif && zone.zoneActivites.length > 0
+      )
     },
     async filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {

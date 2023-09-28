@@ -31,7 +31,7 @@ type CreneauAnonyme = {
   dateSortie: string,
   dateFinCreneau: string,
   type: number,
-  zones: Array,
+  zones: array,
   statut: string
 }
 
