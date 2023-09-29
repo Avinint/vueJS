@@ -1,40 +1,6 @@
-import { defaultHeaders } from './api.js'
-import $fetch from './refreshToken.js'
-import { useStorage } from '@vueuse/core'
+import { get } from './api.js'
 
-export const getTypeCreneau = async (page = 1, query = '') => {
-  // const response = await $fetch(
-  //   `${import.meta.env.VITE_API_URL}/api/type_crenneau?page=${page}${query}`,
-  //   {
-  //     method: 'get',
-  //     headers: {
-  //       ...defaultHeaders,
-  //       'Content-Type': 'application/ld+json',
-  //       Authorization: 'Bearer ' + useStorage('token', '').value,
-  //     },
-  //   }
-  // )
-  // if (response.status !== 200) throw response
-  // return response.json()
-  return [
-    {
-      id: 1,
-      libelle: 'Grand public',
-    },
-    {
-      id: 2,
-      libelle: 'Organisme',
-    },
-    {
-      id: 3,
-      libelle: 'Animateur labelisé',
-    },
-    {
-      id: 4,
-      libelle: 'Maintenance',
-    },
-  ]
-}
+export const getTypeCreneaux = async (query = {}) => await get('/api/creneau_types', query)
 
 // export const postTypeCreneau = async (typeActivite) => {
 //   const response = await $fetch(

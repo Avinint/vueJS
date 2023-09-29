@@ -1,9 +1,9 @@
-import { defaultHeaders, get, getQuery } from './api.js'
+import { defaultHeaders, del, get, patch, post, put } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
 export const getParametreFitArena = async (query = {page: 1}) => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas${getQuery(query)}`)
+  return await get('/api/parametre_fit_arenas', query)
 }
 
 export const getParametreFitArenaById = async (id) => {
@@ -22,38 +22,12 @@ export const getParametreFitArenaById = async (id) => {
   return response.json()
 }
 
-export const postParametreFitArena = async (param) => {q
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas`,
-    {
-      method: 'post',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-      body: JSON.stringify(param),
-    }
-  )
-  if (response.status !== 201) throw response
-  return response.json()
+export const postParametreFitArena = async (param) => {
+  return await post(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas`, param)
 }
 
 export const updateParametreFitArena = async (param, id) => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas/${id}`,
-    {
-      method: 'put',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-      body: JSON.stringify(param),
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
+  return await put(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas/${id}`, param)
 }
 
 export const deleteParametreFitArena = async (id) => {
@@ -72,18 +46,22 @@ export const deleteParametreFitArena = async (id) => {
   return {}
 }
 
-export const patchParametreFitArena = async (id) => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas/${id}`,
-    {
-      method: 'patch',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return {}
+export const patchParametreFitArena = async (param, id) => {
+   await patch(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arenas/${id}`, param)
+}
+
+export const patchParametreFitArenaProfil = async (param, id) => {
+  await patch(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arena_profils/${id}`, param)
+}
+
+export const putParametreFitArenaProfil = async (param, id) => {
+  await put(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arena_profils/${id}`, param)
+}
+
+export const postParametreFitArenaProfil = async (param) => {
+  await post(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arena_profils`, param)
+}
+
+export const deleteParametreFitArenaProfil = async (id) => {
+   await del(`${import.meta.env.VITE_API_URL}/api/parametre_fit_arena_profils/${id}`)
 }

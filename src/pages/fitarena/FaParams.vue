@@ -1,136 +1,88 @@
 <template>
-  <CardReservationDuration />
+  <Card class="space-y-3">
+    <h1 class="mb-6">Paramètres de la fit arena</h1>
+    <CardReservationDuration />
+    <CardReservationAccess />
+    <CardReservationCancel />
+    <CardConditionVisualisationCreneaux @suppression="supprimer" />
+    <CardConditionReservationCreneaux @suppression="supprimer"/>
+    <CardKeyMomentDuration  @suppression="supprimer"/>
 
-  <Card>
-    <h1>Accès à la fit arena</h1>
+    <CardModalSection title="Invitation à une réservation">
+    </CardModalSection>
   </Card>
 
-  <Card>
-    <h1>Annulation d'une réservation</h1>
-    <div class="relative my-4 overflow-x-auto text-black">
-      <div class="flex bg-white">
-        <div class="flex w-1/12 items-center justify-start">
-          <Button
-            v-if="!editCancelBooking"
-            test="TeditSlot"
-            borderless
-            icon="edit"
-            couleur="secondary"
-            @click="setCancelBooking"
-          />
-          <Button
-            v-if="editCancelBooking"
-            test="TeditSlot"
-            borderless
-            icon="cross"
-            couleur="secondary"
-            @click="setCancelBooking"
-          />
-        </div>
-        <div class="flex w-full items-center space-x-2">
-          <p class="w-4/12 py-4">
-            Délai d'annulation d'une réservation avant le début de la séance
-          </p>
-          <input
-            v-if="editCancelBooking"
-            v-model="cancelSessionTime"
-            type="number"
-            min="0"
-            class="block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          />
-          <div v-if="!editCancelBooking">{{ cancelSessionTime }} h</div>
-        </div>
-      </div>
-    </div>
-  </Card>
-
-  <Card>
-    <h1>Condition de visualisation des créneaux</h1>
-    {{ visualisation_creneaux }}
-    <div class="flex items-center space-x-2">
-      <Button icon="edit" couleur="secondary" borderless></Button>
-      <div class="flex items-center">
-        <div class="mr-2">Actif</div>
-        <Switch />
-      </div>
-      <div class="text-sm">
-        Nombre de jours visibles pour la réservation de créneaux par les
-        utilisateurs Grand Public
-      </div>
-      <Button label="Détails" couleur="secondary" />
-    </div>
-    <Button
-      class="font-bold font-black"
-      label="Ajouter une condition de visualisation des créneaux"
-      icon="add"
-      couleur="secondary"
-    />
-    <Modal v-if="false"> </Modal>
-  </Card>
-
-  <CardConditionReservationOfSlots />
-  <CardKeyMomentDuration :params="parametres" @refresh="loadParams"/>
-
-  <Card>
-    <h1>Invitation à une réservation</h1>
-  </Card>
+  <form @submit.prevent="confirmation()">
+    <ValidationModal
+      v-if="modaleConfirmation"
+      type="delete"
+      @cancel="modaleConfirmation = false"
+    >
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup>
 import Card from '../../components/common/Card.vue'
-import Button from '../../components/common/Button.vue'
-import Modal from '../../components/common/Modal.vue'
-import Switch from '../../components/common/Switch.vue'
-import Input from '../../components/common/Input.vue'
-import CardConditionReservationOfSlots from '../../components/molecules/CardConditionReservationOfSlots.vue'
-import CardKeyMomentDuration from '../../components/molecules/CardKeyMomentDuration.vue'
-import CardReservationDuration from '../../components/molecules/CardReservationDuration.vue'
-import {
-  getParametreFitArena,
-  patchParametreFitArena,
-  postParametreFitArena,
-} from '@api/parametreFitArena.js'
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { getParametres, postParametres } from '@api/parametres.js'
-import { getProfils } from "@api/profil.js";
+import CardKeyMomentDuration from '../../components/FaParams/CardKeyMomentDuration.vue'
+import CardReservationDuration from '../../components/FaParams/CardReservationDuration.vue'
+import CardReservationAccess from '../../components/FaParams/CardReservationAccess.vue'
+import CardReservationCancel from '../../components/FaParams/CardReservationCancel.vue'
+import CardConditionVisualisationCreneaux from "@components/FaParams/CardConditionVisualisationCreneaux.vue"
+import CardModalSection from "@components/common/CardModalSection.vue"
+import CardConditionReservationCreneaux from "@components/FaParams/CardConditionReservationCreneaux.vue"
+import ValidationModal from "@components/common/ValidationModal.vue"
 
-const ID_VISU_CRENEAU = 16
+import { postParametreFitArena } from '@api/parametreFitArena.js'
+import { postParametres } from '@api/parametres.js'
+import { useParamStore } from '@stores/parametre.js'
+
+import { onBeforeMount, ref } from 'vue'
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+import { toast } from "vue3-toastify";
 
 const route = useRoute()
+const  params = useParamStore()
+const { fetchParametres, fetchActivites } = params
+const modaleConfirmation = ref(false)
 
-const parametres = ref([])
+let callbackConfirmation = null
+let argumentCallback = null
 
-const visualisation_creneaux = ref({})
-
-const editCancelBooking = ref(false)
-
-const cancelSessionTime = ref(1)
-
-const profils = ref([])
-
-onMounted(async () => {
-  profils.value = await getProfils()
-  // SEARCH ALL PARAMS FOR THIS FIT ARENA
-  await loadParams()
-
-  // PARAMETRE ANNULATION DES CRENEAUX
-  cancelSessionTime.value = await getParameterByCode(
-    'condition-annulation-des-creneaux'
-  ).valeur
+onBeforeRouteUpdate(async (to) => {
+  await fetchActivites(to.params.id)
+  await fetchParametres(to.params.id)
 })
 
-const loadParams = async () => {
-  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
+onBeforeMount(async () => {
+  // SEARCH ALL PARAMS FOR THIS FIT ARENA
+  await fetchActivites(route.params.id)
+  await fetchParametres(route.params.id)
+})
+
+const supprimer = (id, func) => {
+  modaleConfirmation.value = true
+  callbackConfirmation = func
+  argumentCallback = id
 }
 
-const getParameterByCode = async (code, value = 0) => {
-  let parametre = parametres.value.find((el) => el.parametre.code === code)
-  // if (!parametre) {
-  //   await createParamsForFitArena(route.params.id, code, value)
-  // }
-  parametres.value = await getParametreFitArena({ page: 1, 'fitArena.id': route.params.id })
-  return parametres.value.find((el) => el.parametre.code === code)
+const confirmation = async () => {
+  try {
+    if (Array.isArray(argumentCallback)) {
+      for (const argument of argumentCallback) {
+        await callbackConfirmation(argument)
+      }
+    } else {
+      await callbackConfirmation(argumentCallback)
+    }
+
+    await rafraichir()
+    toast.success('Succès de la suppression')
+  } catch (e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur')
+  }
+
+  modaleConfirmation.value = false
 }
 
 const createParamsForFitArena = async (id_fa, code, value) => {
@@ -139,7 +91,7 @@ const createParamsForFitArena = async (id_fa, code, value) => {
     code,
     libelle: code,
     type: code,
-    zoneParametres: [],
+    zoneParametres: []
   })
   // LINK PARAMS TO THIS FIT ARENA AND SET VALUE
   await postParametreFitArena({
@@ -149,18 +101,7 @@ const createParamsForFitArena = async (id_fa, code, value) => {
   })
 }
 
-const setCancelBooking = async () => {
-  editCancelBooking.value = !editCancelBooking.value
-  if (!editCancelBooking.value) {
-    // RETURN TO READONLY MODE -> SAVE INPUT VIA API
-    const { id } = (
-      await getParametres({page: 1, code: 'condition-annulation-des-creneaux'})
-    )[0]
-    await patchParametreFitArena(id, {
-      fitArena: 'api/fit_arenas/' + route.params.id,
-      parametre: 'api/parametres/' + id,
-      valeur: '' + cancelSessionTime.value,
-    })
-  }
+const rafraichir = async () => {
+  await params.fetchParametres(route.params.id)
 }
 </script>

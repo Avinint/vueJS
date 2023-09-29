@@ -1,73 +1,66 @@
 <template>
-  <div class="rounded-md border border-gray-300 p-4">
-    <h2 class="pb-5 pt-2 text-lg">
-      Ajout d'équipements {{ typeEquipementTextes }}
-    </h2>
-
+  <CardModalSection :title="`Ajout d'équipements ${typeEquipementTextes}`" class="py-4 border border-gray-200 rounded-lg my-4">
     <div
       v-for="(type, typeIdx) in typeEquipements"
       :key="typeIdx"
-      class="pb-5 pt-2"
+      class="px-8"
     >
-      <h2 class="pb-5 pt-2">{{ type.libelle }}</h2>
-      <div>
+      <table class="w-full text-left text-sm text-gray-500 border-separate border-spacing-y-2">
+        <thead
+          class="text-xs text-gray-700 bg-gray-200"
+        >
+          <tr>
+            <th scope="col" class="px-6 py-3 w-6/12">{{ type.libelle }}</th>
+            <th scope="col" class="px-6 py-3 w-5/12">Adresse IP</th>
+            <th scope="col" class="px-6 py-3 w-1/12"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="(equipement, equipementIdx) in type.equipements" :key="equipementIdx">
+            <tr v-if="isZoneEquipementExist(equipement)" class="bg-white">
+              <td class="px-6 py-2 bg-blue text-white rounded-lg">{{ equipement.libelle }}</td>
+              <td class="px-6 py-2">{{ equipement.ip }}</td>
+              <td class="flex items-center justify-end p-3 gap-10">
+                <Button
+                  v-if="!readonly"
+                  borderless
+                  icon="delete"
+                  couleur="secondary"
+                  @click.prevent="removeEquipementFromZone(typeIdx, equipementIdx)"
+                />
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <select
+        v-if="!readonly"
+        v-model="equipementSelectionne[typeIdx]"
+        class="mt-2 block w-3/12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+        @change="addEquipementToZone(typeIdx)"
+      >
+        <option value="" selected="selected">Ajouter</option>
         <template
           v-for="(equipement, equipementIdx) in type.equipements"
           :key="equipementIdx"
         >
-          <div
-            v-if="isZoneEquipementExist(equipement)"
-            class="flex items-center justify-between"
+          <option
+            v-if="!isZoneEquipementExist(equipement)"
+            :value="equipementIdx"
           >
             {{ equipement.libelle }}
-            <div class="flex">
-              <Button
-                label="Détails"
-                couleur="secondary"
-                class="mr-4"
-                @click="detailsEquipement(typeIdx, equipementIdx)"
-              />
-              <Button
-                v-if="!readonly"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click.prevent="
-                  removeEquipementFromZone(typeIdx, equipementIdx)
-                "
-              />
-            </div>
-          </div>
+          </option>
         </template>
-
-        <select
-          v-if="!readonly"
-          v-model="equipementSelectionne[typeIdx]"
-          class="mt-2 block w-1/3 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          @change="addEquipementToZone(typeIdx)"
-        >
-          <option value="" selected="selected">Ajouter</option>
-          <template
-            v-for="(equipement, equipementIdx) in type.equipements"
-            :key="equipementIdx"
-          >
-            <option
-              v-if="!isZoneEquipementExist(equipement)"
-              :value="equipementIdx"
-            >
-              {{ equipement.libelle }}
-            </option>
-          </template>
-        </select>
-      </div>
+      </select>
     </div>
-  </div>
+  </CardModalSection>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { getTypeEquipements } from '../../api/typeEquipement'
 import Button from '../../components/common/Button.vue'
+import CardModalSection from '@components/common/CardModalSection.vue'
 
 const props = defineProps({
   typeEquipement: String,
@@ -144,4 +137,8 @@ const detailsEquipement = (typeIdx, equipementIdx) => {
 defineExpose({ typeEquipements })
 </script>
 
-<style scoped></style>
+<style scoped>
+.bg-blue {
+  background-color: #3586E2;
+}
+</style>

@@ -1,294 +1,231 @@
 <template>
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <Card class="space-y-3">
-      <h1>Utilisateurs</h1>
-      <table class="w-full text-sm text-left text-gray-500 p-4">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+  <Card class="space-y-3 mb-10">
+    <h1>Utilisateurs</h1>
+
+    <div class="relative overflow-x-auto">
+      <table class="w-full text-left text-sm text-gray-500">
+        <thead
+          class="text-xs text-gray-700 bg-gray-200"
+        >
           <tr>
-            <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">
-              Nom
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Prenom
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Email
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Mineur
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Actif
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Identifiant
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Action
-            </th>
+            <th scope="col" class="w-1/12 px-6 py-3">Nom</th>
+            <th scope="col" class="w-1/12 px-6 py-3">Prénom</th>
+            <th scope="col" class="w-1/12 px-6 py-3">Email</th>
+            <th scope="col" class="w-1/12 px-6 py-3">Identifiant</th>
+            <th scope="col" class="w-1/12 px-6 py-3">PMR</th>
+            <th scope="col" class="w-1/12 px-6 py-3">Mineur</th>
+            <th scope="col" class="w-1/12 px-6 py-3">Actif</th>
+            <!-- <th scope="col" class="w-5/12 px-6 py-3"></th> -->
           </tr>
         </thead>
         <tbody>
-        <tr v-for="user in users" :key="user.id" class="bg-white border-b">
-          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-            <td class="flex justify-center items-center p-3">
-              <Button test="TdeleteActivities" borderless icon="delete" couleur="secondary" @click="supprimer(user)"/>
-              <Button test="TeditActivites" borderless icon="edit" couleur="secondary" @click="editer(user)"/>
-            </td>
-          </th>
-          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-            {{ user.nom }}
-          </th>
-          <td class="px-6 py-4">
-            {{ user.prenom }}
-          </td>
-          <td class="px-6 py-4">
-            {{ user.email }}
-          </td>
+          <tr v-for="user in users" :key="user.id" class="bg-white">
+            <td class="px-6 py-4">{{ user.nom }}</td>
+            <td class="px-6 py-4">{{ user.nom }}</td>
+            <td class="px-6 py-4">{{ user.email }}</td>
+            <td class="px-6 py-4">{{ user.identifiant }}</td>
 
-          <td class="px-6 py-4">
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input v-model="user.mineur" onclick="return false" type="checkbox" value="true"  class="sr-only peer" checked >
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-400"></div>
-              <span class="ml-3 text-sm font-medium text-gray-900"></span>
-            </label>
-          </td>
-          <td class="px-6 py-4">
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input v-model="user.actif" onclick="return false" type="checkbox" value="true"  class="sr-only peer" checked >
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-400"></div>
-              <span class="ml-3 text-sm font-medium text-gray-900"></span>
-            </label>
-          </td>
-          <td class="px-6 py-4">
-            {{ user.identifiant }}
-          </td>
-          <td class="px-4 py-4">
-            <div class="inline-flex rounded-md shadow-sm " role="group">
-              <Button label="Détails" couleur="secondary" @click="consulter(user)"/>
-            </div>
-          </td>
-        </tr>
+            <td class="px-6 py-4">
+              <label class="relative inline-flex cursor-pointer items-center">
+                <!-- <input
+                  v-model="user.pmr"
+                  type="checkbox"
+                  value="true"
+                  class="peer sr-only"
+                  @change="modifiePMRUser(user)"
+                /> -->
+                <input
+                  v-model="user.actif"
+                  type="checkbox"
+                  value="true"
+                  class="peer sr-only"
+                  @change="modifieActifUser(user)"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                ></div>
+                <span
+                  class="ml-3 text-sm font-medium text-gray-900"
+                ></span>
+              </label>
+            </td>
+            <td class="px-6 py-4">
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="user.mineur"
+                  type="checkbox"
+                  value="true"
+                  class="peer sr-only"
+                  @change="modifieMineurUser(user)"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                ></div>
+                <span
+                  class="ml-3 text-sm font-medium text-gray-900"
+                ></span>
+              </label>
+            </td>
+            <td class="px-6 py-4">
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="user.actif"
+                  type="checkbox"
+                  value="true"
+                  class="peer sr-only"
+                  @change="modifieActifUser(user)"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                ></div>
+                <span
+                  class="ml-3 text-sm font-medium text-gray-900"
+                ></span>
+              </label>
+            </td>
+            <!-- <td class="px-6 py-4 flex">
+              <Button
+                test="TdeleteUser"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                @click="removeUser(user.id)"
+              />
+              <Button
+                test="TeditUser"
+                borderless
+                icon="edit"
+                couleur="secondary"
+                @click="editUser(user.id)"
+              />
+            </td> -->
+          </tr>
         </tbody>
       </table>
-      <div class="sm:flex">
-        <div class="flex items-center space-x-2">
-          <Button label="Ajouter un utilisateur" couleur="secondary" icon="add" @click="ajouter()"/>
-          <Button label="Exporter" couleur="secondary" icon="export" @click="ajouter()"/>
-        </div>
-      </div>
-    </Card>
+    </div>
+  </Card>
+  <div class="flex justify-center items-center mb-10">
+    <p v-if="page !== 1"><span @click="previousPage()" class="chevron left cursor-pointer"></span></p>
+    <p class="pagination mx-10">{{ page }}</p>
+    <p v-if="users.length > 0"><span @click="nextPage()" class="chevron right cursor-pointer"></span></p>
   </div>
-  <Modal v-if="is_open_modal.consult" :title="'Consultation de ' + user.nom + ' ' + user.prenom" @cancel="cancel" @confirm="cancel">
-    <div class="grid grid-cols-6 gap-6">
-      <div class="col-span-6 sm:col-span-3">
-        <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900">Prénom</label>
-        <input id="first-name" readonly type="text" name="first-name" :value=user.prenom class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="Bonnie" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="last-name" class="block mb-2 text-sm font-medium text-gray-900">Nom</label>
-        <input id="last-name" readonly type="text" name="last-name" :value=user.nom class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="Green" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-        <input id="email" readonly type="email" name="email" :value=user.email class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="example@company.com" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="identifiant-user" class="block mb-2 text-sm font-medium text-gray-900">Identifiant</label>
-        <input id="identifiant-user" v-model="user.identifiant" readonly type="text" name="identifiant-user" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="e.g. React developer" required>
-      </div>
-    </div>
-  </Modal>
-
-  <Modal v-if="is_open_modal.edit" :title="'Edition de ' + user.nom + ' ' + user.prenom" @confirm="confirm" @cancel="cancel">
-    <div class="grid grid-cols-6 gap-6">
-      <div class="col-span-6 sm:col-span-3">
-        <label for="first-name" class="required block mb-2 text-sm font-medium text-gray-900">First Name</label>
-        <input id="first-name-edit" v-model="user.prenom" type="text"  name="first-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="Bonnie" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="last-name" class="required block mb-2 text-sm font-medium text-gray-900">Last Name</label>
-        <input id="last-name-edit" v-model="user.nom" type="text" name="last-name" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="Green" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="email" class="required block mb-2 text-sm font-medium text-gray-900">Email</label>
-        <input id="email-edit" v-model="user.email" type="email" name="email" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="example@company.com" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="identifiant-edit" class="required relative block mb-2 text-sm font-medium text-gray-900">Identifiant</label>
-        <input id="identifiant-edit" v-model="user.identifiant" type="text" name="identifiant-edit" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="e.g. React developer" required>
-      </div>
-    </div>
-    <MentionChampsObligatoires margin-top="20px"/>
-  </Modal>
-
-  <Modal v-if="is_open_modal.deleted" :title="'Suppression de ' + user.nom + ' ' + user.prenom" @confirm="deleted" @cancel="cancel">
-    <div class="grid grid-cols-1 gap-1">
-      <p>
-        Attention vous allez supprimer un utilisateur, êtes-vous sûr de votre choix ?
-      </p>
-    </div>
-  </Modal>
-
-
-  <Modal v-if="is_open_modal.add" title="Nouvel utilisateur" @confirm="add" @cancel="cancel">
-    <div class="grid grid-cols-6 gap-6">
-      <div class="col-span-6 sm:col-span-3">
-        <label for="first-name-new" class="required block mb-2 text-sm font-medium text-gray-900">Prénom</label>
-        <input id="first-name-new" v-model="user.prenom" type="text" name="first-name-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="Bonnie" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="last-name-new" class="required block mb-2 text-sm font-medium text-gray-900">Nom</label>
-        <input id="last-name-new" v-model="user.nom" type="text" name="last-name-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="Green" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="email-new" class="required block mb-2 text-sm font-medium text-gray-900">Email</label>
-        <input id="email-new" v-model="user.email" type="email" name="email-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="example@company.com" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="identifiant-new" class="required block mb-2 text-sm font-medium text-gray-900">Identifiant</label>
-        <input id="identifiant-new" v-model="user.identifiant" type="text" name="identifiant-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="e.g. React developer" required>
-      </div>
-
-      <div class="col-span-3 sm:col-span-2">
-        <label class="relative inline-flex items-center mr-5 cursor-pointer">
-          <input v-model="user.actif" type="checkbox" value="true" class="sr-only peer" checked>
-          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-          <span class="ml-3 text-sm font-medium text-gray-900">Actif</span>
-        </label>
-      </div>
-      <div class="col-span-3 sm:col-span-2">
-        <label class="relative inline-flex items-center mr-5 cursor-pointer">
-          <input v-model="user.mineur" type="checkbox" value="false" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-          <span class="ml-3 text-sm font-medium text-gray-900">Mineur</span>
-        </label>
-      </div>
-      <div class="col-span-3 sm:col-span-2">
-        <label class="relative inline-flex items-center mr-5 cursor-pointer">
-          <input v-model="user.responsable" type="checkbox" value="false" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-          <span class="ml-3 text-sm font-medium text-gray-900">Responsable</span>
-        </label>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="portable-new" class="required block mb-2 text-sm font-medium text-gray-900">Portable</label>
-        <input id="portable-new" v-model="user.portable" type="text" name="identifiant-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="e.g. React developer" required>
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <label for="password-new" class="required block mb-2 text-sm font-medium text-gray-900">Password</label>
-        <input id="password-new" v-model="user.plainPassword" type="password" name="password-new" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" placeholder="e.g. React developer" required>
-      </div>
-    </div>
-  </Modal>
-
 </template>
 
 <script setup>
+// import Modal from '../components/common/Modal.vue'
+// import ValidationModal from '../components/common/ValidationModal.vue'
+// import Button from '../components/common/Button.vue'
+// import ButtonRight from '../components/common/ButtonRight.vue'
+import Card from '../components/common/Card.vue'
+import Input from '../components/common/Input.vue'
+// import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
-import Modal from './common/Modal.vue'
-import Card from './common/Card.vue'
+import { getUsers, getUser, patchUser } from '../api/user.js'
+import { onMounted, ref } from "vue"
 
-  import {reactive, ref} from "vue"
-  import Button from './common/Button.vue'
-import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+const users = ref([])
+const user = ref({})
+const page = ref(1)
 
-  const users = ref([])
-
-  const user = ref({})
-
-  const is_open_modal = reactive({
-    consult : false,
-    edit : false,
-    add : false,
-    deleted : false
-  })
-
-
-  const getUsers = async () => {
-    const response = await fetch(import.meta.env.VITE_API_URL +'/api/users', {
-      method:'GET',
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer '+ localStorage.getItem('token')},
-    })
-    users.value = await response.json()
-  }
-
-  const updateUser = async () => {
-    const response = await fetch(import.meta.env.VITE_API_URL +'/api/users/'+user.value.id, {
-      method:'PATCH',
-      body: JSON.stringify(user.value),
-      headers: {'Accept': 'application/json','Content-Type': 'application/merge-patch+json', 'Authorization': 'Bearer '+ localStorage.getItem('token')},
-    })
-  }
-
-  const register = async () => {
-    const response = await fetch(import.meta.env.VITE_API_URL +'/api/users', {
-      method:'POST',
-      body: JSON.stringify(user.value),
-      headers: {'Accept': 'application/json','Content-Type': 'application/json', 'Authorization': 'Bearer '+ localStorage.getItem('token')},
-    })
-    if (response.status !== 201) {
-      alert('ERREUR DE CONNEXION')
-    } else {
-      is_open_modal.add = false
+onMounted(async () => {
+  users.value = await getUsers(1)
+  users.value.sort(function compare(a, b) {
+    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
+      return -1
     }
+    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
+      return 1
+    }
+    return 0
+  })
+})
+
+const modifieActifUser = async ({ actif, id }) => {
+  try {
+    await patchUser({ actif }, id)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
   }
+}
 
-  const deleteUser = async () => {
-    const response = await fetch(import.meta.env.VITE_API_URL +'/api/users/'+user.value.id, {
-      method:'DELETE',
-      headers: {'Accept': 'application/json','Authorization': 'Bearer '+ localStorage.getItem('token')},
-    })
+const modifieMineurUser = async ({ mineur, id }) => {
+  try {
+    await patchUser({ mineur }, id)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
   }
+}
 
-  const consulter = (user_selected) => {
-    user.value = user_selected
-    is_open_modal.consult = true
+const modifiePMRUser = async ({ pmr, id }) => {
+  try {
+    await patchUser({ pmr }, id)
+    toast.success('Modification effectuée avec succès')
+  } catch (e) {
+    toast.error('Une erreur est survenue')
   }
+}
 
-  const editer = (user_selected) => {
-    user.value = user_selected
-    is_open_modal.edit = true
-  }
+const previousPage = async () => {
+  page.value = page.value - 1
+  users.value = await getUsers(page.value)
+  users.value.sort(function compare(a, b) {
+    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
+      return -1
+    }
+    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
+      return 1
+    }
+    return 0
+  })
+  window.scroll(0, 0)
+}
 
-  const ajouter = () => {
-    user.value.actif = true
-    user.value.mineur = false
-    user.value.responsable = false
-    user.value.idParent = 0
-    is_open_modal.add = true
-  }
-
-  const supprimer = (user_selected) => {
-    user.value = user_selected
-    is_open_modal.deleted = true
-  }
-
-  const cancel = () => {
-    user.value = {}
-    Object.keys(is_open_modal).forEach(el=>is_open_modal[el]=false)
-  }
-
-  const confirm = (event) => {
-    updateUser()
-    cancel()
-  }
-
-  const deleted = (event) => {
-    deleteUser()
-    cancel()
-  }
-
-  const add = (event) => {
-    register()
-    cancel()
-  }
-
-  getUsers()
-
+const nextPage = async () => {
+  page.value = page.value + 1
+  users.value = await getUsers(page.value)
+  users.value.sort(function compare(a, b) {
+    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
+      return -1
+    }
+    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
+      return 1
+    }
+    return 0
+  })
+  window.scroll(0, 0)
+}
 </script>
 
 <style scoped>
+.chevron::before {
+	border-style: solid;
+	border-width: 0.25em 0.25em 0 0;
+	content: '';
+	display: inline-block;
+	height: 1.45em;
+	left: 0.15em;
+	position: relative;
+	top: 0.15em;
+	transform: rotate(-45deg);
+	vertical-align: top;
+	width: 1.45em;
+  border-color: #000;
+}
 
+.chevron.right:before {
+	left: 0;
+	transform: rotate(45deg);
+}
+
+.chevron.left:before {
+	left: 0.25em;
+	transform: rotate(-135deg);
+}
+
+.pagination {
+  font-size: 1.45rem;
+  color: #000;
+}
 </style>

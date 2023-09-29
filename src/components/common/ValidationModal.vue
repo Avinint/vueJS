@@ -33,10 +33,10 @@
             @click="emit('cancel', $event)"
           />
         </div>
-        <div v-if="props.type == 'delete'" class="space-y-6 p-6">
+        <div v-if="props.type === 'delete'" class="space-y-6 p-6">
           <slot>Voulez-vous valider la suppression ?</slot>
         </div>
-        <div v-else-if="props.type == 'edit'" class="space-y-6 p-6">
+        <div v-else-if="props.type === 'edit'" class="space-y-6 p-6">
           <slot>Voulez-vous valider la modification ?</slot>
         </div>
         <div v-else-if="props.type === 'add'" class="space-y-6 p-6">

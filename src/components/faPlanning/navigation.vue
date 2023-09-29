@@ -1,79 +1,86 @@
 <template>
   <nav
-    class="flex space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
+    class="flex space-y-3 p-4"
   >
-    <section class="flex w-full flex-wrap gap-5">
+    <section class="flex w-full justify-between gap-2">
       <NavigationSection>
-        <template #title> Zone active </template>
+        <template #title> Zones actives </template>
         <template #content>
-          <Button
-            v-for="zone in zones"
-            :key="zone.id"
-            :label="zone.libelle"
-            couleur="secondary"
-            :submit="false"
-            :class="{ active: planningStore.isZoneActive(zone.id) }"
-            @click="filterByZone(zone.id)"
-          />
-        </template>
-      </NavigationSection>
-      <NavigationSection class="justify-center px-4">
-        <template #title> Affichage du planning </template>
-        <template #content>
-          <Button
-            label="Aujourd'hui"
-            couleur="secondary"
-            icon=""
-            :submit="false"
-            @click="today()"
-          />
-          <Button
-            :label="
-              planningStore.currentViewName === 'day'
-                ? 'Journée >'
-                : 'Semaine >'
-            "
-            couleur="secondary"
-            icon=""
-            class="w-24"
-            :submit="false"
-            @click="toggleView()"
-          />
-        </template>
-      </NavigationSection>
-      <NavigationSection class="justify-center">
-        <template #title>Période en cours</template>
-        <template #content>
-          <Button
-            label="<"
-            couleur="secondary"
-            icon="prev"
-            :submit="false"
-            class="m-0"
-            @click="prev()"
-          />
-          <div class="min-w-max cursor-default px-4">
-            {{ planningStore.getCurrentDateStart }}
-            <template v-if="planningStore.currentViewName === 'day'">
-              - {{ planningStore.getCurrentDateEnd }}
+          <div class="flex flex-wrap gap-1">
+            <template v-for="zone in zones" :key="zone.id">
+              <Button
+                :label="zone.libelle"
+                couleur="secondary"
+                :submit="false"
+                class="mr-2"
+                :class="{ active: planningStore.isZoneActive(zone.id) }"
+                @click="filterByZone(zone.id)"
+              />
             </template>
           </div>
-          <Button
-            label=">"
-            couleur="secondary"
-            icon="next"
-            :submit="false"
-            @click="next()"
-          />
-          <Button
-            class="cursor-default"
-            :label="'S' + planningStore.currentWeek"
-            couleur="secondary"
-            icon="next"
-            :submit="false"
-          />
         </template>
       </NavigationSection>
+      <div class="flex">
+        <NavigationSection class="justify-center px-4">
+          <template #title> Affichage du planning </template>
+          <template #content>
+            <Button
+              label="Aujourd'hui"
+              couleur="secondary"
+              icon=""
+              :submit="false"
+              class="mr-2 text-black"
+              @click="today()"
+            />
+            <Button
+              :label="
+                planningStore.currentViewName === 'day'
+                  ? 'Journée >'
+                  : 'Semaine >'
+              "
+              couleur="info"
+              class="w-24"
+              :submit="false"
+              @click="toggleView()"
+            />
+          </template>
+        </NavigationSection>
+        <NavigationSection class="justify-center">
+          <template #title>Période en cours</template>
+          <template #content>
+              <Button
+                label="<"
+                couleur="info"
+                icon="prev"
+                :submit="false"
+                class="m-0"
+                @click="prev()"
+              />
+              <vue-tailwind-datepicker
+                input-classes="bg-gray-300 border border-gray-300 rounded-lg py-1.5 text-black w-56"
+                v-model="startDate"
+                i18n="fr"
+                as-single
+                :placeholder="`${startDate} - ${endDate}`"
+                :formatter="formatDatepicker"
+              />
+              <Button
+                label=">"
+                couleur="info"
+                icon="next"
+                :submit="false"
+                @click="next()"
+              />
+              <Button
+                class="cursor-default"
+                :label="'S' + planningStore.currentWeek"
+                couleur="info"
+                icon="next"
+                :submit="false"
+              />
+          </template>
+        </NavigationSection>
+      </div>
     </section>
   </nav>
 </template>
@@ -84,6 +91,7 @@ import { getZones } from '@api/zone.js'
 import NavigationSection from '@components/faPlanning/navigationSection.vue'
 import { usePlanningStore } from '@stores/planning.ts'
 import { mapStores } from 'pinia'
+import dayjs from "dayjs";
 
 export default {
   components: {
@@ -99,40 +107,74 @@ export default {
   data() {
     return {
       zones: [],
+      startDate: '',
+      endDate: '',
+      formatDateFr: 'DD-MM-YYYY',
+      formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' }
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
+    id() {
+      return this.$route.params.id
+    },
+  },
+  watch: {
+    startDate (value) {
+      value = dayjs(value, this.formatDateFr).format('YYYY-MM-DD')
+      this.changeData(value)
+    },
+    async id() {
+      this.fetchDonnees()
+    },
   },
   async mounted() {
+    await this.fetchDonnees()
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
     this.$emit('afterFetch');
+    this.setDate()
   },
   methods: {
+    setDate() {
+      this.startDate = dayjs(this.planningStore.getCurrentDateStart).format(this.formatDateFr)
+      this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
+    },
+    changeData(date) {
+      this.calendarApi.gotoDate(date)
+      this.setDate()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
+    },
     today() {
       this.calendarApi.today()
+      this.planningStore.fetch().then(() => {
+        this.$emit('afterFetch')
+      })
+      this.setDate()
     },
     prev() {
       this.calendarApi.prev()
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
       })
+      this.setDate()
     },
     next() {
       this.calendarApi.next()
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
       })
+      this.setDate()
     },
     updateActivities() {
       this.planningStore.updateActivities()
     },
     async setZones() {
-      this.zones = await getZones(
-        1,
-        '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(
+        zone => zone.actif && zone.zoneActivites.length > 0
       )
     },
     async filterByZone(zoneId) {
@@ -172,9 +214,16 @@ export default {
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'week'
     },
+    async fetchDonnees() {
+      await this.setZones()
+      this.viewWeek()
+      await this.planningStore.fetch()
+      this.$emit('afterFetch');
+    },
   },
 }
 </script>
+
 <style scoped lang="scss">
 .active {
   background-color: #0b83d9;

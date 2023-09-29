@@ -1,4 +1,4 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders, patch } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
@@ -84,18 +84,5 @@ export const deleteParametreZone = async (id) => {
   return {}
 }
 
-export const patchParametreZone = async (id) => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametre_zones/${id}`,
-    {
-      method: 'patch',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return {}
-}
+export const patchParametreZone = async (param, id) =>
+  await patch(`/api/parametre_zones/${id}`, param)

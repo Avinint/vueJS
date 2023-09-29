@@ -17,6 +17,7 @@ export enum EventType {
 
 export const default_planning: Planning = {
   creneaux: [],
+  creneauxAnonymes: [],
   // (TODO FITE2D-2853): Load data from WS instead of static mock
   demandes: [
     {
@@ -82,6 +83,7 @@ export const default_planning: Planning = {
   currentWeek: 0,
   slotMinTime: '00:00',
   slotMaxTime: '23:59',
+  scrollTime: '07:00'
 }
 
 export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
@@ -96,23 +98,38 @@ export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
   }
 }
 
+export function parseCreneauAnonymeToEvent(creneau: CreneauAnonyme): CalendarEvent {
+  return {
+    id: creneau.id ?? creneau.dateDebut,
+    start: creneau.dateDebut,
+    end: creneau.dateSortie,
+    title: '',
+    resourceIds: creneau.zones,
+    classNames: ['fc-event-anonyme'],
+    overlap: true
+  }
+}
+
 export function parseDemandeToEvent(demande: Creneau): CalendarEvent {
   return {
     id: demande.id ?? 0,
-    start: demande.heureDebut,
-    end: demande.heureFin,
+    start: demande.dateDebut,
+    end: demande.dateSortie,
     title: demande.titre,
-    resourceIds: [],
+    resourceIds: demande.zones,
     classNames: ['fc-event-demande'],
     overlap: true,
-    editable: false,
-    selectable: false,
-    extendedProps: { ...demande, event_type: EventType.DEMANDE },
+    extendedProps: { ...demande, event_type: EventType.CRENEAU },
   }
 }
 
 export const planning_configuration: CalendarOptions = {
-  plugins: [dayGridPlugin, timeGridPlugin, resourceTimeGridPlugin],
+  plugins: [
+    dayGridPlugin,
+    timeGridPlugin,
+    resourceTimeGridPlugin,
+    interactionPlugin,
+  ],
   headerToolbar: false,
   initialView: 'timeGridWeek',
   locale: frLocale,
@@ -130,7 +147,8 @@ export const planning_configuration: CalendarOptions = {
   allDaySlot: false,
   eventOverlap: false,
   selectOverlap: false,
-  height: 'auto',
+  height: '80vh',
+  scrollTime: '07:00',
   schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
   // timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
   slotLabelFormat: {

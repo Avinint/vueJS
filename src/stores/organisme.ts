@@ -16,8 +16,8 @@ export const useOrganismeStore = defineStore('organisme', {
         getOrganisme: (state) => state.organisme,
     },
     actions: {
-    async fetchOrganismes(page = 0, query = '') {
-            getOrganismesSelect(page, query).then(data => {
+    async fetchOrganismes(query =  {}) {
+            getOrganismesSelect(query).then(data => {
                 this.organismes = data;
             });
         },

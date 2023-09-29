@@ -1,40 +1,24 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
-export const getEquipements = async (fitArenaId, page = 1, query = '') => {
-  const response = await $fetch(
-    `${
-      import.meta.env.VITE_API_URL
-    }/api/fit_arena/${fitArenaId}/equipements?page=${page}${query}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
+
+const dtoRecherche = (criteres) => {
+  let params = {}, reste;
+  ({ categorie: params['typeEquipement.categoryTypeEquipement.code'], fit: params['fitArena.id'], ...reste } = criteres)
+  return {...reste, ...params}
 }
 
-export const getEquipement = async (id = 1) => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/equipements/${id}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
+const dtoTri = (tri) => {
+  let params = {}, reste;
+  ({ type: params['order[typeEquipement.id]'], ...reste } = tri)
+
+  return {...reste, ...params}
 }
+export const getEquipements = async (fitArenaId, query = {}, tri = {}) =>
+  await get(`/api/fit_arena/${fitArenaId}/equipements`, { page: 1, ...dtoRecherche(query), ...dtoTri(tri) })
+
+export const getEquipement = async (id = 1) => await get('/api/equipements/' + id)
 
 export const postEquipements = async (equipement) => {
   if (equipement.hasOwnProperty['equipementModes']) {

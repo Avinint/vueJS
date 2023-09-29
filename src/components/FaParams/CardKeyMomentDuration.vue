@@ -1,32 +1,31 @@
 <template>
-  <Card my2>
-    <h1>Durée des temps forts</h1>
-    <div class="my-2 w-1/2 rounded-lg border">
+  <CardModalSection title="Durée des temps forts">
+    <div class="my-4 ml-9 w-full rounded-lg border">
       <div class="relative my-4 overflow-x-auto text-black">
         <div class="flex px-6 py-4">
-
           <p class="w-7/12 font-bold">Par défaut</p>
-          <Button
-            v-if="!ajoutPossibleParFitArena"
-            test="TeditKeyMoment"
-            borderless
-            icon="edit"
-            couleur="secondary"
-            @click="editTempsFortParFitArena(index)"
-          />
-        </div>
-        <div v-if="parametres.duree_du_temps_fort?.id ?? false" class="mt-6 flex items-center font-light">
-          <p class="ml-6 flex w-5/12 justify-start">{{ parametres.duree_du_temps_fort.libelle }}</p>
-          <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2">{{ parametres.duree_du_temps_fort.valeur }} min</p>
+          <div class="grow flex justify-end">
+            <Button
+              test="TeditKeyMoment"
+              borderless
+              icon="edit"
+              couleur="secondary"
+              @click="editTempsFortParFitArena(index)"
+            />
           </div>
         </div>
-        <div v-if="parametres.duree_soustraite_a_la_fin_du_temps_fort?.id ?? false" class="mt-6 flex items-center font-light">
+        <div v-if="parametreFitArenas[PARAM_TEMPS_FORT]?.id ?? false" class="mt-6 flex items-center font-light">
+          <p class="ml-6 flex w-5/12 justify-start">{{ parametreFitArenas[PARAM_TEMPS_FORT].libelle }}</p>
+          <div class="bg-grey flex justify-end rounded-lg">
+            <p class="flex p-2">{{ parametreFitArenas[PARAM_TEMPS_FORT].valeur }} min</p>
+          </div>
+        </div>
+        <div v-if="parametreFitArenas[PARAM_FIN]?.id ?? false" class="mt-6 flex items-center font-light">
           <p class="ml-6 flex w-5/12 justify-start">
-            {{ parametres.duree_soustraite_a_la_fin_du_temps_fort.libelle }}
+            {{ parametreFitArenas[PARAM_FIN].libelle }}
           </p>
           <div class="bg-grey flex justify-end rounded-lg">
-            <p class="flex p-2">{{ parametres.duree_soustraite_a_la_fin_du_temps_fort.valeur }} sec</p>
+            <p class="flex p-2">{{ parametreFitArenas[PARAM_FIN].valeur }} sec</p>
           </div>
         </div>
       </div>
@@ -40,23 +39,20 @@
         @click="addKeyMomentDurationForFitArena"
       />
     </div>
-    <div class="my-2 w-1/2 rounded-lg border">
-      <template v-for="(activite, index) in activites" :key="index">
-        <div v-if="activite.parametreActivites.length" class="relative my-4 overflow-x-auto text-black" >
-          <!-- dynamique à venir, quand le back et le front seront au même niveau -->
+    <div v-if="!aucunParametre" class="my-4 ml-9 w-full rounded-lg border">
+      <template v-for="(parametreActivite, index) of parametreActivites" :key="index">
+        <div v-if="parametreActivite[PARAM_TEMPS_FORT] ?? false" class="relative my-4 overflow-x-auto text-black">
           <div class="flex px-6 py-4">
-            <p class="w-3/12 font-bold">{{ activite.libelle }}</p>
-            <p class="w-1/12 pr-16">Actif</p>
-            <div>
-
-            </div>
-            <label class="relative inline-flex w-3/12 cursor-pointer">
+            <p class="w-5/12 font-bold">{{ parametreActivite.activite.libelle }}</p>
+            <p v-if="parametreActivite[PARAM_TEMPS_FORT]?.actif" class="px-6">Actif</p>
+            <p v-else class="px-6">Inactif</p>
+            <label class="relative inline-flex w-1/12 cursor-pointer">
               <input
-                :checked="activite.parametres.duree_du_temps_fort?.actif"
+                :checked="parametreActivite[PARAM_TEMPS_FORT]?.actif"
                 type="checkbox"
-                :value="activite.parametres.duree_du_temps_fort?.actif"
+                :value="parametreActivite.duree_du_temps_fort?.actif"
                 class="peer sr-only"
-                @click="modifKeyMomentDuration(activite.parametres.duree_du_temps_fort, activite.parametres.duree_du_temps_fort.id)"
+                @click="modifKeyMomentDuration(parametreActivite?.[PARAM_TEMPS_FORT], parametreActivite?.[PARAM_TEMPS_FORT].id)"
               />
               <div
                 class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
@@ -65,34 +61,36 @@
                 class="ml-3 text-sm font-medium text-gray-900"
               ></span>
             </label>
-            <Button
-              test="TeditKeyMoment"
-              borderless
-              icon="edit"
-              couleur="secondary"
-              @click="editTempsFortParActivite(index)"
-            />
-            <Button
-              test="TdeleteKeyMoment"
-              borderless
-              icon="delete"
-              couleur="secondary"
-              class="flex justify-end"
-              @click="removeKeyMomentDuration(index)"
-            />
+            <div class="grow flex justify-end">
+              <Button
+                test="TeditKeyMoment"
+                borderless
+                icon="edit"
+                couleur="secondary"
+                @click="editTempsFortParActivite(parametreActivite)"
+              />
+              <Button
+                test="TdeleteKeyMoment"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                class="flex justify-end"
+                @click="removeKeyMomentDuration(parametreActivite)"
+              />
+            </div>
           </div>
           <div class="mt-6 flex items-center font-light">
-            <p class="ml-6 flex w-5/12 justify-start">{{ activite.parametres.duree_du_temps_fort?.libelle }}</p>
+            <p class="ml-6 flex w-5/12 justify-start">{{ parametreActivite[PARAM_TEMPS_FORT]?.libelle }}</p>
             <div class="bg-grey flex justify-end rounded-lg">
-              <p class="flex p-2">{{ activite.parametres.duree_du_temps_fort?.valeur ?? 0 }} min</p>
+              <p class="flex p-2">{{ parametreActivite[PARAM_TEMPS_FORT]?.valeur ?? 0 }} min</p>
             </div>
           </div>
           <div class="mt-6 flex items-center font-light">
             <p class="ml-6 flex w-5/12 justify-start">
-              {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.libelle }}
+              {{ parametreActivite[PARAM_FIN]?.libelle }}
             </p>
             <div class="bg-grey flex justify-end rounded-lg">
-              <p class="flex p-2"> {{ activite.parametres.duree_soustraite_a_la_fin_du_temps_fort?.valeur ?? 0 }} sec</p>
+              <p class="flex p-2"> {{ parametreActivite[PARAM_FIN]?.valeur ?? 0 }} sec</p>
             </div>
           </div>
         </div>
@@ -102,41 +100,20 @@
       v-if="ajoutPossibleParActivite"
       id="TaddKeyMomentDurationForAnActivity"
       label="Ajouter une durée de temps fort spécifique à une activité"
-      class="font-bold text-black"
+      class="ml-9"
       icon="add"
-      couleur="secondary"
+      couleur="danger"
       @click="addKeyMomentDurationForAnActivity"
     />
-  </Card>
+  </CardModalSection>
 
   <form @submit.prevent="saveTempsFort">
     <Modal
-      v-if="keyMomentDuration_modal"
+      v-if="modaleVisible"
       :title="modal_title"
       @cancel="closeModal"
     >
       <div>
-<!--        <p class="mb-2 block text-sm font-medium text-gray-900">-->
-<!--          Accès à la Fit Arena réservé uniquement pour certains profils :-->
-<!--        </p>-->
-<!--        <div-->
-<!--          class="bg-light-blue text-light-blue mb-4 block w-2/12 rounded-lg text-center text-sm font-medium"-->
-<!--        >-->
-<!--          <p class="p-2">Adhérents</p>-->
-<!--        </div>-->
-
-<!--        <div class="mb-6 flex items-center">-->
-<!--          <select-->
-<!--            multiple-->
-<!--            v-model="formulaire.profils"-->
-<!--            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"-->
-<!--          >-->
-<!--            <option value="" disabled>Ajouter un profil</option>-->
-<!--            <option v-for="(profil, i) in profils" :key="i" :value="'/api/profils/' + profil.id">-->
-<!--              {{ profil.libelle }}-->
-<!--            </option>-->
-<!--          </select>-->
-<!--        </div>-->
         <div class="mb-6 flex items-center" v-if="modeFormulaire  === 'ParActivite'">
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
             >Activité</label
@@ -148,7 +125,7 @@
           >
             <template v-for="(activite, i) in activites"
                        :key="i">
-              <option v-if="!Object.keys(activite.parametres).length || activite.id === formulaire.activite"
+              <option v-if="activiteDisponible(activite)"
                 :value="activite.id"
               >
                 {{ activite.libelle }}
@@ -199,32 +176,43 @@
 </template>
 
 <script setup>
-import Card from '../common/Card.vue'
 import Modal from '../common/Modal.vue'
 import Button from '../common/Button.vue'
-import ButtonRight from '../common/Button.vue'
 
-import { getParametresById } from '@api/parametres.js'
 import {
   postParametreActivite,
   updateParametreActivite,
   deleteParametreActivite,
   patchParametreActivite,
 } from '@api/parametreActivite.js'
-import { getProfils } from '@api/profil.js'
-import { getActivites } from '@api/activite.ts'
-import { computed, onMounted, reactive, ref } from 'vue'
+
+import { useParamStore } from '@stores/parametre.js'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-import { getParametreFitArena, postParametreFitArena, updateParametreFitArena } from "@api/parametreFitArena.js";
+import {
+  deleteParametreFitArenaProfil,
+  getParametreFitArena,
+  postParametreFitArena,
+  updateParametreFitArena
+} from "@api/parametreFitArena.js";
+import { refThrottled } from "@vueuse/core";
+import CardModalSection from "@components/common/CardModalSection.vue";
 
-const props = defineProps({params: Object})
-const emit = defineEmits(["refresh"])
+const PARAM_TEMPS_FORT = 'duree_du_temps_fort'
+const PARAM_FIN = 'duree_soustraite_a_la_fin_du_temps_fort'
+
+const props = defineProps({params: Object, parametreActivites: Object})
+const emits = defineEmits(["suppression"]) /** @deprecated  TODO remove */
 const route = useRoute()
+const params = useParamStore()
+
+const parametreFitArenas = computed(() => params.parametres?.parametreFitArenas ?? {})
+const parametreActivites = computed(() => params.parametres?.parametreActivites ?? {})
+const activites = computed(() => params.activites ?? [])
+
 const idFitArena = computed(() => route.params.id)
-const parametresDuration = ref({})
-const parametre = ref({})
 const profils = ref(null)
 
 const formulaire = reactive({
@@ -235,50 +223,27 @@ const formulaire = reactive({
   durationEndId: null
 })
 
-const parametresRecuperes = ref([])
-
-const keyMomentDuration_modal = ref(false)
+const modaleVisible = ref(false)
 const modal_title = ref('')
 const modeFormulaire = ref(["ParActivite"])
 
-const activites = ref([])
 const durationsEnd = ['1', '2', '3', '4', '5']
-const durationsKeyMoment = ['5', '10', '15', '20', '25']
+const durationsKeyMoment = ['5', '10', '15', '20' , '25']
 
-const ajoutPossibleParActivite = computed(() => {
-  return activites.value.some((activite => !activite.parametreActivites.length))
-})
+const aucunParametre = computed(() => !Object.keys(parametreActivites.value).length)
 
-const ajoutPossibleParFitArena = computed(() => Object.keys(parametres.value).length  === 0)
+const ajoutPossibleParActivite = computed(() =>
+  aucunParametre.value || activites.value.some(activite => activiteNonRenseignee(activite)))
 
-const parametres = computed(() => {
-  const res = {}
-  for (const param of props.params ) {
-    res[param.parametre.code] = {libelle: param.parametre.libelle, valeur: param.valeur, id: param.id}
-  }
+const ajoutPossibleParFitArena = computed(() => Object.keys(parametreFitArenas?.value ?? {}).length  === 0)
 
-  return res;
-})
+const activiteNonRenseignee = ({ code }) => !(code in parametreActivites.value)
 
-onMounted(async () => {
-  await dynamiseParametresParActivites()
-})
+const activiteDisponible = (activite) =>
+  activiteNonRenseignee(activite) || parseInt(activite.id) === formulaire.activite
 
-const dynamiseParametresParActivites = async () => {
-  activites.value = await getActivites(idFitArena.value)
-  for (const activite of activites.value) {
-    activite.parametres = {}
-    for (const paramActivite of activite.parametreActivites) {
-      activite.parametres[paramActivite.parametre.code] = {
-        libelle: paramActivite.parametre.libelle,
-        valeur: paramActivite.valeur,
-        actif: paramActivite.actif,
-        id: paramActivite.id,
-      }
-    }
-
-  }
-
+const rafraichir = async() => {
+   await params.fetchParametres(idFitArena.value)
 }
 
 const reset = () => {
@@ -292,21 +257,18 @@ const reset = () => {
 
 const closeModal = () => {
   reset()
-  keyMomentDuration_modal.value = false
+  modaleVisible.value = false
 }
 
 const addKeyMomentDurationForAnActivity = async () => {
-  reset()
-  // activite_selected.value = null
   modal_title.value = 'Ajouter la durée de temps fort pour une activité'
-  keyMomentDuration_modal.value = true
+  modaleVisible.value = true
   modeFormulaire.value = "ParActivite"
 }
 
 const addKeyMomentDurationForFitArena = async () => {
- parametres.value = {}
   modal_title.value = 'Ajouter la durée de temps fort pour la Fit Arena'
-  keyMomentDuration_modal.value = true
+  modaleVisible.value = true
   modeFormulaire.value = "ParFitArena"
 }
 
@@ -321,44 +283,33 @@ const modifKeyMomentDuration = async (parametre, id) => {
   }
 }
 
-const removeKeyMomentDuration = async (i) => {
-  try {
-    for (const prop in activites.value[i].parametres) {
-     const paramActiviteId = activites.value[i].parametres[prop].id
-      await deleteParametreActivite(paramActiviteId)
-    }
-    // activites.value[i].parametres = {}
-    await dynamiseParametresParActivites()
-    toast.success('Succès de la suppression')
-  } catch (e) {
-    toast.error('Erreur, Veuillez contacter votre administrateur')
-  }
-  parametresDuration.value = await getParametresById(14)
+const removeKeyMomentDuration = async (parametreActivite) => {
+  const ids = [parametreActivite[PARAM_TEMPS_FORT].id, parametreActivite[PARAM_FIN].id]
+  await emits('suppression', ids, deleteParametreActivite)
 }
 
-const editTempsFortParActivite = async (i, ) => {
+const editTempsFortParActivite = async (parametreActivite) => {
 
-  const params = activites.value[i].parametres
-  formulaire.durationKeyMoment   = params.duree_du_temps_fort.valeur
-  formulaire.durationKeyMomentId = params.duree_du_temps_fort.id
-  formulaire.durationEnd         = params.duree_soustraite_a_la_fin_du_temps_fort.valeur
-  formulaire.durationEndId       = params.duree_soustraite_a_la_fin_du_temps_fort.id
-  formulaire.profils             = params.duree_du_temps_fort.profils
-  formulaire.activite            = activites.value[i].id
-  formulaire.actif               = params.duree_du_temps_fort.actif
-  keyMomentDuration_modal.value  = true
+  formulaire.durationKeyMoment   = parametreActivite[PARAM_TEMPS_FORT]?.valeur
+  formulaire.durationKeyMomentId = parametreActivite[PARAM_TEMPS_FORT]?.id
+  formulaire.durationEnd         = parametreActivite[PARAM_FIN]?.valeur
+  formulaire.durationEndId       = parametreActivite[PARAM_FIN]?.id
+  formulaire.profils             = parametreActivite[PARAM_TEMPS_FORT]?.profils
+  formulaire.activite            = parametreActivite.activite?.id
+  formulaire.actif               = parametreActivite[PARAM_TEMPS_FORT]?.actif
+  modaleVisible.value  = true
   modeFormulaire.value = "ParActivite"
   modal_title.value = 'Modifier une durée de temps fort spécifique à une activité'
 }
 
 const editTempsFortParFitArena = async (i,) => {
-  formulaire.durationKeyMoment   = parametres.value.duree_du_temps_fort.valeur
-  formulaire.durationKeyMomentId = parametres.value.duree_du_temps_fort.id
-  formulaire.durationEnd         = parametres.value.duree_soustraite_a_la_fin_du_temps_fort.valeur
-  formulaire.durationEndId       = parametres.value.duree_soustraite_a_la_fin_du_temps_fort.id
-  formulaire.profils             = parametres.value.duree_du_temps_fort.profils
+  formulaire.durationKeyMoment   = parametreFitArenas.value[PARAM_TEMPS_FORT].valeur
+  formulaire.durationKeyMomentId = parametreFitArenas.value[PARAM_TEMPS_FORT].id
+  formulaire.durationEnd         = parametreFitArenas.value[PARAM_FIN].valeur
+  formulaire.durationEndId       = parametreFitArenas.value[PARAM_FIN].id
+  formulaire.profils             = parametreFitArenas.value[PARAM_TEMPS_FORT].profils
 
-  keyMomentDuration_modal.value  = true
+  modaleVisible.value  = true
   modeFormulaire.value = "ParFitArena"
   modal_title.value = 'Modifier une durée de temps fort global à la Fit Arena'
 }
@@ -394,8 +345,8 @@ const saveTempsFortParFitArena = async () => {
 
     closeModal()
     toast.success('Temps fort sauvegardé avec succès')
-    await emit('refresh')
 
+    await rafraichir()
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }
@@ -421,8 +372,10 @@ const saveTempsFortParActivite = async () => {
     }
 
     closeModal()
+
     toast.success('Temps fort sauvegardé avec succès')
-    await dynamiseParametresParActivites()
+    await await emit('refresh')
+    await rafraichir()
 
   } catch (e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')

@@ -1,62 +1,14 @@
 <template>
-  <Card class="space-y-3">
-    <h1> Mes Adhérents</h1>
-
-    <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500">
-        <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700"
-        >
-        <tr>
-          <th scope="col" class="px-6 py-3">Nom et prénom</th>
-          <th scope="col" class="px-6 py-3">Date de naissance</th>
-          <th scope="col" class="px-6 py-3">Numéro d'adhérent</th>
-          <th scope="col" class="px-6 py-3">Date d'adhésion</th>
-          <th scope="col" class="px-6 py-3">Date de fin d'adhésion</th>
-          <th scope="col" class="px-6 py-3">Groupe(s)</th>
-          <th scope="col" class="px-6 py-3"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(adherent, i) in  adherents" :key="i" class="bg-white">
-
-          <td class="px-6 py-4">{{ adherent.nom }} {{ adherent.prenom }}</td>
-          <td class="px-6 py-4">{{ afficherDate(adherent.dateNaissance) }}</td>
-          <td class="px-6 py-4">{{ adherent.numeroAdherent }}</td>
-          <td class="px-6 py-4">{{ afficherDate(adherent.dateAdhesion) }}</td>
-          <td class="px-6 py-4">{{ afficherDate(adherent.dateFinAdhesion) }}</td>
-          <td class="px-6 py-4">
-            {{ adherent.groupes.slice(0, 2).map(g => g.libelle).join(', ') }}
-            <span v-if="adherent.groupes.length > 2"> + {{ adherent.groupes.length - 2 }}</span>
-          </td>
-          <td class="flex items-center justify-center p-3">
-            <Button
-              test="TeditClient"
-              borderless
-              icon="edit"
-              couleur="secondary"
-              @click="editAdherent(adherent)"
-            />
-            <Button
-              test="TdeleteClient"
-              borderless
-              icon="delete"
-              couleur="secondary"
-              @click="removeAdherent(adherent.id)"
-            />
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-    <Button
-      id="TaddAdherent"
-      label="Ajouter un Adhérent"
-      icon="add"
-      couleur="secondary"
-      @click="createAdherent"
-    />
-  </Card>
+   <CrudList
+    entity="adhérent"
+    plural="mes adhérents"
+    :columns="crud_columns"
+    :data="getTableData()"
+    :can-all="isAdmin || isGestCo || isGestOrg"
+    @entity:new="createAdherent"
+    @entity:edit="editAdherent"
+    @entity:remove="removeAdherent"
+  />
   <form @submit.prevent="saveAdherent">
     <Modal
       v-if="afficherFormulaire"
@@ -64,41 +16,36 @@
       :title="modal_title"
       @cancel="cancel()"
     >
-      <Card class="w-full space-y-2">
-        <!--        <h3>Ajouter un adhérent</h3>-->
-
-        <div class="flex items-center">
+      <CardModalSection title="ÉTAT CIVIL">
+        <template #content>
           <Input
             id="TadhNom"
             v-model="nom"
             :readonly="readonly"
             type="text"
             label="Nom"
-            :required="true"
-            class="w-full"
+            :inline="true"
+            placeholder="Nom"
+            class="mb-4"
+            required
           />
-        </div>
-        <div class="flex items-center">
           <Input
             id="TadhPrenom"
             v-model="prenom"
             :readonly="readonly"
             type="text"
             label="Prénom"
-            :required="true"
-            class="w-full"
+            :inline="true"
+            placeholder="Prénom"
+            class="mb-4"
+            required
           />
-        </div>
-        <div class="flex items-center">
-          <div class="mr-1.5 w-half block"><label for="TadhDateNaissance">Date de naissance</label></div>
-          <div class="w-half">
-            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateNaissance" :disabled="readonly"  :formatter="formatter" as-single required />
+          <div class="flex items-center mb-4">
+            <label class="w-1/2 label-text" for="TadhDateNaissance">Date de naissance</label>
+            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateNaissance" :disabled="readonly" :formatter="formatter" as-single />
           </div>
-        </div>
-
-        <div v-if="!readonly" class="flex items-center">
-          <div class="mr-1.5 w-half block"><label for="TadhGenre">Genre</label></div>
-          <div class="w-half">
+          <div class="flex items-center">
+            <label class="w-1/2 label-text" for="TadhGenre">Genre</label>
             <select
               id="TadhGenre"
               v-model="genre"
@@ -113,91 +60,99 @@
               </option>
             </select>
           </div>
-
-        </div>
-
-        <div class="flex items-center">
+        </template>
+      </CardModalSection>
+      <CardModalSection title="ADHÉSION">
+        <template #content>
           <Input
             id="TadhNumero"
             v-model="numero"
             :readonly="readonly"
             type="text"
             label="Numéro d'adhérent"
-            class="w-full"
+            :inline="true"
+            placeholder="000023"
+            class="mb-4"
           />
-        </div>
-
-        <div class="flex items-center">
           <Input
             id="TadhLicence"
             v-model="licence"
             :readonly="readonly"
             type="text"
             label="Licence"
-            class="w-full"
+            :inline="true"
+            class="mb-4"
           />
-        </div>
-
-        <div class="flex items-center">
-          <div class="mr-1.5 w-half block"><label for="TadhDateAdhesion">Date d'adhésion</label></div>
-          <div class="w-half">
-            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateAdhesion" :disabled="readonly"  :formatter="formatter" as-single />
+          <div class="flex items-center mb-4">
+            <label class="w-1/2 label-text" for="TadhDateAdhesion">Date d'adhésion</label>
+            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateAdhesion" :disabled="readonly" :formatter="formatter" as-single />
           </div>
-        </div>
-
-        <div class="flex items-center">
-          <div class="mr-1.5 w-half block"><label for="TadhDateFinAdhesion">Date de fin d'adhésion</label></div>
-          <div class="w-half">
-            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateFinAdhesion" :disabled="readonly"  :formatter="formatter" as-single   />
+          <div class="flex items-center mb-4">
+            <label class="w-1/2 label-text" for="TadhDateFinAdhesion">Date de fin d'adhésion</label>
+            <vue-tailwind-datepicker placeholder="JJ/MM/AAAA" v-model="dateFinAdhesion" :disabled="readonly" :formatter="formatter" as-single />
           </div>
-        </div>
-
-        <div v-if="!readonly" class="flex items-center">
-          <div class="mr-1.5 w-half block"><label for="TadhGroupes">Groupe(s)</label></div>
-          <div class="w-half">
+          <div class="flex items-center mb-4">
+            <label class="w-1/2 label-text" for="TadhGroupes">Groupes</label>
+            <InputOptions
+              v-model="groupes"
+              :options="getGroupes()"
+            />
+          </div>
+          <!-- <div class="flex items-center mb-4">
+            <label class="w-1/2 label-text" for="TadhGroupes">Groupe(s)</label>
             <select
-                multiple
-                id="TadhGroupes"
-                v-model="groupes"
-                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              id="TadhGroupes"
+              v-model="groupes"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
-                  v-for="unGroupe in listeGroupes"
-                  :key="unGroupe.id"
-                  :value="unGroupe"
+                v-for="unGroupe in listeGroupes"
+                :key="unGroupe.id"
+                :value="unGroupe.libelle"
               >
                 {{ unGroupe.libelle }}
               </option>
             </select>
-          </div>
-
-        </div>
-
-        <div class="flex items-center">
-          <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Adresse</label
-          >
-          <div class="relative w-full">
-            <div
+          </div> -->
+        </template>
+      </CardModalSection>
+      <CardModalSection title="COORDONNÉES">
+        <template #content>
+          <Input
+            id="TadhEmail"
+            v-model="email"
+            v-model:valid="validation.email"
+            :readonly="readonly"
+            :type="'text'"
+            label="Email"
+            :inline="true"
+            class="mb-4"
+            :validation="[emailValidation]"
+          />
+          <div class="flex items-center mb-4">
+            <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+            >Adresse</label>
+            <div class="relative w-full">
+              <div
                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-            >
-              <svg
+              >
+                <svg
                   aria-hidden="true"
                   class="h-5 w-5 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
+                >
+                  <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
-            </div>
-            <input
+                  ></path>
+                </svg>
+              </div>
+              <input
                 id="TclientAdresse"
                 v-model="address"
                 :readonly="readonly"
@@ -205,86 +160,75 @@
                 class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                 data-dropdown-toggle="dropdown"
                 placeholder="Rue, ville, ..."
-            />
+              />
+            </div>
           </div>
-        </div>
-        <div v-if="!readonly" class="flex items-center">
-          <div class="mr-1.5 block w-1/2"></div>
-          <select
-              v-if="address && address.length"
-              id="TclientSelectAdresse"
-              v-model="address_selected"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-              @change="addressSelect"
-          >
-            <option
-                v-for="(address, i) in addresses"
-                :key="i"
-                :value="address"
-            >
-              {{ address.label }}
-            </option>
-          </select>
-        </div>
-        <div class="flex items-center">
+          <div class="flex items-center mb-4">
+            <div class="w-1/2"></div>
+            <div v-if="!readonly" class="w-full">
+              <div class="mr-1.5 block w-1/2"></div>
+              <select
+                v-if="address && address.length"
+                id="TclientSelectAdresse"
+                v-model="address_selected"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                @change="addressSelect"
+              >
+                <option
+                  v-for="(address, i) in addresses"
+                  :key="i"
+                  :value="address"
+                >
+                  {{ address.label }}
+                </option>
+              </select>
+            </div>
+          </div>
           <Input
-              id="TadresseComplement"
-              v-model="complement"
-              :readonly="readonly"
-              :type="'text'"
-              label="Complément"
-              class="w-full"
+            v-if="address && address.length"
+            id="TadresseComplement"
+            v-model="complement"
+            :readonly="readonly"
+            :type="'text'"
+            label="Complément"
+            :inline="true"
+            class="mb-4"
           />
-        </div>
-        <div class="flex items-center">
           <Input
-              v-if="address_selected"
-              id="TadressePostcode"
-              v-model="address_selected.postcode"
-              :readonly="readonly"
-              :type="'text'"
-              label="Code Postal"
-              class="w-full"
-              :validation="[zipValidation]"
+            v-if="address && address.length"
+            id="TadressePostcode"
+            v-model="address_selected.postcode"
+            :readonly="readonly"
+            type="text"
+            label="Code Postal"
+            class="mb-4"
+            :inline="true"
+            :validation="[zipValidation]"
           />
-        </div>
-        <div class="flex items-center">
           <Input
-              v-if="address_selected"
-              id="TadresseCity"
-              v-model="address_selected.city"
-              :readonly="readonly"
-              :type="'text'"
-              label="Ville"
-              class="w-full"
-              :validation="[cityValidation]"
+            v-if="address && address.length"
+            id="TadresseCity"
+            v-model="address_selected.city"
+            :readonly="readonly"
+            type="text"
+            label="Ville"
+            class="mb-4"
+            :inline="true"
+            :validation="[cityValidation]"
           />
-        </div>
-        <div class="flex items-center">
           <Input
-              id="TadhTelephone"
-              v-model="telephone"
-              :readonly="readonly"
-              :type="'text'"
-              label="Numéro de téléphone"
-              class="w-full"
-              :validation="[phoneValidation]"
+            id="TadhTelephone"
+            v-model="telephone"
+            :readonly="readonly"
+            type="text"
+            label="Numéro de téléphone"
+            class="mb-4"
+            :inline="true"
+            :validation="[phoneValidation]"
           />
-        </div>
-        <div class="flex items-center">
-          <Input
-              id="TadhEmail"
-              v-model="email"
-              v-model:valid="validation.email"
-              :readonly="readonly"
-              :type="'text'"
-              label="Email"
-              class="w-full"
-              :validation="[emailValidation]"
-          />
-        </div>
-        <MentionChampsObligatoires/>
-      </Card>
+        </template>
+      </CardModalSection>
+      <MentionChampsObligatoires class="ml-4" />
     </Modal>
   </form>
 
@@ -319,12 +263,15 @@
 <script setup>
 import dayjs from 'dayjs'
 import VueTailwindDatepicker from 'vue-tailwind-datepicker'
-import Card from '../components/common/Card.vue'
+import CrudList from '@components/molecules/CrudList.vue'
 import Modal from '../components/common/Modal.vue'
+import CardModalSection from '@components/common/CardModalSection.vue'
+import InputOptions from '../components/common/InputOptions.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
-import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
 import { getAdresses } from '../api/address.js'
+import { useUserStore } from '@/stores/user.js'
+
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import {
   deleteAdherent,
@@ -333,7 +280,6 @@ import {
   putAdherent,
   selectGroupes
 } from '../api/adherent.ts'
-import { selectOrganismes } from '../api/organisme.ts'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
@@ -346,14 +292,22 @@ import {
   phoneValidation
 } from '@/validation.js'
 import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+const { isAdmin, isGestCo, isGestOrg } = useUserStore()
 
 const modaleConfirmation = ref(false)
 const afficherFormulaire = ref(false)
 const readonly = ref(false)
 const genres = [
-  { code: 'nr', libelle: 'Non renseigné' },
-  { code: 'm', libelle: 'Homme' },
   { code: 'f', libelle: 'Femme' },
+  { code: 'm', libelle: 'Homme' },
+]
+
+const crud_columns = [
+  { data: (e) => e.nom, label: 'Nom et prénom' },
+  { data: (e) => dayjs(e.dateNaissance).format(dateFormatFr), label: 'Date de naissance' },
+  { data: (e) => e.licence, label: 'Licence' },
+  { data: (e) => dayjs(e.dateAdhesion).format(dateFormatFr), label: 'Date d\'adhésion' },
+  { data: (e) => e.groupes.map(g => g.libelle).join(', '), label: 'Groupe(s)' },
 ]
 
 const dateFormatFr = import.meta.env.VITE_DATE_FORMAT_FR
@@ -365,7 +319,6 @@ const formatter = {
 }
 
 const adherents = ref([])
-
 const delete_modal = ref(false)
 const deleteAdherentId = ref(0)
 const adherent = ref({})
@@ -401,18 +354,40 @@ const validation = ref({})
 const organismes = ref([])
 const listeGroupes = ref([])
 
-
 const route = useRoute()
-onMounted(async () => {
+
+function getTableData() {
+  return adherents.value.map((adherent) => {
+    return {
+      data: adherent,
+      editable: true,
+      removable: true,
+    }
+  })
+}
+
+function getGroupes() {
+  return listeGroupes.value.map((groupe) => {
+    return {
+      id: groupe.id,
+      label: groupe.libelle
+    }
+  })
+}
+
+ const fetchDonnees = async () => {
   organismeId.value = parseInt(route.params?.id)
   if (organismeId.value > 0) {
     adherents.value = await getAdherentsParOrganisme(organismeId.value)
-    listeGroupes.value = (await selectGroupes(organismeId.value)).map(g => ({id: g.id, libelle: g.libelle}))
+    listeGroupes.value = (await selectGroupes(organismeId.value)).map(g => ({ id: g.id, libelle: g.libelle }))
+  }
+}
 
-  }})
+onMounted(async () => await fetchDonnees())
+
+watch(() => route.params?.id, async() => await fetchDonnees())
 
 const startFrom = (value) => {
-  let date;
   if (value === null || value.length === 0) {
     return dayjs().date(1);
   }
@@ -420,9 +395,7 @@ const startFrom = (value) => {
   return dayjs(value[0], dateFormatFr).date(1);
 }
 
-
 const createAdherent = () => {
-
   afficherFormulaire.value = true
   readonly.value = false
   modal_title.value = 'Ajouter un Adhérent'
@@ -451,13 +424,12 @@ const cancel = () => {
   afficherFormulaire.value = false
 }
 
-const removeAdherent = (id) => {
-  deleteAdherentId.value = id
+const removeAdherent = (adherent) => {
+  deleteAdherentId.value = adherent.id
   modaleConfirmation.value = 'delete'
-  // delete_modal.value = true
 }
 
-const removeAdherentValidation = async (id) => {
+const removeAdherentValidation = async () => {
   try {
     await deleteAdherent(deleteAdherentId.value)
     toast.success('Suppression effectuée avec succès')
@@ -509,7 +481,7 @@ const mapApiToData = (adherent) => {
   dateNaissance.value = [dayjs(adherent.dateNaissance).format(dateFormatFr)]
   dateAdhesion.value = [dayjs(adherent.dateAdhesion).format(dateFormatFr)]
   dateFinAdhesion.value = [dayjs(adherent.dateFinAdhesion).format(dateFormatFr)]
-  groupes.value = adherent.groupes
+  groupes.value = adherent.groupes.map(groupe => groupe.id)
 }
 
 const afficherDate = (date) => dayjs(date).format(dateFormatFr)
@@ -529,11 +501,11 @@ const saveAdherent = () => {
     dateFinAdhesion: dateFinAdhesion.value.length ? dayjs(dateFinAdhesion.value[0], dateFormatFr).format(dateFormatBdd) : null,
     idOrganisme: organismeId.value,
     genre: genre.value,
-    groupes: groupes.value,
+    groupes: groupes.value.map(groupe => { return { id: groupe } }),
     numeroAdherent: numero.value,
     licence: licence.value,
     adresse: adresseSaisie ? {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
       pays: 'france',
@@ -545,7 +517,6 @@ const saveAdherent = () => {
       complement: complement.value,
     } : null
   }
-
 
   if (id_selected.value) {
     modaleConfirmation.value = 'edit'
@@ -564,12 +535,11 @@ const updateAdherent = async () => {
 
   modaleConfirmation.value = false
   afficherFormulaire.value = false
-
+  cancel()
   adherents.value = await getAdherentsParOrganisme(organismeId.value)
 }
 
 const addAdherent = async () => {
-
   try {
     await postAdherent(adherent)
     toast.success('Ajout effectué avec succès')
@@ -579,22 +549,31 @@ const addAdherent = async () => {
 
   modaleConfirmation.value = false
   afficherFormulaire.value = false
-
+  cancel()
   adherents.value = await getAdherentsParOrganisme(organismeId.value)
 }
 
 watchDebounced(
-    address,
-    async () => {
-      address_selected.value = {}
-      addresses.value = await getAdresses(address.value)
-      address_selected.value = addresses.value[0] ?? {}
-    },
-    { debounce: 500, maxWait: 1000 }
+  address,
+  async () => {
+    address_selected.value = {}
+    addresses.value = await getAdresses(address.value)
+    address_selected.value = addresses.value[0] ?? {}
+  },
+  { debounce: 500, maxWait: 1000 }
 )
 
 const addressSelect = () => {
-  address.value = address_selected.value.label
+  address.value = address_selected.value.name
 }
-
 </script>
+
+<style scoped>
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+</style>
