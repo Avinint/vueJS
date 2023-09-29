@@ -399,8 +399,8 @@ const deleteActivityValidation = async (zoneId, activiteId) => {
 }
 
 const editActiviteZone = async (i) => {
-  activiteZone_modal.value = true
   spinner_modal.value = true
+  activiteZone_modal.value = true
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
   modal_title.value =
