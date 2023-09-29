@@ -12,7 +12,7 @@
       :type-action="actionType"
       @close-modal-creneau="closeModal"
     />
-    <ModalDemande ref="modal_demande"/>
+    <ModalDetailDemande ref="modal_demande"/>
     <div
     class="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow"
     >
@@ -48,7 +48,7 @@ import { mapStores } from 'pinia'
 import { getZones } from '@api/zone.js'
 import Event from '@components/faPlanning/Event.vue'
 import EventDemande from '@components/faPlanning/EventDemande.vue'
-import ModalDemande from '@components/faPlanning/ModalDemande.vue'
+import ModalDetailDemande from '@components/faPlanning/ModalDetailDemande.vue'
 
 export default {
   components: {
@@ -57,7 +57,7 @@ export default {
     FullCalendar,
     Event,
     EventDemande,
-    ModalDemande
+    ModalDetailDemande
 },
   data() {
     return {
