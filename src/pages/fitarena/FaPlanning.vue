@@ -1,6 +1,6 @@
 <template>
   <div class="fa-planning">
-    <EditOptions ref="edit_options" @on-edit-single="editSingle" @on-edit-multiple="editRecurence"/>
+    <EditOptions ref="edit_options" @on-edit-single="editSingle" @on-edit-multiple="editRecurence" />
     <PlanningNavigation
       class="mb-6"
       :calendar-api="calendarApi"
@@ -36,22 +36,23 @@
 <script>
 import PlanningNavigation from '@components/faPlanning/navigation.vue' // PlanningNavigation as navigation is an html reserved tag
 import modalCreneau from '@components/faPlanning/modalCreneau.vue'
+import EditOptions from '@components/faPlanning/EditOptions.vue'
+import Event from '@components/faPlanning/Event.vue'
+import EventDemande from '@components/faPlanning/EventDemande.vue'
+
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
+
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
 import { useTypeCreneauStore } from '@stores/typeCreneau.js'
-import { mapStores } from 'pinia'
 import { getZones } from '@api/zone.js'
 
-import EditOptions from '@components/faPlanning/EditOptions.vue'
-import Event from '@components/faPlanning/Event.vue'
-import EventDemande from '@components/faPlanning/EventDemande.vue'
-
+import { mapStores } from 'pinia'
 
 export default {
   components: {
@@ -108,7 +109,6 @@ export default {
       redraw_key: 0
     }
   },
-
   watch: {
     async idFitArena(idActuel, avant) {
       if (idActuel !== avant) {
@@ -120,9 +120,8 @@ export default {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
     ...mapStores(useTypeCreneauStore),
-
     idFitArena() {
-       return this.$route.params.id
+      return this.$route.params.id
     }
   },
   async created() {
@@ -144,7 +143,7 @@ export default {
     this.calendarOptions.scrollTime = this.planningStore.scrollTime
   },
   methods: {
-    initZones: async function () {
+    async initZones () {
       this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
       this.calendarOptions.resources = [
         { id: this.zones[0].id, title: this.zones[0].libelle },
@@ -170,7 +169,7 @@ export default {
     eventClick(eventClickInfo) {
       this.actionType = 'edit'
       this.setSelectedCreneau(eventClickInfo.event)
-      if(eventClickInfo.event.extendedProps.recurrence)
+      if (eventClickInfo.event.extendedProps.recurrence)
         this.$refs.edit_options.open();
       else {
         this.creneauStore.recurrence = undefined;
@@ -183,7 +182,7 @@ export default {
     },
     editRecurence() {
       this.isModalCreneauOpen = true
-      if(eventClickInfo.event.extendedProps.event_type == 0) {
+      if (eventClickInfo.event.extendedProps.event_type == 0) {
         this.actionType = 'edit'
         this.setSelectedCreneau(eventClickInfo.event)
         this.isModalCreneauOpen = true
@@ -202,7 +201,7 @@ export default {
     setSelectedCreneau(fullCalendarCreneau) {
       this.creneauStore.setCreneau(fullCalendarCreneau)
     },
-    getWeekNumber: function (date) {
+    getWeekNumber(date) {
       var d = new Date(date)
       d.setHours(0, 0, 0, 0)
       d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))

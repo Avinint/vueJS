@@ -98,12 +98,12 @@
         couleur="secondary"
         @click="setSubmenu('advanced')"
       />
-      <!-- <FAButton
+      <FAButton
         v-if="creneauType && creneauStore.recurrence != undefined"
         label="Récurrence"
         couleur="secondary"
         @click="setSubmenu('recurence')"
-      /> -->
+      />
       <div v-if="submenu === 'advanced'" class="flex gap-5">
         <FAInput
           v-model="creneauStore.dureeActivite"
