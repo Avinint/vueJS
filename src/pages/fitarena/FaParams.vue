@@ -24,13 +24,13 @@
 
 <script setup>
 import Card from '../../components/common/Card.vue'
-import CardKeyMomentDuration from '../../components/molecules/CardKeyMomentDuration.vue'
-import CardReservationDuration from '../../components/molecules/CardReservationDuration.vue'
-import CardReservationAccess from '../../components/molecules/CardReservationAccess.vue'
-import CardReservationCancel from '../../components/molecules/CardReservationCancel.vue'
-import CardConditionVisualisationCreneaux from "@components/molecules/CardConditionVisualisationCreneaux.vue"
+import CardKeyMomentDuration from '../../components/FaParams/CardKeyMomentDuration.vue'
+import CardReservationDuration from '../../components/FaParams/CardReservationDuration.vue'
+import CardReservationAccess from '../../components/FaParams/CardReservationAccess.vue'
+import CardReservationCancel from '../../components/FaParams/CardReservationCancel.vue'
+import CardConditionVisualisationCreneaux from "@components/FaParams/CardConditionVisualisationCreneaux.vue"
 import CardModalSection from "@components/common/CardModalSection.vue"
-import CardConditionReservationCreneaux from "@components/molecules/CardConditionReservationCreneaux.vue"
+import CardConditionReservationCreneaux from "@components/FaParams/CardConditionReservationCreneaux.vue"
 import ValidationModal from "@components/common/ValidationModal.vue"
 
 import { postParametreFitArena } from '@api/parametreFitArena.js'
