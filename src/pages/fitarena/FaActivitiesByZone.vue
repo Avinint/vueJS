@@ -1,193 +1,205 @@
 <template>
-  <Card>
-    <h1>Activités par zone</h1>
-    <div class="p-10">
-      <Card v-for="(zoneFit, zoneIdx) of zones" class="mb-10 space-y-3">
-        <h2>{{ zoneFit.libelle }}</h2>
+  <Spinner v-if="spinner" :size="40" />
 
-        <div class="relative overflow-x-auto">
-          <table
-            class="w-full text-left text-sm text-gray-500"
-          >
+  <Card v-if="!spinner">
+    <h1 class="mb-6">Activités par zone</h1>
+    <div v-for="(zoneFit, zoneIdx) of zones" :key="`zone-`+ zoneIdx">
+      <CardModalSection :title="zoneFit.libelle" class="border border-gray-200 pr-6 py-6 rounded-lg mb-6">
+        <template #content>
+          <div class="pl-8">
+            <table class="w-full text-left text-sm text-gray-500 border border-gray-200 mb-6">
+              <thead
+                class="text-xs text-gray-700 bg-gray-200"
+              >
+                <tr>
+                  <th scope="col" class="px-6 py-3">Statut</th>
+                  <th scope="col" class="px-6 py-3">Libellé</th>
+                  <th scope="col" class="px-6 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(act, i) in zoneFit.zoneActivites" :key="`zoneAct-`+ i" class="bg-white">
+                  <td class="px-6 py-4 flex gap-4">
+                    <p class="w-16">{{ act.statut ? 'Actif' : 'Inactif' }}</p>
+                    <label class="relative inline-flex cursor-pointer items-center">
+                      <input
+                        v-model="act.actif"
+                        type="checkbox"
+                        value="true"
+                        class="peer sr-only"
+                        @change="modifieActivite(act)"
+                      />
+                      <div
+                        class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                      ></div>
+                      <span
+                        class="ml-3 text-sm font-medium text-gray-900"
+                      ></span>
+                    </label>
+                  </td>
+                  <td class="px-6 py-4">{{ act.activite.libelle }}</td>
+                  <td class="flex items-center justify-end p-3 gap-8">
+                    <Button
+                      test="TshowZoneActivite"
+                      borderless
+                      icon="info"
+                      couleur="secondary"
+                      @click="showActiviteZone(act.id)"
+                    />
+                    <Button
+                      test="TeditZoneActivite"
+                      borderless
+                      icon="edit"
+                      couleur="secondary"
+                      @click="editActiviteZone(act.id)"
+                    />
+                    <Button
+                      test="TdeleteZoneActivite"
+                      borderless
+                      icon="delete"
+                      couleur="secondary"
+                      @click="removeActiviteZone(zoneFit.id, act.activite.id)"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ButtonRight
+              id="TaddActivite"
+              label="Ajouter une activité à la zone"
+              icon="add"
+              couleur="danger"
+              @click="addActiviteZone(zoneIdx)"
+            />
+          </div>
+        </template>
+      </CardModalSection>
+    </div>
+
+    <form @submit.prevent="saveActiviteZone">
+      <Modal
+        v-if="activiteZone_modal"
+        :type="readonly ? 'visualiser' : 'classic'"
+        :title="modal_title"
+        @cancel="(activiteZone_modal = false), cancel()"
+        size="4xl"
+        confirmButtonText="Enregistrer"
+      >
+        <Spinner v-if="spinner_modal" />
+
+        <div v-if="!spinner_modal" class="pl-4">
+          <table id="modal" class="w-full text-left text-sm mb-4 text-gray-500 border border-gray-200">
             <thead
-              class="text-xs uppercase text-gray-700"
+              class="hidden"
             >
               <tr>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3">Actif</th>
-                <th scope="col" class="px-6 py-3">Libellé</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(act, i) in zoneFit.zoneActivites" class="bg-white">
-                <td class="flex items-center justify-center p-3">
-                  <Button
-                    test="TdeleteClient"
-                    borderless
-                    icon="delete"
-                    couleur="secondary"
-                    @click="removeActiviteZone(zoneFit.id, act.activite.id)"
-                  />
-                  <Button
-                    test="TeditClient"
-                    borderless
-                    icon="edit"
-                    couleur="secondary"
-                    @click="editActiviteZone(act.id)"
-                  />
-                </td>
-                <td class="px-6 py-4">
-                  <label
-                    class="relative inline-flex cursor-pointer items-center"
+              <tr>
+                <td>Activités</td>
+                <td>
+                  <select
+                    id="select_activites"
+                    v-model="activite_selected"
+                    :disabled="readonly || activiteZone_selected"
+                    class="rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                   >
-                    <input
-                      v-model="act.actif"
-                      type="checkbox"
-                      value="true"
-                      class="peer sr-only"
-                      @change="modifieActivite(act)"
-                    />
-                    <div
-                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
-                    ></div>
-                    <span
-                      class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    ></span>
-                  </label>
+                    <option v-for="act of activites" :value="act.id" :key="act.id">
+                      {{ act.libelle }}
+                    </option>
+                  </select>
                 </td>
-                <td class="px-6 py-4">{{ act.activite.libelle }}</td>
-
-                <td class="px-6 py-4">
-                  <Button
-                    label="Détails"
-                    couleur="secondary"
-                    @click="showActiviteZone(act.id)"
+              </tr>
+              <tr>
+                <td>Config des équipements motorisés</td>
+                <td>
+                  <InputRadio
+                    v-model="mode_equipements_motorises"
+                    :disabled="readonly"
+                    name="mode_equipements_motorises"
+                    :list="modes_motorise"
                   />
+                </td>
+              </tr>
+              <tr>
+                <td >Mode d'écran géant et d'interface de vidéo et scoring</td>
+                <td>
+                  <InputRadio
+                    v-model="mode_ecran_interface"
+                    :default="{
+                      label: 'Aucun',
+                      value: 0,
+                    }"
+                    :disabled="readonly == true ? true : false"
+                    name="mode_ecran_interface"
+                    :list="modes_numerique"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Division en sous-zones</td>
+                <td class="flex items-center text-black">
+                  <div
+                    class="mr-4 flex h-8 w-8 items-center justify-center rounded-md bg-slate-300"
+                  >
+                    {{ sous_zones.length }}
+                  </div>
+                  <p class="text-sm text-blue-600">
+                    Sous-zone : surface réservable par les utilisateurs (= terrain)
+                  </p>
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-        <Button
-          id="TaddActivite"
-          label="Ajouter une Activité"
-          icon="add"
-          couleur="secondary"
-          @click="addActiviteZone(zoneIdx)"
-        />
-      </Card>
-
-      <form @submit.prevent="saveActiviteZone">
-        <Modal
-          v-if="activiteZone_modal"
-          :type="readonly ? 'visualiser' : 'classic'"
-          :title="modal_title"
-          @cancel=";(activiteZone_modal = false), cancel()"
-        >
-          <div>
-            <label for="select_activites" class="mr-4">Activité</label>
-            <select
-              id="select_activites"
-              v-model="activite_selected"
-              :disabled="readonly || activiteZone_selected"
-              class="w-3/12 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option v-for="act of activites" :value="act.id">
-                {{ act.libelle }}
-              </option>
-            </select>
-          </div>
-
-          <div class="flex items-center">
-            <div class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-              {{ parametre_config_equipements_motorises?.libelle }}
-            </div>
-            <div>
-              <InputRadio
-                v-model="mode_equipements_motorises"
-                :disabled="readonly"
-                name="mode_equipements_motorises"
-                :list="modes_motorise"
-              />
-            </div>
-          </div>
-
-          <div class="flex items-center">
-            <div class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
-              {{ parametre_mode_ecran_interface_video_scoring?.libelle }}
-            </div>
-            <div>
-              <InputRadio
-                v-model="mode_ecran_interface"
-                :default="{
-                  label: 'Aucun',
-                  value: 0,
-                }"
-                :disabled="readonly == true ? true : false"
-                name="mode_ecran_interface"
-                :list="modes_numerique"
-              />
-            </div>
-          </div>
-
-          <div class="flex items-center">
-            <div class="mr-4">Division en sous-zones</div>
-            <div
-              class="mr-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-300"
-            >
-              {{ sous_zones.length }}
-            </div>
-            <div class="text-sm text-blue-300">
-              Sous-zone : surface réservable par les utilisateurs (= terrain)
-            </div>
-          </div>
-
           <NewSousZone
             v-if="!readonly"
             @valid-sous-zone="newSousZone($event)"
           />
-
-          <template v-for="(sous_zone, idx) in sous_zones">
-            <div
-              v-if="!sous_zone.toRemove"
-              class="rounded-md border border-gray-300 p-4"
-            >
-              <div>Sous-Zone {{ sous_zone.libelle }}</div>
-              <div>
-                <ParamSousZone
-                  v-if="zoneEquipementsByType[zone_selected]"
-                  :i="idx"
-                  :sous-zone-id="sous_zone.id"
-                  :parametres="sousZoneParametres"
-                  :parametre-valeurs="
-                    getParametreValeurs(sous_zone, activite_selected)
-                  "
-                  :zone-equipements-by-type="
-                    zoneEquipementsByType[zone_selected]
-                  "
-                  :sous-zone-equipements="
-                    getEquipementsSousZone(sous_zone, activite_selected)
-                  "
-                  :readonly="readonly"
-                  @change-param-value="changeParamValueSousZone($event)"
-                  @change-equipements="changeEquipementsSousZone($event)"
-                />
-              </div>
-              <div>
+          <template v-for="(sous_zone, idx) in sous_zones" :key="`sous-zone_`+ idx">
+            <CardModalSection v-if="!sous_zone.toRemove" :title="`Sous-zone ` + sous_zone.libelle" :params="true" class="mt-8">
+              <template #topParams>
                 <Button
                   v-if="!readonly"
                   borderless
                   icon="delete"
                   couleur="secondary"
                   @click="removeSousZone(idx)"
+                  class="ml-10"
                 />
-              </div>
-            </div>
+              </template>
+              <template #content>
+                <div>
+                  <div>
+                    <ParamSousZone
+                      v-if="zoneEquipementsByType[zone_selected]"
+                      :i="idx"
+                      :sous-zone-id="sous_zone.id"
+                      :parametres="sousZoneParametres"
+                      :parametre-valeurs="
+                        getParametreValeurs(sous_zone, activite_selected)
+                      "
+                      :zone-equipements-by-type="
+                        zoneEquipementsByType[zone_selected]
+                      "
+                      :sous-zone-equipements="
+                        getEquipementsSousZone(sous_zone, activite_selected)
+                      "
+                      :readonly="readonly"
+                      @change-param-value="changeParamValueSousZone($event)"
+                      @change-equipements="changeEquipementsSousZone($event)"
+                    />
+                  </div>
+                </div>
+              </template>
+            </CardModalSection>
           </template>
-        </Modal>
-      </form>
-    </div>
-
+        </div>
+      </Modal>
+    </form>
+    
     <form
       @submit.prevent="deleteActivityValidation(deleteZoneId, deleteActivityId)"
     >
@@ -216,13 +228,16 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 
 import Card from '../../components/common/Card.vue'
+import Spinner from '../../components/common/Spinner.vue'
 import Modal from '../../components/common/Modal.vue'
+import CardModalSection from '../../components/common/CardModalSection.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
+import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
 import Select from '../../components/common/Select.vue'
 import InputRadio from '../../components/common/InputRadio.vue'
@@ -271,6 +286,8 @@ const deleteZoneId = ref(0)
 const edit_modal = ref(false)
 const add_modal = ref(false)
 const zoneTemp = ref({})
+const spinner = ref(false)
+const spinner_modal = ref(false)
 
 async function fetchDonnees() {
   zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
@@ -279,6 +296,7 @@ async function fetchDonnees() {
 }
 
 onMounted(async () => {
+  spinner.value = true
   await fetchDonnees();
   modes_motorise.value = await getModes({ 'categoryTypeEquipement.code': 'motorise' })
   modes_numerique.value = await getModes({ 'categoryTypeEquipement.code': 'numerique' })
@@ -292,6 +310,7 @@ onMounted(async () => {
   let data = await getTypeZone(1, '&code=sous_zone')
   id_type_sous_zone.value = data[0]?.id
   await fetchSousZoneParametres()
+  spinner.value = false
 })
 
 watch(() => props.id, () => fetchDonnees())
@@ -380,20 +399,24 @@ const deleteActivityValidation = async (zoneId, activiteId) => {
 }
 
 const editActiviteZone = async (i) => {
+  activiteZone_modal.value = true
+  spinner_modal.value = true
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
   modal_title.value =
     'Modifier une activité de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = false
-  activiteZone_modal.value = true
+  spinner_modal.value = false
 }
 
 const showActiviteZone = async (i) => {
+  activiteZone_modal.value = true
+  spinner_modal.value = true
   const activiteZoneTemp = await getActiviteByZone(i)
   await mapApiToData(activiteZoneTemp)
   modal_title.value = 'Information de la zone ' + activiteZoneTemp.zone.libelle
   readonly.value = true
-  activiteZone_modal.value = true
+  spinner_modal.value = false
 }
 
 // récupération de la liste des sous-zones d'une zone+activité
@@ -537,6 +560,7 @@ const removeSousZone = async (index) => {
   const sousZone = sous_zones.value[index]
   // on peut supprimer dans la liste une zone pas encore créée en base
   if (sousZone.isNew) {
+    sousZone.toRemove = true
     sous_zones.value.splice(index, 1)
   } else {
     sousZone.toRemove = true
@@ -677,3 +701,23 @@ const changeEquipementsSousZone = (e) => {
   })
 }
 </script>
+
+<style scoped>
+table#modal tr {
+  font-weight: 700;
+  border: 1px solid lightgray;
+}
+table#modal tr > td:first-of-type {
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+  border-right: 1px solid lightgray;
+  color: #000;
+}
+
+table#modal tr > td {
+  padding: 0.5rem;
+}
+
+table#modal {
+  border-radius: 30px;
+}
+</style>

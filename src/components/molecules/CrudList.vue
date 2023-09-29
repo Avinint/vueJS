@@ -6,10 +6,9 @@
         <div class="mt-4 w-full">
           <slot name="recherche" v-if="canFilter">
             <Input placeholder="Recherche"/>
-            <Button label="Filtrer" couleur="secondary"/>
+            <Button label="Filtrer" couleur="secondary" />
           </slot>
         </div>
-
       </div>
       <ButtonRight v-if="canCreate || canAll" id="TaddElement" :label="`Ajouter un${fem ? 'e' : ''} ` + entity" icon="add"
         couleur="danger" @click="emits('entity:new')" />
@@ -30,6 +29,8 @@ import Card from '@components/common/Card.vue'
 import Input from '@components/common/Input.vue';
 import LabelText from '@components/common/LabelText.vue'
 import Table, { type FaTableColumnData, type FaTableRow } from '@components/common/Table.vue'
+
+import { defineProps, defineEmits } from "vue";
 
 defineProps<{
   entity: string;
@@ -54,7 +55,6 @@ function entity_edit(entity: unknown) {
 function entity_read(entity: unknown) {
   emits('entity:read', entity)
 }
-
 
 function entity_remove(entity: unknown) {
   emits('entity:remove', entity)

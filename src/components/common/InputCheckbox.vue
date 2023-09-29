@@ -1,15 +1,15 @@
 <template>
-  <templace v-for="elt in props.elements">
+  <template v-for="elt in props.elements" :key="elt.id">
     <input
-        :id="idPrefix + elt.id"
-        v-model="modelValue"
-        type="checkbox"
-        :disabled="props.disabled"
-        :value="elt.id"
-        :name="name"
+      :id="idPrefix + elt.id"
+      v-model="modelValue"
+      type="checkbox"
+      :disabled="props.disabled"
+      :value="elt.id"
+      :name="name"
     />
     <label :for="idPrefix + elt.id">{{ elt.libelle }}</label>
-  </templace>
+  </template>
 </template>
 
 <script setup>
@@ -47,11 +47,13 @@ input[type='checkbox'] + label {
   margin-right: 0.5em;
   cursor: pointer;
   padding: 0.25em 1em;
-  border: 1px solid #ddd;
+  border: 1px solid rgb(2 132 199 / var(--tw-bg-opacity));
   border-radius: 0.5em;
+  color: rgb(2 132 199 / var(--tw-bg-opacity));
 }
 
 input[type='checkbox']:checked + label {
-  background-color: #ddd;
+  background-color: rgb(2 132 199 / var(--tw-bg-opacity));
+  color: #fff;
 }
 </style>

@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
+import { defineProps, withDefaults } from 'vue'
 
   const ICON = {
     search: '<svg aria-hidden="true" class="h-5 w-5 currentColor0" fill="none" stroke="currentColor" viewBox="0 0 24 24"xmlns="http://www.w3.org/2000/svg">' +
