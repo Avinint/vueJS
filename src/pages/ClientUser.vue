@@ -108,7 +108,8 @@ import Button from '../components/common/Button.vue'
 import Card from '../components/common/Card.vue'
 import Input from '../components/common/Input.vue'
 
-import { getUsers, patchUser } from '../api/user.js'
+import { getClientUsers, patchUser } from '../api/user.js'
+import { useRoute } from 'vue-router'
 import { onMounted, ref } from "vue"
 import { toast } from "vue3-toastify";
 
@@ -117,7 +118,7 @@ const page = ref(1)
 const userSearch = ref('')
 
 onMounted(async () => {
-  users.value = await getUsers(1)
+  users.value = await getClientUsers(1, useRoute().params.id)
   users.value.sort(function compare(a, b) {
     if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
       return -1
@@ -187,7 +188,7 @@ const nextPage = async () => {
 }
 
 const searchUser = async () => {
-  users.value = await getUsers(1, '&search=' + userSearch.value)
+  users.value = await getClientUsers(1, '&search=' + userSearch.value)
 }
 </script>
 

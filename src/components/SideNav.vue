@@ -64,7 +64,6 @@ import SideNavItem from "./SideNavItem.vue"
 import HomeSVG from "@components/svg/HomeSVG.vue";
 import CitySVG from "@components/svg/CitySVG.vue";
 import ChevronSVG from "@components/svg/ChevronSVG.vue";
-import Link from '../types/Link'
 
 import { useUserStore } from "@/stores/user.js";
 import { useMenuStore } from "@/stores/menu.js";
@@ -144,9 +143,8 @@ const clientLinks = computed(
         sub_links: [
           {
             label: 'Utilisateurs',
-            path: '/users',
+            path: `/clients/${cli.id}/users`,
             icon: 'user.svg'
-            // path: `/client/${cli.id}/utilisateurs`
           },
           // {
           //   label: 'Demandes en attente',
