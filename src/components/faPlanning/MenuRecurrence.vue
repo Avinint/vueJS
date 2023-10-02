@@ -67,7 +67,7 @@
           v-model="repetition_date"
           :disabled="repetition_mode != 'date'"
           :key="date_key"
-          :formatter="{ date: 'DD / MM / YYYY' }"
+          :formatter="{ date: 'DD / MM / YYYY', month: 'MMMM' }"
           class="w-fit"
           required
         />
@@ -96,10 +96,12 @@
 <script setup lang="ts">
 import FaInput from '@components/common/Input.vue'
 import InputSelect from '@components/common/InputSelect.vue'
+
 import { useCreneauStore } from '@stores/creneau'
+import { getDateForInput } from '../../services/date_service'
+
 import { onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
-import { getDateForInput } from '../../services/date_service'
 
 const creneau_store = useCreneauStore()
 

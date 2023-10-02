@@ -25,6 +25,12 @@
         <p class="label-text">Nombre de persones attendues</p>
         <Input class="input-count" v-model="form.people_count" />
       </div>
+      <Button
+        label="Récurrence"
+        couleur="secondary"
+        @click="submenu = !submenu"
+      />
+      <MenuRecurrence v-if="submenu" class="mt-4" />
       <HeaderModal text="ZONES" class="my-8" />
       <InputOptions :options="props.zones" v-model="form.zones" :value="props.libelle" />
       <CardModalSection title="COMMENTAIRE" class="my-8">
@@ -175,20 +181,28 @@ import ValidationModal from '@components/common/ValidationModal.vue'
 import CardModalSection from '@components/common/CardModalSection.vue'
 import HeaderModal from '@components/common/HeaderModal.vue'
 import TimeRange from '@components/molecules/TimeRange.vue'
+import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
 
 import type { DateSelectArg, EventClickArg } from '@fullcalendar/core'
 
 import { extractHour, parseDateToInput } from '../../services/date_service'
 import { makeDemandeEditContract } from '../../services/planning/creneau_service'
-import { postCreneauVerifDemande, postCreneauDemande, updateCreneauDemande, deleteCreneauDemande } from '@api/creneau'
+import {
+  postCreneauVerifDemande,
+  postCreneauDemande,
+  updateCreneauDemande,
+  deleteCreneauDemande
+} from '@api/creneau'
 import { usePlanningStore } from '@stores/planning.ts'
+import { useCreneauStore } from '@stores/creneau'
 
 import { reactive, ref, defineProps } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
 
-const route = useRoute();
+const creneau_store = useCreneauStore()
+const route = useRoute()
 const verifModal = ref(false)
 const verifCreneaux = ref({})
 const contract = ref({})
@@ -197,6 +211,7 @@ const errorMessage = ref('')
 const eventId = ref(0)
 const commentaires = ref([])
 const deleteDemande_modal = ref(false)
+const submenu = ref(false)
 
 const props = defineProps({
   zones: Object
@@ -209,7 +224,8 @@ const default_form_values = {
   end_time: '',
   people_count: 0,
   zones: [],
-  commentaire: ''
+  commentaire: '',
+  recurrence: {}
 }
 
 const form = reactive<{
@@ -220,6 +236,7 @@ const form = reactive<{
   people_count: number,
   zones: number[],
   commentaire: string,
+  recurrence?: object
 }>({ ...default_form_values })
 
 defineExpose({ create, edit })
@@ -235,6 +252,7 @@ function create(event: DateSelectArg) {
   date.value = parseDateToInput(event.start);
   form.start_time = extractHour(event.start)
   form.end_time = extractHour(event.end)
+  form.recurrence = default_form_values.recurrence
 }
 function edit(event: EventClickArg) {
   const e = event.event._def
@@ -248,6 +266,7 @@ function edit(event: EventClickArg) {
   date.value = dayjs(e.extendedProps.dateDebut).format('DD-MM-YYYY');
   form.start_time = dayjs(e.extendedProps.dateDebut).format('HH:mm')
   form.end_time = dayjs(e.extendedProps.dateSortie).format('HH:mm')
+  // form.recurrence = 
 }
 
 const submitDemande = async() => {
@@ -269,6 +288,24 @@ const submitDemande = async() => {
   const month = date.value.split('-')[1]
   const year = date.value.split('-')[2]
   form.date = `${year}-${month}-${day}`
+
+  if (creneau_store.recurrence) {
+    form.recurrence = {
+      dateDebut: creneau_store.recurrence.dateDebut,
+      dateFin: creneau_store.recurrence.dateFin,
+      maxOccurrences: creneau_store.recurrence.maxOccurrences,
+      recurrenceJoursSemaines: creneau_store.recurrence.recurrenceJoursSemaine,
+      recurrenceOrdinaux: creneau_store.recurrence.recurrenceOrdinaux,
+      recurrenceSemainesMois: creneau_store.recurrence.recurrenceSemainesMois,
+      recurrenceType: creneau_store.recurrence.recurrenceType,
+      separation: creneau_store.recurrence.separation
+    }
+
+    if (creneau_store.recurrence.maxOccurrences == 0 && creneau_store.recurrence.dateFin == "") {
+      form.recurrence = undefined
+    }
+  }
+  
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
   
   if (state.value == 'edit') {
@@ -279,6 +316,7 @@ const submitDemande = async() => {
     verifModal.value = true;
   }
     state.value = 'closed';
+    submenu.value = false
 }
 
 const submitDemandeValidation = async () => {
