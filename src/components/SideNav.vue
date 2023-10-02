@@ -74,7 +74,7 @@ import { computed, onMounted } from "vue"
 const { toggleOrganisme, toggleFitArena, toggleClient, fetchMenu } = useMenuStore()
 const { isAdmin, isGestOrg } = useUserStore();
 
-const imgSrc = "/src/assets/"
+const imgSrc = "src/assets/"
 
 onMounted(async () => {
   await fetchMenu()
