@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <section class="flex flex-col">
-      <h3 class="nav-title text-sm font-semibold text-black">
+      <h3 class="nav-title text-sm text-black mb-4">
         <slot name="title"></slot>
       </h3>
       <div class="flex items-center">
@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<style scopped>
+<style scoped>
 button {
   @apply mr-4;
 }

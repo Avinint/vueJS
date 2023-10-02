@@ -1,37 +1,15 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
-export const getParametres = async (page = 1) => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametres?page=${page}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
+export const getParametres = async (query = {page: 1}) => {
+  return await get(`/api/parametres`, query)
 }
 
-export const getParametresById = async (id) => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametres/${id}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
-}
+export const getParametresParFitArena = async (id) => await get(`/api/fit_arenas/${id}/parametres`)
+
+
+export const getParametresById = async (id) => await get(`/api/parametres/${id}`)
 
 export const postParametres = async (param) => {
   const response = await $fetch(
@@ -41,7 +19,7 @@ export const postParametres = async (param) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(param),
     }
@@ -58,7 +36,7 @@ export const updateParametres = async (param, id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(param),
     }
@@ -75,7 +53,7 @@ export const deleteParametres = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -91,7 +69,7 @@ export const patchParametres = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

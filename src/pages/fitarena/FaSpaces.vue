@@ -1,40 +1,22 @@
 <template>
-  <Card>
+  <Card class="space-y-3">
     <h1>Espaces</h1>
-    <span class="text-sm font-bold"
-      >Espaces : Ensemble de sous espace dont l'accès est contrôlé.</span
-    >
+
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="text-xs text-gray-700 bg-gray-200"
         >
           <tr>
+            <th scope="col" class="px-6 py-3">Statut</th>
+            <th scope="col" class="px-6 py-3">Espace</th>
             <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">Actif</th>
-            <th scope="col" class="px-6 py-3">Libellé</th>
-            <th scope="col" class="px-6 py-3">Ordre</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(esp, i) in espaces" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
-              <Button
-                test="TdeleteClient"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeEspace(esp.id)"
-              />
-              <Button
-                test="TeditClient"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editEspace(i)"
-              />
-            </td>
-            <td class="px-6 py-4">
+          <tr v-for="(esp, i) in espaces" :key="`spaces-`+ i" class="bg-white">
+            <td class="px-6 py-4 flex gap-4">
+              <p class="w-16">{{ esp.actif ? 'Actif' : 'Inactif' }}</p>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input
                   v-model="esp.actif"
@@ -44,27 +26,42 @@
                   @change="modifieEspace(esp)"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
                 ></div>
                 <span
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  class="ml-3 text-sm font-medium text-gray-900"
                 ></span>
               </label>
             </td>
             <td class="px-6 py-4">{{ esp.libelle }}</td>
-            <td class="px-6 py-4">{{ esp.ordre }}</td>
-            <td class="px-6 py-4">
-              <Button label="Détails" couleur="secondary" @click="showEspace(i)" />
+            <td class="flex items-center justify-end p-3 gap-10">
+              <div @click="showEspace(i)" class="cursor-pointer px-3 py-2">
+                <img src="/src/assets/info.svg" />
+              </div>
+              <Button
+                test="TeditEspace"
+                borderless
+                icon="edit"
+                couleur="secondary"
+                @click="editEspace(i)"
+              />
+              <Button
+                test="TdeleteEspace"
+                borderless
+                icon="delete"
+                couleur="secondary"
+                @click="removeEspace(esp.id)"
+              />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <Button
+    <ButtonRight
       id="TaddEspace"
       label="Ajouter un espace"
-      couleur="secondary"
       icon="add"
+      couleur="danger"
       @click="addEspace"
     />
   </Card>
@@ -75,59 +72,19 @@
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modal_title"
       @cancel="espace_modal = false"
+      confirm-button-text="Enregistrer"
     >
-      <div class="flex items-center">
-        <Input
-          id="TEspaceLibelle"
-          v-model="espace.libelle"
-          :readonly="readonly"
-          :type="'text'"
-          label="Nom"
-          :required="true"
-          class="w-full"
-        />
-      </div>
-      <div class="flex items-center">
-        <Input
-          v-if="!readonly"
-          id="TEspaceOrdre"
-          v-model="espace.ordre"
-          :type="'number'"
-          label="Ordre"
-          :required="true"
-          class="w-full"
-        />
-        <Input
-          v-else
-          id="TEspaceOrdre"
-          v-model="espace.ordre"
-          readonly
-          :type="'text'"
-          label="Ordre"
-          class="w-full"
-        />
-      </div>
-      <div class="flex items-center">
-        <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Actif :
-        </span>
-        <label class="relative inline-flex w-full cursor-pointer items-center">
-          <input
-            v-model="espace.actif"
-            :disabled="readonly == true ? true : false"
-            type="checkbox"
-            value="true"
-            class="peer sr-only"
+      <div class="pl-4">
+        <div class="flex items-center pb-6">
+          <Input
+            id="TEspaceLibelle"
+            v-model="espace.libelle"
+            :readonly="readonly"
+            type="text"
+            label="Nom"
+            required
           />
-          <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-          ></div>
-          <span
-            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-          ></span>
-        </label>
-      </div>
-      <div>
+        </div>
         <AjoutEquipements
           ref="ajoutEquipementsNume"
           type-equipement="numerique"
@@ -135,8 +92,6 @@
           :zone="id_selected"
           :readonly="readonly"
         ></AjoutEquipements>
-      </div>
-      <div>
         <AjoutEquipements
           ref="ajoutEquipementsMoto"
           type-equipement="motorise"
@@ -144,6 +99,7 @@
           :zone="id_selected"
           :readonly="readonly"
         ></AjoutEquipements>
+        <MentionChampsObligatoires />
       </div>
     </Modal>
   </form>
@@ -173,6 +129,7 @@ import Card from '../../components/common/Card.vue'
 import Modal from '../../components/common/Modal.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
+import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import {
@@ -187,8 +144,9 @@ import {
   postZoneEquipement,
 } from '../../api/zoneEquipement.js'
 import { getTypeZone } from '../../api/typeZone.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
 
 const props = defineProps(['id'])
 
@@ -210,13 +168,16 @@ const espace_selected = ref({})
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
+const fetchDonnees = async() => {
+  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
+}
+
 onMounted(async () => {
-  espaces.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+ await fetchDonnees()
   typeZones.value = await getTypeZone()
 })
+
+watch(() => props.id, async() => await fetchDonnees())
 
 const addEspace = () => {
   cancel()
@@ -241,10 +202,7 @@ const deleteSpaceValidation = async (id) => {
   delete_modal.value = false
   deleteSpaceId.value = 0
   cancel()
-  espaces.value = await getZones(
-    '1',
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   espace_modal.value = false
 }
 
@@ -315,10 +273,7 @@ const updateSpaceValidation = async () => {
   edit_modal.value = false
   espace_modal.value = false
   cancel()
-  espaces.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
@@ -335,16 +290,14 @@ const addSpaceValidation = async () => {
   add_modal.value = false
   espace_modal.value = false
   cancel()
-  espaces.value = await getZones(
-    1,
-    '&typeZone.code=espace&fitArena=' + props.id
-  )
+  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
 const cancel = () => {
   espace.value = {}
   espace_selected.value = {}
+  espTemp.value = {}
   readonly.value = false
   id_selected.value = 0
 }

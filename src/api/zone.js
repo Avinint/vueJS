@@ -1,23 +1,10 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
-export const getZones = async (page = 1, query = '') => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/zones?page=${page}${query}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
-}
+export const getZones = async (query = {}) => await get('/api/zones', {page: 1,  ...query })
 
-export const getZone = async (id = 1) => {
+export const getZone = async (id) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/zones/${id}`,
     {
@@ -25,7 +12,7 @@ export const getZone = async (id = 1) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -39,7 +26,7 @@ export const postZones = async (fa) => {
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
     body: JSON.stringify(fa),
   })
@@ -56,7 +43,7 @@ export const patchZones = async (zone, id) => {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
         //'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(zone),
     }
@@ -74,7 +61,7 @@ export const updateZones = async (zone, id) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(zone),
     }
@@ -91,7 +78,7 @@ export const deleteZones = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

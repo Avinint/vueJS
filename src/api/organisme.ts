@@ -1,19 +1,20 @@
+import { useStorage } from '@vueuse/core'
 import {defaultHeaders, get} from './api.js'
 import $fetch from './refreshToken.js'
 
 export const selectOrganismes = async () => {
-  return await get(`${import.meta.env.VITE_API_URL}/api/select/organismes`)
+  return await get('/api/select/organismes')
 }
 
-export async function getOrganismes(page = 1, query = ''): Promise<Organisme[]> {
+export async function getOrganismes(page = 1, query = '&order=asc'): Promise<Organisme[]> {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/organismes?page=${page}${query}`,
     {
       method: 'get',
       headers: {
         ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       }
     }
   )
@@ -21,9 +22,12 @@ export async function getOrganismes(page = 1, query = ''): Promise<Organisme[]> 
   return response.json()
 }
 
-export async function getOrganismesParClient(id: number): Promise<Organisme[]> {
+export async function getOrganismesSelect(query = {}): Promise<Organisme[]> {
+    return await get('/api/select/organismes', { page: 1, ...query })
+}
 
-    return await get(`${import.meta.env.VITE_API_URL}/api/clients/${id}/organismes`)
+export async function getOrganismesParClient(id: number): Promise<Organisme[]> {
+  return await get(`/api/clients/${id}/organismes`)
 }
 
 export const postOrganismes = async (organisme) => {
@@ -33,8 +37,8 @@ export const postOrganismes = async (organisme) => {
       method: 'post',
       headers: {
         ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(organisme.value),
     }
@@ -51,8 +55,8 @@ export const updateOrganismes = async (organisme, id) => {
       headers: {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(organisme.value),
     }
@@ -68,8 +72,8 @@ export const deleteOrganismes = async (id) => {
       method: 'delete',
       headers: {
         ...defaultHeaders,
-        'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

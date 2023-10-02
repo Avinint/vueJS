@@ -1,4 +1,6 @@
 import { createWebHistory, createRouter } from 'vue-router'
+import { useUserStore } from './stores/user.js'
+
 import Login from './pages/login.vue'
 import Admin from './pages/admin.vue'
 import User from './pages/user.vue'
@@ -6,10 +8,12 @@ import FitArena from './pages/fitArena.vue'
 import FitArenas from './pages/fitArenas.vue'
 import Client from './pages/client.vue'
 import FaParams from './pages/fitarena/FaParams.vue'
+import FaConfig from './pages/fitarena/FaConfig.vue'
 import FaSpaces from './pages/fitarena/FaSpaces.vue'
 import FaWeb from './pages/fitarena/FaWeb.vue'
 import FaSubSpaces from './pages/fitarena/FaSubSpaces.vue'
 import FaActualities from './pages/fitarena/FaActualities.vue'
+import FaSupervision from './pages/fitarena/FaSupervision.vue'
 import FaZones from './pages/fitarena/FaZones.vue'
 import FaActivitiesByZone from './pages/fitarena/FaActivitiesByZone.vue'
 import FaActivities from './pages/fitarena/FaActivities.vue'
@@ -18,11 +22,10 @@ import FaMotorEquipements from './pages/fitarena/FaMotorEquipements.vue'
 import FaPlanning from './pages/fitarena/FaPlanning.vue'
 import FaOrganisme from './pages/FaOrganisme.vue'
 import OgPlanning from './pages/organisme/OgPlanning.vue'
-
-import { useUserStore } from './stores/user.js'
 import Animateur from '@pages/animateur.vue'
 import Adherent from '@pages/Adherent.vue'
 import AdherentGroupe from "@pages/AdherentGroupe.vue";
+import FaReservations from "@pages/fitarena/FaReservations.vue";
 
 const routes = [
   {
@@ -46,7 +49,7 @@ const routes = [
       breadcrumbs: [
         {
           link: 'users',
-          label: 'Utilisaterus',
+          label: 'Utilisateurs',
         },
       ],
     },
@@ -74,6 +77,22 @@ const routes = [
     },
     children: [
       {
+        path: 'config',
+        component: FaConfig,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
+            /**{
+              label: '',
+              link: 'fitarena/',
+            },**/
+          ],
+        },
+      },
+      {
         path: 'planning',
         component: FaPlanning,
         meta: {
@@ -86,6 +105,18 @@ const routes = [
               label: '',
               link: 'fitarena/',
             },**/
+          ],
+        },
+      },
+      {
+        path: 'reservations',
+        component: FaReservations,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
           ],
         },
       },
@@ -247,6 +278,18 @@ const routes = [
               label: '',
               link: 'fitarena/',
             },**/
+          ],
+        },
+      },
+      {
+        path: 'supervision',
+        component: FaSupervision,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
           ],
         },
       },

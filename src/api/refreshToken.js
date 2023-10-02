@@ -1,8 +1,9 @@
 import { defaultHeaders } from './api.js'
 import { parseJwt, useUserStore } from '../stores/user.js'
+import { useStorage } from '@vueuse/core'
 
 const getTokenExpiration = () => {
-  let exp = parseJwt(localStorage.getItem('token')).exp
+  let exp = parseJwt(useStorage('token', '').value).exp
   return Math.floor(Date.now() / 1000) < exp ?? false
 }
 

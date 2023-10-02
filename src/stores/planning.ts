@@ -3,8 +3,11 @@ import { getPlanning } from '@api/planning'
 import dayjs from 'dayjs'
 import { getActivites } from '@api/activite'
 import {
+  EventType,
   default_planning,
   parseCreneauToEvent,
+  parseDemandeToEvent,
+  parseCreneauAnonymeToEvent
 } from '../services/planning/planning_service'
 
 export const usePlanningStore = defineStore('planning', {
@@ -23,10 +26,10 @@ export const usePlanningStore = defineStore('planning', {
       return state.filters.zone
     },
     getCurrentDateStart(state) {
-      return dayjs(state.currentDateStart).format('D MMMM')
+      return dayjs(state.currentDateStart).format('YYYY-MM-DD')
     },
     getCurrentDateEnd(state) {
-      return dayjs(state.currentDateEnd - 1).format('D MMMM YYYY')
+      return dayjs(state.currentDateEnd - 1).format('YYYY-MM-DD')
     },
     getDebutOfWeek(state) {
       const firstDayOfWeek = new Date(
@@ -47,16 +50,38 @@ export const usePlanningStore = defineStore('planning', {
       return state.activites
     },
     getCreneauxEvents(state): CalendarEvent[] {
-      return state.creneaux.map((creneau) => parseCreneauToEvent(creneau))
+      const creneaux = state.creneaux.map((creneau) =>
+        parseCreneauToEvent(creneau)
+      )
+      
+      const demandes = state.demandes.map((demande) => 
+        parseDemandeToEvent(demande)
+      )
+
+      const output = creneaux.concat(demandes)
+      return output
     },
     getCreneauxOrganismesEvents(state): CalendarEvent[] {
-      const output: CalendarEvent[] = [];
-      for(const creneau of state.creneaux) {
-        if(creneau.type == 2) {
-          output.push(parseCreneauToEvent(creneau));
-        }
+      const creneaux = state.creneaux.map((creneau) =>
+        parseCreneauToEvent(creneau)
+      )
+      
+      const creneauxAnonymes = state.creneauxAnonymes.map((ca) => 
+        parseCreneauAnonymeToEvent(ca)
+      )
+      
+      const output = creneaux.concat(creneauxAnonymes)
+      return output
+    },
+    getCreneauxAnonymesOrganismesEvents(state): CalendarEventAnonyme[] {
+      const output: CalendarEventAnonyme[] = []
+      for (const creneauAnonyme of state.creneauxAnonymes) {
+        output.push(parseCreneauAnonymeToEvent(creneauAnonyme))
       }
-      return output;
+      return output
+    },
+    getOrganismeEvents(state) {
+      return state.idOrganisme
     },
   },
   actions: {
@@ -66,13 +91,17 @@ export const usePlanningStore = defineStore('planning', {
           ? this.getDebutOfWeek
           : this.getDebutOfDay
 
+      const date_debut = new Date(debut * 1000);
       const response = await getPlanning(
-        debut,
+        date_debut.toISOString(),
         this.filters.fit_arena,
         this.filters.duree,
-        this.filters.zone.join(',')
+        this.filters.zone.join(','),
+        this.filters.organisme
       )
+
       this.pushCreneaux(response.creneaux)
+      this.pushCreneauxAnonymes(response.creneauxAnonymes)
     },
     async fetchPlanningOrganisme(organisme_id: number) {
       const debut =
@@ -80,15 +109,16 @@ export const usePlanningStore = defineStore('planning', {
           ? this.getDebutOfWeek
           : this.getDebutOfDay
 
+      const date_debut = new Date(debut * 1000);
       const response = await getPlanning(
-        debut,
+        date_debut.toISOString(),
         this.filters.fit_arena,
         this.filters.duree,
         this.filters.zone.join(','),
         organisme_id
       )
-
       this.pushCreneaux(response.creneaux)
+      this.pushCreneauxAnonymes(response.creneauxAnonymes)
     },
     async fetchActivites(id: number) {
       this.activites = await getActivites(id)
@@ -112,6 +142,9 @@ export const usePlanningStore = defineStore('planning', {
     },
     pushCreneaux(creneaux: Creneau[]) {
       this.creneaux = creneaux
+    },
+    pushCreneauxAnonymes(creneaux: CreneauAnonyme[]) {
+      this.creneauxAnonymes = creneaux
     },
     addCreneaux(creneaux: Creneau[]) {
       for (const creneau of creneaux) {

@@ -1,20 +1,11 @@
-import { defaultHeaders } from './api.js'
+import { defaultHeaders, get } from './api.js'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
-export const getParametres = async (page = 1, query = '') => {
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/parametres?page=${page}${query}`,
-    {
-      method: 'get',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    }
-  )
-  if (response.status !== 200) throw response
-  return response.json()
+export const getParametres = async (query = {page: 1}) => await get('/api/parametres', query)
+
+export const getParametresParFitArena = async (id) => {
+  return await get(`/api/fit_arenas/${id}/parametres`)
 }
 
 export const getParametresByZone = async (id) => {
@@ -25,7 +16,7 @@ export const getParametresByZone = async (id) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )
@@ -53,7 +44,7 @@ export const postParametres = async (data) => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(data),
     }
@@ -71,7 +62,7 @@ export const updateParametres = async (data) => {
         ...defaultHeaders,
         // 'Content-Type': 'application/merge-patch+json',
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(data),
     }

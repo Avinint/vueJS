@@ -9,6 +9,9 @@
       @cancel="$emit('closeModalCreneau')"
       @delete="delete_creneau"
     >
+      <template #topButtons>
+        <Button v-if="typeAction === 'edit'" test='TcloseModal' @click="delete_creneau" couleur="danger" borderless class="mr-6" label="Supprimer le créneau" />
+      </template>
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Veuillez sélectionner le type créneau.
       </label>
@@ -16,30 +19,30 @@
         <InputRadio
           v-model="creneauStore.creneauType"
           name="typeCreneau"
-          :list="typeCreneauList"
+          :list="typeCreneauListe"
           required
         />
       </div>
-      <div v-if="creneauStore.creneauType != 0" class="flex gap-3">
+      <div v-if="creneauType !== null" class="flex gap-3">
         <FAInput
           v-model="creneauStore.titre"
           :inline="false"
-          :required="true"
+          :required="false"
           label="Ajouter un titre à votre créneau"
           class="grow"
           placeholder="Ajouter un titre à votre créneau"
           type="text"
         />
         <InputSelect
-          v-if="creneauStore.creneauType == 2"
+          v-if="['organisme', 'maintenance'].includes(creneauType)"
           v-model="creneauStore.organisme"
           :required="true"
-          label="Organisme"
+          :label="creneauType === 'organisme' ? 'Organisme' : 'Prestataire'"
           class="grow"
           :options="getOrganismesOptions"
         />
       </div>
-      <div v-if="creneauStore.creneauType != 0" class="flex w-full">
+      <div v-if="creneauType !== null" class="flex w-full">
         <!-- TODO: update to https://www.vue-tailwind.com/docs/datepicker -->
         <div>
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
@@ -54,14 +57,14 @@
           />
         </div>
         <div class="ml-20 grow">
-          <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
+          <label class="required mb-2 block w-1/2 text-sm font-medium text-gray-900">
             Plage horaire du créneau
           </label>
           <div class="flex">
             <select
               v-model="creneauStore.heureDebut"
               required
-              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listStart"
@@ -75,7 +78,7 @@
             <select
               v-model="creneauStore.heureFin"
               required
-              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
                 v-for="(creneauHoraire, i) in listEnd"
@@ -89,12 +92,19 @@
         </div>
       </div>
       <FAButton
-        v-if="creneauStore.creneauType == 1"
+        v-if="creneauType === 'grand_public'"
+        class="mr-4"
         label="Paramètres avancés"
         couleur="secondary"
-        @click="advanced_options = !advanced_options"
+        @click="setSubmenu('advanced')"
       />
-      <div v-if="advanced_options" class="flex gap-5">
+      <FAButton
+        v-if="creneauType && creneauStore.recurrence != undefined"
+        label="Récurrence"
+        couleur="secondary"
+        @click="setSubmenu('recurence')"
+      />
+      <div v-if="submenu === 'advanced'" class="flex gap-5">
         <FAInput
           v-model="creneauStore.dureeActivite"
           :inline="false"
@@ -114,26 +124,29 @@
           type="number"
         />
       </div>
+      <MenuRecurrence v-if="submenu === 'recurence'" />
       <div
-        v-if="creneauStore.creneauType != 0"
+        v-if="creneauType !== null"
         class="relative rounded-lg border border-gray-300 p-4"
       >
         <label class="block text-sm font-bold text-gray-900"> Zones </label>
         <label
-          v-if="creneauStore.creneauType != 2 && creneauStore.zones.length > 0"
+          v-if="creneauType !== 'organisme' && creneauStore.zones.length > 0"
           class="absolute top-32 mb-2 block text-sm font-bold text-gray-900"
         >
           Activités
         </label>
         <div class="flex overflow-x-scroll py-3">
-          <template v-for="zone in zones">
-            <div v-if="isZoneEditable(zone)" :key="zone" class="w-80 flex-col">
+          <template v-for="zone in zones" :key="zone">
+            <!-- v-if="isZoneEditable(zone)" -->
+            <div class="w-80 flex-col">
               <input
                 :id="zone.code"
                 v-model="creneauStore.zones"
                 type="checkbox"
                 :value="zone.id"
                 class="hidden"
+                @click="selectActivities(zone)"
               />
               <label
                 class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
@@ -143,7 +156,7 @@
                 {{ zone.libelle }}
               </label>
               <div
-                v-if="isZoneChecked(zone.id) && creneauStore.creneauType != 2"
+                v-if="isZoneChecked(zone.id) && creneauType !== 'organisme'"
                 class="flex-col pt-10"
               >
                 <div
@@ -161,7 +174,7 @@
                       class="hidden"
                     />
                     <label
-                      class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-2 text-center text-sm text-black drop-shadow-sm"
+                      class="mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-3 text-center text-sm text-black drop-shadow-sm"
                       :class="{
                         'bg-sky-600 text-white': zoneActivite.activite.checked,
                       }"
@@ -181,32 +194,46 @@
             </div>
           </template>
         </div>
+        <div v-if="errorMessage">
+          <p>
+            Vous devez sélectionner au moins une activité pour créer le créneau.
+          </p>
+        </div>
       </div>
+      <MentionChampsObligatoires/>
     </Modal>
   </form>
 </template>
 
 <script>
-import Modal from '@components/common/Modal.vue'
-import { mapStores } from 'pinia'
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
+import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { useOrganismeStore } from '@stores/organisme.ts'
-import { getTypeCreneau } from '@api/typeCreneau.js'
 import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
+
+import Modal from '@components/common/Modal.vue'
 import InputRadio from '@components/common/InputRadio.vue'
 import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
+import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import Button from "@components/common/Button.vue";
+
+import { mapStores } from 'pinia'
 
 export default {
   components: {
+    Button,
+    MentionChampsObligatoires,
     Modal,
     InputRadio,
     InputSelect,
     FAInput,
     FAButton,
+    MenuRecurrence,
   },
   props: {
     isOpen: {
@@ -222,7 +249,6 @@ export default {
   emits: ['closeModalCreneau'],
   data() {
     return {
-      typeCreneauList: [],
       parametres: [],
       zones: [],
       // activites: [],
@@ -230,22 +256,30 @@ export default {
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
       defaultTarif: '20',
-      advanced_options: false,
+      submenu: 'none',
+      errorMessage: false
     }
   },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
+    ...mapStores(useTypeCreneauStore),
     ...mapStores(useOrganismeStore),
     modalTitle() {
       switch (this.typeAction) {
         case 'create':
-          return 'Création de creneau'
+          return 'Création de créneau'
         case 'edit':
-          return 'Modifier un creneau'
+          return 'Modifier un créneau'
         default:
-          return 'Modifier un creneau'
+          return 'Modifier un créneau'
       }
+    },
+    typeCreneauListe() {
+      return this.typeCreneauStore.typeCreneauListe
+    },
+    creneauType() {
+      return this.typeCreneauListe.find(type => type.id === this.creneauStore.creneauType)?.code ?? null
     },
     getOrganismesOptions() {
       return this.organismeStore.organismes.map((organisme) => {
@@ -298,10 +332,13 @@ export default {
     isOneZoneChecked() {
       return this.creneauStore.zones.length > 0
     },
+    isOneActivityChecked() {
+      return this.creneauStore.activites.length > 0
+    },
     isNotOrganismeOrMaintenance() {
       return (
-        this.creneauStore.creneauType !== 2 &&
-        this.creneauStore.creneauType !== 4
+        this.creneauType !== 'organisme' &&
+        this.creneauType !== 'maintenance'
       )
     },
   },
@@ -318,29 +355,52 @@ export default {
       this.datepickerFormat
     )
     await this.fetchZones()
-    await this.organismeStore.fetchOrganismes()
-    this.typeCreneauList = await getTypeCreneau()
+    await this.organismeStore.fetchOrganismes({'fit_arena.id': this.$route.params.id})
+
     this.parametres = await getParametres()
     if (this.typeAction === 'create') {
       this.creneauStore.activites = []
     }
   },
   methods: {
+    /**
+     * Open the submenu that contains additional inputs 
+     * @param {'advanced' | 'recurence' | 'none'} menu 
+     */
+    setSubmenu(type) {
+      if(this.submenu == type) {
+        this.submenu = 'none';
+        return;
+      }
+
+      this.submenu = type;
+    },
+    selectActivities(zone) {
+      const isChecked = this.isZoneChecked(zone.id)
+      if (!isChecked) {
+        for (const activity of zone.zoneActivites) {
+          activity.activite.checked = true;
+        }
+      } else {
+        for (const activity of zone.zoneActivites) {
+          activity.activite.checked = false;
+        }
+      }
+    },
     delete_creneau() {
-      if(confirm('Souhaitez vous vraiment supprimer le créneau ?')) {
+      if (confirm('Souhaitez-vous vraiment supprimer le créneau ?')) {
         this.creneauStore.delete();
         this.$emit('closeModalCreneau')
       }
     },
-    isZoneEditable(zone) {
-      if (this.typeAction == 'create') return true
-
-      return this.creneauStore.zones.includes(zone.id)
-    },
+    // isZoneEditable(zone) {
+    //   if (this.typeAction == 'create' || this.typeAction === 'edit') return true
+      
+    //   return this.creneauStore.zones.includes(zone.id)
+    // },
     async fetchZones() {
-      this.zones = await getZones(
-        1,
-        '&typeZone.code=zone&fitArena=' + this.$route.params.id
+      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(
+        zone => zone.actif && zone.zoneActivites.length > 0
       )
       this.checkActivites()
     },
@@ -375,27 +435,44 @@ export default {
     submitCreneau() {
       const type_creneau = this.creneauStore.creneauType
 
-      // (REFACTORING)
-      switch (type_creneau) {
-        case 1:
-          // Retreive activity data from the local references
-          // Before sending it to the API. This has to be done
-          // This way because of the unsynchronized data.
-          this.updateActivites()
-
-          if (this.typeAction === 'create') {
-            this.creneauStore.addCreneau()
-          } else this.creneauStore.editCreneau()
-          break
-
-        case 2:
-          if (this.typeAction === 'create') {
-            this.creneauStore.addCreneauOrganisme()
-          } else this.creneauStore.editCreneauOrganisme()
-          break
+      if (this.creneauStore.recurrence) {
+        if (this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "") {
+          this.creneauStore.recurrence = undefined;
+        }
       }
 
-      this.$emit('closeModalCreneau')
+      const fitarena_id = parseInt(this.$route.params.id);
+
+      if (this.isOneZoneChecked) {
+        switch (type_creneau) {
+          case 1:
+            // Retrieve activity data from the local references
+            // Before sending it to the API. This has to be done
+            // This way because of the unsynchronized data.
+            this.updateActivites()
+
+            if (!this.isOneActivityChecked) {
+              this.errorMessage = true
+              break
+            } else {
+              this.typeAction === 'create' ?
+                this.creneauStore.addCreneau(fitarena_id) :
+                this.creneauStore.editCreneau(fitarena_id)
+              this.$emit('closeModalCreneau')
+            }
+            break
+  
+          case 2:
+          case 3:
+            this.typeAction === 'create' ?
+              this.creneauStore.addCreneauOrganisme(fitarena_id) :
+              this.creneauStore.editCreneauOrganisme(fitarena_id)
+            this.$emit('closeModalCreneau')
+            break
+        }
+      } else {
+        this.errorMessage = true
+      }
     },
     isZoneChecked(zoneId) {
       return this.creneauStore.zones.includes(zoneId)
@@ -407,6 +484,7 @@ export default {
 option {
   text-align: center;
 }
+
 .max-w-4xl {
   max-width: 56rem;
 }

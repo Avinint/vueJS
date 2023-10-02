@@ -1,8 +1,9 @@
 import { defaultHeaders } from './api'
 import $fetch from './refreshToken.js'
+import { useStorage } from '@vueuse/core'
 
 export async function getPlanning(
-  debut: number,
+  debut: string,
   fit_arena: number,
   duree: number,
   zone: string,
@@ -24,7 +25,7 @@ export async function getPlanning(
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
   })
   if (response.status !== 200) throw response
@@ -32,14 +33,14 @@ export async function getPlanning(
 }
 
 export async function postCreneau(
-  contract: CreneauEditContract | CreneauOGEditContract
-): Promise<CreneauEditResponse> {
-  const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/creneau`, {
+  contract: DemandeCreneauEditContract
+): Promise<DemandeCreneauEditResponse> {
+  const response = await $fetch(`${import.meta.env.VITE_API_URL}/api/creneau/demandes`, {
     method: 'post',
     headers: {
       ...defaultHeaders,
       'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + useStorage('token', '').value,
     },
     body: JSON.stringify(contract),
   })
@@ -49,16 +50,16 @@ export async function postCreneau(
 
 export async function updateCreneau(
   id: number,
-  contract: CreneauEditContract | CreneauOGEditContract
-): Promise<CreneauEditResponse> {
+  contract: DemandeCreneauEditContract
+): Promise<DemandeCreneauEditResponse> {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
+    `${import.meta.env.VITE_API_URL}/api/creneau/${id}/demandes`,
     {
       method: 'put',
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
       body: JSON.stringify(contract),
     }
@@ -75,7 +76,7 @@ export const deleteCreneau = async (id: number): Promise<void> => {
       headers: {
         ...defaultHeaders,
         'Content-Type': 'application/merge-patch+json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + useStorage('token', '').value,
       },
     }
   )

@@ -3,12 +3,11 @@
     <h1>Fit Arena</h1>
 
     <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+      <table class="w-full text-left text-sm text-gray-500">
         <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+          class="bg-gray-50 text-xs text-gray-700"
         >
           <tr>
-            <th scope="col" class="px-6 py-3"></th>
             <th scope="col" class="px-6 py-3">Nom</th>
             <th scope="col" class="px-6 py-3">Code postal</th>
             <th scope="col" class="px-6 py-3">Ville</th>
@@ -17,7 +16,17 @@
         </thead>
         <tbody>
           <tr v-for="(fit_arena, i) in fit_arenas" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
+            <td class="px-6 py-4">{{ fit_arena.libelle }}</td>
+            <td class="px-6 py-4">{{ fit_arena.adresse.codePostal }}</td>
+            <td class="px-6 py-4">{{ fit_arena.adresse.ville }}</td>
+            <td class="flex items-center justify-center p-3 gap-4">
+              <Button
+              test="TeditClient"
+              borderless
+              icon="edit"
+              couleur="secondary"
+              @click="editFa(i)"
+              />
               <Button
                 test="TdeleteClient"
                 borderless
@@ -25,29 +34,19 @@
                 couleur="secondary"
                 @click="removeFa(fit_arena.id)"
               />
-              <Button
-                test="TeditClient"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editFa(i)"
-              />
             </td>
-            <td class="px-6 py-4">{{ fit_arena.libelle }}</td>
-            <td class="px-6 py-4">{{ fit_arena.adresse.codePostal }}</td>
-            <td class="px-6 py-4">{{ fit_arena.adresse.ville }}</td>
-            <td class="px-6 py-4">
+            <!-- <td class="px-6 py-4">
               <Button label="Détails" couleur="secondary" @click="showFa(i)" />
-            </td>
+            </td> -->
           </tr>
         </tbody>
       </table>
     </div>
-    <Button
+    <ButtonRight
       id="TaddFitArena"
       label="Ajouter une Fit Arena"
       icon="add"
-      couleur="secondary"
+      couleur="danger"
       @click="addFa"
     />
   </Card>
@@ -56,7 +55,7 @@
       v-if="fa_modal"
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modal_title"
-      @cancel=";(fa_modal = false), cancel()"
+      @cancel="(fa_modal = false), cancel()"
     >
       <div class="flex items-center">
         <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
@@ -67,7 +66,7 @@
           id="TfaSelectCollectivite"
           v-model="client_selected"
           :disabled="readonly == true ? true : false"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         >
           <option v-for="client in clients" :key="client.id" :value="client.id">
             {{ client.nom }}
@@ -81,7 +80,8 @@
           :readonly="readonly"
           :type="'text'"
           label="Nom"
-          :required="true"
+          :inline="true"
+          required
           class="w-full"
         />
       </div>
@@ -95,7 +95,7 @@
           >
             <svg
               aria-hidden="true"
-              class="h-5 w-5 text-gray-500 dark:text-gray-400"
+              class="h-5 w-5 text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -127,7 +127,7 @@
           v-if="address.length"
           id="TclientSelectAdresse"
           v-model="address_selected"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           @change="addressSelect"
         >
           <option v-for="(address, i) in addresses" :key="i" :value="address">
@@ -140,7 +140,8 @@
           id="TadresseComplement"
           v-model="complement"
           :readonly="readonly"
-          :type="'text'"
+          type="text"
+          :inline="true"
           label="Complément"
           class="w-full"
         />
@@ -151,8 +152,9 @@
           id="TadressePostcode"
           v-model="address_selected.postcode"
           :readonly="readonly"
-          :type="'text'"
-          :required="true"
+          type="text"
+          required
+          :inline="true"
           label="Code postal"
           class="w-full"
           :validation="[zipValidation]"
@@ -164,8 +166,9 @@
           id="TadresseCity"
           v-model="address_selected.city"
           :readonly="readonly"
-          :type="'text'"
-          :required="true"
+          type="text"
+          :inline="true"
+          required
           label="Ville"
           class="w-full"
           :validation="[cityValidation]"
@@ -206,7 +209,7 @@
         <textarea
           v-model="commentaire"
           :readonly="readonly"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
         ></textarea>
       </div>
       <div class="flex items-center">
@@ -222,11 +225,12 @@
             class="peer sr-only"
           />
           <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
           ></div>
-          <!-- <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span> -->
+          <!-- <span class="ml-3 text-sm font-medium text-gray-900"></span> -->
         </label>
       </div>
+      <MentionChampsObligatoires/>
     </Modal>
   </form>
 
@@ -254,6 +258,7 @@
 import Card from '../components/common/Card.vue'
 import Modal from '../components/common/Modal.vue'
 import ValidationModal from '../components/common/ValidationModal.vue'
+import ButtonRight from '../components/common/ButtonRight.vue'
 import Button from '../components/common/Button.vue'
 import Input from '../components/common/Input.vue'
 import InputDescription from '../components/common/InputDescription.vue'
@@ -271,11 +276,14 @@ import {
   cityValidation,
   latitudeAndLongitudeValidation,
 } from '../validation.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import { useMenuStore } from "@stores/menu.js";
 
+const { fitArenas: menuFitArenas } = useMenuStore()
 const fa_modal = ref(false)
 const readonly = ref(false)
 
@@ -337,6 +345,10 @@ const deleteFitArenaValidation = async (id) => {
   } catch (e) {
     toast.error('Une erreur est survenue')
   }
+
+  const index = menuFitArenas.findIndex(fit => fit.id ===  deleteFitArenaId.value)
+  menuFitArenas.splice(index, 1)
+
   delete_modal.value = false
   deleteFitArenaId.value = 0
   fit_arenas.value = await getFitArenas()
@@ -389,7 +401,7 @@ const saveFA = () => {
     actif: actif.value == true ? actif.value : false,
 
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       complement: complement.value,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
@@ -411,7 +423,7 @@ const saveFA = () => {
 
 const updateFitArenaValidation = async () => {
   try {
-    await updateFitarenas(fit_arena, id_selected.value)
+    await updateFitarenas(fit_arena.value, id_selected.value)
     toast.success('Modification effectuée avec succès')
   } catch (e) {
     toast.error('Une erreur est survenue')
@@ -422,6 +434,13 @@ const updateFitArenaValidation = async () => {
   cancel()
   fit_arenas.value = await getFitArenas()
 }
+
+watch(() => fit_arena.value.libelle, () => {
+  const fitArenaMenu = menuFitArenas.find((fit) => fit.id === id_selected.value)
+  if (fitArenaMenu) {
+    fitArenaMenu.libelle = fit_arena.value.libelle
+  }
+})
 
 const addFitArenaValidation = async () => {
   try {
@@ -435,6 +454,9 @@ const addFitArenaValidation = async () => {
   fa_modal.value = false
   cancel()
   fit_arenas.value = await getFitArenas()
+
+  const nouvelle = fit_arenas.value.find(fit => fit.libelle ===  fit_arena.value.libelle)
+  menuFitArenas.push({id: nouvelle.id, libelle: nouvelle.libelle, open: false})
 }
 
 watchDebounced(
@@ -446,4 +468,8 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 }
 )
+
+const addressSelect = (event) => {
+  address.value  = address_selected.value.name
+}
 </script>

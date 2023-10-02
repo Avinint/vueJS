@@ -1,342 +1,338 @@
 <template>
-  <Card class="space-y-3">
-    <h1>Organismes</h1>
-
-    <div class="relative overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-        <thead
-          class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
-        >
-          <tr>
-            <th scope="col" class="px-6 py-3"></th>
-            <th scope="col" class="px-6 py-3">Nom</th>
-            <th scope="col" class="px-6 py-3">Code postal</th>
-            <th scope="col" class="px-6 py-3">Ville</th>
-            <th scope="col" class="px-6 py-3"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(organisme, i) in organismes" :key="i" class="bg-white">
-            <td class="flex items-center justify-center p-3">
-              <Button v-if="isAdmin || isGestCo"
-                test="TdeleteClient"
-                borderless
-                icon="delete"
-                couleur="secondary"
-                @click="removeOrganisme(organisme.id)"
-              />
-              <Button
-                test="TeditClient"
-                borderless
-                icon="edit"
-                couleur="secondary"
-                @click="editOrganisme(i)"
-              />
-            </td>
-            <td class="px-6 py-4">{{ organisme.libelle }}</td>
-            <td class="px-6 py-4">{{ organisme.adresse.codePostal }}</td>
-            <td class="px-6 py-4">{{ organisme.adresse.ville }}</td>
-            <td class="px-6 py-4">
-              <Button
-                label="Détails"
-                couleur="secondary"
-                @click="showOrganisme(i)"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <Button v-if="isAdmin || isGestCo"
-      id="TaddOrganisme"
-      label="Ajouter un Organisme"
-      icon="add"
-      couleur="secondary"
-      @click="addOrganisme"
+    <CrudList
+      entity="organisme"
+      plural="organismes"
+      :columns="crud_columns"
+      :data="getTableData()"
+      :can-all="isAdmin || isGestCo"
+      @entity:new="addOrganisme"
+      @entity:edit="editOrganisme"
+      @entity:remove="removeOrganisme"
     />
-  </Card>
-  <form @submit.prevent="saveOrganisme">
-    <Modal
-      v-if="afficherFormulaire"
-      :type="readonly ? 'visualiser' : 'classic'"
-      :title="modal_title"
-      @cancel="cancel()"
-    >
-      <Card class="w-full space-y-2">
-        <h3>Ajouter un organisme</h3>
-        <div class="flex items-center"></div>
-        <div class="flex items-center">
-          <Input
-            id="TfaNom"
-            v-model="name"
-            :readonly="readonly"
-            :type="'text'"
-            label="Nom"
-            :required="true"
-            class="w-full"
-          />
-        </div>
-        <div class="flex items-center">
-          <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-            >Adresse</label
-          >
-          <div class="relative w-full">
-            <div
-              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-            >
-              <svg
-                aria-hidden="true"
-                class="h-5 w-5 text-gray-500 dark:text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
+
+    <form @submit.prevent="saveOrganisme">
+      <Modal
+        v-if="afficherFormulaire"
+        :type="readonly ? 'visualiser' : 'classic'"
+        :title="modal_title"
+        @cancel="cancel()"
+      >
+        <CardModalSection title="Informations générales">
+          <div class="space-y-2">
+            <div class="flex items-center">
+              <Input
+                id="TfaNom"
+                v-model="name"
+                :readonly="readonly"
+                :type="'text'"
+                label="Nom"
+                :required="true"
+                class="w-full"
+                inline
+              />
             </div>
-            <input
-              id="TfaAdresse"
-              v-model="address"
-              :readonly="readonly"
-              type="search"
-              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-              data-dropdown-toggle="dropdown"
-              placeholder="Rue, ville, ..."
-              required
-            />
-          </div>
-        </div>
-        <div v-if="!readonly" class="flex items-center">
-          <div class="mr-1.5 block w-1/2"></div>
-          <select
-            v-if="address.length"
-            id="TclientSelectAdresse"
-            v-model="address_selected"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            @change="addressSelect"
-          >
-            <option v-for="(address, i) in addresses" :key="i" :value="address">
-              {{ address.label }}
-            </option>
-          </select>
-        </div>
-        <div class="flex items-center">
-          <Input
-            id="TadresseComplement"
-            v-model="complement"
-            :readonly="readonly"
-            :type="'text'"
-            label="Complément"
-            class="w-full"
-          />
-        </div>
-        <div class="flex items-center">
-          <Input
-            v-if="address_selected"
-            id="TadressePostcode"
-            v-model="address_selected.postcode"
-            :readonly="readonly"
-            :type="'text'"
-            :required="true"
-            label="Code postal"
-            class="w-full"
-            pattern="[0-9]{5}"
-          />
-        </div>
-        <div class="flex items-center">
-          <Input
-            v-if="address_selected"
-            id="TadresseCity"
-            v-model="address_selected.city"
-            :readonly="readonly"
-            :type="'text'"
-            :required="true"
-            label="Ville"
-            class="w-full"
-            pattern="[A-Za-zÉéÈèËëÊêÀàÂâÄäÛûùÖöÔôÎîÏï -]{1,50}"
-          />
-        </div>
-        <div v-if="address_selected" class="flex items-center">
-          <div class="flex w-1/2 items-center justify-between">
-            <label class="block w-1/2 text-sm font-medium text-gray-900"
-              >Latitude</label
-            >
-            <p class="text-sm text-blue-400">Format : 46.7897</p>
-          </div>
-          <input
-            id="TfaLatitude"
-            v-model="address_selected.latitude"
-            :readonly="readonly"
-            type="text"
-            class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-            pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
-          />
-        </div>
-        <div v-if="address_selected" class="flex items-center">
-          <div class="flex w-1/2 items-center justify-between">
-            <label class="block w-1/2 text-sm font-medium text-gray-900"
-              >Longitude</label
-            >
-            <p class="text-sm text-blue-400">Format : 46.7897</p>
-          </div>
-          <input
-            v-if="address_selected"
-            id="TfaLongitude"
-            v-model="address_selected.longitude"
-            :readonly="readonly"
-            type="text"
-            class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-            pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
-          />
-        </div>
-          <div v-if="isAdmin && !readonly" class="flex items-center">
-              <label for="TclientSelect" class="mb-2 block w-1/2 text-sm font-medium text-gray-900">Client :</label>
-              <select
-                  v-if="clients.length"
-                  id="TclientSelect"
-                  v-model="client"
-                  class=" w-full block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            <div class="flex items-center">
+              <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+              >Adresse</label
               >
-                  <option v-for="client in clients" :key="i" :value="`/api/clients/${client.id}`">
-                      {{ client.nom }}
-                  </option>
+              <div class="relative w-full">
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="h-5 w-5 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  id="TfaAdresse"
+                  v-model="address"
+                  :readonly="readonly"
+                  type="search"
+                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                  data-dropdown-toggle="dropdown"
+                  placeholder="Rue, ville, ..."
+                  required
+                />
+              </div>
+            </div>
+            <div v-if="!readonly && address.length" class="flex items-center">
+              <div class="mr-1.5 block w-1/2"></div>
+              <select
+                id="TorgaSelectAdresse"
+                v-model="address_selected"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                @change="addressSelect"
+              >
+                <option v-for="(address, i) in addresses" :key="i" :value="address">
+                  {{ address.label }}
+                </option>
               </select>
-        </div>
-        <div class="flex items-center">
-              <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900">Actif :</span>
-          <label class="relative inline-flex cursor-pointer items-center">
-            <input
-              v-model="actif"
-              :disabled="readonly"
-              type="checkbox"
-              :value="true"
-              class="peer sr-only"
+            </div>
+            <template v-if="address_selected">
+              <Input
+                id="TadresseComplement"
+                v-model="complement"
+                :readonly="readonly"
+                :type="'text'"
+                label="Complément"
+                class="w-full"
+                inline
+              />
+              <Input
+                id="TadressePostcode"
+                v-model="address_selected.postcode"
+                :readonly="readonly"
+                :type="'text'"
+                required
+                label="Code postal"
+                class="w-full"
+                pattern="[0-9]{5}"
+                inline
+              />
+              <Input
+                id="TadresseCity"
+                v-model="address_selected.city"
+                :readonly="readonly"
+                :type="'text'"
+                required
+                label="Ville"
+                class="w-full"
+                pattern="^[a-zA-ZÀ-ÿœ\- ]{1,50}$"
+                inline
+              />
+              <Input
+                inline
+                label="Latitude"
+                v-model="address_selected.latitude"
+                :readonly="readonly"
+                type="text"
+                class="w-full"
+                pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
+              />
+              <Input
+                id="TfaLongitude"
+                v-model="address_selected.longitude"
+                :readonly="readonly"
+                type="text"
+                label="Longitude"
+                inline
+                class="w-full"
+                pattern="-?[0-9]{1,2}\.[0-9]{1,10}"
+              />
+            </template>
+            <div v-if="isAdmin && !readonly" class="flex items-center">
+              <label
+                for="TclientSelect"
+                class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
+              >Client :</label
+              >
+              <select
+                v-if="clients.length"
+                id="TclientSelect"
+                v-model="client"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+              >
+                <option
+                  v-for="(client, i) in clients"
+                  :key="i"
+                  :value="client.id"
+                >
+                  {{ client.nom }}
+                </option>
+              </select>
+            </div>
+            <div class="flex items-center">
+          <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
+          >Actif :</span
+          >
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="actif"
+                  :disabled="readonly"
+                  type="checkbox"
+                  :value="true"
+                  class="peer sr-only"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                ></div>
+                <!-- <span class="ml-3 text-sm font-medium text-gray-900></span> -->
+              </label>
+            </div>
+          </div>
+        </CardModalSection>
+        <CardModalSection title="Comptes gestionnaires">
+          <div v-if="templatePDFVisible" class="offset">
+            <CarteAcces
+              :carte="donneesPDF"
+              ref="templatePDF"
+              @impression-terminee="impressionEnCours = false"/>
+          </div>
+          <Card
+            v-for="(gestionnaire, i) in gestionnairesOrganisme"
+            :key="i"
+            class="relative space-y-2 my-5"
+          >
+            <Button
+              v-if="!readonly && i !== 0"
+              id="Grr"
+              class="absolute right-2 top-2 border-0"
+              icon="delete"
+              couleur="secondary"
+              size="s"
+              @click="removeManager(i)"
             />
-            <div
-              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-            ></div>
-            <!-- <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span> -->
-          </label>
-        </div>
-      </Card>
+            <div class="flex items-center pt-6">
+              <Input
+                id="TcomNom"
+                v-model="gestionnaire.nom"
+                :readonly="readonly"
+                :type="'text'"
+                label="Nom"
+                class="w-full"
+                :required="true"
+                inline
+              />
+            </div>
+            <div class="flex items-center">
+              <Input
+                id="TcomPrenom"
+                v-model="gestionnaire.prenom"
+                :readonly="readonly"
+                :type="'text'"
+                label="Prénom"
+                class="w-full"
+                :required="true"
+                inline
+              />
+            </div>
+            <div class="flex items-center">
+              <Input
+                id="TcomMail"
+                v-model:valid="validation.email"
+                v-model="gestionnaire.email"
+                :readonly="readonly"
+                :type="'text'"
+                label="Email"
+                class="w-full"
+                :required="true"
+                :validation="[emailValidation]"
+                inline
+              />
+            </div>
+            <div class="h-4"/>
+            <CardModalSection title="Carte d'accès">
+                <div class="my-6 flex items-center">
+                  <p class="w-4/12 label-text"
+                  >Titulaire d'une carte d'accès :</p
+                  >
+                  <label class="relative inline-flex cursor-pointer items-center">
+                    <input
+                      v-model="gestionnaire.titulaireCarte"
+                      :disabled="readonly"
+                      type="checkbox"
+                      :value="false"
+                      class="peer sr-only"
+                    />
+                    <div
+                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                    ></div>
+                  </label>
+                </div>
+                <div class="flex items-center"  v-if="gestionnaire.titulaireCarte">
+                  <Input
+                    id="TcodePin"
+                    v-model="gestionnaire.codePin"
+                    inline
+                    :readonly="readonly"
+                    pattern="\d{6}"
+                    label="Code PIN"
+                    class="w-full"
+                    max-length="6"
+                    min-length="6"
+                    :validation="[codePinValidation]"
+                    v-model:valid="validation.codePin"
+                    required
+                  />
+                </div>
+            </CardModalSection>
+            <CardModalSection class="pt-6" v-if="gestionnaire.afficherCarte" title="Qr code">
+                <div>
+                  <p class="text-info">Le gestionnaire peut retrouver son QR code sur son profil Fit Arena en se connectant à fit-arena.fr via l’adresse mail renseignée ci-dessus.</p>
+                  <div class="flex items-center justify-between mt-10">
+                    <div v-if="gestionnaire.infoCarte?.qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
+                      <img
+                        alt="QR CODE Fit Arena"
+                        :src="gestionnaire.infoCarte?.qrCode"
+                      />
+                    </div>
+                    <div class="w-8/12">
+                      <ButtonRight
+                        id="TGestOrgQRCodeImprimer"
+                        icon="print"
+                        couleur="danger"
+                        class="w-full"
+                        label="Imprimer le QR Code"
+                        @click="imprimerPdf(gestionnaire)"
+                      />
+                    </div>
+                  </div>
+                </div>
+            </CardModalSection>
+          </Card>
 
-      <Card class="space-y-2">
-        <h3>Comptes gestionnaires</h3>
-        <Card
-          v-for="(gestionnaire, i) in gestionnairesOrganisme"
-          :key="i"
-          class="relative space-y-2"
-        >
           <Button
-            v-if="!readonly && i !== 0"
-            id="Grr"
-            class="absolute right-2 top-2 border-0"
-            icon="delete"
-            couleur="secondary"
-            size="s"
-            @click="removeManager(i)"
+            v-if="!readonly"
+            id="TaddOrgaManager"
+            label="Ajouter un compte gestionnaire"
+            icon="add"
+            couleur="danger"
+            @click="gestionnairesOrganisme.push({})"
           />
-          <div class="flex items-center pt-6">
-            <Input
-              id="TcomNom"
-              v-model="gestionnaire.nom"
-              :readonly="readonly"
-              :type="'text'"
-              label="Nom"
-              class="w-full"
-              :required="true"
-            />
-          </div>
-          <div class="flex items-center">
-            <Input
-              id="TcomPrenom"
-              v-model="gestionnaire.prenom"
-              :readonly="readonly"
-              :type="'text'"
-              label="Prénom"
-              class="w-full"
-              :required="true"
-            />
-          </div>
-          <div class="flex items-center">
-            <Input
-              id="TcomMail"
-              v-model:valid="validation.email"
-              v-model="gestionnaire.email"
-              :readonly="readonly"
-              :type="'text'"
-              label="Email"
-              class="w-full"
-              :required="true"
-              :validation="[emailValidation]"
-            />
-          </div>
-          <div class="flex items-center">
-            <Input
-              id="TcodePin"
-              v-model="gestionnaire.codePin"
-              :readonly="readonly"
-              pattern="\d{6}"
-              label="Code pin carte d'accès"
-              class="w-full"
-              max-length="6"
-              min-length="6"
-              :required="false"
-            />
-          </div>
-          <div v-if="gestionnaire.qrCode" class="flex items-center">
-            <img
-              alt="qr code"
-              :src="gestionnaire.qrCode"
-            />
-          </div>
+        </CardModalSection>
+        <MentionChampsObligatoires/>
+      </Modal>
+    </form>
 
-        </Card>
+    <form @submit.prevent="deleteOrganismeValidation()">
+      <ValidationModal
+        v-if="modaleConfirmation === 'delete'"
+        type="delete"
+        @cancel="modaleConfirmation = false"
+      >
+      </ValidationModal>
+    </form>
 
-        <Button
-          v-if="!readonly"
-          id="TaddOrgaManager"
-          label="Ajouter un compte gestionnaire"
-          icon="add"
-          couleur="secondary"
-          @click="gestionnairesOrganisme.push({})"
-        />
-      </Card>
-    </Modal>
-  </form>
+    <form @submit.prevent="updateOrganismeValidation()">
+      <ValidationModal
+        v-if="modaleConfirmation === 'edit'"
+        type="edit"
+        @cancel="modaleConfirmation = false"
+      >
+      </ValidationModal>
+    </form>
 
-  <form @submit.prevent="deleteOrganismeValidation()">
-    <ValidationModal
-      v-if="modaleConfirmation === 'delete'"
-      type="delete"
-      @cancel="modaleConfirmation = false"
-    >
-    </ValidationModal>
-  </form>
+    <form @submit.prevent="addOrganismeValidation()">
+      <ValidationModal
+        v-if="modaleConfirmation === 'add'"
+        type="add"
+        @cancel="modaleConfirmation = false"
+      >
+      </ValidationModal>
+    </form>
 
-  <form @submit.prevent="updateOrganismeValidation()">
-    <ValidationModal
-      v-if="modaleConfirmation === 'edit'"
-      type="edit"
-      @cancel="modaleConfirmation = false"
-    >
-    </ValidationModal>
-  </form>
-
-  <form @submit.prevent="addOrganismeValidation()">
-    <ValidationModal
-      v-if="modaleConfirmation === 'add'"
-      type="add"
-      @cancel="modaleConfirmation = false"
-    >
-    </ValidationModal>
-  </form>
 </template>
 
 <script setup>
@@ -353,15 +349,37 @@ import {
   postOrganismes,
   updateOrganismes,
 } from '../api/organisme.ts'
-import { onMounted, reactive, ref, watch } from 'vue'
-import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+
+import { nextTick, computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-import { isValid, emailValidation } from "@/validation.js";
-import { selectClients } from "@api/client.js";
-import { useUserStore } from "@/stores/user.js";
-const { isAdmin, isGestCo } = useUserStore();
+import { isValid, emailValidation, codePinValidation } from '@/validation.js'
+import { selectClients } from '@api/client.js'
+import { useUserStore } from '@/stores/user.js'
+import CrudList from '@components/molecules/CrudList.vue'
+import CarteAcces from "@/pdf/CarteAcces.vue";
+import { getCarteAcces } from "@api/carte_acces.js";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import CardModalSection from "@components/common/CardModalSection.vue";
+import ButtonRight from "@components/common/ButtonRight.vue";
+
+const { isAdmin, isGestCo } = useUserStore()
+const crud_columns = [
+  { data: (e) => e.libelle, label: 'Nom' },
+  { data: (e) => e.adresse.codePostal, label: 'Code Postal' },
+  { data: (e) => e.adresse.ville, label: 'Ville' },
+]
+function getTableData() {
+  return organismes.value.map((organisme) => {
+    return {
+      data: organisme,
+      editable: true,
+      removable: true,
+    }
+  })
+}
 
 const route = useRoute()
 const modaleConfirmation = ref(false)
@@ -387,15 +405,20 @@ const modal_title = ref('')
 const client = ref({})
 const clients = ref([])
 const validation = ref({})
-
 const gestionnairesOrganisme = ref([])
 
-onBeforeRouteUpdate(async (to, from) => {
-  // on recharge le composant si l'id change
-  if ((to.params?.id ?? false) && to.params.id !== from.params.id) {
-    organismes.value = await getOrganismesParClient(route.params.id)
-  }
+const templatePDF = ref(null)
+const donneesPDF = ref(null)
+const templatePDFVisible = computed(() => donneesPDF.value !== null)
+const impressionEnCours = ref(false)
+
+watch(() => route.params, async () => {
+  getOrganismesParClient(route.params.id).then(response => {
+    organismes.value = response;
+  })
 })
+
+const idClient = computed(() => route.params.id)
 
 onMounted(async () => {
   if (route.name === 'organismes') {
@@ -405,12 +428,12 @@ onMounted(async () => {
   }
 
   if (isAdmin) {
-    clients.value = await selectClients();
+    clients.value = await selectClients()
   }
 })
 
 const addOrganisme = () => {
-  reset()
+  client.value = idClient.value
   gestionnairesOrganisme.value = [{ nom: '', prenom: '', email: '' }]
   afficherFormulaire.value = true
   readonly.value = false
@@ -424,7 +447,7 @@ const reset = async () => {
   address.value = ''
   id_selected.value = 0
   address_selected.value = {}
-  client.value = {}
+  donneesPDF.value = null
 }
 
 const cancel = () => {
@@ -432,8 +455,8 @@ const cancel = () => {
   afficherFormulaire.value = false
 }
 
-const removeOrganisme = (id) => {
-  deleteOrganismeId.value = id
+const removeOrganisme = (organisme) => {
+  deleteOrganismeId.value = organisme.id
   modaleConfirmation.value = 'delete'
   // delete_modal.value = true
 }
@@ -447,11 +470,11 @@ const deleteOrganismeValidation = async (id) => {
   }
   modaleConfirmation.value = false
   deleteOrganismeId.value = 0
-  organismes.value = await getOrganismes()
+  cancel()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
-const editOrganisme = (i) => {
-  const organisme = organismes.value[i]
+const editOrganisme = (organisme) => {
   mapApiToData(organisme)
   afficherFormulaire.value = true
   readonly.value = false
@@ -463,14 +486,19 @@ const showOrganisme = async (i) => {
   mapApiToData(organisme)
   afficherFormulaire.value = true
   readonly.value = true
-  modal_title.value = 'Informations de l organisme'
+  modal_title.value = 'Informations de l\'organisme'
 }
 
 const mapApiToData = (organisme) => {
   name.value = organisme.libelle
   actif.value = organisme.actif
-  client.value = organisme.client
-  gestionnairesOrganisme.value = organisme.gestionnaireOrganismes ?? []
+  client.value = idClient.value
+  gestionnairesOrganisme.value = organisme.gestionnaireOrganismes?.map(gest =>  ({
+    afficherCarte: !!gest.codePin?.length,
+    titulaireCarte: !!gest.codePin?.length,
+    ...gest})) ??  []
+
+
   address_selected.value = {
     address: organisme.adresse.adresse,
     postcode: organisme.adresse.codePostal,
@@ -488,15 +516,15 @@ const mapApiToData = (organisme) => {
 }
 
 const saveOrganisme = () => {
-  if (!isValid(validation)) return
+
+if (!isValid(validation)) return
   organisme.value = {
     libelle: name.value,
     actif: actif.value,
-    client: client.value,
+    client: 'api/clients/' + client.value,
     gestionnaireOrganismes: gestionnairesOrganisme.value,
-
     adresse: {
-      adresse: address_selected.value.label,
+      adresse: address_selected.value.name,
       complement: complement.value,
       codePostal: address_selected.value.postcode,
       ville: address_selected.value.city,
@@ -529,7 +557,7 @@ const updateOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 const addOrganismeValidation = async () => {
@@ -543,14 +571,16 @@ const addOrganismeValidation = async () => {
   modaleConfirmation.value = false
   afficherFormulaire.value = false
   cancel()
-  organismes.value = await getOrganismes()
+  organismes.value = await getOrganismesParClient(idClient.value)
 }
 
 watchDebounced(
   address,
   async () => {
     address_selected.value = {}
-    addresses.value = await getAdresses(address.value)
+    try {
+      addresses.value = await getAdresses(address.value)
+    } catch (e) {}
     address_selected.value = addresses.value[0]
   },
   { debounce: 500, maxWait: 1000 }
@@ -565,4 +595,35 @@ const removeFrom = (refArray, i) => {
     .slice(0, i)
     .concat(refArray.value.slice(i + 1))
 }
+
+const getDonneesCarte = async (gestionnaire) => {
+  return (await getCarteAcces(gestionnaire.infoCarte.id)) ?? null
+}
+
+const imprimerPdf = async (gestionnaire) => {
+  impressionEnCours.value = true
+  donneesPDF.value = await getDonneesCarte(gestionnaire)
+  await nextTick()
+  templatePDF.value.imprimer()
+}
+
+const addressSelect = (event) => {
+  address.value  = address_selected.value.name
+}
+
 </script>
+
+<style scoped>
+.offset {
+  position: absolute;
+  right: -2000px;
+}
+
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+</style>

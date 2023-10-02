@@ -1,147 +1,108 @@
 <template>
   <Card>
-    <h1>équipements motorisés de la fit arena</h1>
-    <div v-for="(typeEquipement, i) in typeEquipements" :key="i">
-      <div
-        v-if="typeEquipement.equipements.length"
-        class="m-5 border border-gray-200 p-4"
-      >
-        <h2 class="pb-5 pt-2">
-          {{ typeEquipement.libelle }}
-        </h2>
-        <div class="relative overflow-x-auto">
-          <table
-            v-for="(equipement, i) in typeEquipement.equipements"
-            :key="i"
-            class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
-          >
-            <thead
-              class="text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
-            >
-              <tr>
-                <th scope="col" class="px-6 py-3"></th>
-                <th scope="col" class="px-6 py-3">Actif</th>
-                <th scope="col" class="px-6 py-3">Libellé</th>
-                <th scope="col" class="px-6 py-3">Adresse IP</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="bg-white">
-                <td class="flex w-2/12 p-3">
-                  <Button
-                    test="TdeleteClient"
-                    borderless
-                    icon="delete"
-                    couleur="secondary"
-                    @click="removeEquipement(equipement.id)"
-                  />
-                  <Button
-                    test="TeditClient"
-                    borderless
-                    icon="edit"
-                    couleur="secondary"
-                    @click="editEquipement(equipement.id)"
-                  />
-                </td>
-                <td class="w-1/12 px-6 py-4">
-                  <label
-                    class="relative inline-flex cursor-pointer items-center"
+    <h1 class="mb-6">équipements motorisés de la fit arena</h1>
+    <div>
+      <div v-for="(equipement, i) in equipements" :key="`type_equipement-equipements-`+ i">
+        <CardModalSection :title="equipement.libelle" :params="true" class="border border-gray-200 pr-6 py-6 rounded-lg mb-6">
+          <template #topParams>
+            <div class="px-6 py-4 flex items-center ml-8">
+              <p class="w-16">{{ equipement.statut ? 'Actif' : 'Inactif' }}</p>
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="equipement.statut"
+                  type="checkbox"
+                  value="true"
+                  class="peer sr-only"
+                  @change="modifieEquipement(equipement)"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                ></div>
+                <span
+                  class="ml-3 text-sm font-medium text-gray-900"
+                ></span>
+              </label>
+              <p class="pl-28"><span class="text-black pr-4">Adresse IP</span> {{ equipement.ip }}</p>
+              <div class="ml-28 gap-10 flex">
+                <Button
+                  test="TshowEquipement"
+                  borderless
+                  icon="info"
+                  couleur="secondary"
+                  @click="showEquipement(equipement.id)"
+                />
+                <Button
+                  test="TeditEquipement"
+                  borderless
+                  icon="edit"
+                  couleur="secondary"
+                  @click="editEquipement(equipement.id)"
+                />
+                <Button
+                  test="TdeleteEquipement"
+                  borderless
+                  icon="delete"
+                  couleur="secondary"
+                  @click="removeEquipement(equipement.id)"
+                />
+              </div>
+            </div>
+          </template>
+          <template #content>
+            <div v-if="equipement.equipementModes && equipement.equipementModes.length" class="pl-8">
+              <h2 class="title-conf mb-4">CONFIGURATION ÉQUIPEMENTS</h2>
+              <table
+                class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
+              >
+                <thead>
+                  <tr>
+                    <th scope="col" class="px-6 py-3">Statut</th>
+                    <th scope="col" class="px-6 py-3">Libellé</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(
+                      equipementMode, i
+                    ) in equipement.equipementModes"
+                    :key="`equipementModes`+ i"
+                    class="bg-white border border-gray-200"
                   >
-                    <input
-                      v-model="equipement.statut"
-                      type="checkbox"
-                      value="true"
-                      class="peer sr-only"
-                      @change="modifieEquipement(equipement)"
-                    />
-                    <div
-                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-green-800"
-                    ></div>
-                    <span
-                      class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    ></span>
-                  </label>
-                </td>
-                <td class="w-1/2 max-w-xs truncate break-all px-6 py-4">
-                  {{ equipement.libelle }}
-                </td>
-                <td class="w-2/12 px-6 py-4">{{ equipement.ip }}</td>
-                <td class="w-1/12 px-6 py-4">
-                  <Button
-                    label="Détails"
-                    couleur="secondary"
-                    @click="showEquipement(equipement.id)"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td></td>
-                <td colspan="3">
-                  <CardConfiguration>
-                    <h3 class="pl-10 pt-2">Configuration</h3>
-                    <table
-                      v-if="equipement.equipementModes.length"
-                      class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
-                    >
-                      <thead>
-                        <tr>
-                          <th scope="col" class="px-6 py-3">Actif</th>
-                          <th scope="col" class="px-6 py-3">Libellé</th>
-                          <th scope="col" class="px-6 py-3">Adresse IP</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(
-                            equipementMode, i
-                          ) in equipement.equipementModes"
-                          :key="i"
-                          class="bg-white"
-                        >
-                          <td class="w-3/12 px-6 py-4">
-                            <label
-                              class="relative inline-flex cursor-pointer items-center"
-                            >
-                              <input
-                                v-model="equipementMode.statut"
-                                type="checkbox"
-                                value="true"
-                                class="peer sr-only"
-                              />
-                              <div
-                                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-                              ></div>
-                              <span
-                                class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-                              ></span>
-                            </label>
-                          </td>
-                          <td
-                            class="w-7/12 max-w-xs truncate break-all px-6 py-4"
-                          >
-                            {{ equipementMode.mode.libelle }}
-                          </td>
-                          <td class="w-2/12 px-6 py-4">
-                            {{ equipementMode.nomAppel }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </CardConfiguration>
-                </td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                    <td class="px-6 py-4 flex">
+                      <p class="w-16">{{ equipementMode.actif ? 'Actif' : 'Inactif' }}</p>
+                      <label
+                        class="relative inline-flex cursor-pointer items-center"
+                      >
+                        <input
+                          v-model="equipementMode.actif"
+                          type="checkbox"
+                          :disabled="true"
+                          class="peer sr-only"
+                        />
+                        <div
+                          class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                        ></div>
+                        <span
+                          class="ml-3 text-sm font-medium text-gray-900"
+                        ></span>
+                      </label>
+                    </td>
+                    <td class="px-6 py-4 border border-gray-200">
+                      {{ equipementMode.mode?.libelle ?? equipementMode.nomAppel }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </template>
+        </CardModalSection>
       </div>
     </div>
-    <Button
-      id="TaddEquipementNumerique"
+    <ButtonRight
+      id="TaddEquipement"
       label="Ajouter un équipement motorisé"
       icon="add"
-
-      couleur="secondary"
+      couleur="danger"
       @click="addEquipement"
     />
   </Card>
@@ -151,80 +112,86 @@
       :type="readonly ? 'visualiser' : 'classic'"
       :title="modal_title"
       @cancel="equipement_modal = false"
+      size="5xl"
+      confirmButtonText="Enregistrer"
     >
-      <div class="flex items-center">
-        <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900"
-          >Type d'équipement</label
-        >
-        <select
-          v-if="typeEquipementsSelects.length"
-          id="TTypeActivite"
-          v-model="equipement_selected"
-          :disabled="readonly == true ? true : false"
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        >
-          <option
-            v-for="(typeEquipementsSelect, i) in typeEquipementsSelects"
-            :key="i"
-            :value="typeEquipementsSelect.id"
+      <template #topParams>
+        <div class="flex items-center">
+          <p class="pr-4 label-text"
+            >Équipement actif :
+          </p>
+          <label class="relative inline-flex cursor-pointer items-center">
+            <input
+              v-model="equipement.statut"
+              :disabled="readonly"
+              type="checkbox"
+              value="true"
+              class="peer sr-only"
+            />
+            <div
+              class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+            ></div>
+            <span
+              class="ml-3 text-sm font-medium text-gray-900"
+            ></span>
+          </label>
+        </div>
+      </template>
+      <div class="w-full pl-4 items-center mb-16 flex justify-between">
+        <div class="w-3/12">
+          <p class="mb-2 label-text"
+            >Type d'équipement</p
           >
-            {{ typeEquipementsSelect.libelle }}
-          </option>
-        </select>
-      </div>
-      <div class="flex items-center">
-        <Input
-          id="TEquipementLibelle"
-          v-model="equipement.libelle"
-          :readonly="readonly"
-          :type="'text'"
-          label="Nom"
-          :required="true"
-          class="w-full"
-        />
-      </div>
-      <div class="flex items-center">
-        <Input
-          id="TEquipementIp"
-          v-model="equipement.ip"
-          :readonly="readonly"
-          :type="'text'"
-          label="Adresse IP"
-          :required="true"
-          class="w-full"
-          :validation="[ipValidation]"
-        />
-      </div>
-      <div class="flex items-center">
-        <span class="w-1/2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Actif :
-        </span>
-        <label class="relative inline-flex w-full cursor-pointer items-center">
-          <input
-            v-model="equipement.statut"
-            :disabled="readonly == true ? true : false"
-            type="checkbox"
-            value="true"
-            class="peer sr-only"
+          <select
+            v-if="typeEquipementsSelects.length"
+            id="TequipementSelect"
+            v-model="equipement_selected"
+            :disabled="readonly"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option
+              v-for="(typeEquipementsSelect, i) in typeEquipementsSelects"
+              :key="`typeEquipementsSelect-` + i"
+              :value="typeEquipementsSelect.id"
+            >
+              {{ typeEquipementsSelect.libelle }}
+            </option>
+          </select>
+        </div>
+        <div class="w-3/12">
+          <Input
+            id="TEquipementLibelle"
+            v-model="equipement.libelle"
+            :readonly="readonly"
+            type="text"
+            label="Nom"
+            required
+            class="w-full"
           />
-          <div
-            class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-          ></div>
-          <span
-            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-          ></span>
-        </label>
+        </div>
+        <div class="w-3/12">
+          <Input
+            id="TEquipementIp"
+            v-model="equipement.ip"
+            :readonly="readonly"
+            type="text"
+            label="Adresse IP"
+            required
+            class="w-full"
+            :validation="[ipValidation]"
+          />
+        </div>
       </div>
-      <CardConfiguration>
-        <h3 class="pl-10 pt-2">Configuration</h3>
+      <CardModalSection title="CONFIGURATION ÉQUIPEMENTS" class="pl-4" v-if="equipement.equipementModes?.length > 0">
         <table
-          class="w-full text-left text-sm text-gray-500 dark:text-gray-400"
+          class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
         >
           <thead>
             <tr>
-              <th scope="col" class="w-1/5 px-6 py-3"></th>
-              <th scope="col" class="w-1/5 px-6 py-3">Libellé</th>
-              <th scope="col" class="w-1/5 px-6 py-3">Nom d'Appel</th>
+              <th scope="col" class="px-6 py-3">Statut</th>
+              <th scope="col" class="px-6 py-3">Libellé</th>
+              <th scope="col" class="px-6 py-3">Nom d'appel</th>
+              <th scope="col" class="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -233,47 +200,69 @@
               :key="i"
               class="items-center bg-white"
             >
-              <td class="flex items-center justify-center p-3">
+              <td class="px-6 py-4 flex">
+                <p class="w-16">{{ equipementMode.actif ? 'Actif' : 'Inactif' }}</p>
+                <label
+                  class="relative inline-flex cursor-pointer items-center"
+                >
+                  <input
+                    v-model="equipementMode.actif"
+                    type="checkbox"
+                    value="true"
+                    class="peer sr-only"
+                  />
+                  <div
+                    class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
+                  ></div>
+                  <span
+                    class="ml-3 text-sm font-medium text-gray-900"
+                  ></span>
+                </label>
+              </td>
+              <td class="px-4 py-4">
+                <select
+                  :id="'Tmode-' + i"
+                  v-model="equipementMode.mode"
+                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 disabled:text-gray-400"
+                >
+                  <option
+                    v-for="(mode, j) in selectableModes"
+                    :key="j"
+                    :value="mode"
+                  >
+                    {{ mode.libelle }}
+                  </option>
+                </select>
+              </td>
+              <td class="px-4 py-4">
+                <Input
+                  type="text"
+                  v-model="equipementMode.nomAppel"
+                />
+              </td>
+              <td class="flex items-center justify-center px-4 py-5">
                 <Button
-                  test="TdeleteClient"
+                  test="TdeleteEquipementMode"
                   borderless
                   icon="delete"
                   couleur="secondary"
-
-                  @click="removeEquipementConfiguration(i)"
-                />
-                <Button
-                  test="TeditClient"
-                  borderless
-                  icon="edit"
-                  couleur="secondary"
-                  @click="editEquipementConfiguration(i)"
-                />
-              </td>
-              <td class="px-6 py-4">
-                <Input
-                  v-model="equipementMode.libelle"
-                  :readonly="equipementMode.readonly"
-                />
-              </td>
-              <td class="px-6 py-4">
-                <Input
-                  v-model="equipementMode.nomAppel"
-                  :readonly="equipementMode.mode?.readonly ? true : false"
+                  @click="removeEquipementConfiguration(equipement.equipementModes, i)"
                 />
               </td>
             </tr>
           </tbody>
         </table>
-        <Button
-          v-if="!readonly"
-          id="TaddConfiguration"
-          label="Ajouter une configuration"
-          icon="add"
-          couleur="secondary"
-          @click="addEquipementConfiguration"
-        />
-      </CardConfiguration>
+      </CardModalSection>
+      <ButtonRight
+        v-if="!readonly"
+        id="TaddConfiguration"
+        label="Ajouter une configuration"
+        icon="add"
+        couleur="danger"
+        @click="addEquipementConfiguration"
+        class="mt-4 ml-4"
+      />
+      <MentionChampsObligatoires class="pl-4" />
     </Modal>
   </form>
 
@@ -299,65 +288,87 @@
 
 <script setup>
 import Card from '../../components/common/Card.vue'
-import CardConfiguration from '../../components/common/CardConfiguration.vue'
 import Modal from '../../components/common/Modal.vue'
 import ValidationModal from '../../components/common/ValidationModal.vue'
 import Button from '../../components/common/Button.vue'
+import ButtonRight from '../../components/common/ButtonRight.vue'
 import Input from '../../components/common/Input.vue'
+import CardModalSection from '@components/common/CardModalSection.vue'
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
+import Table from '@components/common/Table.vue'
+
 import {
   deleteEquipements,
   getEquipement,
   getEquipements,
   postEquipements,
   updateEquipements,
-  patchEquipements,
-} from '../../api/equipement.js'
+  patchEquipements
+} from '@api/equipement.js'
 import { isValid, ipValidation } from '@/validation.js'
-import { getTypeEquipements } from '../../api/typeEquipement.js'
-import { useRoute } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { getTypeEquipements } from '@api/typeEquipement.js'
+import { getModes } from "@api/mode.js";
+
+import { onMounted, ref, watch } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
-
-const props = defineProps(['id'])
 
 const delete_modal = ref(false)
 const deleteEquipmentId = ref(0)
 const edit_modal = ref(false)
 const add_modal = ref(false)
 const equipmentTemp = ref({})
-
 const equipement_modal = ref(false)
 const readonly = ref(false)
 const id_selected = ref(0)
 const equipements = ref([])
 const typeEquipements = ref([])
 const typeEquipementsSelects = ref([])
-const typeEquipementsSelect = ref([])
 const typeEquipement = ref({})
 const equipement = ref({})
 const equipement_selected = ref({})
 const modal_title = ref('')
-
 const validation = ref({})
+const selectableModes = ref([])
 
-const id_fa = useRoute().params.id
+const props = defineProps({ id: String })
+
+const fetchDonnees = async () => {
+  equipements.value = await getEquipements(props.id, {categorie: 'motorise'})
+  
+  typeEquipements.value = setEquipementModes(
+    await getTypeEquipements(
+      1,
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena=' + props.id
+    ), setProprieteReadonly)
+}
 
 onMounted(async () => {
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-      '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
-  )
-  typeEquipements.value = await getTypeEquipements(
-    1,
-    '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
-  )
+  await fetchDonnees()
   typeEquipementsSelects.value = await getTypeEquipements(
-      1,
-      '&categoryTypeEquipement.code=motorise'
+    1,
+    '&categoryTypeEquipement.code=motorise'
   )
+  selectableModes.value = await getModes({ 'categoryTypeEquipement.code': 'motorisé' })
 })
+
+watch(() => props.id, async() => await fetchDonnees())
+
+const setEquipementModes = (typeEquipements, setter) => {
+  for (let typeEquipement of typeEquipements) {
+    for (let equipement of typeEquipement.equipements) {
+      for (let equipementMode of equipement.equipementModes ) {
+        setter(equipementMode);
+      }
+    }
+  }
+  return typeEquipements;
+}
+
+const setProprieteReadonly = (objet) =>
+{
+  objet.readonly = false;
+}
 
 const addEquipement = () => {
   cancel()
@@ -382,14 +393,11 @@ const deleteEquipmentValidation = async (id) => {
   delete_modal.value = false
   deleteEquipmentId.value = 0
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise'
-  )
+  equipements.value = await getEquipements(props.id, { categorie: 'motorise' })
+
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ props.id
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
@@ -436,13 +444,8 @@ const addEquipementConfiguration = () => {
   equipement.value.equipementModes.push(mode)
 }
 
-const removeEquipementConfiguration = (i) => {
-  delete equipement.value.equipementModes[i]
-}
-
-const editEquipementConfiguration = (i) => {
-  let equipementMode = equipement.value.equipementModes[i]
-  equipementMode.readonly = false
+const removeEquipementConfiguration = (equipementModes, i) => {
+  equipementModes.splice(i, 1)
 }
 
 const saveEquipement = () => {
@@ -454,6 +457,7 @@ const saveEquipement = () => {
     libelle: equipement.value.libelle,
     statut: equipement.value.statut == true ? equipement.value.statut : false,
     ip: equipement.value.ip,
+    equipementModes: equipement.value.equipementModes,
   }
 
   if (id_selected.value) {
@@ -474,14 +478,10 @@ const updateEquipmentValidation = async () => {
   edit_modal.value = false
   equipement_modal.value = false
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-    '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
-  )
+  equipements.value = await getEquipements(props.id, { categorie: 'motorise' })
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ props.id
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
@@ -500,14 +500,10 @@ const addEquipmentValidation = async () => {
   add_modal.value = false
   equipement_modal.value = false
   cancel()
-  equipements.value = await getEquipements(
-    props.id,
-    1,
-      '&typeEquipement.categoryTypeEquipement.code=motorise&fitArena.id='+ id_fa
-  )
+  equipements.value = await getEquipements(props.id, { categorie: 'motorise' })
   typeEquipements.value = await getTypeEquipements(
     1,
-      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ id_fa
+      '&categoryTypeEquipement.code=motorise&equipements.fitArena='+ props.id
   )
   typeEquipementsSelects.value = await getTypeEquipements(
       1,
@@ -521,3 +517,17 @@ const cancel = () => {
   equipement_selected.value = {}
 }
 </script>
+
+<style scoped>
+.label-text {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.title-conf {
+  font-family: 'Esphimere', 'sans-serif';
+}
+</style>
