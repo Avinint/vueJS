@@ -140,8 +140,8 @@
               {{ dayjs(creneau.dateDebut).format('HH:mm') }} - {{ dayjs(creneau.dateSortie).format('HH:mm') }}
             </td>
             <td class="px-6 py-4 flex items-center" id="statut">
-              Soumis à validation
-              <div class="w-3 h-3 bg-green-600 rounded-xl ml-10" />
+              Non validé
+              <div class="w-3 h-3 bg-red-600 rounded-xl ml-10" />
             </td>
           </tr>
         </tbody>
@@ -252,7 +252,6 @@ function create(event: DateSelectArg) {
   date.value = parseDateToInput(event.start);
   form.start_time = extractHour(event.start)
   form.end_time = extractHour(event.end)
-  form.recurrence = default_form_values.recurrence
 }
 function edit(event: EventClickArg) {
   const e = event.event._def
@@ -290,19 +289,17 @@ const submitDemande = async() => {
   form.date = `${year}-${month}-${day}`
 
   if (creneau_store.recurrence) {
-    form.recurrence = {
-      dateDebut: creneau_store.recurrence.dateDebut,
-      dateFin: creneau_store.recurrence.dateFin,
-      maxOccurrences: creneau_store.recurrence.maxOccurrences,
-      recurrenceJoursSemaines: creneau_store.recurrence.recurrenceJoursSemaine,
-      recurrenceOrdinaux: creneau_store.recurrence.recurrenceOrdinaux,
-      recurrenceSemainesMois: creneau_store.recurrence.recurrenceSemainesMois,
-      recurrenceType: creneau_store.recurrence.recurrenceType,
-      separation: creneau_store.recurrence.separation
-    }
-
-    if (creneau_store.recurrence.maxOccurrences == 0 && creneau_store.recurrence.dateFin == "") {
-      form.recurrence = undefined
+    if (submenu.value === true) {
+      form.recurrence = {
+        dateDebut: creneau_store.recurrence.dateDebut,
+        dateFin: creneau_store.recurrence.dateFin,
+        maxOccurrences: creneau_store.recurrence.maxOccurrences,
+        recurrenceJoursSemaines: creneau_store.recurrence.recurrenceJoursSemaine,
+        recurrenceOrdinaux: creneau_store.recurrence.recurrenceOrdinaux,
+        recurrenceSemainesMois: creneau_store.recurrence.recurrenceSemainesMois,
+        recurrenceType: creneau_store.recurrence.recurrenceType,
+        separation: creneau_store.recurrence.separation
+      }
     }
   }
   
