@@ -16,7 +16,7 @@
             v-model="date"
             i18n="fr"
             as-single
-            :formatter="{ date: 'DD-MM-YYYY' }"
+            :formatter="{ date: 'DD-MM-YYYY', month: 'MMMM' }"
           />
         </div>
         <TimeRange label="Plage horaire du créneau" v-model:start_time="form.start_time" v-model:end_time="form.end_time" />
@@ -44,7 +44,7 @@
       </CardModalSection>
       <div class="flex justify-end gap-10">
         <Button
-          v-if="state == 'edit'"
+          v-if="state == 'edit' && eventId !== 0"
           @click="deleteDemande"
           label="Annuler une demande"
           couleur="secondary"
