@@ -13,20 +13,20 @@
       :type-action="actionType"
       @close-modal-creneau="closeModal"
     />
-    <ModalDetailDemande ref="modal_demande"/>
+    <ModalDetailDemande ref="modalDemandeDetails"/>
     <div
       class="space-y-3 p-4"
     >
       <FullCalendar ref="fullCalendar" :options="calendarOptions">
         <template #eventContent="arg">
-          <Event
-            v-if="arg.event.extendedProps.event_type == 0"
-            :event="arg.event"
-          />
           <EventDemande
-            v-else-if="arg.event.extendedProps.event_type == 1"
+              v-if="arg.event.extendedProps.statut === 'demande'"
             :event="arg.event"
             :key="redraw_key"
+          />
+          <Event
+            v-else
+            :event="arg.event"
           />
         </template>
       </FullCalendar>
@@ -107,7 +107,7 @@ export default {
       isModalCreneauOpen: false,
       actionType: '',
       zones: [],
-      redraw_key: 0
+      redraw_key: 0,
     }
   },
   watch: {
@@ -132,12 +132,14 @@ export default {
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
+
         this.calendarOptions.events = newCreneaux
         this.redraw_key++
       }
     )
   },
   async mounted() {
+
     this.calendarApi = this.$refs.fullCalendar.getApi()
     await this.initZones();
     await this.typeCreneauStore.fetchTypeCreneaux()
@@ -170,12 +172,21 @@ export default {
     eventClick(eventClickInfo) {
       this.actionType = 'edit'
       this.setSelectedCreneau(eventClickInfo.event)
-      if (eventClickInfo.event.extendedProps.recurrence)
-        this.$refs.edit_options.open();
-      else {
-        this.creneauStore.recurrence = undefined;
-        this.isModalCreneauOpen = true;
+
+      if (eventClickInfo.event.extendedProps.statut === "demande") {
+        let demande = eventClickInfo.event.extendedProps
+        this.$refs.modalDemandeDetails.setDemande(demande)
+        this.$refs.modalDemandeDetails.open()
+
+      } else {
+        if (eventClickInfo.event.extendedProps.recurrence)
+          this.$refs.edit_options.open();
+        else {
+          this.creneauStore.recurrence = undefined;
+          this.isModalCreneauOpen = true;
+        }
       }
+
     },
     editSingle() {
       this.creneauStore.recurrence = undefined;

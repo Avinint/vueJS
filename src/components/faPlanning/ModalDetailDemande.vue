@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex w-full items-center justify-between">
         <div class="modal-demande-title">
-          <h2>{{ demande.titre.toUpperCase() }}</h2>
+          <h2>{{ demande?.titre.toUpperCase() }}</h2>
           <h2>{{ getDateTitle() }}</h2>
         </div>
         <div>
@@ -70,7 +70,7 @@ const MOCK_DATA: FaTableRow<MOCK_TYPE>[] = [
     id: 0,
     data: {
       demandeur: 'Adipso',
-      date: '04/01/2023',
+      date: '29/09/2023',
       zones: 'Halle multisport',
       horaire: '12:00 - 13:00',
       type: 'Créneau unique le 06/01',
