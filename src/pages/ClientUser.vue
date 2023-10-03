@@ -109,16 +109,28 @@ import Card from '../components/common/Card.vue'
 import Input from '../components/common/Input.vue'
 
 import { getClientUsers, patchUser } from '../api/user.js'
-import { useRoute } from 'vue-router'
-import { onMounted, ref } from "vue"
+import { onMounted, ref, watch } from "vue"
 import { toast } from "vue3-toastify";
 
 const users = ref([])
 const page = ref(1)
 const userSearch = ref('')
+const props = defineProps(['id'])
+
 
 onMounted(async () => {
-  users.value = await getClientUsers(1, useRoute().params.id)
+  await fetchDonnees()
+})
+
+watch(() => props.id, async() => await fetchDonnees())
+watch(() => userSearch.value, () => console.log(userSearch.value))
+
+const fetchDonnees = async () => {
+  users.value = await getClientUsers(1, props.id)
+  sortDonnees()
+}
+
+const sortDonnees = () => {
   users.value.sort(function compare(a, b) {
     if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
       return -1
@@ -128,7 +140,7 @@ onMounted(async () => {
     }
     return 0
   })
-})
+}
 
 const modifieActifUser = async ({ actif, id }) => {
   try {
@@ -159,36 +171,21 @@ const modifiePMRUser = async ({ equipementAdapte, id }) => {
 
 const previousPage = async () => {
   page.value = page.value - 1
-  users.value = await getUsers(page.value)
-  users.value.sort(function compare(a, b) {
-    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
-      return -1
-    }
-    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
-      return 1
-    }
-    return 0
-  })
+  users.value = await getClientUsers(page.value, props.id)
+  sortDonnees()
   window.scroll(0, 0)
 }
 
 const nextPage = async () => {
   page.value = page.value + 1
-  users.value = await getUsers(page.value)
-  users.value.sort(function compare(a, b) {
-    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
-      return -1
-    }
-    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
-      return 1
-    }
-    return 0
-  })
+  users.value = await getClientUsers(page.value, props.id)
+  sortDonnees()
   window.scroll(0, 0)
 }
 
 const searchUser = async () => {
-  users.value = await getClientUsers(1, '&search=' + userSearch.value)
+  users.value = await getClientUsers(1, props.id, '&search=' + userSearch.value)
+  sortDonnees()
 }
 </script>
 

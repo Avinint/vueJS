@@ -18,7 +18,7 @@ export const getUsers = async (page = 1, query = '') => {
   return response.json()
 }
 
-export const getClientUsers = async (page = 1, idClient ,query = '') => {
+export const getClientUsers = async (page, idClient, query = '') => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/clients/${idClient}/users?page=${page}${query}`,
     {

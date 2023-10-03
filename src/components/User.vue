@@ -117,7 +117,15 @@ const page = ref(1)
 const userSearch = ref('')
 
 onMounted(async () => {
+  await fetchDonnees()
+})
+
+const fetchDonnees = async () => {
   users.value = await getUsers(1)
+  sortDonnees()
+}
+
+const sortDonnees = () => {
   users.value.sort(function compare(a, b) {
     if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
       return -1
@@ -127,7 +135,7 @@ onMounted(async () => {
     }
     return 0
   })
-})
+}
 
 const modifieActifUser = async ({ actif, id }) => {
   try {
@@ -159,30 +167,14 @@ const modifiePMRUser = async ({ equipementAdapte, id }) => {
 const previousPage = async () => {
   page.value = page.value - 1
   users.value = await getUsers(page.value)
-  users.value.sort(function compare(a, b) {
-    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
-      return -1
-    }
-    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
-      return 1
-    }
-    return 0
-  })
+  sortDonnees()
   window.scroll(0, 0)
 }
 
 const nextPage = async () => {
   page.value = page.value + 1
   users.value = await getUsers(page.value)
-  users.value.sort(function compare(a, b) {
-    if (a.nom.toLowerCase() < b.nom.toLowerCase()) {
-      return -1
-    }
-    if (a.nom.toLowerCase() > b.nom.toLowerCase()) {
-      return 1
-    }
-    return 0
-  })
+  sortDonnees()
   window.scroll(0, 0)
 }
 
