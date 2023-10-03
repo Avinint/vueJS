@@ -184,7 +184,8 @@ const nextPage = async () => {
 }
 
 const searchUser = async () => {
-  users.value = await getClientUsers(1, props.id, '&search=' + userSearch.value)
+  const value = encodeURIComponent(userSearch.value)
+  users.value = await getClientUsers(1, props.id, '&search=' + value)
   sortDonnees()
 }
 </script>
