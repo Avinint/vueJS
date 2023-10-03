@@ -26,6 +26,7 @@
         <Input class="input-count" v-model="form.people_count" />
       </div>
       <Button
+        v-if="state === 'create' || (state === 'edit' && isRecurrent)"
         label="Récurrence"
         couleur="secondary"
         @click="submenu = !submenu"
@@ -213,6 +214,7 @@ const creneauId = ref(0)
 const commentaires = ref([])
 const deleteDemande_modal = ref(false)
 const submenu = ref(false)
+const isRecurrent = ref(false)
 
 const props = defineProps({
   zones: Object
@@ -246,6 +248,7 @@ const state = ref<'create' | 'edit' | 'closed'>('closed')
 
 function create(event: DateSelectArg) {
   state.value = 'create'
+  isRecurrent.value = false
   form.title = default_form_values.title;
   form.people_count = default_form_values.people_count;
   form.zones = default_form_values.zones;
@@ -257,6 +260,9 @@ function create(event: DateSelectArg) {
 
 function edit(event: EventClickArg) {
   const e = event.event._def
+  if (e.extendedProps.recurrence) {
+    isRecurrent.value = true
+  }
   state.value = 'edit'
   form.title = e.title;
   // form.people_count = e.people_count;
