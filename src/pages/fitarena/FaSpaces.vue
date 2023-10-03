@@ -252,7 +252,6 @@ const saveEspace = async () => {
     fitArena: '/api/fit_arenas/' + props.id,
     ordre: parseInt(espace.value.ordre),
     libelle: espace.value.libelle,
-    ordre: espace.value.ordre,
     actif: espace.value.actif == true ? espace.value.actif : false,
   }
 
