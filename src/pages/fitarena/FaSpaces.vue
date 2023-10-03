@@ -75,13 +75,21 @@
       confirm-button-text="Enregistrer"
     >
       <div class="pl-4">
-        <div class="flex items-center pb-6">
+        <div class="flex items-center pb-6 gap-20">
           <Input
             id="TEspaceLibelle"
             v-model="espace.libelle"
             :readonly="readonly"
             type="text"
             label="Nom"
+            required
+          />
+          <Input
+            id="TEspaceOrdre"
+            v-model="espace.ordre"
+            :readonly="readonly"
+            type="number"
+            label="Ordre"
             required
           />
         </div>

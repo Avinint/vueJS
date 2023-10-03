@@ -21,9 +21,10 @@ const emit = defineEmits(['close'])
     position: fixed;
     z-index: 100;
     bottom: 0;
+    right: 0;
     border-radius: 8px 8px 0px 0px;
     width: 100%;
-    max-width: calc(100vw - 350px);
+    max-width: calc(100vw - 320px);
     box-shadow: 0px 0px 15px rgb(99, 99, 99);
 }
 

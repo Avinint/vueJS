@@ -399,9 +399,14 @@ export default {
     //   return this.creneauStore.zones.includes(zone.id)
     // },
     async fetchZones() {
-      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(
-        zone => zone.actif && zone.zoneActivites.length > 0
-      )
+      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
+      this.zones.forEach((zone, i) => {
+        zone.zoneActivites.forEach(za => {
+          if (!za.actif) {
+            this.zones.splice(i, 1);
+          }
+        })
+      });
       this.checkActivites()
     },
     updateActivites() {

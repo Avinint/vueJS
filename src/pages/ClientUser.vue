@@ -1,8 +1,8 @@
 <template>
   <Card class="space-y-3 mb-10">
-    <!-- <div class="flex gap-40 items-center"> -->
+    <div class="flex gap-40 items-center">
       <h1>Utilisateurs</h1>
-      <!-- <div class="flex gap-4">
+      <div class="flex gap-4">
         <Input
           placeholder="..."
           v-model="userSearch"
@@ -16,7 +16,7 @@
           label="Rechercher"
         />
       </div>
-    </div> -->
+    </div>
 
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
@@ -99,7 +99,7 @@
   <div class="flex justify-center items-center mb-10">
     <p v-if="page !== 1"><span @click="previousPage()" class="chevron left cursor-pointer"></span></p>
     <p class="mx-10 text-gray-500">{{ page }}</p>
-    <p :class="users.length >= 30 ? '' : 'hidden'"><span @click="nextPage()" class="chevron right cursor-pointer"></span></p>
+    <p v-if="users.length > 0"><span @click="nextPage()" class="chevron right cursor-pointer"></span></p>
   </div>
 </template>
 
@@ -108,20 +108,25 @@ import Button from '../components/common/Button.vue'
 import Card from '../components/common/Card.vue'
 import Input from '../components/common/Input.vue'
 
-import { getUsers, patchUser } from '../api/user.js'
-import { onMounted, ref } from "vue"
+import { getClientUsers, patchUser } from '../api/user.js'
+import { onMounted, ref, watch } from "vue"
 import { toast } from "vue3-toastify";
 
 const users = ref([])
 const page = ref(1)
 const userSearch = ref('')
+const props = defineProps(['id'])
+
 
 onMounted(async () => {
   await fetchDonnees()
 })
 
+watch(() => props.id, async() => await fetchDonnees())
+watch(() => userSearch.value, () => console.log(userSearch.value))
+
 const fetchDonnees = async () => {
-  users.value = await getUsers(1)
+  users.value = await getClientUsers(1, props.id)
   sortDonnees()
 }
 
@@ -166,20 +171,21 @@ const modifiePMRUser = async ({ equipementAdapte, id }) => {
 
 const previousPage = async () => {
   page.value = page.value - 1
-  users.value = await getUsers(page.value)
+  users.value = await getClientUsers(page.value, props.id)
   sortDonnees()
   window.scroll(0, 0)
 }
 
 const nextPage = async () => {
   page.value = page.value + 1
-  users.value = await getUsers(page.value)
+  users.value = await getClientUsers(page.value, props.id)
   sortDonnees()
   window.scroll(0, 0)
 }
 
 const searchUser = async () => {
-  users.value = await getUsers(1, '&search=' + userSearch.value)
+  users.value = await getClientUsers(1, props.id, '&search=' + userSearch.value)
+  sortDonnees()
 }
 </script>
 

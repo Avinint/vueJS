@@ -1,11 +1,12 @@
-<script setup>
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
+
   const props = defineProps({
     open: Boolean,
     visible: Boolean,
   })
 
   const emit = defineEmits(['openMenuItem'])
-
 </script>
 
 <template>
@@ -17,12 +18,3 @@
           clip-rule="evenodd"/>
   </svg>
 </template>
-
-<style scoped lang="scss">
- .home{
-   height: 25px;
-   display: inline-block;
-   color: inherit;
-   padding:  0 3px 4px 7px;
- }
-</style>
