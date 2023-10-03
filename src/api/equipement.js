@@ -21,7 +21,7 @@ export const getEquipements = async (fitArenaId, query = {}, tri = {}) =>
 export const getEquipement = async (id = 1) => await get('/api/equipements/' + id)
 
 export const postEquipements = async (equipement) => {
-  if (equipement.hasOwnProperty['equipementModes']) {
+  if (equipement.hasOwnProperty('equipementModes')) {
     for (let configuration of equipement.equipementModes) {
       configuration.mode = configuration.mode.iri
     }
