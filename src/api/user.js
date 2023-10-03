@@ -18,6 +18,22 @@ export const getUsers = async (page = 1, query = '') => {
   return response.json()
 }
 
+export const getClientUsers = async (page, idClient, query = '') => {
+  const response = await $fetch(
+    `${import.meta.env.VITE_API_URL}/api/clients/${idClient}/users?page=${page}${query}`,
+    {
+      method: 'get',
+      headers: {
+        ...defaultHeaders,
+        'Content-Type': 'application/ld+json',
+        Authorization: 'Bearer ' + useStorage('token', '').value,
+      },
+    }
+  )
+  if (response.status !== 200) throw response
+  return response.json()
+}
+
 export const getUser = async (id = 1) => {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/users/${id}`,

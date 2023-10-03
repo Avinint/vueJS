@@ -46,16 +46,16 @@
 import ModalBottom from '@components/common/ModalBottom.vue'
 import EditSeance from '@components/faPlanning/EditSeance.vue'
 import Button from '@components/common/Button.vue'
+import Table from '@components/common/Table.vue'
+import ModalQRCode from './ModalQRCode.vue'
+import type { FaTableColumnData, FaTableRow } from '@components/common/Table.vue'
+
 import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
 import { getDateStringHour } from '../../services/date_service'
 import { useCreneauStore } from '@stores/creneau'
 import { useSeanceStore } from '@stores/seance'
-import { useRoute } from 'vue-router'
-import CrudList from '@components/molecules/CrudList.vue'
-import type { FaTableColumnData, FaTableRow } from '@components/common/Table.vue'
-import { getAnimateurs } from '@api/animateur'
-import Table from '@components/common/Table.vue'
-import ModalQRCode from './ModalQRCode.vue'
 import { fetchGroupes } from '@api/groupe'
 
 defineExpose({ open_modal, close_modal })

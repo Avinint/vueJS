@@ -4,6 +4,7 @@ import { useUserStore } from './stores/user.js'
 import Login from './pages/login.vue'
 import Admin from './pages/admin.vue'
 import User from './pages/user.vue'
+import ClientUsers from './pages/ClientUser.vue'
 import FitArena from './pages/fitArena.vue'
 import FitArenas from './pages/fitArenas.vue'
 import Client from './pages/client.vue'
@@ -360,6 +361,24 @@ const routes = [
         },
       },
     ],
+  },
+  {
+    path: '/clients/:id/users',
+    props: true,
+    name: 'utilisateurs_par_client',
+    component: ClientUsers,
+    meta: {
+      breadcrumbs: [
+        {
+          label: 'Utilisateurs',
+          link: 'utilisateurs',
+        },
+        {
+          label: 'Liste',
+          link: '',
+        },
+      ],
+    }
   },
   {
     path: '/clients/:id/organismes',

@@ -14,32 +14,15 @@
         <tbody>
           <tr>
             <td>Délai d'annulation d'une réservation</td>
-            <td>
-              <input
-                v-if="editCancelBooking"
-                v-model="cancelSessionTime"
-                type="number"
-                min="0"
-                class="block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-              />
-              <div v-if="!editCancelBooking">{{ cancelSessionTime }} h</div>
-            </td>
+            <td>{{ parametres?.condition_annulation_des_creneaux?.valeur }} h</td>
             <td>
               <Button
-                v-if="!editCancelBooking"
-                test="TeditSlot"
+                test="TeditSlotCancel"
                 borderless
                 icon="edit"
                 couleur="secondary"
-                @click="setCancelBooking"
-              />
-              <Button
-                v-if="editCancelBooking"
-                test="TeditSlot"
-                borderless
-                icon="cross"
-                couleur="secondary"
-                @click="setCancelBooking"
+                class="pl-0"
+                @click="modale = true"
               />
             </td>
           </tr>
@@ -47,42 +30,79 @@
       </table>
     </div>
   </CardModalSection>
+  <form @submit.prevent="saveParametre">
+    <Modal
+      v-if="modale"
+      title="Modifier le délai d'annulation d'une réservation"
+      @cancel="modale = false"
+    >
+      <div>
+        <div class="mb-6 ">
+          <Input
+            id="TeditSlotModalCancel"
+            type="number"
+            label="Délai d'annulation d'une réservation"
+            v-model="parametres.condition_annulation_des_creneaux.valeur"
+            required
+          />
+        </div>
+        <p class="text-light-blue">
+          Cette modification ne sera pas appliquée sur les créneaux créés
+          précédemment.
+        </p>
+      </div>
+    </Modal>
+  </form>
 </template>
 
 <script setup>
 import Button from '../common/Button.vue'
-import Input from "../common/Input.vue"
+import Input from '../common/Input.vue'
+import Modal from '../common/Modal.vue'
 import CardModalSection from "@components/common/CardModalSection.vue"
 
-import { ref, onBeforeMount } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
-import { patchParametreFitArena } from '@api/parametreFitArena.js'
+import { updateParametreFitArena } from '@api/parametreFitArena.js'
 import { useParamStore } from "@stores/parametre.js"
 
 const props = defineProps(['id'])
 const route = useRoute()
 const params = useParamStore()
 
-const editCancelBooking = ref(false)
-const cancelSessionTime = ref(1)
+const modale = ref(false)
 
-onBeforeMount(async () => {
-  cancelSessionTime.value = params.parametreFitArenas?.['condition-annulation-des-creneaux'].valeur ?? 1
+const parametres = computed(() => {
+  const {
+    condition_annulation_des_creneaux: condition_annulation_des_creneaux
+  } = params.parametreFitArenas ?? {}
+
+  return { condition_annulation_des_creneaux }
 })
 
-const setCancelBooking = async () => {
-  editCancelBooking.value = !editCancelBooking.value
-  if (!editCancelBooking.value) {
-    // RETURN TO READONLY MODE -> SAVE INPUT VIA API
-    const id = params.parametreFitArenas['condition-annulation-des-creneaux'].id
-    await patchParametreFitArena(id, {
-      fitArena: 'api/fit_arenas/' + route.params.id,
-      parametre: 'api/parametres/' + id,
-      valeur: '' + cancelSessionTime.value,
-    })
+const rafraichir = async () => {
+  await params.fetchParametres(route.params.id)
+}
+
+const saveParametre = async () => {
+  const paramTemp = {
+    fitArena: '/api/fit_arenas/' + route.params.id,
+    parametre: params.parametreFitArenas.condition_annulation_des_creneaux.parametre.toString(),
+    valeur: parametres.value.condition_annulation_des_creneaux.valeur.toString(),
   }
+
+  try {
+    await updateParametreFitArena(paramTemp, params.parametreFitArenas.condition_annulation_des_creneaux.id)
+    rafraichir()
+    toast.success('Enregistrement du paramètre avec succès')
+  } catch (e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur')
+  }
+
+  modale.value = false
 }
 </script>
 

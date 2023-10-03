@@ -108,20 +108,25 @@ import Button from '../components/common/Button.vue'
 import Card from '../components/common/Card.vue'
 import Input from '../components/common/Input.vue'
 
-import { getUsers, patchUser } from '../api/user.js'
-import { onMounted, ref } from "vue"
+import { getClientUsers, patchUser } from '../api/user.js'
+import { onMounted, ref, watch } from "vue"
 import { toast } from "vue3-toastify";
 
 const users = ref([])
 const page = ref(1)
 const userSearch = ref('')
+const props = defineProps(['id'])
+
 
 onMounted(async () => {
   await fetchDonnees()
 })
 
+watch(() => props.id, async() => await fetchDonnees())
+watch(() => userSearch.value, () => console.log(userSearch.value))
+
 const fetchDonnees = async () => {
-  users.value = await getUsers(1)
+  users.value = await getClientUsers(1, props.id)
   sortDonnees()
 }
 
@@ -166,20 +171,21 @@ const modifiePMRUser = async ({ equipementAdapte, id }) => {
 
 const previousPage = async () => {
   page.value = page.value - 1
-  users.value = await getUsers(page.value)
+  users.value = await getClientUsers(page.value, props.id)
   sortDonnees()
   window.scroll(0, 0)
 }
 
 const nextPage = async () => {
   page.value = page.value + 1
-  users.value = await getUsers(page.value)
+  users.value = await getClientUsers(page.value, props.id)
   sortDonnees()
   window.scroll(0, 0)
 }
 
 const searchUser = async () => {
-  users.value = await getUsers(1, '&search=' + userSearch.value)
+  users.value = await getClientUsers(1, props.id, '&search=' + userSearch.value)
+  sortDonnees()
 }
 </script>
 
