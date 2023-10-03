@@ -1,8 +1,8 @@
 <template>
   <Card class="space-y-3 mb-10">
-    <div class="flex gap-40 items-center">
+    <!-- <div class="flex gap-40 items-center"> -->
       <h1>Utilisateurs</h1>
-      <div class="flex gap-4">
+      <!-- <div class="flex gap-4">
         <Input
           placeholder="..."
           v-model="userSearch"
@@ -16,7 +16,7 @@
           label="Rechercher"
         />
       </div>
-    </div>
+    </div> -->
 
     <div class="relative overflow-x-auto">
       <table class="w-full text-left text-sm text-gray-500">
@@ -99,7 +99,7 @@
   <div class="flex justify-center items-center mb-10">
     <p v-if="page !== 1"><span @click="previousPage()" class="chevron left cursor-pointer"></span></p>
     <p class="mx-10 text-gray-500">{{ page }}</p>
-    <p v-if="users.length > 0"><span @click="nextPage()" class="chevron right cursor-pointer"></span></p>
+    <p :class="users.length >= 30 ? '' : 'hidden'"><span @click="nextPage()" class="chevron right cursor-pointer"></span></p>
   </div>
 </template>
 
