@@ -254,6 +254,7 @@ function create(event: DateSelectArg) {
   form.start_time = extractHour(event.start)
   form.end_time = extractHour(event.end)
 }
+
 function edit(event: EventClickArg) {
   const e = event.event._def
   state.value = 'edit'
@@ -304,27 +305,26 @@ const submitDemande = async() => {
     }
   }
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
-  
+  verifCreneaux.value = await postCreneauVerifDemande(contract.value);
+  state.value = 'closed';
+  verifModal.value = true
+}
+
+const submitDemandeValidation = async () => {
   if (state.value == 'edit') {
     if (creneauId.value !== 0) {
       verifCreneaux.value = await updateCreneauDemande(contract.value, creneauId.value);
     } else {
       verifCreneaux.value = await updateCreneauDemande(contract.value, eventId.value);
     }
-    await refreshPlanning()
   } else {
-    verifCreneaux.value = await postCreneauVerifDemande(contract.value);
-    verifModal.value = true;
+    await postCreneauDemande(contract.value)
   }
-    state.value = 'closed';
-    submenu.value = false
-}
 
-const submitDemandeValidation = async () => {
-  await postCreneauDemande(contract.value)
+  await refreshPlanning()
   verifModal.value = false
   state.value = 'closed'
-  await refreshPlanning()
+  submenu.value = false
 }
 
 const modifierDemande = () => {
