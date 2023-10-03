@@ -1,4 +1,4 @@
-import { defaultHeaders, get } from './api.js'
+import { defaultHeaders, get, post } from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
@@ -21,26 +21,11 @@ export const getEquipements = async (fitArenaId, query = {}, tri = {}) =>
 export const getEquipement = async (id = 1) => await get('/api/equipements/' + id)
 
 export const postEquipements = async (equipement) => {
-  if (equipement.hasOwnProperty['equipementModes']) {
-    for (let configuration of equipement.equipementModes) {
-      configuration.mode = configuration.mode.iri
-    }
+  if (equipement.hasOwnProperty('equipementModes')) {
+    equipement.equipementModes = equipement.equipementModes.map(config => ({ ...config, mode: config.mode.iri }))
   }
 
-  const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/equipements`,
-    {
-      method: 'post',
-      headers: {
-        ...defaultHeaders,
-        'Content-Type': 'application/ld+json',
-        Authorization: 'Bearer ' + useStorage('token', '').value,
-      },
-      body: JSON.stringify(equipement),
-    }
-  )
-  if (response.status !== 201) throw response.json()
-  return response.json()
+  return await post('/api/equipements', equipement)
 }
 
 export const updateEquipements = async (equipement, id) => {
