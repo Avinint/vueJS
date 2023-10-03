@@ -209,6 +209,7 @@ const contract = ref({})
 const date = ref('')
 const errorMessage = ref('')
 const eventId = ref(0)
+const creneauId = ref(0)
 const commentaires = ref([])
 const deleteDemande_modal = ref(false)
 const submenu = ref(false)
@@ -225,7 +226,7 @@ const default_form_values = {
   people_count: 0,
   zones: [],
   commentaire: '',
-  recurrence: {}
+  recurrence: undefined
 }
 
 const form = reactive<{
@@ -259,6 +260,7 @@ function edit(event: EventClickArg) {
   form.title = e.title;
   // form.people_count = e.people_count;
   eventId.value = e.extendedProps.demandeId;
+  creneauId.value = e.extendedProps.id
   form.zones = e.extendedProps.zones;
   form.commentaire = default_form_values.commentaire;
   commentaires.value = e.extendedProps.commentaires;
@@ -287,8 +289,8 @@ const submitDemande = async() => {
   const year = date.value.split('-')[2]
   form.date = `${year}-${month}-${day}`
 
-  if (creneau_store.recurrence) {
-    if (submenu.value === true) {
+  if (submenu.value === true) {
+    if (creneau_store.recurrence) {
       form.recurrence = {
         dateDebut: creneau_store.recurrence.dateDebut,
         dateFin: creneau_store.recurrence.dateFin,
@@ -301,11 +303,14 @@ const submitDemande = async() => {
       }
     }
   }
-  
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
   
   if (state.value == 'edit') {
-    verifCreneaux.value = await updateCreneauDemande(contract.value, eventId.value);
+    if (creneauId.value !== 0) {
+      verifCreneaux.value = await updateCreneauDemande(contract.value, creneauId.value);
+    } else {
+      verifCreneaux.value = await updateCreneauDemande(contract.value, eventId.value);
+    }
     await refreshPlanning()
   } else {
     verifCreneaux.value = await postCreneauVerifDemande(contract.value);
