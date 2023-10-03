@@ -256,7 +256,6 @@ function create(event: DateSelectArg) {
 }
 function edit(event: EventClickArg) {
   const e = event.event._def
-  console.log(e)
   state.value = 'edit'
   form.title = e.title;
   // form.people_count = e.people_count;
