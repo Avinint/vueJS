@@ -1,11 +1,12 @@
 <template>
   <CardModalSection title="Annulation d'une réservation" class="border border-gray-200 py-4 pr-4 rounded-lg">
     <div class="pl-8">
-      <table id="cancel" class="w-full text-left text-sm mb-4 text-gray-500 border border-gray-200 table-fixed">
+      <table class="param-fa w-full text-left text-sm mb-4 text-gray-500 border border-gray-200 table-fixed">
         <thead
           class="hidden"
         >
           <tr>
+            <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
@@ -25,6 +26,7 @@
                 @click="modale = true"
               />
             </td>
+            <td></td>
           </tr>
         </tbody>
       </table>
@@ -105,27 +107,3 @@ const saveParametre = async () => {
   modale.value = false
 }
 </script>
-
-<style scoped>
-table#cancel tr {
-  font-weight: 700;
-  border: 1px solid lightgray;
-}
-table#cancel tr > td:first-of-type {
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-  border-right: 1px solid lightgray;
-  color: #000;
-}
-
-table#cancel tr > td {
-  padding: 0.5rem 1rem;
-}
-
-table#cancel tr > td:nth-child(3) {
-  text-align: center;
-}
-
-table#cancel {
-  border-radius: 30px;
-}
-</style>

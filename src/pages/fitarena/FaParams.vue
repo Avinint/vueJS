@@ -105,3 +105,36 @@ const rafraichir = async () => {
   await params.fetchParametres(route.params.id)
 }
 </script>
+
+<style>
+table.param-fa tr {
+  border: 1px solid lightgray;
+}
+
+table.param-fa tr > td:first-of-type {
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+  border-right: 1px solid lightgray;
+  color: #000;
+}
+
+table.param-fa tr > td {
+  padding: 0.5rem 1rem;
+}
+
+table#view tr > td:nth-child(4) {
+  text-align: start;
+}
+
+table.param-fa tr > td:nth-child(3) {
+  text-align: end;
+}
+
+table.param-fa {
+  border-radius: 30px;
+}
+
+.bg-blue-view {
+  background-color: #3586E2;
+  color: #fff;
+}
+</style>
