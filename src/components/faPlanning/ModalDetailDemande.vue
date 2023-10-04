@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex w-full items-center justify-between">
         <div class="modal-demande-title">
-          <h2>{{ demande?.titre.toUpperCase() }}</h2>
+          <h2>{{ libelleOrganisme.toUpperCase() }}</h2>
           <h2>{{ getDateTitle() }}</h2>
         </div>
         <div>
@@ -20,7 +20,7 @@
     <template #content>
       <Table :can-create="false" :columns="columns" :data="MOCK_DATA">
         <template #col-0="{ item }">
-          <Button :label="item.demandeur"></Button>
+          <Button :label="item.organisme"></Button>
         </template>
         <template #col-6="{ item }">
           <Button couleur="danger"></Button>
@@ -34,55 +34,79 @@
 import Button from '@components/common/Button.vue'
 import ModalBottom from '@components/common/ModalBottom.vue'
 import { frenchTodayDate, getDateStringHour } from '../../services/date_service'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type {
   FaTableColumnData,
   FaTableRow,
 } from '@components/common/Table.vue'
 import Table from '@components/common/Table.vue'
+import {useMenuStore} from "@stores/menu";
+import {getDetailsDemande} from "@api/creneau";
 
-defineExpose({ open, close, setDemande })
+
+const menu = useMenuStore()
+const organismes = computed(() => menu.getOrganismes())
+const libelleOrganisme = computed(() => {
+  const id = demande.value.organismeId
+  return organismes.value.find(organisme => organisme.id === id)?.libelle ?? ''
+})
 
 const is_open = ref(false)
 const demande = ref<Creneau>()
 
-type MOCK_TYPE = {
-  demandeur: string,
-    date: string,
-    zones: string,
-    horaire: string,
-    type: string,
-    status: string
-}
+type DEMANDE = {
+  organisme: string,
+  date: string,
+  zones: string,
+  heureDebut: string,
+  heureFin: string
 
-const columns: FaTableColumnData<MOCK_TYPE>[] = [
-  { label: 'Demandeur' },
+  nbConflit: number
+}
+type Conflit = {}
+
+const details = ref([])
+const conflits = computed(() => ({
+  id: 0,
+  editable: false,
+  removable: false,
+  data: details.value.demandesConflit?.map(conflit => ({
+    ...conflit,
+    zones: conflit.zones.join(', '),
+    horaire: getDateStringHour(conflit.heureDebut, 'H') + ' - ' + getDateStringHour(conflit.heureFin, 'H')
+  }))
+})
+)
+
+
+const columns: FaTableColumnData<DEMANDE>[] = [
+  { label: 'Demandeur', data: (e) => e.organisme },
   { label: 'Date de demande', data: (e) => e.date },
   { label: 'Zones', data: (e) => e.zones },
   { label: 'Horaire', data: (e) => e.horaire },
-  { label: 'Type de créneau', data: (e) => e.type },
-  { label: 'Statut(s)', data: (e) => e.status },
+  // { label: 'Type de créneau', data: (e) => e.type },
+  { label: 'Statut(s)', data: (e) => e.statut },
   { label: 'Action rapide' },
 ]
 
-const MOCK_DATA: FaTableRow<MOCK_TYPE>[] = [
+const MOCK_DATA: FaTableRow<Conflit>[] = [
   {
     id: 0,
-    data: {
-      demandeur: 'Adipso',
-      date: '29/09/2023',
-      zones: 'Halle multisport',
-      horaire: '12:00 - 13:00',
-      type: 'Créneau unique le 06/01',
-      status: 'Aucun(s) conflit(s) détecté',
-    },
+    data: conflits.value,
     editable: false,
     removable: false,
   },
 ]
 
-function open() {
+defineExpose({ open, close, setDemande })
+
+async function open() {
+  details.value = await getDetailsDemande(demande.value.demandeId!)
   is_open.value = true
+
+  console.log(libelleOrganisme.value)
+  console.log(conflits.value)
+  console.log(MOCK_DATA)
 }
 
 function close() {
@@ -92,9 +116,9 @@ function close() {
 function getDateTitle() {
   if (!demande.value) return
 
-  const french_date = frenchTodayDate(demande.value.date)
-  const start = getDateStringHour(demande.value.heureDebut, 'H')
-  const end = getDateStringHour(demande.value.heureFin, 'H')
+  const french_date = frenchTodayDate(demande.value.dateDebut)
+  const start = getDateStringHour(demande.value.dateDebut, 'H')
+  const end = getDateStringHour(demande.value.dateSortie, 'H')
   return `${french_date.weekday} ${french_date.dayNumber} ${french_date.month} - ${start} - ${end}`.toUpperCase()
 }
 

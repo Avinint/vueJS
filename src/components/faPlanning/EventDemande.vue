@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 const props = defineProps<{
   event: CalendarEvent
 }>()
-console.log(props.event.end)
+
 const start = computed(() => dayjs(props.event.start).format('HH:mm'))
 const end = computed(() =>dayjs( props.event.end).format('HH:mm'))
 

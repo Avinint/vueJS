@@ -169,23 +169,25 @@ export default {
       this.planningStore.currentDateStart = dateInfo.start
       this.planningStore.currentDateEnd = dateInfo.end
     },
-    eventClick(eventClickInfo) {
+    async eventClick(eventClickInfo) {
       this.actionType = 'edit'
       this.setSelectedCreneau(eventClickInfo.event)
 
       if (eventClickInfo.event.extendedProps.statut === "demande") {
         let demande = eventClickInfo.event.extendedProps
         this.$refs.modalDemandeDetails.setDemande(demande)
-        this.$refs.modalDemandeDetails.open()
-
+        await this.$refs.modalDemandeDetails.open()
       } else {
-        if (eventClickInfo.event.extendedProps.recurrence)
-          this.$refs.edit_options.open();
-        else {
-          this.creneauStore.recurrence = undefined;
-          this.isModalCreneauOpen = true;
-        }
+        this.isModalCreneauOpen = true;
       }
+      // else ?
+      if (eventClickInfo.event.extendedProps.recurrence)
+        this.$refs.edit_options.open();
+      else {
+        this.creneauStore.recurrence = undefined;
+
+      }
+
 
     },
     editSingle() {
