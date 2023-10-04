@@ -39,7 +39,15 @@ export function getDateDMY(date_string: string) {
   return `${f0(date.getDate())}/${f0(date.getMonth())}/${f0(date.getFullYear())}`
 }
 
+export function getDateDM(date_string: string) {
+  const date = new Date(date_string);
+  return `${f0(date.getDate())}/${f0(date.getMonth())}`
+}
+
 const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" ]
+export const weekDays = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+
+
 export function frenchTodayDate(date_string: string) {
   let today = new Date(date_string);
   let year = today.getFullYear()
