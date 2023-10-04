@@ -7,23 +7,8 @@
     <div class="relative h-full w-full max-w-2xl">
       <div class="relative rounded-lg bg-white shadow">
         <div class="flex items-start justify-between rounded-t border-b p-4">
-          <h3
-            v-if="props.type == 'delete'"
-            class="text-xl font-semibold text-gray-900"
-          >
-            Suppression
-          </h3>
-          <h3
-            v-else-if="props.type == 'edit'"
-            class="text-xl font-semibold text-gray-900"
-          >
-            Modification
-          </h3>
-          <h3
-            v-else-if="props.type == 'add'"
-            class="text-xl font-semibold text-gray-900"
-          >
-            Ajout
+          <h3 class="text-xl font-semibold text-gray-900">
+            <slot name="titre"> {{ titre }}</slot>
           </h3>
           <Button
             test="TcloseModal"
@@ -66,7 +51,14 @@
 
 <script setup>
 import Button from './Button.vue'
+import { computed } from "vue";
+const titres = {
+  add: "Ajout",
+  edit: "Modification",
+  delete: "Suppression"
+}
 
+const titre = computed(() => titres[props.type])
 const props = defineProps({
   type: { type: String, default: '' },
 })
