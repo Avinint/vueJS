@@ -90,6 +90,8 @@ type Conflit = {
   dateCreation: string
   zones: string
   horaire: string
+  heureDebut: string
+  heureFin: string
   nbConflit: number
   creneaux: string[]
   recurrence: Recurrence
@@ -125,8 +127,6 @@ defineExpose({ open, close, setDemande })
 
 async function open() {
   details.value = await getDetailsDemande(demande.value.demandeId!)
-
-  console.log(details.value)
   is_open.value = true
 }
 
@@ -143,10 +143,28 @@ function getDateTitle() {
   return `${french_date.weekday} ${french_date.dayNumber} ${french_date.month} - ${start} - ${end}`.toUpperCase()
 }
 
-const messageType = (conflit) => {
-  const n = conflit.creneaux.length
-  return n > 1 ? n + ' occurrences du ' + getDateDM(conflit.recurrence.dateDebut) + ' au '  + getDateDM(conflit.recurrence.dateFin )
-    : 'Créneau unique le ' + getDateDM(conflit.recurrence.dateDebut)
+/**
+ * Résumé des récurrences du conflit
+ * @param conflit
+ */
+const messageType = (conflit: Conflit): string => {
+  let n: number, dateDebut: string, dateFin: string
+ if (conflit.recurrence?.maxOccurrences) {
+   n = conflit.recurrence.maxOccurrences
+   dateDebut = getDateDM(conflit.heureDebut)
+   dateFin = conflit.creneaux.sort((a, b) => a.dateSortie > b.dateSortie ? -1 : 1)[0]
+ } else if (conflit.recurrence) {
+   n = conflit.creneaux.length
+   dateDebut = conflit.recurrence.dateDebut
+   dateFin = conflit.recurrence.dateFin!
+ } else {
+   n = conflit.creneaux.length
+   dateDebut = conflit.heureDebut
+   dateFin = conflit.heureFin
+ }
+
+  return n > 1 ? n + ' occurrences du ' + getDateDM(dateDebut) + ' au ' + getDateDM(dateFin)
+    : 'Créneau unique le ' + getDateDM(dateDebut)
 }
 
 const messageConflits = (n) => {
@@ -216,9 +234,6 @@ const messageRecurrence = (recurrence)  => {
   const occurrences =  !limites && maxOccurrences && `pendant ${maxOccurrences} fois` || false
 
   const type = recurrenceTypes[recurrenceType]
-
-  console.log(type, joursSemaine)
-  console.log(joursMois)
 
   let unites: string|boolean = false
   let frequence: string|boolean = false
