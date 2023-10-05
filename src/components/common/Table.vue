@@ -10,7 +10,7 @@
     <thead class="h-10 w-full bg-gray-100 text-sm text-gray-700">
     <tr>
       <th></th>
-      <th v-for="column in columns" :key="column.label">
+      <th :class="{ 'text-center': textCenter }" v-for="column in columns" :key="column.label">
         {{ column.label }}
       </th>
       <th v-if="editable"></th>
@@ -23,7 +23,8 @@
         v-if="data.length > 0"
         v-for="(item, index) in data"
         class="h-10 border border-gray-200 text-sm text-gray-700"
-      >
+        :class="{ 'text-center': textCenter }">
+        {{ item.data.length }}
         <td class="flex h-10 items-center justify-center">
           <input
             v-if="selectable"
@@ -101,6 +102,7 @@ interface Props {
   editable?: boolean
   removable?: boolean
   readable?: boolean
+  textCenter?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -108,6 +110,7 @@ const props = withDefaults(defineProps<Props>(), {
   editable: false,
   removable: false,
   readable: false,
+  textCenter: false
 })
 
 const emits = defineEmits<{

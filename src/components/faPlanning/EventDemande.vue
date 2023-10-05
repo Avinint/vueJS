@@ -4,18 +4,22 @@
       <div class="event-demande-content">
         <p class="information">Demande en attente</p>
         <p class="title">{{ event.title }}</p>
-        <p class="hour">12:00 - 13:00</p>
+        <p class="hour">{{ start + ' - ' + end }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import {computed, onMounted} from 'vue'
+import dayjs from "dayjs";
 
 const props = defineProps<{
   event: CalendarEvent
 }>()
+
+const start = computed(() => dayjs(props.event.start).format('HH:mm'))
+const end = computed(() =>dayjs( props.event.end).format('HH:mm'))
 
 onMounted(() => {
   SetupCSS()
@@ -74,7 +78,6 @@ function SetupCSS() {
   left: 15px;
   height: 100%;
   padding: 10px;
-  height: 100%;
   line-height: 1rem;
 }
 

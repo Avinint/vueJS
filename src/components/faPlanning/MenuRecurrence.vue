@@ -100,7 +100,7 @@ import InputSelect from '@components/common/InputSelect.vue'
 import { useCreneauStore } from '@stores/creneau'
 import { getDateForInput } from '../../services/date_service'
 
-import { onMounted, ref, watch } from 'vue'
+import {nextTick, onMounted, ref, watch} from 'vue'
 import dayjs from 'dayjs'
 
 const creneau_store = useCreneauStore()
@@ -117,7 +117,8 @@ const repetition_date = ref('')
 const repetition_occurence = ref(0)
 const repetition_mode = ref<'date' | 'occurence'>('date')
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick()
   if(!creneau_store.recurrence.recurrenceType)
     creneau_store.recurrence.recurrenceType = 2;
   else {

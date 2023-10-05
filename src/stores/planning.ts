@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { getPlanning } from '@api/planning'
 import dayjs from 'dayjs'
 import { getActivites } from '@api/activite'
+import { useUserStore } from './user'
+
 import {
   EventType,
   default_planning,
@@ -58,8 +60,7 @@ export const usePlanningStore = defineStore('planning', {
         parseDemandeToEvent(demande)
       )
 
-      const output = creneaux.concat(demandes)
-      return output
+      return creneaux.concat(demandes)
     },
     getCreneauxOrganismesEvents(state): CalendarEvent[] {
       const creneaux = state.creneaux.map((creneau) =>
@@ -140,8 +141,18 @@ export const usePlanningStore = defineStore('planning', {
       })
       this.activites = arr
     },
-    pushCreneaux(creneaux: Creneau[]) {
-      this.creneaux = creneaux
+    pushCreneaux(creneauxTemp: Creneau[]) {
+      const user = useUserStore()
+
+      if (!user.isGestOrg) {
+        this.demandes = creneauxTemp
+            .filter(creneau => creneau.statut === 'demande')
+
+        this.creneaux = creneauxTemp
+            .filter(creneau => !this.demandes.some((dem) => dem.id === creneau.id))
+      } else {
+        this.creneaux = creneauxTemp
+      }
     },
     pushCreneauxAnonymes(creneaux: CreneauAnonyme[]) {
       this.creneauxAnonymes = creneaux

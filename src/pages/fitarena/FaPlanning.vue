@@ -13,19 +13,20 @@
       :type-action="actionType"
       @close-modal-creneau="closeModal"
     />
+    <ModalDetailDemande ref="modalDemandeDetails"/>
     <div
       class="space-y-3 p-4"
     >
       <FullCalendar ref="fullCalendar" :options="calendarOptions">
         <template #eventContent="arg">
-          <Event
-            v-if="arg.event.extendedProps.event_type == 0"
-            :event="arg.event"
-          />
           <EventDemande
-            v-else-if="arg.event.extendedProps.event_type == 1"
+              v-if="arg.event.extendedProps.statut === 'demande'"
             :event="arg.event"
             :key="redraw_key"
+          />
+          <Event
+            v-else
+            :event="arg.event"
           />
         </template>
       </FullCalendar>
@@ -46,12 +47,11 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
-
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
 import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { getZones } from '@api/zone.js'
-
+import ModalDetailDemande from '@components/faPlanning/ModalDetailDemande.vue'
 import { mapStores } from 'pinia'
 
 export default {
@@ -62,7 +62,8 @@ export default {
     EditOptions,
     Event,
     EventDemande,
-  },
+    ModalDetailDemande
+},
   data() {
     return {
       calendarOptions: {
@@ -106,7 +107,7 @@ export default {
       isModalCreneauOpen: false,
       actionType: '',
       zones: [],
-      redraw_key: 0
+      redraw_key: 0,
     }
   },
   watch: {
@@ -131,12 +132,14 @@ export default {
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
+
         this.calendarOptions.events = newCreneaux
         this.redraw_key++
       }
     )
   },
   async mounted() {
+
     this.calendarApi = this.$refs.fullCalendar.getApi()
     await this.initZones();
     await this.typeCreneauStore.fetchTypeCreneaux()
@@ -166,15 +169,26 @@ export default {
       this.planningStore.currentDateStart = dateInfo.start
       this.planningStore.currentDateEnd = dateInfo.end
     },
-    eventClick(eventClickInfo) {
+    async eventClick(eventClickInfo) {
       this.actionType = 'edit'
       this.setSelectedCreneau(eventClickInfo.event)
+
+      if (eventClickInfo.event.extendedProps.statut === "demande") {
+        let demande = eventClickInfo.event.extendedProps
+        this.$refs.modalDemandeDetails.setDemande(demande)
+        await this.$refs.modalDemandeDetails.open()
+      } else {
+        this.isModalCreneauOpen = true;
+      }
+      // else ?
       if (eventClickInfo.event.extendedProps.recurrence)
         this.$refs.edit_options.open();
       else {
         this.creneauStore.recurrence = undefined;
-        this.isModalCreneauOpen = true;
+
       }
+
+
     },
     editSingle() {
       this.creneauStore.recurrence = undefined;
@@ -186,6 +200,11 @@ export default {
         this.actionType = 'edit'
         this.setSelectedCreneau(eventClickInfo.event)
         this.isModalCreneauOpen = true
+      }
+
+      if(eventClickInfo.event.extendedProps.event_type == 1) {
+        this.$refs.modal_demande.setDemande(eventClickInfo.event.extendedProps);
+        this.$refs.modal_demande.open(); 
       }
     },
     select(selectionInfo) {
