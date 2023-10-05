@@ -94,14 +94,14 @@
       <FAButton
         v-if="creneauType === 'grand_public'"
         class="mr-4"
+        :class="submenu === 'advanced' ? 'bg-advanced' : 'bg-none'"
         label="Paramètres avancés"
-        couleur="secondary"
         @click="setSubmenu('advanced')"
       />
       <FAButton
         v-if="creneauType && creneauStore.recurrence != undefined"
         label="Récurrence"
-        couleur="secondary"
+        :class="submenu === 'recurence' ? 'bg-recurence' : 'bg-none'"
         @click="setSubmenu('recurence')"
       />
       <div v-if="submenu === 'advanced'" class="flex gap-5">
@@ -492,5 +492,14 @@ option {
 
 .max-w-4xl {
   max-width: 56rem;
+}
+
+.bg-advanced, .bg-recurence {
+  background-color: rgb(2 132 199 / var(--tw-bg-opacity));
+}
+
+.bg-none {
+  background-color: #fff;
+  color: #000;
 }
 </style>
