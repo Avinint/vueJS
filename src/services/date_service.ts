@@ -29,15 +29,35 @@ export function getWeekNumber(date: string) {
   )
 }
 
-export function getDateStringHour(date_string: string): string {
+export function getDateStringHour(date_string: string, symbol: string = ':'): string {
   const date = new Date(date_string);
-  return `${f0(date.getHours())}:${f0(date.getMinutes())}`;
+  return `${f0(date.getHours())}${symbol}${f0(date.getMinutes())}`;
 }
 
 export function getDateDMY(date_string: string) {
   const date = new Date(date_string);
   return `${f0(date.getDate())}/${f0(date.getMonth())}/${f0(date.getFullYear())}`
 }
+
+export function getDateDM(date_string: string) {
+  const date = new Date(date_string);
+  return `${f0(date.getDate())}/${f0(date.getMonth())}`
+}
+
+const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" ]
+export const weekDays = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+
+
+export function frenchTodayDate(date_string: string) {
+  let today = new Date(date_string);
+  let year = today.getFullYear()
+  let dayNumber = today.getDate()
+  let month = months[today.getMonth()]
+  let weekday = today.toLocaleDateString("fr-FR", {weekday: "long"});
+
+  return {weekday, dayNumber, month, year}
+}
+
 export function getDateYMD(date_string: string) {
   const date = new Date(date_string);
   return `${f0(date.getFullYear())}-${f0(date.getMonth())}-${f0(date.getDate())}`

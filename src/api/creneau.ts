@@ -1,6 +1,20 @@
-import { defaultHeaders } from './api.js'
+import {defaultHeaders, get, put} from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
+
+
+export async function getDetailsDemande(id: number): Promise<[]> {
+    return get('/api/demande/' + id)
+}
+
+export async function rejeterDemande(id: number) {
+    return put(`/api/demande/${id}/refuser`)
+}
+
+export async function accepterDemande(id: number) {
+    return put(`/api/demande/${id}/accepter`)
+}
+
 
 export async function postCreneauDemande(contract: DemandeEditContract): Promise<CreneauDemandePostResponse> {
   const response = await $fetch(

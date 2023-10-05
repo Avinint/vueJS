@@ -64,7 +64,7 @@ export function makeCreneauEditContract(
 /**
  * Generate an ``organisme`` type creneau edit contract that is properly typed to be used by the API
  *
- * @param zone_id The zone ID that is used to clean the object
+ * @param fitarena_id number The zone ID that is used to clean the object
  * @param creneau Creneau data
  */
 export function makeCreneauOGEditContract(

@@ -1,4 +1,4 @@
-import { defaultHeaders } from './api'
+import {defaultHeaders, get} from './api'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
@@ -9,27 +9,16 @@ export async function getPlanning(
   zone: string,
   organisme?: number
 ): Promise<Planning> {
-  const api_url = import.meta.env.VITE_API_URL
 
-  const url = new URL(`${api_url}/api/planning`)
-  url.searchParams.append('debut', debut.toString())
-  url.searchParams.append('fit_arena', fit_arena.toString())
-  url.searchParams.append('duree', duree.toString())
-  url.searchParams.append('zones', `[${zone}]`)
+  let params = {
+    debut:     debut,
+    fit_arena: fit_arena,
+    duree:     duree,
+    zones:     `[${zone}]`,
+    organisme: organisme ?? null
+  }
 
-  if(organisme)
-    url.searchParams.append('organisme', organisme.toString());
-
-  const response = await $fetch(url.toString(), {
-    method: 'get',
-    headers: {
-      ...defaultHeaders,
-      'Content-Type': 'application/ld+json',
-      Authorization: 'Bearer ' + useStorage('token', '').value,
-    },
-  })
-  if (response.status !== 200) throw response
-  return response.json()
+  return await get(`/api/planning`, params)
 }
 
 export async function postCreneau(
