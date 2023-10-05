@@ -5,8 +5,8 @@
     <CardReservationAccess />
     <CardReservationCancel />
     <CardConditionVisualisationCreneaux @suppression="supprimer" />
-    <CardConditionReservationCreneaux @suppression="supprimer"/>
-    <CardKeyMomentDuration  @suppression="supprimer"/>
+    <CardConditionReservationCreneaux @suppression="supprimer" />
+    <CardKeyMomentDuration @suppression="supprimer" />
 
     <CardModalSection title="Invitation à une réservation">
     </CardModalSection>
@@ -107,6 +107,15 @@ const rafraichir = async () => {
 </script>
 
 <style>
+table.key-moment-duration tr > th:first-of-type {
+  border-right: 1px solid lightgray;
+}
+
+table.key-moment-duration tr > th:nth-child(2) {
+  border-right: 1px solid #fff;
+  border-top: 1px solid #fff;
+}
+
 table.param-fa tr {
   border: 1px solid lightgray;
 }
@@ -115,18 +124,21 @@ table.param-fa tr > td:first-of-type {
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
   border-right: 1px solid lightgray;
   color: #000;
+  width: 40%;
 }
 
-table.param-fa tr > td {
+table.param-fa tr > td, table.param-fa tr > th {
   padding: 0.5rem 1rem;
 }
 
-table#view tr > td:nth-child(4) {
+table.param-fa tr > td:nth-child(4) {
   text-align: start;
+  width: 5%;
 }
 
 table.param-fa tr > td:nth-child(3) {
   text-align: end;
+  width: 5%;
 }
 
 table.param-fa {

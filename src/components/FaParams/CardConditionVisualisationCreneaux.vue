@@ -1,7 +1,7 @@
 <template>
   <CardModalSection title="Condition de visualisation des créneaux" class="border border-gray-200 py-4 pr-4 rounded-lg">
     <div v-if="parametreFitArena" class="pl-8">
-      <table id="view" class="param-fa w-full text-left text-sm mb-4 text-gray-500 table-fixed">
+      <table id="view" class="param-fa w-full text-left text-sm mb-4 text-gray-500">
         <thead
           class="hidden"
         >
@@ -100,7 +100,7 @@
       label="Ajouter une condition de visualisation des créneaux"
       icon="add"
       couleur="danger"
-      class="ml-9"
+      class="ml-8"
       @click="add()"
     />
   </CardModalSection>
@@ -343,14 +343,14 @@ const saveParProfils = async () => {
     closeModal()
   } catch (e) {
     console.log(e)
-    toast.error('Erreur, Veuillez contacter votre administrateur')
+    toast.error('Erreur, veuillez contacter votre administrateur')
   }
 }
 
 const miseAJourParProfil = async(corps) => {
   if (formulaire.profil) {
     corps.profil = formulaire.profil
-    await putParametreFitArenaProfil(corps)
+    await postParametreFitArenaProfil(corps)
   }
 
   if (formulaire.profilsASupprimer.length) {

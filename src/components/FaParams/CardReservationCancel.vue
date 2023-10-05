@@ -1,7 +1,7 @@
 <template>
   <CardModalSection title="Annulation d'une réservation" class="border border-gray-200 py-4 pr-4 rounded-lg">
     <div class="pl-8">
-      <table class="param-fa w-full text-left text-sm mb-4 text-gray-500 border border-gray-200 table-fixed">
+      <table class="param-fa w-full text-left text-sm mb-4 text-gray-500 border border-gray-200">
         <thead
           class="hidden"
         >
