@@ -1,112 +1,129 @@
 <template>
   <ModalBottom v-if="is_open && demande" @close="close">
     <template #title>
-      <div class="flex w-full items-center justify-between">
+      <div class="flex w-full items-center justify-between header">
         <div class="modal-demande-title">
           <h2>{{ libelleOrganisme.toUpperCase() }}</h2>
           <h2>{{ getDateTitle() }}</h2>
+
+        </div>
+        <div v-if="details.recurrence" class=" modal-demande-subtitle">
+          <h3>{{ messageRecurrence(details.recurrence) }}</h3>
         </div>
         <div>
-          <Button couleur="danger" borderless label="Rejeter" class="mr-4" />
+          <Button couleur="danger" borderless label="Rejeter" class="mr-4"  @click="rejeter(demande.demandeId)"/>
           <Button
             couleur="secondary"
             borderless
             label="Valider la demande"
             class="mr-6"
+            @click="accepter(demande.demandeId)"
           />
         </div>
       </div>
+
     </template>
     <template #content>
-      <Table :can-create="false" :columns="columns" :data="MOCK_DATA">
+      <Table text-center :can-create="false" :columns="columns" :data="getTableData()">
         <template #col-0="{ item }">
-          <Button :label="item.organisme"></Button>
+          <div class="flex ">
+            <div class="flex-grow-0 px-5 py-2 m-auto bg-blue-500 text-white rounded-md">{{ item.organisme }}</div>
+          </div>
+
         </template>
         <template #col-6="{ item }">
-          <Button couleur="danger"></Button>
+          <Button @click="rejeter(item.idDemande)" class="mr-4" couleur="danger" icon="cross"></Button>
         </template>
       </Table>
     </template>
   </ModalBottom>
+  <form v-if="confirmation" @submit.prevent="confirmationCallbacks[confirmation](demandeId)">
+    <ValidationModal  type="edit">
+      <template #titre>{{ confirmationTitres[confirmation] }}</template>
+      {{ confirmationTextes[confirmation] }}
+    </ValidationModal>
+  </form>
 </template>
 
 <script setup lang="ts">
 import Button from '@components/common/Button.vue'
 import ModalBottom from '@components/common/ModalBottom.vue'
-import { frenchTodayDate, getDateStringHour } from '../../services/date_service'
-import { ref, computed } from 'vue'
+import {frenchTodayDate, getDateDM, getDateDMY, getDateStringHour, weekDays} from '../../services/date_service'
+import {ref, computed, watch} from 'vue'
 import type {
   FaTableColumnData,
   FaTableRow,
 } from '@components/common/Table.vue'
 import Table from '@components/common/Table.vue'
 import {useMenuStore} from "@stores/menu";
-import {getDetailsDemande} from "@api/creneau";
+import { usePlanningStore } from '@stores/planning.ts'
+import {accepterDemande, getDetailsDemande, rejeterDemande} from "@api/creneau";
+import {match} from "cypress/types/minimatch";
+import {toast} from "vue3-toastify";
+import ValidationModal from "@components/common/ValidationModal.vue";
 
-
+const planning = usePlanningStore()
 const menu = useMenuStore()
-const organismes = computed(() => menu.getOrganismes())
+const organismes: computed<[]> = computed(() => menu.getOrganismes())
 const libelleOrganisme = computed(() => {
   const id = demande.value.organismeId
   return organismes.value.find(organisme => organisme.id === id)?.libelle ?? ''
 })
 
+const confirmation  = ref<false | 'refus' | 'validation'>(false)
+const demandeId = ref(null)
+
+
 const is_open = ref(false)
 const demande = ref<Creneau>()
 
-type DEMANDE = {
+type DetailsDemande = {
   organisme: string,
   date: string,
   zones: string,
   heureDebut: string,
   heureFin: string
-
   nbConflit: number
 }
-type Conflit = {}
+type Conflit = {
+  organisme: string
+  dateCreation: string
+  zones: string
+  horaire: string
+  nbConflit: number
+}
 
-const details = ref([])
-const conflits = computed(() => ({
-  id: 0,
-  editable: false,
-  removable: false,
-  data: details.value.demandesConflit?.map(conflit => ({
-    ...conflit,
-    zones: conflit.zones.join(', '),
-    horaire: getDateStringHour(conflit.heureDebut, 'H') + ' - ' + getDateStringHour(conflit.heureFin, 'H')
-  }))
-})
-)
+const details = ref<DetailsDemande[]>()
+const conflits = computed<FaTableRow<Conflit>[]>(() =>
+ details.value.demandesConflit?.map(conflit => ({ id: conflit.idDemande, editable: false, removable: false,
+   data:
+     {
+       ...conflit,
+       zones: conflit.zones.map(z => z.libelle).join(', '),
+       horaire: getDateStringHour(conflit.heureDebut, 'H') + ' - ' + getDateStringHour(conflit.heureFin, 'H'),
+     }
+  })
+))
 
-
-const columns: FaTableColumnData<DEMANDE>[] = [
-  { label: 'Demandeur', data: (e) => e.organisme },
-  { label: 'Date de demande', data: (e) => e.date },
+const columns: FaTableColumnData<Conflit>[] = [
+  { label: 'Demandeur' },
+  { label: 'Date de demande', data: (e) => getDateDMY(e.dateCreation) },
   { label: 'Zones', data: (e) => e.zones },
   { label: 'Horaire', data: (e) => e.horaire },
-  // { label: 'Type de créneau', data: (e) => e.type },
-  { label: 'Statut(s)', data: (e) => e.statut },
+  { label: 'Type de créneau', data: (e) => messageType(1, e.heureDebut)},
+  { label: 'Statut(s)', data: (e) => messageConflits(e.nbConflit) },
   { label: 'Action rapide' },
 ]
 
-const MOCK_DATA: FaTableRow<Conflit>[] = [
-  {
-    id: 0,
-    data: conflits.value,
-    editable: false,
-    removable: false,
-  },
-]
+const getTableData = ():FaTableRow<Conflit>[] => conflits.value
 
 defineExpose({ open, close, setDemande })
 
 async function open() {
   details.value = await getDetailsDemande(demande.value.demandeId!)
-  is_open.value = true
 
-  console.log(libelleOrganisme.value)
-  console.log(conflits.value)
-  console.log(MOCK_DATA)
+  console.log(details.value)
+  is_open.value = true
 }
 
 function close() {
@@ -120,6 +137,91 @@ function getDateTitle() {
   const start = getDateStringHour(demande.value.dateDebut, 'H')
   const end = getDateStringHour(demande.value.dateSortie, 'H')
   return `${french_date.weekday} ${french_date.dayNumber} ${french_date.month} - ${start} - ${end}`.toUpperCase()
+}
+
+const messageType = (n, date) => {
+
+  return n > 1 ? n + ' occurrences' : 'Créneau unique le ' + getDateDM(date)
+}
+
+const messageConflits = (n) => {
+  if (n > 0) {
+    return `${n} conflit${n > 1 && 's' || '' } de récurrence`
+  } else {
+    return "Aucun conflit détecté"
+  }
+}
+
+const rejeter = async (id)  => {
+  confirmation.value = 'refus'
+  demandeId.value = id
+
+}
+
+const accepter = async (id)  => {
+  confirmation.value = 'validation'
+  demandeId.value = id
+}
+
+const confirmerRefus= async (id) => {
+  try {
+    await rejeterDemande(id)
+    await planning.fetch()
+    toast.success('Demande rejetée')
+    confirmation.value = false
+  } catch(e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur')
+  }
+}
+
+const confirmerValidation = async (id) => {
+  try {
+    await accepterDemande(id)
+    await planning.fetch()
+    toast.success('Demande acceptée')
+    confirmation.value = false
+  } catch(e) {
+    toast.error('Erreur, Veuillez contacter votre administrateur')
+  }
+}
+
+const confirmationCallbacks = {
+  refus: confirmerRefus,
+  validation: confirmerValidation,
+}
+
+const confirmationTitres = {
+  refus: "Rejet de demande",
+  validation: "Validation de demande"
+}
+const confirmationTextes = {
+  refus: "Voulez-vous confirmer le rejet de cette demande ?",
+  validation: "Voulez-vous confirmer la validation de cette demande ?"
+}
+
+const getFrench = (date) => {
+  const {weekday, dayNumber, month} = frenchTodayDate(date)
+  return `${weekday} ${dayNumber} ${month}`
+}
+
+const messageRecurrence = (recurrence)  => {
+  const { dateDebut, dateFin, separation, maxOccurrences, recurrenceJoursMois: joursMois, recurrenceJoursSemaines: joursSemaines } = recurrence
+  const limites = dateDebut && dateFin && `du ${getFrench(dateDebut)} au ${getFrench(dateFin)}` || false
+  const occurrences = maxOccurrences && `pendant ${maxOccurrences} fois` || false
+
+  const frequence = separation  &&  `tous les ${separation + 1} jours` || false
+  const dernierJour =  joursSemaines && joursSemaines.length > 1 &&  joursSemaines.pop() || false
+  const jours = joursSemaines &&  `tous les ${joursSemaines.map(j => weekDays[j]).join(', ').replace}` + (dernierJour ? ' et ' +  dernierJour : '') || false
+
+  const dernierJoursMois =  joursMois && joursMois.length > 1 && joursMois.pop() || false
+  const joursDuMois = joursMois && `tous les ${joursMois.join(', ')}` + (dernierJoursMois ? ' et ' + dernierJoursMois : '') || false
+
+  const message = ['Récurrence',  limites ? limites : occurrences, frequence ? frequence : (jours ? jours : joursDuMois) ].filter(el => el !== false)
+  return message.join(' ')
+
+  // details.value.recurrence && `Récurrence du ${frenchTodayDate(dateDebut)} au ${frenchTodayDate(dateFin)}` +
+  //   `tous les ${separation + 1} jours`
+  // 'Récurrence du vendredi 06 janvier au vendredi 06 décembre tous les 7 jours' && ''
 }
 
 function setDemande(value: Creneau) {
@@ -163,4 +265,23 @@ function setDemande(value: Creneau) {
   width: 40px;
   height: 1.5px;
 }
+
+.header {
+  position: relative;
+}
+
+.modal-demande-subtitle{
+  position: absolute;
+  left:  50px;
+
+  top: 27px;
+
+}
+
+.modal-demande-subtitle h3{
+  font-size: 15px;
+}
+
+
+
 </style>
