@@ -247,6 +247,7 @@ defineExpose({ create, edit })
 const state = ref<'create' | 'edit' | 'closed'>('closed')
 
 function create(event: DateSelectArg) {
+  commentaires.value = []
   state.value = 'create'
   isRecurrent.value = false
   form.title = default_form_values.title;
