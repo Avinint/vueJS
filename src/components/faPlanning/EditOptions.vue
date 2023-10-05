@@ -7,13 +7,13 @@
 
 <script setup lang="ts">
 import { onClickOutside, useMouse } from '@vueuse/core';
-import { reactive, ref } from 'vue';
+import { reactive, ref, defineEmits, defineExpose } from 'vue';
 
 const is_open = ref(false);
 const anim = ref(false);
 const wrapper = ref<HTMLElement>();
 const emits = defineEmits(['onEditSingle', 'onEditMultiple'])
-defineExpose({ open });
+defineExpose({ open, close });
 const mouse = reactive(useMouse());
 
 function open() {
@@ -30,12 +30,12 @@ function open() {
 }
 
 function close() {
-		is_open.value = false;
-		anim.value = false;
+	anim.value = false;
+	is_open.value = false;
 }
 
 onClickOutside(wrapper, () => {
-	if(is_open.value) {
+	if (is_open.value) {
 		is_open.value = false;
 		anim.value = false;
 	}

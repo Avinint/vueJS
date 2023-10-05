@@ -8,7 +8,7 @@
         <p>Tous les</p>
         <FaInput
           class="w-12"
-          default-value="0"
+          default-value="1"
           v-model="creneau_store.recurrence.separation"
         />
         <InputSelect

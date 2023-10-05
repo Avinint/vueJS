@@ -443,9 +443,10 @@ export default {
       if (this.creneauStore.recurrence) {
         if (this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "") {
           this.creneauStore.recurrence = undefined;
+        } else {
+          this.creneauStore.recurrence.separation -= 1
         }
       }
-
       const fitarena_id = parseInt(this.$route.params.id);
 
       if (this.isOneZoneChecked) {
