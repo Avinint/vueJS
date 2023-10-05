@@ -36,12 +36,13 @@ export function getDateStringHour(date_string: string, symbol: string = ':'): st
 
 export function getDateDMY(date_string: string) {
   const date = new Date(date_string);
-  return `${f0(date.getDate())}/${f0(date.getMonth())}/${f0(date.getFullYear())}`
+  return `${f0(date.getDate())}/${f0(date.getMonth() + 1)}/${f0(date.getFullYear())}`
 }
 
 export function getDateDM(date_string: string) {
   const date = new Date(date_string);
-  return `${f0(date.getDate())}/${f0(date.getMonth())}`
+
+  return `${f0(date.getDate())}/${f0(date.getMonth() + 1)}`
 }
 
 const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" ]
