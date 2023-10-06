@@ -90,8 +90,14 @@ type Conflit = {
   dateCreation: string
   zones: string
   horaire: string
+  heureDebut: string
+  heureFin: string
   nbConflit: number
+  creneaux: string[]
+  recurrence: Recurrence
 }
+
+const recurrenceTypes = { 1: 'journalier', 2: 'hebdomadaire', 3: 'mensuel' }
 
 const details = ref<DetailsDemande[]>()
 const conflits = computed<FaTableRow<Conflit>[]>(() =>
@@ -110,7 +116,7 @@ const columns: FaTableColumnData<Conflit>[] = [
   { label: 'Date de demande', data: (e) => getDateDMY(e.dateCreation) },
   { label: 'Zones', data: (e) => e.zones },
   { label: 'Horaire', data: (e) => e.horaire },
-  { label: 'Type de créneau', data: (e) => messageType(1, e.heureDebut)},
+  { label: 'Type de créneau', data: (e) => messageType(e)},
   { label: 'Statut(s)', data: (e) => messageConflits(e.nbConflit) },
   { label: 'Action rapide' },
 ]
@@ -121,8 +127,6 @@ defineExpose({ open, close, setDemande })
 
 async function open() {
   details.value = await getDetailsDemande(demande.value.demandeId!)
-
-  console.log(details.value)
   is_open.value = true
 }
 
@@ -139,9 +143,28 @@ function getDateTitle() {
   return `${french_date.weekday} ${french_date.dayNumber} ${french_date.month} - ${start} - ${end}`.toUpperCase()
 }
 
-const messageType = (n, date) => {
+/**
+ * Résumé des récurrences du conflit
+ * @param conflit
+ */
+const messageType = (conflit: Conflit): string => {
+  let n: number, dateDebut: string, dateFin: string
+ if (conflit.recurrence?.maxOccurrences) {
+   n = conflit.recurrence.maxOccurrences
+   dateDebut = getDateDM(conflit.heureDebut)
+   dateFin = conflit.creneaux.sort((a, b) => a.dateSortie > b.dateSortie ? -1 : 1)[0]
+ } else if (conflit.recurrence) {
+   n = conflit.creneaux.length
+   dateDebut = conflit.recurrence.dateDebut
+   dateFin = conflit.recurrence.dateFin!
+ } else {
+   n = conflit.creneaux.length
+   dateDebut = conflit.heureDebut
+   dateFin = conflit.heureFin
+ }
 
-  return n > 1 ? n + ' occurrences' : 'Créneau unique le ' + getDateDM(date)
+  return n > 1 ? n + ' occurrences du ' + getDateDM(dateDebut) + ' au ' + getDateDM(dateFin)
+    : 'Créneau unique le ' + getDateDM(dateDebut)
 }
 
 const messageConflits = (n) => {
@@ -205,18 +228,35 @@ const getFrench = (date) => {
 }
 
 const messageRecurrence = (recurrence)  => {
-  const { dateDebut, dateFin, separation, maxOccurrences, recurrenceJoursMois: joursMois, recurrenceJoursSemaines: joursSemaines } = recurrence
+  const { dateDebut, dateFin, separation, maxOccurrences, recurrenceJoursMois: joursMois, recurrenceJoursSemaine: joursSemaine, recurrenceType } = recurrence
+
   const limites = dateDebut && dateFin && `du ${getFrench(dateDebut)} au ${getFrench(dateFin)}` || false
-  const occurrences = maxOccurrences && `pendant ${maxOccurrences} fois` || false
+  const occurrences =  !limites && maxOccurrences && `pendant ${maxOccurrences} fois` || false
 
-  const frequence = separation  &&  `tous les ${separation + 1} jours` || false
-  const dernierJour =  joursSemaines && joursSemaines.length > 1 &&  joursSemaines.pop() || false
-  const jours = joursSemaines &&  `tous les ${joursSemaines.map(j => weekDays[j]).join(', ').replace}` + (dernierJour ? ' et ' +  dernierJour : '') || false
+  const type = recurrenceTypes[recurrenceType]
 
-  const dernierJoursMois =  joursMois && joursMois.length > 1 && joursMois.pop() || false
-  const joursDuMois = joursMois && `tous les ${joursMois.join(', ')}` + (dernierJoursMois ? ' et ' + dernierJoursMois : '') || false
+  let unites: string|boolean = false
+  let frequence: string|boolean = false
+  if (type === 'journalier') {
 
-  const message = ['Récurrence',  limites ? limites : occurrences, frequence ? frequence : (jours ? jours : joursDuMois) ].filter(el => el !== false)
+
+    unites = 'jours'
+    frequence = separation  ? `tous les ${separation} jours` : 'tous les jours'
+
+  } else {
+    if (type === 'mensuel') {
+      const dernierJoursMois = joursMois && joursMois.length > 1 && joursMois.pop() || false
+      unites = 'du mois'
+      const joursDuMois = joursMois && `tous les ${joursSemaine.map(j => weekDays[j]).join(', ')}` + (dernierJoursMois ? ' et ' + dernierJoursMois : '') || false
+      frequence = joursDuMois + separation ? `tous les ${separation} mois ` : 'tous les mois'
+    } else if (type === 'hebdomadaire') {
+      const dernierJour = joursSemaine.length > 1 && joursSemaine.pop() || false
+      j
+      frequence = joursSemaine && `tous les ${joursSemaine.map(j => weekDays[j]).join(', ')}` + (dernierJour ? ' et ' + dernierJour : '') || false
+    }
+  }
+
+  const message = ['Récurrence',  limites ? limites : occurrences, frequence ].filter(el => el !== false)
   return message.join(' ')
 
   // details.value.recurrence && `Récurrence du ${frenchTodayDate(dateDebut)} au ${frenchTodayDate(dateFin)}` +

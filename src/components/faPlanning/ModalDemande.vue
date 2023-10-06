@@ -37,7 +37,7 @@
       <CardModalSection title="COMMENTAIRE" class="my-8">
         <template #content>
           <div v-if="commentaires.length > 0" class="mb-4 rounded-lg border border-gray-300">
-            <div v-for="com, i in commentaires" :key="`com_`+ i" class="p-4 text-sm">
+            <div v-for="(com, i) in commentaires" :key="`com_`+ i" class="p-4 text-sm">
               <p class="text-black">
                 {{ com.userEmail }} - 
                 {{ dayjs(com.date_creation).format('DD MMMM YYYY') }} à 
@@ -303,7 +303,7 @@ const submitDemande = async() => {
         dateDebut: creneau_store.recurrence.dateDebut,
         dateFin: creneau_store.recurrence.dateFin,
         maxOccurrences: creneau_store.recurrence.maxOccurrences,
-        recurrenceJoursSemaines: creneau_store.recurrence.recurrenceJoursSemaine,
+        recurrenceJoursSemaine: creneau_store.recurrence.recurrenceJoursSemaine,
         recurrenceOrdinaux: creneau_store.recurrence.recurrenceOrdinaux,
         recurrenceSemainesMois: creneau_store.recurrence.recurrenceSemainesMois,
         recurrenceType: creneau_store.recurrence.recurrenceType,
