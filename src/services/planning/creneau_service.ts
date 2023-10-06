@@ -231,6 +231,48 @@ export function makeDemandeEditContract(fitarena_id: number, organisme_id: numbe
   }
 }
 
+export function makeDemandeAdminEditContract(fitarena_id: number, creneau: any): DemandeEditContract {
+  if (creneau.recurrence) {
+    creneau.recurrence.dateDebut = creneau.date
+  }
+
+  const zones = []
+  for (const zone_id of creneau.zones) {
+    const zone_activities = []
+    for (const activity of creneau.activites) {
+      if (activity.zoneId === zone_id) {
+        zone_activities.push({
+          activiteId: activity.activiteId,
+          tarif: activity.tarif,
+        })
+      }
+    }
+    zones.push({ id: zone_id, activites: zone_activities })
+  }
+
+  return {
+    creneau: {
+      titre: creneau.titre,
+      date: creneau.date,
+      description: '',
+      animateurLabellise: 0,
+      creneauType: creneau.creneauType,
+      dureeActivite: creneau.dureeActivite,
+      dureeInterCreneau: creneau.dureeInterCreneau,
+      nbParticipants: creneau.nbParticipants,
+      niveauPratique: 0,
+      tarifHoraire: 0,
+      heureDebut: `${creneau.heureDebut}:00`,
+      heureFin: `${creneau.heureFin}:00`,
+      organisme: 0,
+      zones: zones,
+      recurrence: creneau.recurrence,
+    },
+    commentaire: creneau.commentaire,
+    fitArenaId: fitarena_id
+  }
+}
+
 export const default_creneau = (): Creneau => ({
   id: 0,
   creneauType: 0,
