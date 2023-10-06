@@ -8,11 +8,11 @@
         </router-link>
       </div>
 
-      <div v-if="isAdmin" class="mt-4">
+      <div v-if="isAdmin" class="mt-4 bg-white">
         <div class="pl-8 mb-2">
           <p class="text-red-600 text-xl">Administrateur</p>
         </div>
-        <div v-for="adminlink, i in adminLinks" :key="`adminlink` + i" class="flex flex-col pl-12 pt-2 bg-gray-100">
+        <div v-for="adminlink, i in adminLinks" :key="`adminlink-` + i" class="flex flex-col pl-8 pt-2">
           <div class="mb-4">
             <router-link :to="adminlink.path" class="flex items-center">
               <UserSVG v-if="adminlink.img === 'user'" />

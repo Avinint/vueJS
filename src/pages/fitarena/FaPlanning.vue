@@ -178,31 +178,27 @@ export default {
         this.$refs.modalDemandeDetails.setDemande(demande)
         await this.$refs.modalDemandeDetails.open()
       } else {
-        this.isModalCreneauOpen = true;
+        if (eventClickInfo.event.extendedProps.recurrence)
+          this.$refs.edit_options.open();
+        else {
+          this.creneauStore.recurrence = undefined;
+          this.isModalCreneauOpen = true;
+        }
       }
-      // else ?
-      if (eventClickInfo.event.extendedProps.recurrence)
-        this.$refs.edit_options.open();
-      else {
-        this.creneauStore.recurrence = undefined;
-
-      }
-
-
     },
     editSingle() {
       this.creneauStore.recurrence = undefined;
       this.isModalCreneauOpen = true;
     },
     editRecurence() {
+      this.$refs.edit_options.close()
       this.isModalCreneauOpen = true
       if (eventClickInfo.event.extendedProps.event_type == 0) {
         this.actionType = 'edit'
         this.setSelectedCreneau(eventClickInfo.event)
-        this.isModalCreneauOpen = true
       }
 
-      if(eventClickInfo.event.extendedProps.event_type == 1) {
+      if (eventClickInfo.event.extendedProps.event_type == 1) {
         this.$refs.modal_demande.setDemande(eventClickInfo.event.extendedProps);
         this.$refs.modal_demande.open(); 
       }
@@ -234,8 +230,8 @@ export default {
             7
         )
       )
-    },
-  },
+    }
+  }
 }
 </script>
 

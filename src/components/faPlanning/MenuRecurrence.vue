@@ -8,7 +8,7 @@
         <p>Tous les</p>
         <FaInput
           class="w-12"
-          default-value="0"
+          default-value="1"
           v-model="creneau_store.recurrence.separation"
         />
         <InputSelect
@@ -52,42 +52,46 @@
     </div>
     <div>
       <label class="mb-2 block text-sm text-gray-700">Fin de répétition *</label>
-      <div class="flex items-center gap-2">
-        <input
-          type="radio"
-          value="repetition_date"
-          id="repetition_date"
-          name="repetition"
-          checked
-          @click="setRepetitionDate"
-        />
-        <vue-tailwind-datepicker
-          i18n="fr"
-          as-single
-          v-model="repetition_date"
-          :disabled="repetition_mode != 'date'"
-          :key="date_key"
-          :formatter="{ date: 'DD / MM / YYYY', month: 'MMMM' }"
-          class="w-fit"
-          required
-        />
-        <input
-          class="ml-4"
-          type="radio"
-          value="repetition_occurence"
-          id="repetition_occurence"
-          name="repetition"
-          @click="setRepetitionOccurence"
-        />
-        <p>Après</p>
-        <FaInput
-          class="w-16"
-          default-value="0"
-          :disabled="repetition_mode != 'occurence'"
-          v-model="repetition_occurence"
-          @input="setRepetitionValue"
-        />
-        <p>occurence(s)</p>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 w-4/12">
+          <input
+            type="radio"
+            value="repetition_date"
+            id="repetition_date"
+            name="repetition"
+            checked
+            @click="setRepetitionDate"
+          />
+          <vue-tailwind-datepicker
+            i18n="fr"
+            as-single
+            v-model="repetition_date"
+            :disabled="repetition_mode != 'date'"
+            :key="date_key"
+            :formatter="{ date: 'DD / MM / YYYY', month: 'MMMM' }"
+            class="w-full"
+            required
+          />
+        </div>
+        <div class="flex items-center gap-2 w-4/12">
+          <input
+            class="ml-4"
+            type="radio"
+            value="repetition_occurence"
+            id="repetition_occurence"
+            name="repetition"
+            @click="setRepetitionOccurence"
+          />
+          <p>Après</p>
+          <FaInput
+            class="w-16"
+            default-value="0"
+            :disabled="repetition_mode != 'occurence'"
+            v-model="repetition_occurence"
+            @input="setRepetitionValue"
+          />
+          <p>occurence(s)</p>
+        </div>
       </div>
     </div>
   </div>
@@ -100,7 +104,7 @@ import InputSelect from '@components/common/InputSelect.vue'
 import { useCreneauStore } from '@stores/creneau'
 import { getDateForInput } from '../../services/date_service'
 
-import {nextTick, onMounted, ref, watch} from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 
 const creneau_store = useCreneauStore()
@@ -119,6 +123,9 @@ const repetition_mode = ref<'date' | 'occurence'>('date')
 
 onMounted(async () => {
   await nextTick()
+  if (creneau_store.recurrence) {
+    creneau_store.recurrence.separation = creneau_store.recurrence.separation + 1
+  }
   if(!creneau_store.recurrence.recurrenceType)
     creneau_store.recurrence.recurrenceType = 2;
   else {
