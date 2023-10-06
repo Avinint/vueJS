@@ -112,6 +112,51 @@ export function makeCreneauOGEditContract(
   }
 }
 
+export function makeDemandeAdminOGEditContract(
+  fitarena_id: number,
+  creneau: Creneau
+): DemandeCreneauEditContract {
+  if (creneau.recurrence) {
+    creneau.recurrence.dateDebut = creneau.date
+  }
+
+  const zones = []
+  for (const zone_id of creneau.zones) {
+    const zone_activities = []
+    for (const activity of creneau.activites) {
+      if (activity.zoneId === zone_id) {
+        zone_activities.push({
+          activiteId: activity.activiteId,
+          tarif: activity.tarif,
+        })
+      }
+    }
+    zones.push({ id: zone_id, activites: zone_activities })
+  }
+
+  return {
+    creneau: {
+      titre: creneau.titre,
+      date: creneau.date,
+      description: creneau.description,
+      animateurLabellise: creneau.animateurLabellise,
+      creneauType: creneau.creneauType,
+      dureeActivite: getCreneauDuration(creneau.heureDebut, creneau.heureFin),
+      dureeInterCreneau: 0,
+      nbParticipants: creneau.nbParticipants,
+      niveauPratique: creneau.niveauPratique,
+      tarifHoraire: creneau.tarifHoraire,
+      heureDebut: `${creneau.heureDebut}:00`,
+      heureFin: `${creneau.heureFin}:00`,
+      organisme: creneau.organisme,
+      zones: zones,
+      recurrence: creneau.recurrence,
+    },
+    commentaire: '',
+    fitArenaId: fitarena_id,
+  }
+}
+
 export function makeDemandeCreneauEditContract(
   fitarena_id: number,
   creneau: Creneau

@@ -52,7 +52,7 @@
             v-model="datepicked"
             i18n="fr"
             as-single
-            :formatter="{ date: datepickerFormat }"
+            :formatter="{ date: datepickerFormat, month: 'MMMM' }"
             class="bg-gray-50 text-center"
           />
         </div>
@@ -98,12 +98,12 @@
         label="Paramètres avancés"
         @click="setSubmenu('advanced')"
       />
-      <FAButton
+      <!-- <FAButton
         v-if="creneauType && creneauStore.recurrence != undefined"
         label="Récurrence"
         :class="submenu === 'recurence' ? 'bg-recurence' : 'bg-none'"
         @click="setSubmenu('recurence')"
-      />
+      /> -->
       <div v-if="submenu === 'advanced'" class="flex gap-5">
         <FAInput
           v-model="creneauStore.dureeActivite"
@@ -306,7 +306,7 @@
 <script>
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
-import { makeDemandeAdminEditContract } from '../../services/planning/creneau_service'
+import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { useOrganismeStore } from '@stores/organisme.ts'
 import { getParametres } from '@api/parametre'
@@ -572,7 +572,7 @@ export default {
               this.errorMessage = true
               break
             } else {
-              const contract = makeDemandeAdminEditContract(fitarena_id, this.creneauStore);
+              const contract = makeDemandeAdminEditContract(fitarena_id, this.creneauStore)
               if (this.typeAction === 'create') {
                 this.verifCreneaux = await postCreneauVerifDemande(contract);
                 this.verifModal = true
@@ -583,13 +583,17 @@ export default {
               }
             }
             break
-  
           case 2:
           case 3:
-            this.typeAction === 'create' ?
-              this.creneauStore.addCreneauOrganisme(fitarena_id) :
-              this.creneauStore.editCreneauOrganisme(fitarena_id)
-            this.$emit('closeModalCreneau')
+            const contract = makeDemandeAdminOGEditContract(fitarena_id, this.creneauStore)
+            if (this.typeAction === 'create') {
+              this.verifCreneaux = await postCreneauVerifDemande(contract);
+              this.verifModal = true
+            } else {
+              this.verifCreneaux = await updateCreneauDemande(contract, this.creneauStore.id)
+              await usePlanningStore().fetch()
+              this.$emit('closeModalCreneau')
+            }
             break
         }
       } else {
