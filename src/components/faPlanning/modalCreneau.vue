@@ -287,6 +287,44 @@
         </tbody>
       </table>
     </CardModalSection>
+
+    <CardModalSection
+      v-if="verifCreneaux.creneauxDemandeConflit.length > 0"
+      title="DEMANDES CRÉEES CAR LES CRÉNEAUX ENTRENT EN CONFLIT AVEC DES DEMANDES EN COURS"
+      class="pl-4"
+    >
+      <table
+        class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200 table-fixed"
+      >
+        <thead>
+          <tr>
+            <th scope="col" class="px-6 py-3">Date du créneau</th>
+            <th scope="col" class="px-6 py-3">Horaire</th>
+            <th scope="col" class="px-6 py-3">Statut demande</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(
+              creneau, i
+            ) in verifCreneaux.creneauxDemandeConflit"
+            :key="`creneauxConflit-`+ i"
+            class="bg-white border border-gray-200"
+          >
+            <td class="px-6 py-4 flex">
+              {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
+            </td>
+            <td class="px-6 py-4 border border-gray-200">
+              {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
+            </td>
+            <td class="px-6 py-4 flex items-center" id="statut">
+              En cours
+              <div class="w-3 h-3 bg-green-600 rounded-xl ml-10" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </CardModalSection>
     <div class="flex justify-end gap-4">
       <Button
         @click="modifierDemande"
@@ -328,14 +366,16 @@ import { mapStores } from 'pinia'
 
 export default {
   components: {
-    Button,
-    MentionChampsObligatoires,
     Modal,
+    ValidationModal,
+    CardModalSection,
     InputRadio,
     InputSelect,
     FAInput,
     FAButton,
     MenuRecurrence,
+    MentionChampsObligatoires,
+    Button
   },
   props: {
     isOpen: {
@@ -543,10 +583,13 @@ export default {
     },
     async submitDemandeValidation () {
       const fitarena_id = parseInt(this.$route.params.id);
-      this.creneauStore.addCreneau(fitarena_id)
-      this.verifModal = false
-      await usePlanningStore().fetch()
+      if (this.typeAction === 'create') {
+        this.creneauStore.creneauType === 1 ? this.creneauStore.addCreneau(fitarena_id) : this.creneauStore.addCreneauOrganisme(fitarena_id)
+      } else {
+        this.creneauStore.creneauType === 1 ? this.creneauStore.editCreneau(fitarena_id) : this.creneauStore.editCreneauOrganisme(fitarena_id)
+      }
       this.$emit('closeModalCreneau')
+      this.verifModal = false
     },
     async submitCreneau() {
       const type_creneau = this.creneauStore.creneauType
@@ -573,27 +616,15 @@ export default {
               break
             } else {
               const contract = makeDemandeAdminEditContract(fitarena_id, this.creneauStore)
-              if (this.typeAction === 'create') {
                 this.verifCreneaux = await postCreneauVerifDemande(contract);
                 this.verifModal = true
-              } else {
-                this.verifCreneaux = await updateCreneauDemande(contract, this.creneauStore.id)
-                await usePlanningStore().fetch()
-                this.$emit('closeModalCreneau')
               }
-            }
             break
           case 2:
           case 3:
             const contract = makeDemandeAdminOGEditContract(fitarena_id, this.creneauStore)
-            if (this.typeAction === 'create') {
               this.verifCreneaux = await postCreneauVerifDemande(contract);
               this.verifModal = true
-            } else {
-              this.verifCreneaux = await updateCreneauDemande(contract, this.creneauStore.id)
-              await usePlanningStore().fetch()
-              this.$emit('closeModalCreneau')
-            }
             break
         }
       } else {
