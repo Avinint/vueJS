@@ -38,12 +38,11 @@
           <div class="font-extralight">{{ commentaire.texte }}</div>
 
         </div>
-        <div class="content flex items-end  my-2">
-          <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-1/3" label="Commentaire:" placeholder="Votre commentaire" border-radius="rounded-l-lg"/><Button class="w-5  border h-11" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="info" icon="next"/>
+        <div class=" flex mt-3 mb-7">
+          <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-1/3" label="Commentaire:" placeholder="Votre commentaire" border-radius="rounded-l-lg"><Button class="w-5  border" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="info" icon="next"/></Input>
         </div>
       </div>
       <HeaderModal text-size="text-base uppercase" text="Liste des conflits" class="content"></HeaderModal>
-
       <Table :fullWidth="false" class="content" text-center :can-create="false" :columns="columns" :data="getTableData()">
         <template #col-0="{ item }">
           <div class="flex ">
