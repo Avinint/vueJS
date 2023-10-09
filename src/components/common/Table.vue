@@ -1,5 +1,5 @@
 <template>
-  <table class="w-full text-left mt-4">
+  <table :class="{'w-full' : fullWidth}" class="w-full text-left mt-4">
     <colgroup>
       <col :style="{ width: selectable ? '60px' : '20px' }" />
       <col v-for="_ in columns" />
@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import Button from './Button.vue'
 
 interface FaTableColumnCallback<T> {
@@ -103,6 +103,7 @@ interface Props {
   removable?: boolean
   readable?: boolean
   textCenter?: boolean
+  fullWidth?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -110,7 +111,8 @@ const props = withDefaults(defineProps<Props>(), {
   editable: false,
   removable: false,
   readable: false,
-  textCenter: false
+  textCenter: false,
+  fullWidth: true
 })
 
 const emits = defineEmits<{

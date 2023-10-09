@@ -1,5 +1,5 @@
 <template>
-  <ModalBottom v-if="is_open && demande" @close="close">
+  <ModalBottom class="max-h-full overflow-auto" v-if="is_open && demande" @close="close">
     <template #title>
       <div class="flex w-full items-center justify-between header">
         <div class="modal-demande-title">
@@ -9,6 +9,13 @@
         </div>
         <div v-if="details.recurrence" class=" modal-demande-subtitle">
           <h3>{{ messageRecurrence(details.recurrence) }}</h3>
+        </div>
+        <div>
+          <Button
+            couleur="secondary" class="mr-4"
+            :label=" commentairesVisibles ? 'Réduire les commentaires' : 'Afficher les commentaires'"
+            @click="toggleCommentaires">
+          </Button>
         </div>
         <div>
           <Button couleur="danger" borderless label="Rejeter" class="mr-4"  @click="rejeter(demande.demandeId)"/>
@@ -23,8 +30,21 @@
       </div>
 
     </template>
-    <template #content>
-      <Table text-center :can-create="false" :columns="columns" :data="getTableData()">
+    <template  #content>
+      <div v-if="commentairesVisibles" class="content">
+        <HeaderModal text-size="text-base uppercase" text="Commentaires"></HeaderModal>
+        <div class="my-8" v-for="commentaire in demande.commentaires">
+          <div class="font-semibold">{{ commentaire.userEmail }} {{ dateCommentaire(commentaire.date_creation) }}</div>
+          <div class="font-extralight">{{ commentaire.texte }}</div>
+
+        </div>
+        <div class="content flex items-end  my-2">
+          <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-1/3" label="Commentaire:" placeholder="Votre commentaire" border-radius="rounded-l-lg"/><Button class="w-5  border h-11" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="info" icon="next"/>
+        </div>
+      </div>
+      <HeaderModal text-size="text-base uppercase" text="Liste des conflits" class="content"></HeaderModal>
+
+      <Table :fullWidth="false" class="content" text-center :can-create="false" :columns="columns" :data="getTableData()">
         <template #col-0="{ item }">
           <div class="flex ">
             <div class="flex-grow-0 px-5 py-2 m-auto bg-blue-500 text-white rounded-md">{{ item.organisme }}</div>
@@ -47,6 +67,7 @@
 
 <script setup lang="ts">
 import Button from '@components/common/Button.vue'
+import Input from "@components/common/Input.vue";
 import ModalBottom from '@components/common/ModalBottom.vue'
 import {frenchTodayDate, getDateDM, getDateDMY, getDateStringHour, weekDays} from '../../services/date_service'
 import {ref, computed, watch} from 'vue'
@@ -56,14 +77,17 @@ import type {
 } from '@components/common/Table.vue'
 import Table from '@components/common/Table.vue'
 import {useMenuStore} from "@stores/menu";
+import {useUserStore} from "@stores/user";
 import { usePlanningStore } from '@stores/planning.ts'
-import {accepterDemande, getDetailsDemande, rejeterDemande} from "@api/creneau";
+import {accepterDemande, getDetailsDemande, postCommentaire, rejeterDemande} from "@api/creneau";
 import {match} from "cypress/types/minimatch";
 import {toast} from "vue3-toastify";
 import ValidationModal from "@components/common/ValidationModal.vue";
+import HeaderModal from "@components/common/HeaderModal.vue";
 
 const planning = usePlanningStore()
 const menu = useMenuStore()
+const user = useUserStore()
 const organismes: computed<[]> = computed(() => menu.getOrganismes())
 const libelleOrganisme = computed(() => {
   const id = demande.value.organismeId
@@ -71,8 +95,8 @@ const libelleOrganisme = computed(() => {
 })
 
 const confirmation  = ref<false | 'refus' | 'validation'>(false)
-const demandeId = ref(null)
-
+const demandeId = ref<number|null>(null)
+const today = ref('')
 
 const is_open = ref(false)
 const demande = ref<Creneau>()
@@ -127,11 +151,14 @@ defineExpose({ open, close, setDemande })
 
 async function open() {
   details.value = await getDetailsDemande(demande.value.demandeId!)
+
+  console.log(demande.value)
   is_open.value = true
 }
 
 function close() {
   is_open.value = false
+  commentairesVisibles.value = false
 }
 
 function getDateTitle() {
@@ -140,6 +167,7 @@ function getDateTitle() {
   const french_date = frenchTodayDate(demande.value.dateDebut)
   const start = getDateStringHour(demande.value.dateDebut, 'H')
   const end = getDateStringHour(demande.value.dateSortie, 'H')
+  today.value = `${french_date.dayNumber} ${french_date.month}`
   return `${french_date.weekday} ${french_date.dayNumber} ${french_date.month} - ${start} - ${end}`.toUpperCase()
 }
 
@@ -222,11 +250,6 @@ const confirmationTextes = {
   validation: "Voulez-vous confirmer la validation de cette demande ?"
 }
 
-const getFrench = (date) => {
-  const {weekday, dayNumber, month} = frenchTodayDate(date)
-  return `${weekday} ${dayNumber} ${month}`
-}
-
 const messageRecurrence = (recurrence)  => {
   const { dateDebut, dateFin, separation, maxOccurrences, recurrenceJoursMois: joursMois, recurrenceJoursSemaine: joursSemaine, recurrenceType } = recurrence
 
@@ -262,6 +285,54 @@ const messageRecurrence = (recurrence)  => {
   // details.value.recurrence && `Récurrence du ${frenchTodayDate(dateDebut)} au ${frenchTodayDate(dateFin)}` +
   //   `tous les ${separation + 1} jours`
   // 'Récurrence du vendredi 06 janvier au vendredi 06 décembre tous les 7 jours' && ''
+}
+
+const getFrench = (date = '', options: {year?: boolean, day?: boolean} = {year: false, day: true}) => {
+  const frenchDate = frenchTodayDate(date)
+  const {weekday, dayNumber, month, year} = frenchDate
+
+  let french = `${weekday} ${dayNumber} ${month}`
+
+  if (options.day) {
+    french =  weekday + ' ' + french
+  }
+  if (options.year) {
+    french += (' ' + year)
+  }
+
+  return french
+}
+
+const commentairesVisibles = ref(false)
+const commentaire = ref<string|null>(null)
+
+const toggleCommentaires = () => { commentairesVisibles.value = !commentairesVisibles.value }
+
+const heureMinute = (date: Date) => date.toLocaleTimeString('fr-FR').split(':').slice(0, -1).join(':')
+
+const dateCommentaire = (date = ''): string =>
+  getFrench(date, {year: true}) + ' à '
+  + heureMinute(date && new Date(date) || new Date())
+
+const ajouterCommentaire = async () => {
+
+  if (commentaire.value === null || commentaire.value === '') {
+    toast.error('Erreur, Veuillez remplir le champ commentaire')
+  } else {
+    try {
+      await postCommentaire({commentaire: commentaire.value!}, demande.value.demandeId!)
+      toast.success('Commentaire ajouté')
+
+      demande.value.commentaires.push({
+        texte: commentaire.value,
+        userEmail: user.username,
+        date_creation: ''
+      })
+      commentaire.value = ''
+    } catch (e) {
+      toast.error('Erreur, Veuillez contacter votre administrateur')
+    }
+  }
 }
 
 function setDemande(value: Creneau) {
@@ -322,6 +393,10 @@ function setDemande(value: Creneau) {
   font-size: 15px;
 }
 
-
+.content {
+  margin-left: 50px;
+  margin-right: 50px;
+  width: calc(100% - 100px);
+}
 
 </style>

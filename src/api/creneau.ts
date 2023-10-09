@@ -1,4 +1,4 @@
-import {defaultHeaders, get, put} from './api.js'
+import {defaultHeaders, get, post, put} from './api.js'
 import $fetch from './refreshToken.js'
 import { useStorage } from '@vueuse/core'
 
@@ -15,6 +15,8 @@ export async function accepterDemande(id: number) {
     return put(`/api/demande/${id}/accepter`)
 }
 
+export const postCommentaire = async (contract: { commentaire: string }, id: number): Promise<{}> =>
+    put(`/api/creneau/demande/${id}/commentaire`, contract)
 
 export async function postCreneauDemande(contract: DemandeEditContract): Promise<CreneauDemandePostResponse> {
   const response = await $fetch(
