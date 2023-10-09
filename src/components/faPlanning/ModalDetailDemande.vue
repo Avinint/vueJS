@@ -7,7 +7,7 @@
           <h2>{{ getDateTitle() }}</h2>
 
         </div>
-        <div v-if="details.recurrence" class=" modal-demande-subtitle">
+        <div v-if="details.recurrence" class="modal-demande-subtitle mt-1">
           <h3>{{ messageRecurrence(details.recurrence) }}</h3>
         </div>
         <div>
@@ -30,16 +30,20 @@
       </div>
 
     </template>
-    <template  #content>
+    <template #content>
       <div v-if="commentairesVisibles" class="content">
         <HeaderModal text-size="text-base uppercase" text="Commentaires"></HeaderModal>
-        <div class="my-8" v-for="commentaire in demande.commentaires">
+        <div class="my-8" v-for="(commentaire, i) in demande.commentaires" :key="`com-` + i">
           <div class="font-semibold">{{ commentaire.userEmail }} {{ dateCommentaire(commentaire.date_creation) }}</div>
           <div class="font-extralight">{{ commentaire.texte }}</div>
-
         </div>
+<<<<<<< Updated upstream
         <div class=" flex mt-3 mb-7">
           <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-1/3" label="Commentaire:" placeholder="Votre commentaire" border-radius="rounded-l-lg"><Button class="w-5  border" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="info" icon="next"/></Input>
+=======
+        <div class="content flex items-end  my-2">
+          <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-1/3" placeholder="Votre commentaire" border-radius="rounded-l-lg" /><Button class="w-5 border h-11" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="info" icon="next" />
+>>>>>>> Stashed changes
         </div>
       </div>
       <HeaderModal text-size="text-base uppercase" text="Liste des conflits" class="content"></HeaderModal>
@@ -57,7 +61,7 @@
     </template>
   </ModalBottom>
   <form v-if="confirmation" @submit.prevent="confirmationCallbacks[confirmation](demandeId)">
-    <ValidationModal  type="edit">
+    <ValidationModal type="edit">
       <template #titre>{{ confirmationTitres[confirmation] }}</template>
       {{ confirmationTextes[confirmation] }}
     </ValidationModal>
@@ -222,6 +226,7 @@ const confirmerRefus= async (id) => {
   } catch(e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }
+  is_open.value = false
 }
 
 const confirmerValidation = async (id) => {
@@ -233,6 +238,7 @@ const confirmerValidation = async (id) => {
   } catch(e) {
     toast.error('Erreur, Veuillez contacter votre administrateur')
   }
+  is_open.value = false
 }
 
 const confirmationCallbacks = {
@@ -293,7 +299,7 @@ const getFrench = (date = '', options: {year?: boolean, day?: boolean} = {year: 
   let french = `${weekday} ${dayNumber} ${month}`
 
   if (options.day) {
-    french =  weekday + ' ' + french
+    french = weekday + ' ' + french
   }
   if (options.year) {
     french += (' ' + year)
@@ -380,15 +386,13 @@ function setDemande(value: Creneau) {
   position: relative;
 }
 
-.modal-demande-subtitle{
+.modal-demande-subtitle {
   position: absolute;
-  left:  50px;
-
+  left: 50px;
   top: 27px;
-
 }
 
-.modal-demande-subtitle h3{
+.modal-demande-subtitle h3 {
   font-size: 15px;
 }
 
@@ -397,5 +401,4 @@ function setDemande(value: Creneau) {
   margin-right: 50px;
   width: calc(100% - 100px);
 }
-
 </style>
