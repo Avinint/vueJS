@@ -37,13 +37,8 @@
           <div class="font-semibold">{{ commentaire.userEmail }} {{ dateCommentaire(commentaire.date_creation) }}</div>
           <div class="font-extralight">{{ commentaire.texte }}</div>
         </div>
-<<<<<<< Updated upstream
-        <div class=" flex mt-3 mb-7">
-          <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-1/3" label="Commentaire:" placeholder="Votre commentaire" border-radius="rounded-l-lg"><Button class="w-5  border" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="info" icon="next"/></Input>
-=======
         <div class="content flex items-end  my-2">
           <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-1/3" placeholder="Votre commentaire" border-radius="rounded-l-lg" /><Button class="w-5 border h-11" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="info" icon="next" />
->>>>>>> Stashed changes
         </div>
       </div>
       <HeaderModal text-size="text-base uppercase" text="Liste des conflits" class="content"></HeaderModal>
@@ -217,7 +212,7 @@ const accepter = async (id)  => {
   demandeId.value = id
 }
 
-const confirmerRefus= async (id) => {
+const confirmerRefus = async (id) => {
   try {
     await rejeterDemande(id)
     await planning.fetch()
