@@ -67,7 +67,6 @@
               <Button
                 label=">"
                 couleur="info"
-                icon="next"
                 :submit="false"
                 @click="next()"
               />
@@ -75,7 +74,6 @@
                 class="cursor-default"
                 :label="'S' + planningStore.currentWeek"
                 couleur="info"
-                icon="next"
                 :submit="false"
               />
           </template>

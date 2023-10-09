@@ -25,13 +25,13 @@
         <p class="label-text">Nombre de persones attendues</p>
         <Input class="input-count" v-model="form.people_count" />
       </div>
-      <Button
+      <!-- <Button
         v-if="state === 'create' || (state === 'edit' && isRecurrent)"
         label="Récurrence"
         couleur="secondary"
         @click="submenu = !submenu"
-      />
-      <MenuRecurrence v-if="submenu" class="mt-4" />
+      /> -->
+      <!-- <MenuRecurrence v-if="submenu" class="mt-4" /> -->
       <HeaderModal text="ZONES" class="my-8" />
       <InputOptions :options="props.zones" v-model="form.zones" :value="props.libelle" />
       <CardModalSection title="COMMENTAIRE" class="my-8">
