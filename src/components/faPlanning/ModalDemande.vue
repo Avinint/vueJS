@@ -73,12 +73,12 @@
     type="none"
   >
     <CardModalSection
-      v-if="verifCreneaux.creneauxValide.length > 0"
+      v-if="verifCreneaux.creneauxValide"
       title="CRÉNEAUX SOUMIS POUR VALIDATION PAR LA COLLECTIVITÉ"
       class="pl-4"
     >
       <table
-        v-if="verifCreneaux.creneauxValide"
+        v-if="verifCreneaux.creneauxValide.length > 0"
         class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
       >
         <thead>
@@ -112,7 +112,7 @@
     </CardModalSection>
 
     <CardModalSection
-      v-if="verifCreneaux.creneauxConflit.length > 0"
+      v-if="verifCreneaux.creneauxConflit?.length > 0"
       title="CRÉNEAUX NON CRÉÉS, CAR ILS ENTRENT EN CONFLIT AVEC DES RÉSERVATIONS DÉJÀ VALIDÉES"
       class="pl-4"
     >
@@ -313,7 +313,7 @@ const submitDemande = async() => {
   }
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
   verifCreneaux.value = await postCreneauVerifDemande(contract.value);
-  state.value = 'closed';
+  //state.value = 'closed';
   verifModal.value = true
 }
 

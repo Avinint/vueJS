@@ -2,20 +2,26 @@
   <div class="flex" :class="inline ? 'items-center' : 'flex-col'">
     <InputLabel :required="required" v-if="label" :for="id">{{ label }}</InputLabel>
     <div class="w-full">
-      <input
-        :readonly="readonly"
-        :id="id"
-        @input="inputValidation"
-        :value="value"
-        :type="type"
-        :required="required"
-        :pattern="pattern"
-        :minlength="minLength"
-        :maxlength="maxLength"
-        :disabled="disabled"
-        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-        :placeholder="placeholder"
-      />
+      <div class="flex">
+        <input
+          :readonly="readonly"
+          :id="id"
+          @input="inputValidation"
+          :value="value"
+          :type="type"
+          :required="required"
+          :pattern="pattern"
+          :minlength="minLength"
+          :maxlength="maxLength"
+          :disabled="disabled"
+          :class="borderRadius"
+          class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+          :placeholder="placeholder"
+        />
+        <slot></slot>
+      </div>
+
+
       <p v-html="error"></p>
     </div>
   </div>
@@ -42,6 +48,7 @@ interface Props {
   valid?: boolean
   required: boolean
   disabled?: boolean
+  borderRadius: string
 }
 
 
@@ -50,7 +57,8 @@ const props = withDefaults(defineProps<Props>(), {
   inline: false,
   valid: false,
   required: false,
-  disabled: false
+  disabled: false,
+  borderRadius: 'rounded-lg'
 })
 
 const value = computed(() => props.modelValue || props.defaultValue || null);

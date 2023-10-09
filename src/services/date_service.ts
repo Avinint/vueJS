@@ -50,7 +50,9 @@ export const weekDays = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'ven
 
 
 export function frenchTodayDate(date_string: string) {
-  let today = new Date(date_string);
+
+  let today = date_string && new Date(date_string) || new Date();
+
   let year = today.getFullYear()
   let dayNumber = today.getDate()
   let month = months[today.getMonth()]
