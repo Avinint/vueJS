@@ -209,7 +209,7 @@ const zones = ref([])
 const zone = ref([])
 const typeZones = ref([])
 const espaceParents = ref([])
-let espace_selected = ref({})
+let espace_selected = ref(0)
 const modal_title = ref('')
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
@@ -264,6 +264,9 @@ const modifieZone = async ({ actif, id }) => {
 
 const editZone = (i) => {
   const zoneTemp = zones.value[i]
+  if (zoneTemp.zoneParent) {
+    espace_selected.value = zoneTemp.zoneParent.id
+  }
   mapApiToData(zoneTemp)
   zone_modal.value = true
   readonly.value = false
@@ -369,7 +372,7 @@ const linkedEquipements = async (typeEquipements, zoneId) => {
 }
 
 const cancel = () => {
-  espace_selected.value = {}
+  espace_selected.value = 0
   espTemp.value = {}
   zone.value = {}
   readonly.value = false

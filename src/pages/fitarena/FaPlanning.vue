@@ -132,14 +132,12 @@ export default {
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
-
         this.calendarOptions.events = newCreneaux
         this.redraw_key++
       }
     )
   },
   async mounted() {
-
     this.calendarApi = this.$refs.fullCalendar.getApi()
     await this.initZones();
     await this.typeCreneauStore.fetchTypeCreneaux()
