@@ -20,8 +20,6 @@
         />
         <slot></slot>
       </div>
-
-
       <p v-html="error"></p>
     </div>
   </div>
