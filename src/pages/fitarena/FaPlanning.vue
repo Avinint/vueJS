@@ -13,7 +13,7 @@
       :type-action="actionType"
       @close-modal-creneau="closeModal"
     />
-    <ModalDetailDemande ref="modalDemandeDetails"/>
+    <ModalDetailDemande ref="modalDemandeDetails" />
     <div
       class="space-y-3 p-4"
     >
