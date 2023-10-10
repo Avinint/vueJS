@@ -38,16 +38,19 @@ const TYPE = {
   info: 'bg-gray-300 hover:bg-gray-400 text-black',
   submit: 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white',
   danger: 'bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 text-white',
+  important: 'bg-gray-500 hover:bg-gray-600 text-white focus:ring-4',
   warning: 'bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 text-white',
   success: 'bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 text-white',
-  secondary: ' focus:ring-blue-300 bg-white',
+  secondary: 'focus:ring-blue-300 bg-white',
+  tertiary: 'hover:bg-red-200 border-1 border-red-600 bg-white text-red-600',
+
   '': 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white'
 }
 
 interface Props {
   label?: string,
   icon?: 'search' | 'print' | 'add' | 'reload' | 'edit' | 'delete' | 'export' | 'logout' | 'cross' | 'filter' | 'info' | '',
-  couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | '',
+  couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | 'tertiary' | '',
   borderless: boolean,
   submit: boolean,
   borderRadius: string
@@ -56,11 +59,12 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   borderless: false,
   submit: false,
-  borderRadius: 'rounded-lg'
+  borderRadius: 'rounded-lg',
+  couleur: ''
 });
 
 const icon: string = ICON[props.icon ?? '']
-const couleur: string = TYPE[props.couleur ?? '']
+const couleur: string = TYPE[props.couleur]
 const border: string = props.borderless ? '' : 'border'
 
 </script>
