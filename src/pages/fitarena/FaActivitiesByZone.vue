@@ -1,5 +1,5 @@
 <template>
-  <Spinner v-if="spinner" :size="40" />
+  <Spinner v-if="spinner" />
 
   <Card v-if="!spinner">
     <h1 class="mb-6">Activités par zone</h1>
