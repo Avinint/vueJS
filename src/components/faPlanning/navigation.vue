@@ -20,7 +20,7 @@
           </div>
         </template>
       </NavigationSection>
-      <div class="flex">
+      <div class="flex navigation">
         <NavigationSection class="justify-center px-4">
           <template #title> Affichage du planning </template>
           <template #content>
@@ -241,5 +241,9 @@ button {
     @apply relative;
     top: 1px;
   }
+}
+
+.navigation {
+  min-width: 583px;
 }
 </style>

@@ -17,7 +17,12 @@ const toFormData = (body: RequestBody): FormData => {
 
     const formData = new FormData()
     for (const prop in body) {
-        formData.append(prop, body[prop])
+        if (typeof body[prop] === "boolean") {
+            formData.append(prop, Number(body[prop]).toString())
+        } else {
+            formData.append(prop, body[prop])
+        }
+
     }
 
     return formData;

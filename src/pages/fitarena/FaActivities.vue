@@ -182,10 +182,10 @@
         </span>
         <label class="relative inline-flex w-full cursor-pointer items-center">
           <input
-            v-model="activite.actif"
-            :disabled="readonly == true ? true : false"
+            :disabled="readonly"
+            :checked="activite.actif"
             type="checkbox"
-            value="true"
+            @click="activite.actif = !activite.actif"
             class="peer sr-only"
           />
           <div
@@ -282,7 +282,7 @@ watch(() => props.id, async (  ) => {
 })
 
 const addActivite = () => {
-  activite.value = {}
+  activite.value = { actif: false }
   activite_selected.value = {}
   activite_modal.value = true
   readonly.value = false
