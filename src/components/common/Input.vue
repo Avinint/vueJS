@@ -15,7 +15,7 @@
           :maxlength="maxLength"
           :disabled="disabled"
           :class="borderRadius"
-          class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+          class="block w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-300"
           :placeholder="placeholder"
         />
         <slot></slot>
