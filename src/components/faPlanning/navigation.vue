@@ -128,16 +128,17 @@ export default {
   },
   async mounted() {
     await this.fetchDonnees()
-    await this.setZones()
-    this.viewWeek()
-    await this.planningStore.fetch()
-    this.$emit('afterFetch');
     this.setDate()
   },
   methods: {
     setDate() {
       this.startDate = dayjs(this.planningStore.getCurrentDateStart).format(this.formatDateFr)
-      this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
+      const end = this.planningStore.getCurrentDateEnd ??
+        dayjs(this.planningStore.getCurrentDateStart)
+        .add(this.planningStore.filters.duree, 'day')
+        .format('YYYY-MM-DD')
+      this.endDate = dayjs(end).format(this.formatDateFr)
+
     },
     changeData(date) {
       this.calendarApi.gotoDate(date)

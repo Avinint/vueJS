@@ -78,7 +78,6 @@ import {useMenuStore} from "@stores/menu";
 import {useUserStore} from "@stores/user";
 import { usePlanningStore } from '@stores/planning.ts'
 import {accepterDemande, getDetailsDemande, postCommentaire, rejeterDemande} from "@api/creneau";
-import {match} from "cypress/types/minimatch";
 import {toast} from "vue3-toastify";
 import ValidationModal from "@components/common/ValidationModal.vue";
 import HeaderModal from "@components/common/HeaderModal.vue";
@@ -150,7 +149,6 @@ defineExpose({ open, close, setDemande })
 async function open() {
   details.value = await getDetailsDemande(demande.value.demandeId!)
 
-  console.log(demande.value)
   is_open.value = true
 }
 
