@@ -57,7 +57,7 @@
                 @click="prev()"
               />
               <vue-tailwind-datepicker
-                input-classes="bg-gray-300 border border-gray-300 rounded-lg py-1.5 text-black w-56 text-align"
+                input-classes="bg-gray-300 border border-gray-300 rounded-lg py-1.5 text-black w-56"
                 v-model="startDate"
                 i18n="fr"
                 as-single
@@ -106,7 +106,7 @@ export default {
     return {
       zones: [],
       startDate: '',
-      dateAffichee: '',
+      dateAffichee: ' ', // une chaine vide affiche true dans le placeholder du datepicker
       endDate: '',
       formatDateFr: 'DD-MM-YYYY',
       formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' }
@@ -117,6 +117,9 @@ export default {
     id() {
       return this.$route.params.id
     },
+    currentView() {
+      return this.planningStore.currentViewName
+    }
     // dateAffichee() {
     //   return this.planningStore.currentViewName === 'week' &&
     //     this.startDate ||
@@ -133,30 +136,38 @@ export default {
     async id() {
       this.fetchDonnees()
     },
+    currentView() { this.setDateAffichee() }
+
   },
   async mounted() {
+    this.planningStore.currentViewName = 'day'
+    console.log("mounted view", this.currentView)
+    this.$nextTick(() => this.setDate())
+    // this.changeDate(new Date().format(''))
     await this.fetchDonnees()
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
     this.$emit('afterFetch');
-    this.setDate()
   },
   methods: {
     setDateAffichee() {
-      if (this.startDate !== '') {
-        this.dateAffichee = this.planningStore.currentViewName === 'week' &&
-          this.startDate ||
-          `${this.startDate} - ${this.endDate}`
+      if (this.startDate === '') {
+        this.setDate()
       }
+      console.log("lanningStore.currentViewName", this.planningStore.currentViewName)
+      this.dateAffichee = this.planningStore.currentViewName === 'week' &&
+        this.startDate ||
+        `${this.startDate} - ${this.endDate}`
+
     },
     setDate() {
       this.startDate = dayjs(this.planningStore.getCurrentDateStart).format(this.formatDateFr)
       this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
     },
     changeDate(date) {
-      this.calendarApi.gotoDate(date)
       this.setDate()
+      this.calendarApi.gotoDate(date)
       this.setDateAffichee()
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
