@@ -7,6 +7,7 @@
       </svg>
     </div>
   </div>
+  <span class="flex justify-center mt-6 text-sm">En cours de chargement ...</span>
 </template>
 
 <script setup lang="ts">
@@ -20,7 +21,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   alignement: 'center',
-  size: 20,
+  size: 12,
   color: 'red'
 });
 </script>
