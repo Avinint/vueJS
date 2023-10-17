@@ -231,7 +231,7 @@ type Planning = {
   demandes: Creneau[]
   filters: PlanningFilters
   activites: Activite[]
-  currentViewName: string
+  currentViewName: 'day' | 'week'
   currentDateStart: any // TODO: Find a proper type
   currentDateEnd: any // TODO: Find a proper type
   currentWeek: number
