@@ -417,14 +417,6 @@ export default {
           return 'Modifier un créneau'
       }
     },
-    // @Todo Suprimer après les tests
-    activites() {
-      return this.creneauStore.activites
-    },
-    zoneActivites() {
-      return this.zones.map(z => z.zoneActivites).flat()
-    },
-    // @Todo Fin todo
     typeCreneauListe() {
       return this.typeCreneauStore.typeCreneauListe
     },
