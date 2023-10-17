@@ -57,11 +57,11 @@
                 @click="prev()"
               />
               <vue-tailwind-datepicker
-                input-classes="bg-gray-300 border border-gray-300 rounded-lg py-1.5 text-black w-56"
+                input-classes="bg-gray-300 border border-gray-300 rounded-lg py-1.5 text-black w-56 text-align"
                 v-model="startDate"
                 i18n="fr"
                 as-single
-                :placeholder="`${startDate} - ${endDate}`"
+                :placeholder="dateAffichee"
                 :formatter="formatDatepicker"
               />
               <Button
@@ -106,6 +106,7 @@ export default {
     return {
       zones: [],
       startDate: '',
+      dateAffichee: '',
       endDate: '',
       formatDateFr: 'DD-MM-YYYY',
       formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' }
@@ -116,11 +117,18 @@ export default {
     id() {
       return this.$route.params.id
     },
+    // dateAffichee() {
+    //   return this.planningStore.currentViewName === 'week' &&
+    //     this.startDate ||
+    //     `${this.startDate} - ${this.endDate}`
+    // }
   },
   watch: {
     startDate (value) {
-      value = dayjs(value, this.formatDateFr).format('YYYY-MM-DD')
-      this.changeData(value)
+      if (value !== '') {
+        value = dayjs(value, this.formatDateFr).format('YYYY-MM-DD')
+        this.changeDate(value)
+      }
     },
     async id() {
       this.fetchDonnees()
@@ -135,16 +143,26 @@ export default {
     this.setDate()
   },
   methods: {
+    setDateAffichee() {
+      if (this.startDate !== '') {
+        this.dateAffichee = this.planningStore.currentViewName === 'week' &&
+          this.startDate ||
+          `${this.startDate} - ${this.endDate}`
+      }
+    },
     setDate() {
       this.startDate = dayjs(this.planningStore.getCurrentDateStart).format(this.formatDateFr)
       this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
     },
-    changeData(date) {
+    changeDate(date) {
       this.calendarApi.gotoDate(date)
       this.setDate()
+      this.setDateAffichee()
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
       })
+      this.startDate = ''
+      this.endDate = ''
     },
     today() {
       this.calendarApi.today()
