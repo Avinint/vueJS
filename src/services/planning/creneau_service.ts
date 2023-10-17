@@ -26,7 +26,7 @@ export function makeCreneauEditContract(
     if (activity.zoneId === zone_id) {
       activities.push({
         activiteId: activity.activiteId,
-        tarif: activity.prix,
+        tarif: activity.tarif,
       })
     }
   }
@@ -75,19 +75,7 @@ export function makeCreneauOGEditContract(
     creneau.recurrence.dateDebut = creneau.date
   }
 
-  const zones = []
-  for (const zone_id of creneau.zones) {
-    const zone_activities = []
-    for (const activity of creneau.activites) {
-      if (activity.zoneId === zone_id) {
-        zone_activities.push({
-          activiteId: activity.activiteId,
-          tarif: activity.tarif,
-        })
-      }
-    }
-    zones.push({ id: zone_id, activites: zone_activities })
-  }
+  const zones = hydrateZones(creneau)
 
   return {
     creneau: {
@@ -120,19 +108,7 @@ export function makeDemandeAdminOGEditContract(
     creneau.recurrence.dateDebut = creneau.date
   }
 
-  const zones = []
-  for (const zone_id of creneau.zones) {
-    const zone_activities = []
-    for (const activity of creneau.activites) {
-      if (activity.zoneId === zone_id) {
-        zone_activities.push({
-          activiteId: activity.activiteId,
-          tarif: activity.tarif,
-        })
-      }
-    }
-    zones.push({ id: zone_id, activites: zone_activities })
-  }
+  const zones = hydrateZones(creneau)
 
   return {
     creneau: {
@@ -165,19 +141,7 @@ export function makeDemandeCreneauEditContract(
     creneau.recurrence.dateDebut = creneau.date
   }
 
-  const zones = []
-  for (const zone_id of creneau.zones) {
-    const zone_activities = []
-    for (const activity of creneau.activites) {
-      if (activity.zoneId === zone_id) {
-        zone_activities.push({
-          activiteId: activity.activiteId,
-          tarif: activity.tarif,
-        })
-      }
-    }
-    zones.push({ id: zone_id, activites: zone_activities })
-  }
+  const zones = hydrateZones(creneau)
 
   return {
     creneau: {
@@ -202,46 +166,7 @@ export function makeDemandeCreneauEditContract(
   }
 }
 
-export function ParseDemandeCreneauResponse(response: DemandeCreneauEditResponse): Creneau[] {
 
-  return response.creneaux.map(creneau => {
-    const value: Creneau = {
-      id: creneau.id,
-      titre: creneau.titre,
-      date: creneau.dateDebut, // besoin de l'heure
-      description: creneau.description,
-      animateurLabellise: 0,
-      creneauType: creneau.type,
-      dureeActivite: creneau.dureeActivite,
-      dureeInterCreneau: creneau.dureeIntercreneau,
-      nbParticipants: creneau.remplissage,
-      niveauPratique: 0,
-      tarifHoraire: 0,
-      heureDebut: getDateStringHour(creneau.dateDebut),
-      heureFin: getDateStringHour(creneau.dateFinCreneau),
-      organisme: 0, // creneau.organismes? kesako
-      zones: creneau.zones,
-      activites: creneau.activites.map(e => {
-        return {
-          activiteId: e.id,
-          libelle: e.libelle,
-          tarif: e.prix,
-           maxTerrain: 0,
-        }
-      }),
-      dateDebut: creneau.dateDebut,
-      dateFinCreneau: creneau.dateFinCreneau,
-      dateSortie: creneau.dateSortie,
-      seances: [],
-      type: creneau.type,
-      zoneId: 0,
-      recurrence: creneau.recurrence,
-      mode: '',
-    }
-
-    return value;
-  })
-}
 
 export function makeDemandeEditContract(fitarena_id: number, organisme_id: number, form: any): DemandeEditContract {
   if (form.recurrence) {
@@ -274,29 +199,40 @@ export function makeDemandeEditContract(fitarena_id: number, organisme_id: numbe
     commentaire: form.commentaire,
     fitArenaId: fitarena_id
   }
+
 }
 
-export function makeDemandeAdminEditContract(fitarena_id: number, creneau: any): DemandeEditContract {
+
+const hydrateZones = (creneau): ZoneContract[]  => {
+  const zones: ZoneContract[] = []
+  for (const zone_id of creneau.zones) {
+    const zone_activites = []
+    for (const activite of creneau.activites) {
+      if (activite.zoneId === zone_id) {
+        zone_activites.push({
+          activiteId: activite.activiteId,
+          tarif: activite.tarif,
+        })
+      }
+    }
+
+    zones.push({ id: zone_id, activites: zone_activites })
+  }
+
+  return zones
+
+}
+
+export function makeDemandeAdminEditContract(fitarena_id: number, creneau: CreneauDemandeContract): DemandeEditContract {
   if (creneau.recurrence) {
     creneau.recurrence.dateDebut = creneau.date
   }
 
-  const zones = []
-  for (const zone_id of creneau.zones) {
-    const zone_activities = []
-    for (const activity of creneau.activites) {
-      if (activity.zoneId === zone_id) {
-        zone_activities.push({
-          activiteId: activity.activiteId,
-          tarif: activity.tarif,
-        })
-      }
-    }
-    zones.push({ id: zone_id, activites: zone_activities })
-  }
+  const zones = hydrateZones(creneau)
 
   return {
     creneau: {
+      id: creneau.id,
       titre: creneau.titre,
       date: creneau.date,
       description: '',
@@ -313,7 +249,7 @@ export function makeDemandeAdminEditContract(fitarena_id: number, creneau: any):
       zones: zones,
       recurrence: creneau.recurrence,
     },
-    commentaire: creneau.commentaire,
+    commentaire: creneau.commentaire as string,
     fitArenaId: fitarena_id
   }
 }
@@ -322,7 +258,7 @@ export const default_creneau = (): Creneau => ({
   id: 0,
   creneauType: 0,
   type: 0,
-  activites: [],
+  activites: <Activite[]>[],
   titre: '',
   date: '',
   heureDebut: '', // "14:30:00"

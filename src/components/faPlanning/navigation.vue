@@ -138,7 +138,6 @@ export default {
   async mounted() {
     this.planningStore.currentViewName = 'week'
     this.$nextTick(() => this.setDate())
-    // this.changeDate(new Date().format(''))
     await this.fetchDonnees()
     await this.setZones()
     this.viewWeek()
@@ -157,7 +156,14 @@ export default {
     },
     setDate() {
       this.startDate = dayjs(this.planningStore.getCurrentDateStart).format(this.formatDateFr)
-      this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
+      // this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
+
+      const end = this.planningStore.getCurrentDateEnd ??
+        dayjs(this.planningStore.getCurrentDateStart)
+        .add(this.planningStore.filters.duree, 'day')
+        .format('YYYY-MM-DD')
+      this.endDate = dayjs(end).format(this.formatDateFr)
+
       this.setDateAffichee()
     },
     changeDate(date) {

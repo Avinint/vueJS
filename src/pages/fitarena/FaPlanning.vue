@@ -12,6 +12,7 @@
       :is-open="isModalCreneauOpen"
       :type-action="actionType"
       @close-modal-creneau="closeModal"
+      @after-fetch="redraw_key++"
     />
     <ModalDetailDemande ref="modalDemandeDetails" />
     <div

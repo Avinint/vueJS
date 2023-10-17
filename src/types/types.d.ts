@@ -23,7 +23,7 @@ type Creneau = {
   mode: string | null
   seances: Seance[]
   recurrence: Recurrence
-  demandeId: number
+  demandeId?: number
   statut?: string
   commentaires?: []
 }
@@ -58,6 +58,7 @@ type Zone = {
 
 type DemandeEditContract = {
   creneau: {
+    id?: number
     creneauType: number
     zones: { id: number; activites: { activiteId: number; tarif: number }[] }[]
     titre: string
@@ -112,24 +113,30 @@ type CreneauEditContract = {
   recurrence?: Recurrence
 }
 
+type ZoneContract = { id: number; activites: { activiteId: number; tarif: number }[] }
+
+type CreneauDemandeContract = {
+  id?: number
+  creneauType: number
+  zones: ZoneContract[]
+  titre: string
+  date: string
+  heureDebut: string
+  heureFin: string
+  dureeActivite: number
+  dureeInterCreneau: number
+  description: string
+  organisme: number
+  animateurLabellise: number
+  niveauPratique: number
+  tarifHoraire: number
+  nbParticipants: number
+  recurrence: Recurrence,
+  commentaire?: string
+}
+
 type DemandeCreneauEditContract = {
-  creneau: {
-    creneauType: number
-    zones: { id: number; activites: { activiteId: number; tarif: number }[] }[]
-    titre: string
-    date: string
-    heureDebut: string
-    heureFin: string
-    dureeActivite: number
-    dureeInterCreneau: number
-    description: string
-    organisme: number
-    animateurLabellise: number
-    niveauPratique: number
-    tarifHoraire: number
-    nbParticipants: number
-    recurrence: Recurrence
-  }
+  creneau: CreneauDemandeContract
   commentaire: string
   fitArenaId: number
 }
@@ -179,18 +186,16 @@ type DemandeCreneauResult = {
   dateFinCreneau: string
   titre: string
   description: string
-  activites: {
-    id: number
-    libelle: string
-    prix: number
-  }[],
+  activites: ActiviteReponse[],
   type: number,
   remplissage: number,
   zones: number[],
   dureeActivite: number
-  dureeIntercreneau: number
+  dureeInterCreneau: number
   statut: string
-  recurrence: Recurrence
+  recurrence: Recurrence,
+  demandeId?: number
+  organismeId?: number
 }
 
 type SeanceEditResponse = {
@@ -216,6 +221,15 @@ type Activite = {
   maxTerrain: number
   tarif: number
 }
+
+type ActiviteReponse = {
+  id: number
+  zoneId?: number
+  libelle: string
+  maxTerrain: number
+  prix: number
+}
+
 
 type PlanningFilters = {
   debut: number
