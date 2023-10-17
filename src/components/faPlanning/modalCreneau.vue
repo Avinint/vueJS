@@ -183,7 +183,7 @@
                     </label>
                     <FAInput
                       v-model="zoneActivite.activite.tarif"
-                      :default-value="defaultTarif"
+                      :default-value="zoneActivite.tarifDefaut ?? defaultTarif"
                       class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
                       :inline="true"
                       suffix="€"
@@ -347,7 +347,6 @@ import { useCreneauStore } from '@stores/creneau.ts'
 import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { useOrganismeStore } from '@stores/organisme.ts'
-import { getParametres } from '@api/parametre'
 import { getZones } from '@api/zone'
 import { postCreneauVerifDemande, updateCreneauDemande } from '@api/creneau'
 
@@ -391,13 +390,12 @@ export default {
   emits: ['closeModalCreneau'],
   data() {
     return {
-      parametres: [],
       zones: [],
       // activites: [],
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
-      defaultTarif: '20',
+      defaultTarif: 20,
       submenu: 'none',
       errorMessage: false,
       verifModal: false,
@@ -501,10 +499,10 @@ export default {
     await this.fetchZones()
     await this.organismeStore.fetchOrganismes({'fit_arena.id': this.$route.params.id})
 
-    this.parametres = await getParametres()
     if (this.typeAction === 'create') {
       this.creneauStore.activites = []
     }
+
   },
   methods: {
     /**
@@ -557,8 +555,9 @@ export default {
       this.creneauStore.activites = []
       this.zones.forEach((zone) => {
         zone.zoneActivites.forEach((zone_activite) => {
-          if (zone_activite.activite.checked == true) {
+          if (zone_activite.activite.checked === true) {
             this.creneauStore.addActivite({
+              libelle: zone_activite.activite.libelle,
               activiteId: zone_activite.activite.id,
               tarif: parseInt(zone_activite.activite.tarif),
               zoneId: zone.id,
@@ -572,8 +571,8 @@ export default {
         this.zones.forEach((zone) => {
           zone.zoneActivites.forEach((zoneActivite) => {
             this.creneauStore.activites.forEach((activite) => {
-              if (activite.activiteId === zoneActivite.activite.id) {
-                zoneActivite.activite.checked = true
+              zoneActivite.activite.checked = activite.activiteId === zoneActivite.activite.id
+              if (zoneActivite.activite.checked) {
                 zoneActivite.activite.tarif = activite.tarif
               }
             })
@@ -609,7 +608,9 @@ export default {
             // Retrieve activity data from the local references
             // Before sending it to the API. This has to be done
             // This way because of the unsynchronized data.
+
             this.updateActivites()
+
 
             if (!this.isOneActivityChecked) {
               this.errorMessage = true
