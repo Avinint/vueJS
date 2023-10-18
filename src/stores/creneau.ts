@@ -70,7 +70,7 @@ export const useCreneauStore = defineStore('creneau', {
       const contract = makeCreneauOGEditContract(fitarena_id, this.$state)
       const response = await updateCreneau(this.id, contract)
       planningStore.addCreneaux(this.parseDemandeCreneauResponse(response));
-      // planningStore.removeCreneau(this.id)
+      planningStore.removeCreneau(this.id)
     },
     addActivite(activite: Activite) {
       const index = this.activites.findIndex(
