@@ -73,10 +73,12 @@ type DemandeEditContract = {
     niveauPratique: number
     tarifHoraire: number
     nbParticipants: number
-    recurrence: Recurrence
+    recurrence: Recurrence | null
+    mode: 'recurrence' | 'occurence'
   }
   commentaire: string
   fitArenaId: number
+  creneauModifId: number | null
 }
 
 type CreneauOGEditContract = {
@@ -131,7 +133,7 @@ type CreneauDemandeContract = {
   niveauPratique: number
   tarifHoraire: number
   nbParticipants: number
-  recurrence: Recurrence,
+  recurrence?: Recurrence,
   commentaire?: string
 }
 

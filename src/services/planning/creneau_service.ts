@@ -103,7 +103,7 @@ export function makeCreneauOGEditContract(
 export function makeDemandeAdminOGEditContract(
   fitarena_id: number,
   creneau: Creneau
-): DemandeCreneauEditContract {
+): DemandeEditContract {
   if (creneau.recurrence) {
     creneau.recurrence.dateDebut = creneau.date
   }
@@ -112,6 +112,7 @@ export function makeDemandeAdminOGEditContract(
 
   return {
     creneau: {
+      mode: creneau.recurrence ? 'recurrence' : 'occurence',
       titre: creneau.titre,
       date: creneau.date,
       description: creneau.description,
@@ -130,6 +131,7 @@ export function makeDemandeAdminOGEditContract(
     },
     commentaire: '',
     fitArenaId: fitarena_id,
+    creneauModifId: creneau.id ?? null
   }
 }
 
@@ -232,7 +234,7 @@ export function makeDemandeAdminEditContract(fitarena_id: number, creneau: Crene
 
   return {
     creneau: {
-      id: creneau.id,
+      mode: creneau.recurrence ? 'recurrence' : 'occurence',
       titre: creneau.titre,
       date: creneau.date,
       description: '',
@@ -247,10 +249,11 @@ export function makeDemandeAdminEditContract(fitarena_id: number, creneau: Crene
       heureFin: `${creneau.heureFin}:00`,
       organisme: 0,
       zones: zones,
-      recurrence: creneau.recurrence,
+      recurrence: creneau.recurrence ?? null,
     },
     commentaire: creneau.commentaire as string,
-    fitArenaId: fitarena_id
+    fitArenaId: fitarena_id,
+    creneauModifId: creneau.id ?? null
   }
 }
 
