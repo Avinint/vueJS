@@ -1,7 +1,5 @@
 <template>
-  <Spinner v-if="spinner" />
-
-  <div v-if="!spinner" class="fa-planning">
+  <div class="fa-planning">
     <EditOptions ref="edit_options" @on-edit-single="editSingle" @on-edit-multiple="editRecurence" />
     <PlanningNavigation
       class="mb-6"
@@ -43,7 +41,6 @@ import modalCreneau from '@components/faPlanning/modalCreneau.vue'
 import EditOptions from '@components/faPlanning/EditOptions.vue'
 import Event from '@components/faPlanning/Event.vue'
 import EventDemande from '@components/faPlanning/EventDemande.vue'
-import Spinner from '@components/common/Spinner.vue'
 
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -66,8 +63,7 @@ export default {
     EditOptions,
     Event,
     EventDemande,
-    ModalDetailDemande,
-    Spinner
+    ModalDetailDemande
 },
   data() {
     return {
@@ -112,8 +108,7 @@ export default {
       isModalCreneauOpen: false,
       actionType: '',
       zones: [],
-      redraw_key: 0,
-      spinner: false
+      redraw_key: 0
     }
   },
   watch: {
@@ -144,12 +139,10 @@ export default {
     )
   },
   async mounted() {
-    this.spinner = true
     this.calendarApi = this.$refs.fullCalendar.getApi()
     await this.initZones();
     await this.typeCreneauStore.fetchTypeCreneaux()
     this.calendarOptions.scrollTime = this.planningStore.scrollTime
-    this.spinner = false
   },
   methods: {
     async initZones () {

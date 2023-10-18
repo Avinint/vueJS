@@ -1,5 +1,8 @@
 <template>
+  <Spinner v-if="spinner" />
+
   <nav
+    v-if="!spinner"
     class="flex space-y-3 p-4"
   >
     <section class="flex w-full justify-between gap-2">
@@ -87,6 +90,7 @@
 <script>
 import Button from '@components/common/Button.vue'
 import NavigationSection from '@components/faPlanning/navigationSection.vue'
+import Spinner from '@components/common/Spinner.vue'
 
 import { getZones } from '@api/zone.js'
 import { usePlanningStore } from '@stores/planning.ts'
@@ -96,7 +100,8 @@ import dayjs from "dayjs";
 export default {
   components: {
     Button,
-    NavigationSection
+    NavigationSection,
+    Spinner
   },
   props: {
     calendarApi: {
@@ -111,7 +116,8 @@ export default {
       dateAffichee: ' ', // une chaine vide affiche true dans le placeholder du datepicker
       endDate: '',
       formatDateFr: 'DD-MM-YYYY',
-      formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' }
+      formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' },
+      spinner: false
     }
   },
   computed: {
@@ -134,9 +140,9 @@ export default {
       this.fetchDonnees()
     },
     currentView() { this.setDateAffichee() }
-
   },
   async mounted() {
+    this.spinner = true
     this.planningStore.currentViewName = 'week'
     this.$nextTick(() => this.setDate())
     await this.fetchDonnees()
@@ -144,6 +150,7 @@ export default {
     this.viewWeek()
     await this.planningStore.fetch()
     this.$emit('afterFetch')
+    this.spinner = false
   },
   methods: {
     setDateAffichee() {
@@ -237,7 +244,9 @@ export default {
       this.planningStore.filters.fit_arena = this.$route.params.id
       this.planningStore.filters.organisme = (this.$route.params.org_id) ? this.$route.params.org_id : null
       this.planningStore.filters.duree = 7
-      this.planningStore.filters.zone = [this.zones[0].id] // select first zone
+      if (this.zones.length > 0) {
+        this.planningStore.filters.zone = [this.zones[0].id] // select first zone
+      }
       this.calendarApi.changeView('timeGridWeek')
       this.planningStore.currentViewName = 'week'
     },
