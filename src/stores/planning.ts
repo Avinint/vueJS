@@ -88,7 +88,7 @@ export const usePlanningStore = defineStore('planning', {
   actions: {
     async fetch() {
       const debut =
-        this.currentViewName === 'day'
+        this.currentViewName === 'week'
           ? this.getDebutOfWeek
           : this.getDebutOfDay
 
@@ -106,7 +106,7 @@ export const usePlanningStore = defineStore('planning', {
     },
     async fetchPlanningOrganisme(organisme_id: number) {
       const debut =
-        this.currentViewName === 'day'
+        this.currentViewName === 'week'
           ? this.getDebutOfWeek
           : this.getDebutOfDay
 
