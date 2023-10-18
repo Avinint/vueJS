@@ -5,7 +5,6 @@
         <div class="modal-demande-title">
           <h2>{{ libelleOrganisme.toUpperCase() }}</h2>
           <h2>{{ getDateTitle() }}</h2>
-
         </div>
         <div v-if="details.recurrence" class="modal-demande-subtitle mt-1">
           <h3>{{ messageRecurrence(details.recurrence) }}</h3>
@@ -28,8 +27,8 @@
           />
         </div>
       </div>
-
     </template>
+    
     <template #content>
       <div v-if="commentairesVisibles" class="content">
         <HeaderModal text-size="text-base uppercase" text="Commentaires"></HeaderModal>
@@ -250,7 +249,7 @@ const confirmationTextes = {
 
 const messageRecurrence = (recurrence)  => {
   const { dateDebut, dateFin, separation, maxOccurrences, recurrenceJoursMois: joursMois, recurrenceJoursSemaine: joursSemaine, recurrenceType } = recurrence
-
+  
   const limites = dateDebut && dateFin && `du ${getFrench(dateDebut)} au ${getFrench(dateFin)}` || false
   const occurrences =  !limites && maxOccurrences && `pendant ${maxOccurrences} fois` || false
 
@@ -259,11 +258,8 @@ const messageRecurrence = (recurrence)  => {
   let unites: string|boolean = false
   let frequence: string|boolean = false
   if (type === 'journalier') {
-
-
     unites = 'jours'
     frequence = separation  ? `tous les ${separation} jours` : 'tous les jours'
-
   } else {
     if (type === 'mensuel') {
       const dernierJoursMois = joursMois && joursMois.length > 1 && joursMois.pop() || false
@@ -272,7 +268,6 @@ const messageRecurrence = (recurrence)  => {
       frequence = joursDuMois + separation ? `tous les ${separation} mois ` : 'tous les mois'
     } else if (type === 'hebdomadaire') {
       const dernierJour = joursSemaine.length > 1 && joursSemaine.pop() || false
-      j
       frequence = joursSemaine && `tous les ${joursSemaine.map(j => weekDays[j]).join(', ')}` + (dernierJour ? ' et ' + dernierJour : '') || false
     }
   }
@@ -291,9 +286,9 @@ const getFrench = (date = '', options: {year?: boolean, day?: boolean} = {year: 
 
   let french = `${weekday} ${dayNumber} ${month}`
 
-  if (options.day) {
-    french = weekday + ' ' + french
-  }
+  // if (options.day) {
+  //   french = weekday + ' ' + french
+  // }
   if (options.year) {
     french += (' ' + year)
   }

@@ -12,25 +12,26 @@
 
 <script setup lang="ts">
 import Button from './Button.vue';
-const emit = defineEmits(['close'])
+import { defineEmits } from 'vue';
 
+const emit = defineEmits(['close'])
 </script>
 
 <style scoped>
 .modal-bottom {
-    position: fixed;
-    z-index: 100;
-    bottom: 0;
-    right: 0;
-    border-radius: 8px 8px 0px 0px;
-    width: 100%;
-    max-width: calc(100vw - 320px);
-    box-shadow: 0px 0px 15px rgb(99, 99, 99);
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  right: 0;
+  border-radius: 8px 8px 0px 0px;
+  width: 100%;
+  max-width: calc(100vw - 320px);
+  box-shadow: 0px 0px 15px rgb(99, 99, 99);
 }
 
 .modal-bottom-title {
-    height: 60px;
-    border-bottom: 1px solid gray;
+  height: 60px;
+  border-bottom: 1px solid gray;
 }
 
 @media screen and (max-width: 1024px) {

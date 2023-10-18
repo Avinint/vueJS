@@ -14,7 +14,7 @@
         <InputSelect
           class="w-fit-content"
           :option-label="(e) => e"
-          :options="['Jours', 'Semaines', 'Mois']"
+          :options="['Jours', 'Semaines']"
           v-model="type"
           :key="type"
         />
@@ -123,9 +123,6 @@ const repetition_mode = ref<'date' | 'occurence'>('date')
 
 onMounted(async () => {
   await nextTick()
-  if (creneau_store.recurrence) {
-    creneau_store.recurrence.separation = creneau_store.recurrence.separation + 1
-  }
   if(!creneau_store.recurrence.recurrenceType)
     creneau_store.recurrence.recurrenceType = 2;
   else {

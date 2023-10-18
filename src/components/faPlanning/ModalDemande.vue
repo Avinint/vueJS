@@ -309,6 +309,7 @@ const submitDemande = async() => {
         recurrenceType: creneau_store.recurrence.recurrenceType,
         separation: creneau_store.recurrence.separation
       }
+      form.recurrence.separation -= 1
     }
   }
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
