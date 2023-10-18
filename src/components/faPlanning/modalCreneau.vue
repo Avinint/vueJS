@@ -571,7 +571,9 @@ export default {
         this.zones.forEach((zone) => {
           zone.zoneActivites.forEach((zoneActivite) => {
             this.creneauStore.activites.forEach((activite) => {
-              zoneActivite.activite.checked = activite.activiteId === zoneActivite.activite.id
+              if (activite.id === zoneActivite.activite.id) {
+                zoneActivite.activite.checked = true
+              }
               if (zoneActivite.activite.checked) {
                 zoneActivite.activite.tarif = activite.tarif
               }

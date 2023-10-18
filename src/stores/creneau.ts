@@ -30,7 +30,14 @@ export const useCreneauStore = defineStore('creneau', {
       if (creneau.extendedProps) {
         this.creneauType = creneau.extendedProps.type
         this.zones = creneau.extendedProps.zones
-        this.activites = creneau.extendedProps.activites
+
+        this.activites = creneau.extendedProps.activites.map(
+            (activite: any) => {
+              activite.activiteId = activite.id
+              activite.tarif = activite.prix
+              return activite
+            }
+        )
 
         this.titre = creneau.extendedProps.titre
         this.dureeActivite = creneau.extendedProps.dureeActivite // 55
