@@ -114,7 +114,7 @@ const selected_days = ref<boolean[]>([])
 const selected_weeks = ref<number[]>([])
 const date_key = ref(0);
 
-const types = ['Jours', 'Semaines', 'Mois']
+const types = ['Jours', 'Semaines']
 const type = ref('Semaines')
 
 const repetition_date = ref('')
