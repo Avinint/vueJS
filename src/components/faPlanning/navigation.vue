@@ -86,8 +86,9 @@
 
 <script>
 import Button from '@components/common/Button.vue'
-import { getZones } from '@api/zone.js'
 import NavigationSection from '@components/faPlanning/navigationSection.vue'
+
+import { getZones } from '@api/zone.js'
 import { usePlanningStore } from '@stores/planning.ts'
 import { mapStores } from 'pinia'
 import dayjs from "dayjs";
@@ -95,7 +96,7 @@ import dayjs from "dayjs";
 export default {
   components: {
     Button,
-    NavigationSection,
+    NavigationSection
   },
   props: {
     calendarApi: {
@@ -142,7 +143,7 @@ export default {
     await this.setZones()
     this.viewWeek()
     await this.planningStore.fetch()
-    this.$emit('afterFetch');
+    this.$emit('afterFetch')
   },
   methods: {
     setDateAffichee() {
