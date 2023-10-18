@@ -73,7 +73,7 @@ type DemandeEditContract = {
     niveauPratique: number
     tarifHoraire: number
     nbParticipants: number
-    recurrence: Recurrence | null
+    recurrence?: Recurrence
     mode: 'recurrence' | 'occurence'
   }
   commentaire: string

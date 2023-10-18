@@ -249,7 +249,7 @@ export function makeDemandeAdminEditContract(fitarena_id: number, creneau: Crene
       heureFin: `${creneau.heureFin}:00`,
       organisme: 0,
       zones: zones,
-      recurrence: creneau.recurrence ?? null,
+      recurrence: creneau.recurrence,
     },
     commentaire: creneau.commentaire as string,
     fitArenaId: fitarena_id,
