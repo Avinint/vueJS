@@ -437,6 +437,7 @@ const addOrganisme = () => {
   gestionnairesOrganisme.value = [{ nom: '', prenom: '', email: '' }]
   afficherFormulaire.value = true
   readonly.value = false
+  actif.value = true
   modal_title.value = 'Ajouter un Organisme'
 }
 
