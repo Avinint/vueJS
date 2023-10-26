@@ -54,7 +54,13 @@
         </div>
       </div>
       <div class="infos-section">
-        <div class="flex items-center w-5/12">
+        <div v-if="details.type === 'Organisme'" class="flex items-center w-5/12">
+          <p class="label-text">Titre</p>
+          <div class="infos">
+            {{ details.titre ?? '...' }}
+          </div>
+        </div>
+        <div v-else class="flex items-center w-5/12">
           <p class="label-text">Sport</p>
           <div class="infos">
             {{ details.sport ?? '...' }}
@@ -72,6 +78,12 @@
           <p class="label-text">Organisateur(s)</p>
           <div class="infos">
             {{ orga }}
+          </div>
+        </div>
+        <div v-if="details.type === 'Organisme'" class="flex items-center w-5/12">
+          <p class="label-text">Organisme</p>
+          <div class="infos">
+            {{ details.organisme }}
           </div>
         </div>
       </div>
@@ -116,6 +128,7 @@ const props = defineProps(['id'])
 
 const colonnesReservations = [
   { data: (e): string => e.type, label: 'Type' },
+  { data: (e): string => e.titre, label: 'Titre' },
   { data: (e): string => e.responsable, label: 'Responsable' },
   { data: (e): string => dayjs(e.dateCreation).format('D MMMM YYYY'), label: 'Date de réservation' },
   { data: (e): string => dayjs(e.dateDebut).format('D MMMM YYYY HH[h]mm'), label: 'Date - Début de séance' },
@@ -175,15 +188,10 @@ const consulterResa = async(reservation: any) => {
       dateFin: dayjs(details.value.dateFin).format('- HH[h]mm')
     }
   }
-  if (details.value.organisateurs.length > 0) {
-    for (let i = 0; i < details.value.organisateurs.length; i++) {
-      if (i > 0) {
-        orga.value += ', ' + details.value.organisateurs[i].nom.toUpperCase() + ' ' + details.value.organisateurs[i].prenom
-      } else {
-        orga.value += details.value.organisateurs[i].nom.toUpperCase() + ' ' + details.value.organisateurs[i].prenom
-      }
-    }
+  if (details.value.organisateurs) {
+    orga.value = details.value.organisateurs.map(orga => orga.nom.toUpperCase() + ' ' + orga.prenom).join(', ')
   }
+
   calqueFormulaireVisible.value = true
 }
 
