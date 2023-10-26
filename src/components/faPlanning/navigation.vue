@@ -150,6 +150,7 @@ export default {
     this.viewWeek()
     await this.planningStore.fetch()
     this.$emit('afterFetch')
+    this.startDate = ''
     this.spinner = false
   },
   methods: {
@@ -180,7 +181,8 @@ export default {
       this.planningStore.fetch().then(() => {
         this.$emit('afterFetch')
       })
-      this.$refs.datepicker.clearPicker()
+      if (this.$refs.datepicker !== null)
+        this.$refs.datepicker.clearPicker()
     },
     today() {
       this.calendarApi.today()
