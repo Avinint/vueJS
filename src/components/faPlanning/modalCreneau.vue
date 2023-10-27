@@ -366,7 +366,6 @@ import MentionChampsObligatoires from "@components/common/MentionChampsObligatoi
 import Button from "@components/common/Button.vue";
 
 import { mapStores } from 'pinia'
-// import { toast } from "vue3-toastify";
 
 export default {
   components: {
@@ -530,37 +529,6 @@ export default {
         this.datepickerFormat
       ).format('YYYY-MM-DD')
     },
-
-    // heures(valeur, valeurPrec) {
-    //   const heureDebutModifiee = valeur[0] !== valeurPrec[0]
-    // },
-
-    // "creneauStore.heureDebut": function(val, valPrec) {
-    //   if (val !== valPrec) {
-    //     const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
-    //     this.creneauStore.heureFin = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage)
-    //
-    //     console.log("watch 1")
-    //     console.log(this.creneauStore.heureFin)
-    //   }
-    // },
-    // "creneauStore.heureFin": function(val, valPrec) {
-    //   if (val !== valPrec) {
-    //     const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau || 1
-    //     this.creneauStore.heureDebut = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage, true)
-    //
-    //     console.log("watch 2")
-    //     console.log(this.creneauStore.heureDebut)
-    //   }
-    // },
-    // dureeActivite(duree, dureePrec) {
-    //   console.log("watch duree activite", duree)
-    //   console.log(duree === 0 )
-    //   if (duree === 0 ) {
-    //     this.creneauStore.dureeActivite = dureePrec
-    //     this.$forceUpdate()
-    //   }
-    // },
   },
   async mounted() {
     this.datepicked = this.$dayjs(this.creneauStore.date).format(
@@ -577,29 +545,15 @@ export default {
   methods: {
 
     setHeureDebut(event) {
-      // const sauvegarde = this.creneauStore.heureDebut
       this.creneauStore.heureDebut = event.target.value
-
-      // if (this.nbCreneauxSelectionnes > 0) {
       const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
       this.creneauStore.heureFin = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage)
-      // } else {
-      //   toast.error('Erreur: vous ne pouvez pas sélectionner 0 créneaux')
-      //   this.creneauStore.heureDebut = sauvegarde
-      // }
     },
 
     setHeureFin(event) {
-      // const sauvegarde = this.creneauStore.heureFin
       this.creneauStore.heureFin = event.target.value
-
-      // if (this.nbCreneauxSelectionnes > 0) {
       const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
       this.creneauStore.heureDebut = this.getHeureSelonDuree(this.creneauStore.heureFin, -nouvelleDureePlage)
-      // } else {
-      //   toast.error('Erreur: vous ne pouvez pas sélectionner 0 créneaux')
-      //   this.creneauStore.heureFin = sauvegarde
-      // }
     },
 
     getHeureSelonDuree(horaire, duree) {
