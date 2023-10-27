@@ -73,8 +73,7 @@ const emits = defineEmits<{
 }>()
 
 const inputValidation = (event: any = {}) => {
-  const val = event.target?.value || value.value
-
+  const val = event.target?.value ?? value.value
   error.value = ''
   emits('update:valid', true)
   if (props.validation) {
@@ -92,6 +91,7 @@ const inputValidation = (event: any = {}) => {
       }
     })
   }
+
   if(typeof(props.modelValue) === 'number')
     emits('update:modelValue', parseInt(val));
   else emits('update:modelValue', val)
