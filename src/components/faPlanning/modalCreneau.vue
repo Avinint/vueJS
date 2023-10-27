@@ -48,21 +48,24 @@
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
             Date du créneau
           </label>
+          <div class="text-xs mt-3 h-2 pb-1"></div>
           <vue-tailwind-datepicker
             v-model="datepicked"
             i18n="fr"
             as-single
             :formatter="{ date: datepickerFormat, month: 'MMMM' }"
-            class="bg-gray-50 text-center"
+            class="bg-gray-50 text-center h-10"
           />
         </div>
         <div class="ml-20 grow">
-          <label class="required mb-2 block w-1/2 text-sm font-medium text-gray-900">
+          <label class="required  block w-1/2 text-sm font-medium text-gray-900">
             Plage horaire du créneau
           </label>
+          <div class="text-xs pb-1">Vous avez sélectionné {{ nbCreneauxSelectionnes }} créneau{{nbCreneauxSelectionnes > 1 ? 'x' : '' }}</div>
           <div class="flex">
             <select
-              v-model="creneauStore.heureDebut"
+              :value="creneauStore.heureDebut"
+              @change="setHeureDebut"
               required
               class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
@@ -76,7 +79,8 @@
             </select>
             <div class="px-4 py-2">à</div>
             <select
-              v-model="creneauStore.heureFin"
+              :value="creneauStore.heureFin"
+              @change="setHeureFin"
               required
               class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
@@ -106,7 +110,7 @@
       />
       <div v-if="submenu === 'advanced'" class="flex gap-5">
         <FAInput
-          v-model="creneauStore.dureeActivite"
+          v-model="dureeActivite"
           :inline="false"
           :required="true"
           label="Durée d'un créneau"
@@ -362,6 +366,7 @@ import MentionChampsObligatoires from "@components/common/MentionChampsObligatoi
 import Button from "@components/common/Button.vue";
 
 import { mapStores } from 'pinia'
+// import { toast } from "vue3-toastify";
 
 export default {
   components: {
@@ -431,6 +436,40 @@ export default {
         }
       })
     },
+    dureeActivite:  {
+      get() {
+        return this.creneauStore.dureeActivite
+      },
+      set(val) {
+        if (val !== 0)
+          this.creneauStore.dureeActivite = val
+      }
+
+    },
+    heures: {
+      get() {
+        return [this.creneauStore.heureDebut, this.creneauStore.heureFin]
+      },
+      set(valeur) {
+        this.creneauStore.heureDebut = valeur[0]
+        this.creneauStore.heureFin = valeur[1]
+      }
+    },
+    dureeInterCreneau() {
+      return this.creneauStore.dureeInterCreneau
+    },
+    dureeCreneau() {
+      return this.creneauStore.dureeActivite + this.creneauStore.dureeInterCreneau
+    },
+    dureePlage() {
+      const [heureDebut, minutesDebut] = this.creneauStore.heureDebut.split(':')
+      const [heureFin, minutesFin] = this.creneauStore.heureFin.split(':')
+
+      return (heureFin - heureDebut) * 60 +  parseInt(minutesFin) - minutesDebut
+    },
+    nbCreneauxSelectionnes() {
+      return Math.round(this.dureePlage / this.dureeCreneau)
+    },
     slotMinTimeNumber() {
       return Number(
         this.planningStore.slotMinTime
@@ -491,6 +530,37 @@ export default {
         this.datepickerFormat
       ).format('YYYY-MM-DD')
     },
+
+    // heures(valeur, valeurPrec) {
+    //   const heureDebutModifiee = valeur[0] !== valeurPrec[0]
+    // },
+
+    // "creneauStore.heureDebut": function(val, valPrec) {
+    //   if (val !== valPrec) {
+    //     const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
+    //     this.creneauStore.heureFin = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage)
+    //
+    //     console.log("watch 1")
+    //     console.log(this.creneauStore.heureFin)
+    //   }
+    // },
+    // "creneauStore.heureFin": function(val, valPrec) {
+    //   if (val !== valPrec) {
+    //     const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau || 1
+    //     this.creneauStore.heureDebut = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage, true)
+    //
+    //     console.log("watch 2")
+    //     console.log(this.creneauStore.heureDebut)
+    //   }
+    // },
+    // dureeActivite(duree, dureePrec) {
+    //   console.log("watch duree activite", duree)
+    //   console.log(duree === 0 )
+    //   if (duree === 0 ) {
+    //     this.creneauStore.dureeActivite = dureePrec
+    //     this.$forceUpdate()
+    //   }
+    // },
   },
   async mounted() {
     this.datepicked = this.$dayjs(this.creneauStore.date).format(
@@ -505,6 +575,43 @@ export default {
 
   },
   methods: {
+
+    setHeureDebut(event) {
+      // const sauvegarde = this.creneauStore.heureDebut
+      this.creneauStore.heureDebut = event.target.value
+
+      // if (this.nbCreneauxSelectionnes > 0) {
+      const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
+      this.creneauStore.heureFin = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage)
+      // } else {
+      //   toast.error('Erreur: vous ne pouvez pas sélectionner 0 créneaux')
+      //   this.creneauStore.heureDebut = sauvegarde
+      // }
+    },
+
+    setHeureFin(event) {
+      // const sauvegarde = this.creneauStore.heureFin
+      this.creneauStore.heureFin = event.target.value
+
+      // if (this.nbCreneauxSelectionnes > 0) {
+      const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
+      this.creneauStore.heureDebut = this.getHeureSelonDuree(this.creneauStore.heureFin, -nouvelleDureePlage)
+      // } else {
+      //   toast.error('Erreur: vous ne pouvez pas sélectionner 0 créneaux')
+      //   this.creneauStore.heureFin = sauvegarde
+      // }
+    },
+
+    getHeureSelonDuree(horaire, duree) {
+      const [heures, minutes] = horaire.split(':')
+      const nouvelHoraireBrut = (parseInt(heures) * 60) + parseInt(minutes) + duree
+
+      return this.formatterHoraire(nouvelHoraireBrut)
+    },
+
+    formatterHoraire(horaireBrut) {
+      return Math.floor(horaireBrut / 60).toString().padStart(2, '0') + ':' + (horaireBrut % 60).toString().padStart(2, '0')
+    },
     /**
      * Open the submenu that contains additional inputs 
      * @param {'advanced' | 'recurence' | 'none'} menu 
