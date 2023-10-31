@@ -100,6 +100,8 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.zone.join(','),
         this.filters.organisme
       )
+      console.log('ici fetch planning store ---- ')
+      console.log(response)
 
       this.pushCreneaux(response.creneaux)
       this.pushCreneauxAnonymes(response.creneauxAnonymes)
