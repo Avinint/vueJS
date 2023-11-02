@@ -496,26 +496,24 @@ export default {
       const [heureMax, minuteMax] = this.heureDebutMax.split(this.timeSeparator).map(v => parseInt(v))
       for (let i = this.slotMinTimeNumber; i <= heureMax ; i++) {
         let minuteMaxJournee =  i < heureMax ? 59 : minuteMax
-        for (let y = 0; y < minuteMaxJournee; y += 5) {
+        for (let y = 0; y <= minuteMaxJournee; y += 5) {
           const hours = i.toString().padStart(2, '0')
           const minutes = y.toString().padStart(2, '0')
+
           list.push(hours + this.timeSeparator + minutes)
         }
       }
+
       return list
     },
     listEnd() {
       let list = []
       const [heureMax, minuteMax] = this.heureFinMax.split(this.timeSeparator).map(v => parseInt(v))
       let [heureMin, minuteMin] = this.creneauStore.heureDebut.split(this.timeSeparator).map(v => parseInt(v));
-
-      // console.log(heureMax, minuteMax)
       const heureMinBrut = heureMin * 60 + minuteMin
       const heureMaxBrut = heureMax * 60 + minuteMax
-      // console.log('brut:', heureMinBrut, heureMaxBrut  )
-      for (let i = heureMinBrut + this.dureeCreneau - 1; i <= heureMaxBrut; i += this.dureeCreneau) {
-        console.log(this.formatterHoraire(i))
-        list.push(this.formatterHoraire(i))
+      for (let m = heureMinBrut + this.dureeCreneau; m <= heureMaxBrut; m += this.dureeCreneau) {
+        list.push(this.formatterHoraire(m).replace('24:', '00:'))
       }
 
       return list
@@ -575,7 +573,7 @@ export default {
     },
 
     getHeureSelonDuree(horaire, duree) {
-      const nouvelHoraireBrut = this.getHeureBrut(horaire) + duree - 1
+      const nouvelHoraireBrut = this.getHeureBrut(horaire) + duree
 
       return this.formatterHoraire(nouvelHoraireBrut)
     },

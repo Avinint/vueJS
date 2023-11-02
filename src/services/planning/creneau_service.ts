@@ -246,7 +246,7 @@ export function makeDemandeAdminEditContract(fitarena_id: number, creneau: Crene
       niveauPratique: 0,
       tarifHoraire: 0,
       heureDebut: `${creneau.heureDebut}:00`,
-      heureFin: `${creneau.heureFin}:00`,
+      heureFin: creneau.heureFin === '00:00' ? '23:59:00' : creneau.heureFin + ':00',
       organisme: 0,
       zones: zones,
       recurrence: creneau.recurrence,
