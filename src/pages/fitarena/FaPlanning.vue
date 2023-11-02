@@ -133,6 +133,10 @@ export default {
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
+        newCreneaux.forEach(cre => {
+          if (cre.extendedProps.statut === 'demande') {
+          }
+        })
         this.calendarOptions.events = newCreneaux
         this.redraw_key++
       }

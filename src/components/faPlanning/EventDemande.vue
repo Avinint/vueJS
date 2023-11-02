@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted} from 'vue'
+import { computed, onMounted, defineProps } from 'vue'
 import dayjs from "dayjs";
 
 const props = defineProps<{
@@ -27,7 +27,7 @@ onMounted(() => {
 
 /**
  * Override base CSS inset style to fit the bar rendering process.
- * Take the ID of the event, and retreive the parent event container, then replace
+ * Take the ID of the event, and retrieve the parent event container, then replace
  * the inset values with the z-index as indexer.
  */
 function SetupCSS() {
