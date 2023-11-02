@@ -129,17 +129,12 @@ export default {
   async created() {
     this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
     this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
-    console.log('ici created faPlanning ---- ')
-    console.log(this.planningStore.getCreneauxEvents)
     // sync events from store/api
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
-        console.log('new creneaux ---- ')
         newCreneaux.forEach(cre => {
           if (cre.extendedProps.statut === 'demande') {
-            console.log('ici cre demande ---- ')
-            console.log(cre)
           }
         })
         this.calendarOptions.events = newCreneaux
@@ -151,7 +146,6 @@ export default {
     this.calendarApi = this.$refs.fullCalendar.getApi()
     await this.initZones();
     await this.typeCreneauStore.fetchTypeCreneaux()
-    console.log('ici mounted planning ---- ')
     this.calendarOptions.scrollTime = this.planningStore.scrollTime
   },
   methods: {

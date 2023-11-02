@@ -22,7 +22,6 @@ const start = computed(() => dayjs(props.event.start).format('HH:mm'))
 const end = computed(() =>dayjs( props.event.end).format('HH:mm'))
 
 onMounted(() => {
-  console.log('ici onMounted event demande')
   SetupCSS()
 })
 
@@ -33,8 +32,6 @@ onMounted(() => {
  */
 function SetupCSS() {
   const css_event = document.querySelector(`#event-demande-${props.event.id}`)
-  console.log('ici css event récupéré dans event demande ------ ')
-  console.log(css_event?.textContent)
   if (css_event) {
     const harness = css_event.parentElement?.parentElement?.parentElement;
     const event = css_event.parentElement;
@@ -51,8 +48,6 @@ function SetupCSS() {
     }
 
     if(event) {
-      console.log('ici event demande --- ')
-      console.log(event.textContent)
       event.setAttribute('draggable', 'false');
     }
   }

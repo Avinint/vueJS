@@ -55,7 +55,7 @@ export const usePlanningStore = defineStore('planning', {
       const creneaux = state.creneaux.map((creneau) =>
         parseCreneauToEvent(creneau)
       )
-      
+
       const demandes = state.demandes.map((demande) => 
         parseDemandeToEvent(demande)
       )
@@ -70,7 +70,7 @@ export const usePlanningStore = defineStore('planning', {
       const creneauxAnonymes = state.creneauxAnonymes.map((ca) => 
         parseCreneauAnonymeToEvent(ca)
       )
-      
+
       const output = creneaux.concat(creneauxAnonymes)
       return output
     },
@@ -100,8 +100,6 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.zone.join(','),
         this.filters.organisme
       )
-      console.log('ici fetch planning store ---- ')
-      console.log(response)
 
       this.pushCreneaux(response.creneaux)
       this.pushCreneauxAnonymes(response.creneauxAnonymes)
@@ -145,14 +143,18 @@ export const usePlanningStore = defineStore('planning', {
     },
     pushCreneaux(creneauxTemp: Creneau[]) {
       const user = useUserStore()
-
-      if (!user.isGestOrg) {
+      
+      if (user.isAdmin || user.isGestCo) {
+        // SI JE SUIS ADMIN OU GESTCOL
+        // J'AI DES DEMANDES ET DES CRÉNEAUX VALIDÉS
         this.demandes = creneauxTemp
-            .filter(creneau => creneau.statut === 'demande')
+          .filter(creneau => creneau.statut === 'demande')
 
         this.creneaux = creneauxTemp
-            .filter(creneau => !this.demandes.some((dem) => dem.id === creneau.id))
-      } else {
+          .filter(creneau => !this.demandes.some((dem) => dem.id === creneau.id))
+      } else if (user.isGestOrg) {
+        // SI JE SUIS GESTORG
+        // J'AI SEULEMENT DES CRÉNEAUX EN STATUT DEMANDE
         this.creneaux = creneauxTemp
       }
     },

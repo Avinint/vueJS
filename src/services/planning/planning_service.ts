@@ -38,7 +38,7 @@ export const default_planning: Planning = {
 }
 
 export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
-  return {
+  const test = {
     id: creneau.id ?? 0,
     start: creneau.dateDebut,
     end: creneau.dateSortie,
@@ -47,6 +47,7 @@ export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
     overlap: true,
     extendedProps: { ...creneau, event_type: EventType.CRENEAU },
   }
+  return test
 }
 
 export function parseCreneauAnonymeToEvent(creneau: CreneauAnonyme): CalendarEvent {
@@ -62,7 +63,7 @@ export function parseCreneauAnonymeToEvent(creneau: CreneauAnonyme): CalendarEve
 }
 
 export function parseDemandeToEvent(demande: Creneau): CalendarEvent {
-  return {
+  const test = {
     id: demande.id ?? 0,
     start: demande.dateDebut,
     end: demande.dateSortie,
@@ -72,6 +73,7 @@ export function parseDemandeToEvent(demande: Creneau): CalendarEvent {
     overlap: true,
     extendedProps: { ...demande, event_type: EventType.CRENEAU },
   }
+  return test
 }
 
 export const planning_configuration: CalendarOptions = {
