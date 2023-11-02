@@ -10,7 +10,8 @@
       @delete="delete_creneau"
     >
       <template #topButtons>
-        <Button v-if="typeAction === 'edit'" test='TcloseModal' @click="delete_creneau" couleur="danger" borderless class="mr-6" label="Supprimer le créneau" />
+        <Button v-if="typeAction === 'edit'" test='TcloseModal' @click="delete_creneau" couleur="danger" borderless
+                class="mr-6" label="Supprimer le créneau"/>
       </template>
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Veuillez sélectionner le type créneau.
@@ -61,7 +62,9 @@
           <label class="required  block w-1/2 text-sm font-medium text-gray-900">
             Plage horaire du créneau
           </label>
-          <div class="text-xs pb-1">Vous avez sélectionné {{ nbCreneauxSelectionnes }} créneau{{nbCreneauxSelectionnes > 1 ? 'x' : '' }}</div>
+          <div class="text-xs pb-1">Vous avez sélectionné {{ nbCreneauxSelectionnes }}
+            créneau{{ nbCreneauxSelectionnes > 1 ? 'x' : '' }}
+          </div>
           <div class="flex">
             <select
               :value="creneauStore.heureDebut"
@@ -128,7 +131,7 @@
           type="number"
         />
       </div>
-      <MenuRecurrence v-if="submenu === 'recurence'" />
+      <MenuRecurrence v-if="submenu === 'recurence'"/>
       <div
         v-if="creneauType !== null"
         class="relative rounded-lg border border-gray-300 p-4"
@@ -183,7 +186,7 @@
                         'bg-sky-600 text-white': zoneActivite.activite.checked,
                       }"
                       :for="zone.id + '-' + zoneActivite.activite.id"
-                      >{{ zoneActivite.activite.libelle }}
+                    >{{ zoneActivite.activite.libelle }}
                     </label>
                     <FAInput
                       v-model="zoneActivite.activite.tarif"
@@ -225,31 +228,31 @@
         class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200 table-fixed"
       >
         <thead>
-          <tr>
-            <th scope="col" class="px-6 py-3">Date du créneau</th>
-            <th scope="col" class="px-6 py-3">Horaire</th>
-            <th scope="col" class="px-6 py-3">Statut demande</th>
-          </tr>
+        <tr>
+          <th scope="col" class="px-6 py-3">Date du créneau</th>
+          <th scope="col" class="px-6 py-3">Horaire</th>
+          <th scope="col" class="px-6 py-3">Statut demande</th>
+        </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(
+        <tr
+          v-for="(
               creneau, i
             ) in verifCreneaux.creneauxValide"
-            :key="`creneauxValide-`+ i"
-            class="bg-white border border-gray-200"
-          >
-            <td class="px-6 py-4 flex">
-              {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
-            </td>
-            <td class="px-6 py-4 border border-gray-200">
-              {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
-            </td>
-            <td class="px-6 py-4 flex items-center" id="statut">
-              Soumis à validation
-              <div class="w-3 h-3 bg-green-600 rounded-xl ml-10" />
-            </td>
-          </tr>
+          :key="`creneauxValide-`+ i"
+          class="bg-white border border-gray-200"
+        >
+          <td class="px-6 py-4 flex">
+            {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
+          </td>
+          <td class="px-6 py-4 border border-gray-200">
+            {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
+          </td>
+          <td class="px-6 py-4 flex items-center" id="statut">
+            Soumis à validation
+            <div class="w-3 h-3 bg-green-600 rounded-xl ml-10"/>
+          </td>
+        </tr>
         </tbody>
       </table>
     </CardModalSection>
@@ -263,31 +266,31 @@
         class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200 table-fixed"
       >
         <thead>
-          <tr>
-            <th scope="col" class="px-6 py-3">Date du créneau</th>
-            <th scope="col" class="px-6 py-3">Horaire</th>
-            <th scope="col" class="px-6 py-3">Statut demande</th>
-          </tr>
+        <tr>
+          <th scope="col" class="px-6 py-3">Date du créneau</th>
+          <th scope="col" class="px-6 py-3">Horaire</th>
+          <th scope="col" class="px-6 py-3">Statut demande</th>
+        </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(
+        <tr
+          v-for="(
               creneau, i
             ) in verifCreneaux.creneauxConflit"
-            :key="`creneauxConflit-`+ i"
-            class="bg-white border border-gray-200"
-          >
-            <td class="px-6 py-4 flex">
-              {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
-            </td>
-            <td class="px-6 py-4 border border-gray-200">
-              {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
-            </td>
-            <td class="px-6 py-4 flex items-center" id="statut">
-              Non validé
-              <div class="w-3 h-3 bg-red-600 rounded-xl ml-10" />
-            </td>
-          </tr>
+          :key="`creneauxConflit-`+ i"
+          class="bg-white border border-gray-200"
+        >
+          <td class="px-6 py-4 flex">
+            {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
+          </td>
+          <td class="px-6 py-4 border border-gray-200">
+            {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
+          </td>
+          <td class="px-6 py-4 flex items-center" id="statut">
+            Non validé
+            <div class="w-3 h-3 bg-red-600 rounded-xl ml-10"/>
+          </td>
+        </tr>
         </tbody>
       </table>
     </CardModalSection>
@@ -301,31 +304,31 @@
         class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200 table-fixed"
       >
         <thead>
-          <tr>
-            <th scope="col" class="px-6 py-3">Date du créneau</th>
-            <th scope="col" class="px-6 py-3">Horaire</th>
-            <th scope="col" class="px-6 py-3">Statut demande</th>
-          </tr>
+        <tr>
+          <th scope="col" class="px-6 py-3">Date du créneau</th>
+          <th scope="col" class="px-6 py-3">Horaire</th>
+          <th scope="col" class="px-6 py-3">Statut demande</th>
+        </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(
+        <tr
+          v-for="(
               creneau, i
             ) in verifCreneaux.creneauxDemandeConflit"
-            :key="`creneauxConflit-`+ i"
-            class="bg-white border border-gray-200"
-          >
-            <td class="px-6 py-4 flex">
-              {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
-            </td>
-            <td class="px-6 py-4 border border-gray-200">
-              {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
-            </td>
-            <td class="px-6 py-4 flex items-center" id="statut">
-              En cours
-              <div class="w-3 h-3 bg-green-600 rounded-xl ml-10" />
-            </td>
-          </tr>
+          :key="`creneauxConflit-`+ i"
+          class="bg-white border border-gray-200"
+        >
+          <td class="px-6 py-4 flex">
+            {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
+          </td>
+          <td class="px-6 py-4 border border-gray-200">
+            {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
+          </td>
+          <td class="px-6 py-4 flex items-center" id="statut">
+            En cours
+            <div class="w-3 h-3 bg-green-600 rounded-xl ml-10"/>
+          </td>
+        </tr>
         </tbody>
       </table>
     </CardModalSection>
@@ -435,7 +438,7 @@ export default {
         }
       })
     },
-    dureeActivite:  {
+    dureeActivite: {
       get() {
         return this.creneauStore.dureeActivite
       },
@@ -464,7 +467,7 @@ export default {
       const [heureDebut, minutesDebut] = this.creneauStore.heureDebut.split(':')
       const [heureFin, minutesFin] = this.creneauStore.heureFin.split(':')
 
-      return (heureFin - heureDebut) * 60 +  parseInt(minutesFin) - minutesDebut
+      return (heureFin - heureDebut) * 60 + parseInt(minutesFin) - minutesDebut
     },
     nbCreneauxSelectionnes() {
       return Math.round(this.dureePlage / this.dureeCreneau)
@@ -472,41 +475,47 @@ export default {
     slotMinTimeNumber() {
       return Number(
         this.planningStore.slotMinTime
-          .split(this.timeSeparator)[0]
-          .replace('0', '')
+        .split(this.timeSeparator)[0]
       )
     },
     slotMaxTimeNumber() {
       return Number(
         this.planningStore.slotMaxTime
-          .split(this.timeSeparator)[0]
-          .replace('0', '')
+        .split(this.timeSeparator)[0]
+        .replace('0', '')
       )
+    },
+    heureDebutMax() {
+      return this.formatterHoraire(this.getHeureBrut(this.planningStore.slotMaxTime) - this.dureeCreneau)
+    },
+    heureFinMax() {
+      return this.formatterHoraire(this.getHeureBrut(this.planningStore.slotMaxTime))
     },
     listStart() {
       let list = []
-      for (let i = this.slotMinTimeNumber; i < this.slotMaxTimeNumber; i++) {
-        for (let y = 0; y < 59; y += 5) {
-          const hours = i.toString().length === 1 ? '0' + i : i
-          const minutes = y.toString().length === 1 ? '0' + y : y
+      const [heureMax, minuteMax] = this.heureDebutMax.split(this.timeSeparator).map(v => parseInt(v))
+      for (let i = this.slotMinTimeNumber; i <= heureMax ; i++) {
+        let minuteMaxJournee =  i < heureMax ? 59 : minuteMax
+        for (let y = 0; y <= minuteMaxJournee; y += 5) {
+          const hours = i.toString().padStart(2, '0')
+          const minutes = y.toString().padStart(2, '0')
+
           list.push(hours + this.timeSeparator + minutes)
         }
       }
+
       return list
     },
     listEnd() {
       let list = []
-      for (
-        let i = this.creneauStore.heureDebut.split(this.timeSeparator)[0];
-        i < this.slotMaxTimeNumber;
-        i++
-      ) {
-        for (let y = 0; y < 59; y += 5) {
-          const hours = i.toString().length === 1 ? '0' + i : i
-          const minutes = y.toString().length === 1 ? '0' + y : y
-          list.push(hours + this.timeSeparator + minutes)
-        }
+      const [heureMax, minuteMax] = this.heureFinMax.split(this.timeSeparator).map(v => parseInt(v))
+      let [heureMin, minuteMin] = this.creneauStore.heureDebut.split(this.timeSeparator).map(v => parseInt(v));
+      const heureMinBrut = heureMin * 60 + minuteMin
+      const heureMaxBrut = heureMax * 60 + minuteMax
+      for (let m = heureMinBrut + this.dureeCreneau; m <= heureMaxBrut; m += this.dureeCreneau) {
+        list.push(this.formatterHoraire(m).replace('24:', '00:'))
       }
+
       return list
     },
     isOneZoneChecked() {
@@ -529,13 +538,17 @@ export default {
         this.datepickerFormat
       ).format('YYYY-MM-DD')
     },
+
+    dureeCreneau() {
+      this.changerHeureFinSelonDureeCreneau()
+    }
   },
   async mounted() {
     this.datepicked = this.$dayjs(this.creneauStore.date).format(
       this.datepickerFormat
     )
     await this.fetchZones()
-    await this.organismeStore.fetchOrganismes({'fit_arena.id': this.$route.params.id})
+    await this.organismeStore.fetchOrganismes({ 'fit_arena.id': this.$route.params.id })
 
     if (this.typeAction === 'create') {
       this.creneauStore.activites = []
@@ -546,32 +559,48 @@ export default {
 
     setHeureDebut(event) {
       this.creneauStore.heureDebut = event.target.value
+      this.changerHeureFinSelonDureeCreneau()
+    },
+    changerHeureFinSelonDureeCreneau() {
       const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
       this.creneauStore.heureFin = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage)
     },
 
     setHeureFin(event) {
       this.creneauStore.heureFin = event.target.value
-      const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
-      this.creneauStore.heureDebut = this.getHeureSelonDuree(this.creneauStore.heureFin, -nouvelleDureePlage)
+      // const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
+      // this.creneauStore.heureDebut = this.getHeureSelonDuree(this.creneauStore.heureFin, -nouvelleDureePlage)
     },
 
     getHeureSelonDuree(horaire, duree) {
-      const [heures, minutes] = horaire.split(':')
-      const nouvelHoraireBrut = (parseInt(heures) * 60) + parseInt(minutes) + duree
+      const nouvelHoraireBrut = this.getHeureBrut(horaire) + duree
 
       return this.formatterHoraire(nouvelHoraireBrut)
     },
+    /**
+     * Convertit un horaire affichable en nombre de minutes depuis le début de la journée
+     * @param {string}  horaireFormate
+     * @returns {number}
+     */
+    getHeureBrut(horaireFormate) {
+      const [heures, minutes] = horaireFormate.split(this.timeSeparator)
+      return (parseInt(heures) * 60) + parseInt(minutes)
+    },
 
+    /**
+     * Convertit un nomber de minutes en horaire affichable
+     * @param horaireBrut
+     * @returns {string}
+     */
     formatterHoraire(horaireBrut) {
-      return Math.floor(horaireBrut / 60).toString().padStart(2, '0') + ':' + (horaireBrut % 60).toString().padStart(2, '0')
+      return Math.floor(horaireBrut / 60).toString().padStart(2, '0') + this.timeSeparator + (horaireBrut % 60).toString().padStart(2, '0')
     },
     /**
-     * Open the submenu that contains additional inputs 
-     * @param {'advanced' | 'recurence' | 'none'} menu 
+     * Open the submenu that contains additional inputs
+     * @param {'advanced' | 'recurence' | 'none'} menu
      */
     setSubmenu(type) {
-      if(this.submenu == type) {
+      if (this.submenu == type) {
         this.submenu = 'none';
         return;
       }
@@ -598,11 +627,15 @@ export default {
     },
     // isZoneEditable(zone) {
     //   if (this.typeAction == 'create' || this.typeAction === 'edit') return true
-      
+
     //   return this.creneauStore.zones.includes(zone.id)
     // },
     async fetchZones() {
-      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
+      this.zones = (await getZones({
+        page: 1,
+        'typeZone.code': 'zone',
+        fitArena: this.$route.params.id
+      })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
       this.zones.forEach((zone, i) => {
         zone.zoneActivites.forEach(za => {
           if (!za.actif) {
@@ -643,7 +676,7 @@ export default {
         })
       }
     },
-    async submitDemandeValidation () {
+    async submitDemandeValidation() {
       const fitarena_id = parseInt(this.$route.params.id);
       if (this.typeAction === 'create') {
         this.creneauStore.creneauType === 1 ? this.creneauStore.addCreneau(fitarena_id) : this.creneauStore.addCreneauOrganisme(fitarena_id)
@@ -680,15 +713,15 @@ export default {
               break
             } else {
               const contract = makeDemandeAdminEditContract(fitarena_id, this.creneauStore)
-                this.verifCreneaux = await postCreneauVerifDemande(contract);
-                this.verifModal = true
-              }
+              this.verifCreneaux = await postCreneauVerifDemande(contract);
+              this.verifModal = true
+            }
             break
           case 2:
           case 3:
             const contract = makeDemandeAdminOGEditContract(fitarena_id, this.creneauStore)
-              this.verifCreneaux = await postCreneauVerifDemande(contract);
-              this.verifModal = true
+            this.verifCreneaux = await postCreneauVerifDemande(contract);
+            this.verifModal = true
             break
         }
       } else {
@@ -698,7 +731,7 @@ export default {
     isZoneChecked(zoneId) {
       return this.creneauStore.zones.includes(zoneId)
     },
-    modifierDemande () {
+    modifierDemande() {
       this.verifModal = false
     }
   },

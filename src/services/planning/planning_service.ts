@@ -33,7 +33,7 @@ export const default_planning: Planning = {
   currentDateEnd: {},
   currentWeek: 0,
   slotMinTime: '00:00',
-  slotMaxTime: '23:59',
+  slotMaxTime: '24:00',
   scrollTime: '07:00'
 }
 
