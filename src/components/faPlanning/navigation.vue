@@ -113,9 +113,11 @@ export default {
     return {
       zones: [],
       startDate: '',
+      startMonth: '',
       dateAffichee: ' ', // une chaine vide affiche true dans le placeholder du datepicker
       endDate: '',
       formatDateFr: 'DD-MM-YYYY',
+      formatMoisFr: 'MMM YYYY',
       formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' },
       spinner: false
     }
@@ -158,15 +160,12 @@ export default {
       if (this.startDate === '') {
         this.setDate()
       }
-      this.dateAffichee = this.planningStore.currentViewName === 'day' &&
-        this.startDate ||
-        `${this.startDate} - ${this.endDate}`
 
+      this.dateAffichee = this.planningStore.currentViewName === 'day' ? this.startDate : this.startMonth
     },
     setDate() {
       this.startDate = dayjs(this.planningStore.getCurrentDateStart).format(this.formatDateFr)
-      // this.endDate = dayjs(this.planningStore.getCurrentDateEnd).format(this.formatDateFr)
-
+      this.startMonth = dayjs(this.planningStore.getCurrentDateStart).format(this.formatMoisFr).toUpperCase()
       const end = this.planningStore.getCurrentDateEnd ??
         dayjs(this.planningStore.getCurrentDateStart)
         .add(this.planningStore.filters.duree, 'day')
