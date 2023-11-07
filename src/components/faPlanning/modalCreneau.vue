@@ -402,7 +402,7 @@ export default {
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
-      defaultTarif: 20,
+      defaultTarif: '0',
       submenu: 'none',
       errorMessage: false,
       verifModal: false,
