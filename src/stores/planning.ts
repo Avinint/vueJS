@@ -199,6 +199,6 @@ export const usePlanningStore = defineStore('planning', {
         this.currentViewName === 'week'
           ? this.getDebutOfWeek
           : this.getDebutOfDay
-    },
-  },
+    }
+  }
 })

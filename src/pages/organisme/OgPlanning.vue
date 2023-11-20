@@ -6,6 +6,7 @@
       v-if="calendar_api"
       class="mb-6"
       :calendar-api="calendar_api"
+      @filter-updated="applyFilter"
     />
     <div
       class="space-y-3 p-4"
@@ -90,6 +91,16 @@ function eventClick(eventClickInfo: EventClickArg) {
   } else if (modal.value) {
     modal.value.open_modal()
   }
+}
+
+async function applyFilter () {
+  let zonesTemp = []
+  zones.value.forEach((zone) => {
+    if (planning_store.isZoneActive(zone.id)) {
+      zonesTemp.push({ id: zone.id, title: zone.libelle })
+    }
+  })
+  calendar_options.resources = zonesTemp
 }
 
 function select(event: DateSelectArg) {
