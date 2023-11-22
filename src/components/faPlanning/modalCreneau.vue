@@ -542,7 +542,7 @@ export default {
         this.creneauType !== 'organisme' &&
         this.creneauType !== 'maintenance'
       )
-    },
+    }
   },
   watch: {
     datepicked(newDatepicked) {

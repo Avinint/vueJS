@@ -23,6 +23,7 @@ export const useCreneauStore = defineStore('creneau', {
       this.id = parseInt(creneau.id as string)
       this.date = dayjs(creneau.start).format('YYYY-MM-DD') // 2023-01-23
       this.heureDebut = dayjs(creneau.start).format('HH:mm') // "14:30:00"
+      this.heureFin = dayjs(creneau.end).format('HH:mm') // "14:30:00"
 
       // Extended props contains the complete Creneau data.
       // Even if it is typed "any"
