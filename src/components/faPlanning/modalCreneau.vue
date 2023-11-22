@@ -62,7 +62,7 @@
           <label class="required  block w-1/2 text-sm font-medium text-gray-900">
             Plage horaire du créneau
           </label>
-          <div class="text-xs pb-1">Vous avez sélectionné {{ nbCreneauxSelectionnes }}
+          <div class="text-xs pb-1">Vous avez sélectionné {{ isNaN(nbCreneauxSelectionnes) ? 0 : nbCreneauxSelectionnes }}
             créneau{{ nbCreneauxSelectionnes > 1 ? 'x' : '' }}
           </div>
           <div class="flex">
@@ -409,6 +409,17 @@ export default {
       verifCreneaux: []
     }
   },
+  async mounted() {
+    this.datepicked = this.$dayjs(this.creneauStore.date).format(
+      this.datepickerFormat
+    )
+    await this.fetchZones()
+    await this.organismeStore.fetchOrganismes({ 'fit_arena.id': this.$route.params.id })
+
+    if (this.typeAction === 'create') {
+      this.creneauStore.activites = []
+    }
+  },
   computed: {
     ...mapStores(usePlanningStore),
     ...mapStores(useCreneauStore),
@@ -443,10 +454,13 @@ export default {
         return this.creneauStore.dureeActivite
       },
       set(val) {
-        if (val !== 0)
+        if (val !== 0) {
           this.creneauStore.dureeActivite = val
+        }
+        if (isNaN(val)) {
+          val = 0
+        }
       }
-
     },
     heures: {
       get() {
@@ -515,7 +529,6 @@ export default {
       for (let m = heureMinBrut + this.dureeCreneau; m <= heureMaxBrut; m += this.dureeCreneau) {
         list.push(this.formatterHoraire(m).replace('24:', '00:'))
       }
-
       return list
     },
     isOneZoneChecked() {
@@ -538,25 +551,11 @@ export default {
         this.datepickerFormat
       ).format('YYYY-MM-DD')
     },
-
     dureeCreneau() {
       this.changerHeureFinSelonDureeCreneau()
     }
   },
-  async mounted() {
-    this.datepicked = this.$dayjs(this.creneauStore.date).format(
-      this.datepickerFormat
-    )
-    await this.fetchZones()
-    await this.organismeStore.fetchOrganismes({ 'fit_arena.id': this.$route.params.id })
-
-    if (this.typeAction === 'create') {
-      this.creneauStore.activites = []
-    }
-
-  },
   methods: {
-
     setHeureDebut(event) {
       this.creneauStore.heureDebut = event.target.value
       this.changerHeureFinSelonDureeCreneau()
@@ -565,16 +564,13 @@ export default {
       const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
       this.creneauStore.heureFin = this.getHeureSelonDuree(this.creneauStore.heureDebut, nouvelleDureePlage)
     },
-
     setHeureFin(event) {
       this.creneauStore.heureFin = event.target.value
       // const nouvelleDureePlage = this.nbCreneauxSelectionnes * this.dureeCreneau
       // this.creneauStore.heureDebut = this.getHeureSelonDuree(this.creneauStore.heureFin, -nouvelleDureePlage)
     },
-
     getHeureSelonDuree(horaire, duree) {
       const nouvelHoraireBrut = this.getHeureBrut(horaire) + duree
-
       return this.formatterHoraire(nouvelHoraireBrut)
     },
     /**
@@ -586,7 +582,6 @@ export default {
       const [heures, minutes] = horaireFormate.split(this.timeSeparator)
       return (parseInt(heures) * 60) + parseInt(minutes)
     },
-
     /**
      * Convertit un nomber de minutes en horaire affichable
      * @param horaireBrut

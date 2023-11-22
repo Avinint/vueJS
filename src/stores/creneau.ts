@@ -8,7 +8,7 @@ import {
 } from '../services/planning/creneau_service'
 import dayjs from 'dayjs'
 import { getCreneauSeances } from '@api/seance'
-import { getDateStringHour } from "../services/date_service";
+import { getDateStringHour } from "../services/date_service"
 
 export const useCreneauStore = defineStore('creneau', {
   state: default_creneau,
@@ -23,7 +23,6 @@ export const useCreneauStore = defineStore('creneau', {
       this.id = parseInt(creneau.id as string)
       this.date = dayjs(creneau.start).format('YYYY-MM-DD') // 2023-01-23
       this.heureDebut = dayjs(creneau.start).format('HH:mm') // "14:30:00"
-      this.heureFin = dayjs(creneau.end).format('HH:mm') // "14:30:00"
 
       // Extended props contains the complete Creneau data.
       // Even if it is typed "any"
@@ -32,11 +31,11 @@ export const useCreneauStore = defineStore('creneau', {
         this.zones = creneau.extendedProps.zones
 
         this.activites = creneau.extendedProps.activites.map(
-            (activite: any) => {
-              activite.activiteId = activite.id
-              activite.tarif = activite.prix
-              return activite
-            }
+          (activite: any) => {
+            activite.activiteId = activite.id
+            activite.tarif = activite.prix
+            return activite
+          }
         )
 
         this.titre = creneau.extendedProps.titre
@@ -44,6 +43,16 @@ export const useCreneauStore = defineStore('creneau', {
         this.dureeInterCreneau = creneau.extendedProps.dureeInterCreneau // 5
         this.organisme = creneau.extendedProps.organismeId ?? creneau.extendedProps.organisme
         this.recurrence = creneau.extendedProps.recurrence
+
+        // HEURE DE FIN = HEURE DE FIN + DURÉE INTER CRÉNEAU
+        let hourEnd = dayjs(creneau.end).hour()
+        let minuteEnd = dayjs(creneau.end).minute() + creneau.extendedProps.dureeInterCreneau
+        if (minuteEnd % 60 >= 0) {
+          hourEnd += 1
+          minuteEnd = minuteEnd % 60
+        }
+        minuteEnd = minuteEnd.toString().padStart(2, "0");
+        this.heureFin = `${hourEnd}:${minuteEnd}`
       } else {
         this.zones = []
       }
