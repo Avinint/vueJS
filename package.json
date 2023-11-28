@@ -1,7 +1,7 @@
 {
   "name": "adminfitarena-v2",
   "private": true,
-  "version": "2.9.2",
+  "version": "2.3.0",
   "type": "module",
   "scripts": {
     "local": "vite",
