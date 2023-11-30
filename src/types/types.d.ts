@@ -271,7 +271,8 @@ type CalendarEvent = {
   overlap?: boolean
   editable?: boolean
   selectable?: boolean
-  extendedProps?: any
+  extendedProps?: any,
+  mode?: tring
 }
 
 type CalendarEventAnonyme = {

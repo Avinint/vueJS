@@ -393,6 +393,7 @@ export default {
       default: '',
     },
     readonly: Boolean,
+    mode: String
   },
   emits: ['closeModalCreneau'],
   data() {
@@ -583,7 +584,7 @@ export default {
       return (parseInt(heures) * 60) + parseInt(minutes)
     },
     /**
-     * Convertit un nomber de minutes en horaire affichable
+     * Convertit un nombre de minutes en horaire affichable
      * @param horaireBrut
      * @returns {string}
      */
@@ -616,7 +617,7 @@ export default {
     },
     delete_creneau() {
       if (confirm('Souhaitez-vous vraiment supprimer le créneau ?')) {
-        this.creneauStore.delete();
+        this.creneauStore.delete(this.mode);
         this.$emit('closeModalCreneau')
       }
     },
@@ -732,6 +733,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 option {
   text-align: center;

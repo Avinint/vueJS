@@ -10,6 +10,7 @@
     <modalCreneau
       v-if="isModalCreneauOpen"
       :is-open="isModalCreneauOpen"
+      :mode="mode"
       :type-action="actionType"
       @close-modal-creneau="closeModal"
       @after-fetch="redraw_key++"
@@ -109,7 +110,8 @@ export default {
       isModalCreneauOpen: false,
       actionType: '',
       zones: [],
-      redraw_key: 0
+      redraw_key: 0,
+      mode: ''
     }
   },
   watch: {
@@ -131,7 +133,6 @@ export default {
     this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
     this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
     this.orga = await getOrganismes(1)
-    console.log(this.orga)
     // sync events from store/api
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
@@ -191,10 +192,12 @@ export default {
     },
     editSingle() {
       this.creneauStore.recurrence = undefined;
+      this.mode = 'occurence'
       this.isModalCreneauOpen = true;
     },
     editRecurence() {
       this.$refs.edit_options.close()
+      this.mode = 'recurrence'
       this.isModalCreneauOpen = true
       if (eventClickInfo.event.extendedProps.event_type == 0) {
         this.actionType = 'edit'
