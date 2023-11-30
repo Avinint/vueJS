@@ -111,7 +111,7 @@ export default {
       actionType: '',
       zones: [],
       redraw_key: 0,
-      mode: ''
+      mode: 'occurence'
     }
   },
   watch: {
