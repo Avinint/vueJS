@@ -17,7 +17,8 @@
           {{ dayjs(event.start).format('H:mm') }} -
           {{ dayjs(event.end).format('H:mm') }}
         </span>
-        <span class="">{{ event.title }}</span>
+        <span v-if="event.extendedProps.organismeLabel">{{ event.extendedProps.organismeLabel }} : {{ event.title }}</span>
+        <span v-else>{{ event.extendedProps.organismeLabel }}</span>
       </div>
       <div class="flex">
         <span
@@ -37,6 +38,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs'
+import { defineProps } from 'vue'
 
 defineProps<{
   event: CalendarEvent

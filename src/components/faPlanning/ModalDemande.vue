@@ -29,6 +29,7 @@
         v-if="state === 'create' || (state === 'edit' && isRecurrent)"
         label="Récurrence"
         couleur="secondary"
+        :class="submenu ? 'bg-recurence' : 'bg-none'"
         @click="submenu = !submenu"
       />
       <MenuRecurrence v-if="submenu" class="mt-4" />
@@ -266,7 +267,7 @@ function edit(event: EventClickArg) {
   }
   state.value = 'edit'
   form.title = e.title;
-  // form.people_count = e.people_count;
+  form.people_count = e.extendedProps.people_count;
   eventId.value = e.extendedProps.demandeId;
   creneauId.value = e.extendedProps.id
   form.zones = e.extendedProps.zones;
@@ -287,6 +288,9 @@ const submitDemande = async() => {
     return
   } else if (form.title == '') {
     errorMessage.value = "Un titre de créneau doit être renseigné"
+    return
+  } else if (form.people_count === 0) {
+    errorMessage.value = "Le nombre de personnes attendues doit être renseigné"
     return
   }
 
@@ -373,5 +377,15 @@ const refreshPlanning = async() => {
   font-weight: 500;
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.bg-recurence {
+  background-color: rgb(2 132 199 / var(--tw-bg-opacity));
+  color: #fff;
+}
+
+.bg-none {
+  background-color: #fff;
+  color: #000;
 }
 </style>

@@ -46,14 +46,17 @@ export const useCreneauStore = defineStore('creneau', {
         this.recurrence = creneau.extendedProps.recurrence
 
         // HEURE DE FIN = HEURE DE FIN + DURÉE INTER CRÉNEAU
-        let hourEnd = dayjs(creneau.end).hour()
-        let minuteEnd = dayjs(creneau.end).minute() + creneau.extendedProps.dureeInterCreneau
-        if (minuteEnd % 60 >= 0) {
-          hourEnd += 1
-          minuteEnd = minuteEnd % 60
-        }
-        minuteEnd = minuteEnd.toString().padStart(2, "0");
-        this.heureFin = `${hourEnd}:${minuteEnd}`
+        // let hourEnd = dayjs(creneau.end).hour()
+        // let minuteEnd = dayjs(creneau.end).minute() + creneau.extendedProps.dureeInterCreneau
+        // if (minuteEnd % 60 >= 0) {
+        //   hourEnd += 1
+        //   minuteEnd = minuteEnd % 60
+        // }
+        // minuteEnd = minuteEnd.toString().padStart(2, "0");
+        // this.heureFin = `${hourEnd}:${minuteEnd}`
+
+        let date = dayjs(creneau.end).add(creneau.extendedProps.dureeInterCreneau, 'm')
+        this.heureFin = date.format('HH:mm')
       } else {
         this.zones = []
       }

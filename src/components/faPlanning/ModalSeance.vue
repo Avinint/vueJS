@@ -50,7 +50,7 @@ import Table from '@components/common/Table.vue'
 import ModalQRCode from './ModalQRCode.vue'
 import type { FaTableColumnData, FaTableRow } from '@components/common/Table.vue'
 
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, defineExpose } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { getDateStringHour } from '../../services/date_service'
