@@ -145,7 +145,7 @@ import {
   getZones,
   postZones,
   updateZones,
-  patchZones,
+  patchZones, getZonesSSDetail,
 } from '../../api/zone.js'
 import {
   deleteZoneEquipement,
@@ -177,7 +177,7 @@ const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
 const fetchDonnees = async() => {
-  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
+  espaces.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'espace', fitArena: props.id })
 }
 
 onMounted(async () => {
@@ -210,7 +210,7 @@ const deleteSpaceValidation = async (id) => {
   delete_modal.value = false
   deleteSpaceId.value = 0
   cancel()
-  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
+  espaces.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'espace', fitArena: props.id })
   espace_modal.value = false
 }
 
@@ -281,7 +281,7 @@ const updateSpaceValidation = async () => {
   edit_modal.value = false
   espace_modal.value = false
   cancel()
-  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
+  espaces.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
@@ -298,7 +298,7 @@ const addSpaceValidation = async () => {
   add_modal.value = false
   espace_modal.value = false
   cancel()
-  espaces.value = await getZones({ page: 1, 'typeZone.code': 'espace', fitArena: props.id })
+  espaces.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 

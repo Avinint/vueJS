@@ -183,7 +183,7 @@ import {
   getZone,
   postZones,
   updateZones,
-  patchZones,
+  patchZones, getZonesSSDetail,
 } from '../../api/zone.js'
 import {
   postZoneEquipement,
@@ -215,8 +215,8 @@ const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
 async function fetchDonnees() {
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
-  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
+  zones.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc','typeZone.code': 'zone', fitArena: props.id })
+  espaceParents.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc','typeZone.code': 'sous_espace', fitArena: props.id })
 }
 
 onMounted(async () => {
@@ -249,7 +249,7 @@ const deleteZoneValidation = async (id) => {
   delete_modal.value = false
   deleteZoneId.value = 0
   cancel()
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+  zones.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc','typeZone.code': 'zone', fitArena: props.id })
   zone_modal.value = false
 }
 
@@ -324,8 +324,8 @@ const updateZoneValidation = async () => {
   edit_modal.value = false
   zone_modal.value = false
   cancel()
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
-  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
+  zones.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc','typeZone.code': 'zone', fitArena: props.id })
+  espaceParents.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc','typeZone.code': 'sous_espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 
@@ -342,8 +342,8 @@ const addZoneValidation = async () => {
   add_modal.value = false
   zone_modal.value = false
   cancel()
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
-  espaceParents.value = await getZones({ page: 1, 'typeZone.code': 'sous_espace', fitArena: props.id })
+  zones.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: props.id })
+  espaceParents.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'sous_espace', fitArena: props.id })
   typeZones.value = await getTypeZone()
 }
 

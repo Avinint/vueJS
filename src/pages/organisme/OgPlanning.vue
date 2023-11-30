@@ -27,7 +27,7 @@ import ModalSeance from '@components/faPlanning/ModalSeance.vue'
 import ModalDemande from '@components/faPlanning/ModalDemande.vue'
 
 import FullCalendar from '@fullcalendar/vue3'
-import { EventSourceInput } from '@fullcalendar/core'
+import type { EventSourceInput } from '@fullcalendar/core'
 import type { EventClickArg } from '@fullcalendar/core'
 import { type CalendarOptions } from '@fullcalendar/core'
 import type { DateSelectArg } from '@fullcalendar/core'
