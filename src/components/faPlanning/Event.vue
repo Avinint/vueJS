@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs'
+import { defineProps } from 'vue'
 
 defineProps<{
   event: CalendarEvent
