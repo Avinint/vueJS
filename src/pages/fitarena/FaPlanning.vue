@@ -54,6 +54,7 @@ import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { getZones } from '@api/zone.js'
 import ModalDetailDemande from '@components/faPlanning/ModalDetailDemande.vue'
 import { mapStores } from 'pinia'
+import { getOrganismes } from '@api/organisme'
 
 export default {
   components: {
@@ -129,14 +130,13 @@ export default {
   async created() {
     this.calendarOptions.slotMinTime = this.planningStore.slotMinTime
     this.calendarOptions.slotMaxTime = this.planningStore.slotMaxTime
+    this.orga = await getOrganismes(1)
+    console.log(this.orga)
     // sync events from store/api
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
-        newCreneaux.forEach(cre => {
-          if (cre.extendedProps.statut === 'demande') {
-          }
-        })
+        newCreneaux = newCreneaux.map((creneau => ({...creneau, organismeLabel: creneau.extendedProps.organismeId ? this.orga.find(x => x.id === creneau.extendedProps.organismeId).libelle ?? null : null })))
         this.calendarOptions.events = newCreneaux
         this.redraw_key++
       }

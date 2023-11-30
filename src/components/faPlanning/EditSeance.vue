@@ -38,7 +38,7 @@
 import Button from '@components/common/Button.vue'
 import Switch from '@components/common/Switch.vue'
 import { useSeanceStore } from '@stores/seance'
-import { onMounted, ref } from 'vue'
+import { defineExpose, ref, defineProps } from 'vue'
 import ListAnimateurs from './ListAnimateurs.vue'
 import ModalBottom from '@components/common/ModalBottom.vue'
 import BorderContainer from '@components/common/BorderContainer.vue'
