@@ -131,7 +131,7 @@
           type="number"
         />
       </div>
-      <MenuRecurrence v-if="submenu === 'recurence'"/>
+      <MenuRecurrence v-if="submenu === 'recurence'" />
       <div
         v-if="creneauType !== null"
         class="relative rounded-lg border border-gray-300 p-4"
