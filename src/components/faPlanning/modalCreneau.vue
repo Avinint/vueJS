@@ -351,9 +351,9 @@
 <script>
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
-import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { useOrganismeStore } from '@stores/organisme.ts'
+import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { getZones } from '@api/zone'
 import { postCreneauVerifDemande, updateCreneauDemande } from '@api/creneau'
 
@@ -365,10 +365,11 @@ import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
 import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
-import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
-import Button from "@components/common/Button.vue";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue"
+import Button from "@components/common/Button.vue"
 
 import { mapStores } from 'pinia'
+import { toast } from 'vue3-toastify'
 
 export default {
   components: {
@@ -615,9 +616,13 @@ export default {
         }
       }
     },
-    delete_creneau() {
+    async delete_creneau() {
       if (confirm('Souhaitez-vous vraiment supprimer le créneau ?')) {
-        this.creneauStore.delete(this.mode);
+        await this.creneauStore.delete(this.mode).then({}).catch(e => {
+          if (e.status === 422 && e.statusText === 'Unprocessable Content') {
+            toast.error('Le créneau ne peut pas être supprimé, car il est déjà réservé !')
+          }
+        })
         this.$emit('closeModalCreneau')
       }
     },
