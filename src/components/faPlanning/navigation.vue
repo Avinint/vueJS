@@ -148,10 +148,6 @@ export default {
     this.planningStore.currentViewName = 'week'
     this.$nextTick(() => this.setDate())
     await this.fetchDonnees()
-    await this.setZones()
-    this.viewWeek()
-    await this.planningStore.fetch()
-    this.$emit('afterFetch')
     this.startDate = ''
     this.spinner = false
   },
@@ -208,7 +204,7 @@ export default {
       this.planningStore.updateActivities()
     },
     async setZones() {
-      this.zones = (await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
+      this.zones = (await getZones({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: this.$route.params.id })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
       this.zones.forEach((zone, i) => {
         zone.zoneActivites.forEach(za => {
           if (!za.actif) {

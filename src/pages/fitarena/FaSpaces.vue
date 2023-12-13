@@ -142,7 +142,6 @@ import Input from '../../components/common/Input.vue'
 import AjoutEquipements from '../../components/faZones/ajoutEquipement.vue'
 import {
   deleteZones,
-  getZones,
   postZones,
   updateZones,
   patchZones, getZonesSSDetail,

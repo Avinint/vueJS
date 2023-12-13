@@ -171,7 +171,7 @@ const idFitArena = computed(() => route.params.id)
 const parametreZones = computed(() => params.parametreZones)
 
 onMounted(async () => {
-  zoneParents.value = await getZones({ "typeZone.code": "espace", fitArena: idFitArena.value })
+  zoneParents.value = await getZones({ 'order[ordre]': 'asc', "typeZone.code": "espace", fitArena: idFitArena.value })
 })
 
 const addConditionReservation = () => {

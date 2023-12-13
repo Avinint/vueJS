@@ -179,7 +179,6 @@ import MentionChampsObligatoires from "@components/common/MentionChampsObligatoi
 
 import {
   deleteZones,
-  getZones,
   getZone,
   postZones,
   updateZones,
@@ -215,8 +214,8 @@ const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
 
 async function fetchDonnees() {
-  zones.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc','typeZone.code': 'zone', fitArena: props.id })
-  espaceParents.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc','typeZone.code': 'sous_espace', fitArena: props.id })
+  zones.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: props.id })
+  espaceParents.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'sous_espace', fitArena: props.id })
 }
 
 onMounted(async () => {

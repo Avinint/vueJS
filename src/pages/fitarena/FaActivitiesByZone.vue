@@ -290,7 +290,7 @@ const spinner = ref(false)
 const spinner_modal = ref(false)
 
 async function fetchDonnees() {
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+  zones.value = await getZones({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: props.id })
   activites.value = await getActivites(props.id)
   await fetchZoneEquipements()
 }
@@ -395,7 +395,7 @@ const deleteActivityValidation = async (zoneId, activiteId) => {
   cancel()
   activiteZone_modal.value = false
   delete_modal.value = false
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+  zones.value = await getZones({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: props.id })
 }
 
 const editActiviteZone = async (i) => {
@@ -422,7 +422,7 @@ const showActiviteZone = async (i) => {
 // récupération de la liste des sous-zones d'une zone+activité
 const getSousZones = async (zoneId, activiteId) => {
   const sousZones = []
-  const data = await getZones({ page: 1, 'zoneParent': zoneId, 'zoneActivites.activite.id': activiteId })
+  const data = await getZones({ page: 1, 'order[ordre]': 'asc', 'zoneParent': zoneId, 'zoneActivites.activite.id': activiteId })
 
   data.forEach((datum) => {
     sousZones.push(datum)
@@ -483,7 +483,7 @@ const activityValidation = async (msgOk, msgNoOk) => {
   add_modal.value = false
   activiteZone_modal.value = false
   cancel()
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: props.id })
+  zones.value = await getZones({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: props.id })
 }
 
 const newSousZone = (libelle) => {

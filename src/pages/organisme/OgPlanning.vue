@@ -71,7 +71,7 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   calendar_api.value = calendar.value?.getApi()
-  zones.value = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: route.params.id })
+  zones.value = await getZones({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: route.params.id })
 
   calendar_options.resources = [
     { id: zones.value[0].id.toString(), title: zones.value[0].libelle },

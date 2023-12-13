@@ -190,7 +190,6 @@ import MentionChampsObligatoires from "@components/common/MentionChampsObligatoi
 
 import {
   deleteZones,
-  getZones,
   getZone,
   postZones,
   updateZones,

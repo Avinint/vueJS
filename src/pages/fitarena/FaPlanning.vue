@@ -42,6 +42,7 @@ import modalCreneau from '@components/faPlanning/modalCreneau.vue'
 import EditOptions from '@components/faPlanning/EditOptions.vue'
 import Event from '@components/faPlanning/Event.vue'
 import EventDemande from '@components/faPlanning/EventDemande.vue'
+import ModalDetailDemande from '@components/faPlanning/ModalDetailDemande.vue'
 
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -49,12 +50,12 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
+import { mapStores } from 'pinia'
+
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
 import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { getZones } from '@api/zone.js'
-import ModalDetailDemande from '@components/faPlanning/ModalDetailDemande.vue'
-import { mapStores } from 'pinia'
 import { getOrganismes } from '@api/organisme'
 
 export default {
@@ -151,7 +152,7 @@ export default {
   },
   methods: {
     async initZones () {
-      this.zones = await getZones({ page: 1, 'typeZone.code': 'zone', fitArena: this.$route.params.id })
+      this.zones = await getZones({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: this.$route.params.id })
       this.calendarOptions.resources = [
         { id: this.zones[0].id, title: this.zones[0].libelle },
       ]

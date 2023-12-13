@@ -93,9 +93,6 @@ export const usePlanningStore = defineStore('planning', {
           : this.getDebutOfDay
 
       const date_debut = new Date(debut * 1000);
-      if (this.filters.fit_arena === 0) {
-        await this.fetch()
-      }
       const response = await getPlanning(
         date_debut.toISOString(),
         this.filters.fit_arena,
@@ -114,9 +111,6 @@ export const usePlanningStore = defineStore('planning', {
           : this.getDebutOfDay
 
       const date_debut = new Date(debut * 1000);
-      if (this.filters.fit_arena === 0) {
-        await this.fetch()
-      }
       const response = await getPlanning(
         date_debut.toISOString(),
         this.filters.fit_arena,

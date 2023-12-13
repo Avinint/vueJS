@@ -638,6 +638,7 @@ export default {
     async fetchZones() {
       this.zones = (await getZones({
         page: 1,
+        'order[ordre]': 'asc',
         'typeZone.code': 'zone',
         fitArena: this.$route.params.id
       })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
