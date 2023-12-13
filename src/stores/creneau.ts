@@ -44,17 +44,7 @@ export const useCreneauStore = defineStore('creneau', {
         this.dureeInterCreneau = creneau.extendedProps.dureeInterCreneau // 5
         this.organisme = creneau.extendedProps.organismeId ?? creneau.extendedProps.organisme
         this.recurrence = creneau.extendedProps.recurrence
-
         // HEURE DE FIN = HEURE DE FIN + DURÉE INTER CRÉNEAU
-        // let hourEnd = dayjs(creneau.end).hour()
-        // let minuteEnd = dayjs(creneau.end).minute() + creneau.extendedProps.dureeInterCreneau
-        // if (minuteEnd % 60 >= 0) {
-        //   hourEnd += 1
-        //   minuteEnd = minuteEnd % 60
-        // }
-        // minuteEnd = minuteEnd.toString().padStart(2, "0");
-        // this.heureFin = `${hourEnd}:${minuteEnd}`
-
         let date = dayjs(creneau.end).add(creneau.extendedProps.dureeInterCreneau, 'm')
         this.heureFin = date.format('HH:mm')
       } else {
@@ -106,9 +96,9 @@ export const useCreneauStore = defineStore('creneau', {
       )
       if (index !== -1) this.activites.splice(index, 1)
     },
-    async delete() {
+    async delete(mode: string) {
       if (this.id) {
-        await deleteCreneau(this.id)
+        await deleteCreneau(this.id, mode)
         const planningStore = usePlanningStore()
         planningStore.removeCreneau(this.id)
       }

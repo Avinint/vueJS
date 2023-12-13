@@ -57,9 +57,9 @@ export async function updateCreneau(
   return response.json()
 }
 
-export const deleteCreneau = async (id: number): Promise<void> => {
+export const deleteCreneau = async (id: number, mode: string): Promise<void> => {
   const response = await $fetch(
-    `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=occurence`,
+    `${import.meta.env.VITE_API_URL}/api/creneau/${id}?mode=${mode}`,
     {
       method: 'delete',
       headers: {

@@ -351,9 +351,9 @@
 <script>
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau.ts'
-import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { useOrganismeStore } from '@stores/organisme.ts'
+import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { getZones } from '@api/zone'
 import { postCreneauVerifDemande, updateCreneauDemande } from '@api/creneau'
 
@@ -365,10 +365,11 @@ import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
 import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
-import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue";
-import Button from "@components/common/Button.vue";
+import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue"
+import Button from "@components/common/Button.vue"
 
 import { mapStores } from 'pinia'
+import { toast } from 'vue3-toastify'
 
 export default {
   components: {
@@ -393,6 +394,7 @@ export default {
       default: '',
     },
     readonly: Boolean,
+    mode: String
   },
   emits: ['closeModalCreneau'],
   data() {
@@ -522,12 +524,16 @@ export default {
     },
     listEnd() {
       let list = []
-      const [heureMax, minuteMax] = this.heureFinMax.split(this.timeSeparator).map(v => parseInt(v))
-      let [heureMin, minuteMin] = this.creneauStore.heureDebut.split(this.timeSeparator).map(v => parseInt(v));
-      const heureMinBrut = heureMin * 60 + minuteMin
-      const heureMaxBrut = heureMax * 60 + minuteMax
-      for (let m = heureMinBrut + this.dureeCreneau; m <= heureMaxBrut; m += this.dureeCreneau) {
-        list.push(this.formatterHoraire(m).replace('24:', '00:'))
+      if (this.creneauType === 'grand_public') {
+        const [heureMax, minuteMax] = this.heureFinMax.split(this.timeSeparator).map(v => parseInt(v))
+        let [heureMin, minuteMin] = this.creneauStore.heureDebut.split(this.timeSeparator).map(v => parseInt(v));
+        const heureMinBrut = heureMin * 60 + minuteMin
+        const heureMaxBrut = heureMax * 60 + minuteMax
+        for (let m = heureMinBrut + this.dureeCreneau; m <= heureMaxBrut; m += this.dureeCreneau) {
+          list.push(this.formatterHoraire(m).replace('24:', '00:'))
+        }
+      } else {
+        list = this.listStart
       }
       return list
     },
@@ -583,7 +589,7 @@ export default {
       return (parseInt(heures) * 60) + parseInt(minutes)
     },
     /**
-     * Convertit un nomber de minutes en horaire affichable
+     * Convertit un nombre de minutes en horaire affichable
      * @param horaireBrut
      * @returns {string}
      */
@@ -614,9 +620,13 @@ export default {
         }
       }
     },
-    delete_creneau() {
+    async delete_creneau() {
       if (confirm('Souhaitez-vous vraiment supprimer le créneau ?')) {
-        this.creneauStore.delete();
+        await this.creneauStore.delete(this.mode).then({}).catch(e => {
+          if (e.status === 422 && e.statusText === 'Unprocessable Content') {
+            toast.error('Le créneau ne peut pas être supprimé, car il est déjà réservé !')
+          }
+        })
         this.$emit('closeModalCreneau')
       }
     },
@@ -732,6 +742,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 option {
   text-align: center;
