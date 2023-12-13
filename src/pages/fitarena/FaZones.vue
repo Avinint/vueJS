@@ -144,6 +144,9 @@
         ></AjoutEquipements>
       </div>
       <MentionChampsObligatoires />
+      <p v-if="errorMessage" class="text-center text-red-600">
+        Vous devez sélectionner un espace parent pour enregistrer la zone.
+      </p>
     </Modal>
   </form>
 
@@ -212,6 +215,7 @@ let espace_selected = ref(0)
 const modal_title = ref('')
 const ajoutEquipementsNume = ref()
 const ajoutEquipementsMoto = ref()
+const errorMessage = ref(false)
 
 async function fetchDonnees() {
   zones.value = await getZonesSSDetail({ page: 1, 'order[ordre]': 'asc', 'typeZone.code': 'zone', fitArena: props.id })
@@ -287,6 +291,11 @@ const mapApiToData = async (zoneTemp) => {
 
 const saveZone = async () => {
   const zoneTemp = await getTypeZone(1, '&code=zone')
+
+  if (espace_selected.value === 0) {
+    errorMessage.value = true
+    return
+  }
 
   espTemp.value = {
     typeZone: '/api/type_zones/' + zoneTemp[0].id,
@@ -376,5 +385,6 @@ const cancel = () => {
   zone.value = {}
   readonly.value = false
   id_selected.value = 0
+  errorMessage.value = false
 }
 </script>
