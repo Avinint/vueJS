@@ -173,11 +173,13 @@ export default {
     changeDate(date) {
       this.calendarApi.gotoDate(date)
       this.setDate()
-      this.planningStore.fetch().then(() => {
-        this.$emit('afterFetch')
-      })
-      if (this.$refs.datepicker !== null)
-        this.$refs.datepicker.clearPicker()
+      if (this.planningStore.filters.duree !== 0) {
+        this.planningStore.fetch().then(() => {
+          this.$emit('afterFetch')
+        })
+        if (this.$refs.datepicker !== null)
+          this.$refs.datepicker.clearPicker()
+      }
     },
     today() {
       this.calendarApi.today()
