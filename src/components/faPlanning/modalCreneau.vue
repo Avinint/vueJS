@@ -524,12 +524,16 @@ export default {
     },
     listEnd() {
       let list = []
-      const [heureMax, minuteMax] = this.heureFinMax.split(this.timeSeparator).map(v => parseInt(v))
-      let [heureMin, minuteMin] = this.creneauStore.heureDebut.split(this.timeSeparator).map(v => parseInt(v));
-      const heureMinBrut = heureMin * 60 + minuteMin
-      const heureMaxBrut = heureMax * 60 + minuteMax
-      for (let m = heureMinBrut + this.dureeCreneau; m <= heureMaxBrut; m += this.dureeCreneau) {
-        list.push(this.formatterHoraire(m).replace('24:', '00:'))
+      if (this.creneauType === 'grand_public') {
+        const [heureMax, minuteMax] = this.heureFinMax.split(this.timeSeparator).map(v => parseInt(v))
+        let [heureMin, minuteMin] = this.creneauStore.heureDebut.split(this.timeSeparator).map(v => parseInt(v));
+        const heureMinBrut = heureMin * 60 + minuteMin
+        const heureMaxBrut = heureMax * 60 + minuteMax
+        for (let m = heureMinBrut + this.dureeCreneau; m <= heureMaxBrut; m += this.dureeCreneau) {
+          list.push(this.formatterHoraire(m).replace('24:', '00:'))
+        }
+      } else {
+        list = this.listStart
       }
       return list
     },

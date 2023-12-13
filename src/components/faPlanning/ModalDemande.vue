@@ -198,7 +198,7 @@ import {
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau'
 
-import { reactive, ref, defineProps } from 'vue'
+import { reactive, ref, defineProps, defineExpose } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
