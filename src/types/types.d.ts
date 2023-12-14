@@ -275,6 +275,7 @@ type CalendarEvent = {
   selectable?: boolean
   extendedProps?: any,
   mode?: tring
+  organismeLabel?: string
 }
 
 type CalendarEventAnonyme = {

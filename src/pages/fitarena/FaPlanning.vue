@@ -138,7 +138,11 @@ export default {
     this.$watch(
       () => this.planningStore.getCreneauxEvents,
       (newCreneaux) => {
-        newCreneaux = newCreneaux.map((creneau => ({...creneau, organismeLabel: creneau.extendedProps.organismeId ? this.orga.find(x => x.id === creneau.extendedProps.organismeId).libelle ?? null : null })))
+        newCreneaux = newCreneaux.map((creneau => {
+          const organismeId = creneau.extendedProps.organismeId ?? creneau.extendedProps.organisme
+          return {...creneau, organismeLabel: organismeId ? this.orga.find(x => x.id === organismeId).libelle ?? null : null }
+        }
+        ))
         this.calendarOptions.events = newCreneaux
         this.redraw_key++
       }

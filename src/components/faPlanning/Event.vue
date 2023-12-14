@@ -17,8 +17,7 @@
           {{ dayjs(event.start).format('H:mm') }} -
           {{ dayjs(event.end).format('H:mm') }}
         </span>
-        <span v-if="event.extendedProps.organismeLabel">{{ event.extendedProps.organismeLabel }} : {{ event.title }}</span>
-        <span v-else>{{ event.extendedProps.organismeLabel }}</span>
+        <span>{{ event.extendedProps.organismeLabel }} : {{ event.title }}</span>
       </div>
       <div class="flex">
         <span

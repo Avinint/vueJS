@@ -361,7 +361,7 @@ const removeDemandeValidation = async () => {
   state.value = 'closed'
 }
 
-const refreshPlanning = async() => {
+const refreshPlanning = async () => {
   await usePlanningStore().fetch()
 }
 </script>
