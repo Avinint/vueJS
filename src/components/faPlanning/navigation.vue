@@ -244,28 +244,17 @@ export default {
       this.planningStore.filters.fit_arena = this.$route.params.id
       this.planningStore.filters.organisme = (this.$route.params.org_id) ? this.$route.params.org_id : null
       this.planningStore.filters.duree = 7
-      if (this.zones.length > 0) {
-        this.planningStore.filters.zone = [this.zones[0].id] // select first zone
+      if (this.zones.length > 0 && this.planningStore.filters.zone.length > 1) {
+        this.filtersZonesForDayView = this.planningStore.filters.zone
       }
-      // console.log(this.planningStore.filters.zone)
-      // if (this.planningStore.filters.zone.length > 1) {
-      //   // si plusieurs zones ont été sélectionnées en vue JOUR,
-      //   // stockage dans une variable afin de ne pas perdre la sélection des zones
-      //   console.log('ici')
-      //   this.filtersZonesForDayView = this.planningStore.filters.zone
-      // } else {
-      //   console.log('là')
-      //   this.planningStore.filters.zone = [this.zones[0].id] // select first zone
-      //   this.filtersZonesForDayView = this.planningStore.filters.zone
-      // }
-      // if (this.zones.length > 0) {
-      //   this.planningStore.filters.zone = [this.zones[0].id] // select first zone
-      // }
+      this.planningStore.filters.zone = [this.zones[0].id] // select first zone
       this.calendarApi.changeView('timeGridWeek')
       this.planningStore.currentViewName = 'week'
     },
     viewDay() {
-      // this.planningStore.filters.zone = this.filtersZonesForDayView
+      if (this.filtersZonesForDayView.length > 1) {
+        this.planningStore.filters.zone = this.filtersZonesForDayView
+      }
       this.planningStore.filters.duree = 1
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'day'
