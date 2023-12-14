@@ -199,7 +199,8 @@ export function makeDemandeEditContract(fitarena_id: number, organisme_id: numbe
       recurrence: form.recurrence,
     },
     commentaire: form.commentaire,
-    fitArenaId: fitarena_id
+    fitArenaId: fitarena_id,
+    nbPersonnesAttendu: form.people_count
   }
 
 }

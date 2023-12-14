@@ -5,6 +5,7 @@
         <div class="modal-demande-title">
           <h2>{{ libelleOrganisme.toUpperCase() }}</h2>
           <h2>{{ getDateTitle() }}</h2>
+          <h2>{{ demande.nbPersonnesAttendu }} pers. attendues</h2>
         </div>
         <div v-if="details.recurrence" class="modal-demande-subtitle mt-1">
           <h3>{{ messageRecurrence(details.recurrence) }}</h3>
@@ -66,8 +67,8 @@
 import Button from '@components/common/Button.vue'
 import Input from "@components/common/Input.vue";
 import ModalBottom from '@components/common/ModalBottom.vue'
-import {frenchTodayDate, getDateDM, getDateDMY, getDateStringHour, weekDays} from '../../services/date_service'
-import {ref, computed, watch} from 'vue'
+import { frenchTodayDate, getDateDM, getDateDMY, getDateStringHour, weekDays } from '../../services/date_service'
+import { ref, computed, defineExpose } from 'vue'
 import type {
   FaTableColumnData,
   FaTableRow,
@@ -103,7 +104,8 @@ type DetailsDemande = {
   zones: string,
   heureDebut: string,
   heureFin: string
-  nbConflit: number
+  nbConflit: number,
+  nbPersonnesAttendu: number
 }
 type Conflit = {
   organisme: string
@@ -114,7 +116,8 @@ type Conflit = {
   heureFin: string
   nbConflit: number
   creneaux: string[]
-  recurrence: Recurrence
+  recurrence: Recurrence,
+  nbPersonnesAttendu: number
 }
 
 const recurrenceTypes = { 1: 'journalier', 2: 'hebdomadaire', 3: 'mensuel' }
@@ -136,7 +139,8 @@ const columns: FaTableColumnData<Conflit>[] = [
   { label: 'Date de demande', data: (e) => getDateDMY(e.dateCreation) },
   { label: 'Zones', data: (e) => e.zones },
   { label: 'Horaire', data: (e) => e.horaire },
-  { label: 'Type de créneau', data: (e) => messageType(e)},
+  { label: 'Type de créneau', data: (e) => messageType(e) },
+  { label: 'Nb pers. attendues', data: (e) => e.nbPersonnesAttendu },
   { label: 'Statut(s)', data: (e) => messageConflits(e.nbConflit) },
   { label: 'Action rapide' },
 ]
@@ -349,6 +353,15 @@ function setDemande(value: Creneau) {
 
 .modal-demande-title h2 {
   font-size: 18px;
+}
+
+.modal-demande-title > h2:nth-child(3)::before {
+  content: '';
+  position: absolute;
+  width: 1.5px;
+  height: 100%;
+  right: 160px;
+  background-color: red;
 }
 
 .modal-demande-title :nth-child(1)::before {

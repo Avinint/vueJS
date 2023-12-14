@@ -25,7 +25,8 @@ type Creneau = {
   recurrence: Recurrence
   demandeId?: number
   statut?: string
-  commentaires?: []
+  commentaires?: [],
+  nbPersonnesAttendu?: number
 }
 
 type CreneauAnonyme = {
@@ -78,7 +79,8 @@ type DemandeEditContract = {
   }
   commentaire: string
   fitArenaId: number
-  creneauModifId: number | null
+  creneauModifId: number | null,
+  nbPersonnesAttendu: number
 }
 
 type CreneauOGEditContract = {
@@ -160,7 +162,7 @@ type GroupeEditContract = {
 
 type CreneauDemandePostResponse = {
     creneau: {
-        creneaux: Creneau[],
+      creneaux: Creneau[]
     },
     commentaire: string,
     fitarenaId: number

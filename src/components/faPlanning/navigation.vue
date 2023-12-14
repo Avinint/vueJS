@@ -119,7 +119,8 @@ export default {
       formatDateFr: 'DD-MM-YYYY',
       formatMoisFr: 'MMM YYYY',
       formatDatepicker: { date: 'DD-MM-YYYY', month: 'MMMM' },
-      spinner: false
+      spinner: false,
+      filtersZonesForDayView: []
     }
   },
   computed: {
@@ -246,10 +247,25 @@ export default {
       if (this.zones.length > 0) {
         this.planningStore.filters.zone = [this.zones[0].id] // select first zone
       }
+      // console.log(this.planningStore.filters.zone)
+      // if (this.planningStore.filters.zone.length > 1) {
+      //   // si plusieurs zones ont été sélectionnées en vue JOUR,
+      //   // stockage dans une variable afin de ne pas perdre la sélection des zones
+      //   console.log('ici')
+      //   this.filtersZonesForDayView = this.planningStore.filters.zone
+      // } else {
+      //   console.log('là')
+      //   this.planningStore.filters.zone = [this.zones[0].id] // select first zone
+      //   this.filtersZonesForDayView = this.planningStore.filters.zone
+      // }
+      // if (this.zones.length > 0) {
+      //   this.planningStore.filters.zone = [this.zones[0].id] // select first zone
+      // }
       this.calendarApi.changeView('timeGridWeek')
       this.planningStore.currentViewName = 'week'
     },
     viewDay() {
+      // this.planningStore.filters.zone = this.filtersZonesForDayView
       this.planningStore.filters.duree = 1
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'day'
