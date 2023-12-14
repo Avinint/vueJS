@@ -267,7 +267,7 @@ function edit(event: EventClickArg) {
   }
   state.value = 'edit'
   form.title = e.title;
-  form.people_count = e.extendedProps.people_count;
+  form.people_count = e.extendedProps.nbPersonnesAttendu;
   eventId.value = e.extendedProps.demandeId;
   creneauId.value = e.extendedProps.id
   form.zones = e.extendedProps.zones;
