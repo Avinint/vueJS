@@ -43,6 +43,9 @@
             >
               Se connecter
             </button>
+            <div class="text-right underline" @click="forgotPassword()">
+              <p>Mot de passe oublié ?</p>
+            </div>
             <MentionChampsObligatoires/>
           </form>
 
@@ -85,6 +88,10 @@ const login = async () => {
       toast.error("Une erreur est survenue.");
     }
   }
+}
+
+const forgotPassword = () => {
+  window.open('https://fit-arena.fr/forgot-password', 'newWindow', 'width=800,height=800')
 }
 
 if (user.connected) router.push('/')
