@@ -251,6 +251,7 @@ function create(event: DateSelectArg) {
   commentaires.value = []
   state.value = 'create'
   isRecurrent.value = false
+  form.recurrence = default_form_values.recurrence
   form.title = default_form_values.title;
   form.people_count = default_form_values.people_count;
   form.zones = default_form_values.zones;
@@ -318,8 +319,9 @@ const submitDemande = async() => {
   }
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
   verifCreneaux.value = await postCreneauVerifDemande(contract.value);
-  //state.value = 'closed';
+  state.value = 'create';
   verifModal.value = true
+  submenu.value = false
 }
 
 const submitDemandeValidation = async () => {
