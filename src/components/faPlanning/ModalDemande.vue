@@ -22,7 +22,7 @@
         <TimeRange label="Plage horaire du créneau" v-model:start_time="form.start_time" v-model:end_time="form.end_time" />
       </div>
       <div class="flex items-center gap-4 mt-8">
-        <p class="label-text">Nombre de persones attendues</p>
+        <p class="label-text">Nombre de personnes attendues</p>
         <Input class="input-count" v-model="form.people_count" />
       </div>
       <Button
@@ -249,6 +249,7 @@ const state = ref<'create' | 'edit' | 'closed'>('closed')
 
 function create(event: DateSelectArg) {
   commentaires.value = []
+  submenu.value = false
   state.value = 'create'
   isRecurrent.value = false
   form.recurrence = default_form_values.recurrence
@@ -266,6 +267,7 @@ function edit(event: EventClickArg) {
   if (e.extendedProps.recurrence) {
     isRecurrent.value = true
   }
+  submenu.value = false
   state.value = 'edit'
   form.title = e.title;
   form.people_count = e.extendedProps.nbPersonnesAttendu;
@@ -343,7 +345,6 @@ const submitDemandeValidation = async () => {
 
 const modifierDemande = () => {
   verifModal.value = false
-  state.value = 'edit'
 }
 
 const deleteDemande = async () => {
