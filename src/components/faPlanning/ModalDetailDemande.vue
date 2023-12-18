@@ -355,12 +355,12 @@ function setDemande(value: Creneau) {
   font-size: 18px;
 }
 
-.modal-demande-title > h2:nth-child(3)::before {
+.modal-demande-title > h2:nth-child(2)::after {
   content: '';
   position: absolute;
   width: 1.5px;
   height: 100%;
-  right: 160px;
+  right: 150px;
   background-color: red;
 }
 

@@ -255,6 +255,7 @@ export default {
       if (this.filtersZonesForDayView.length > 1) {
         this.planningStore.filters.zone = this.filtersZonesForDayView
       }
+      this.$emit('filter-updated')
       this.planningStore.filters.duree = 1
       this.calendarApi.changeView('resourceTimeGridDay')
       this.planningStore.currentViewName = 'day'
