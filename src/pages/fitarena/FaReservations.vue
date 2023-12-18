@@ -1,5 +1,8 @@
 <template>
+  <Spinner v-if="spinner" />
+
   <CrudList
+    v-if="!spinner"
     entity="réservation"
     plural="liste des réservations"
     :columns="colonnesReservations"
@@ -122,6 +125,7 @@ import CardModalSection from '@components/common/CardModalSection.vue'
 import Table from "@components/common/Table.vue";
 import ValidationModal from "@components/common/ValidationModal.vue";
 import Button from "@components/common/Button.vue";
+import Spinner from '@/components/common/Spinner.vue'
 import RechercheReservation from "@components/molecules/RechercheReservation.vue";
 
 const props = defineProps(['id'])
@@ -157,13 +161,18 @@ const creerLigneParticipant = (data) => {
 const reservations = ref([])
 const details = ref({})
 const orga = ref('')
+const spinner = ref(false)
 
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
-const fetchDonnees = async(params = {}) => { reservations.value = await getReservations({idFA : props.id, page: 1, ...params}) }
+const fetchDonnees = async(params = {}) => { reservations.value = await getReservations({ idFA: props.id, page: 1, ...params }) }
 
-onMounted(async () => await fetchDonnees())
+onMounted(async () => {
+  spinner.value = true
+  await fetchDonnees()
+  spinner.value = false
+})
 
 watch(() => props.id, () => fetchDonnees())
 
@@ -201,16 +210,19 @@ const annulerResa = (reservation) => {
     details.value = reservation
   }
 }
-const annulerResaConfirmation = () => {
+const annulerResaConfirmation = async () => {
+  spinner.value = true
   try {
     const index = reservations.value.findIndex(ligne => ligne.id === details.value.id)
-    annulerReservation(details.value.id)
+    await annulerReservation(details.value.id)
     reservations.value[index].statut = 'Annulée'
     fermerCalqueFormulaire()
     toast.success("Réservation annulée avec succès")
   } catch(e) {
     toast.error("Erreur, veuillez contacter votre administrateur")
   }
+  await fetchDonnees()
+  spinner.value = false
 }
 
 const fermerCalqueFormulaire = () => {
