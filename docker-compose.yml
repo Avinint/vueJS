@@ -1,0 +1,19 @@
+version: "3"
+networks:
+  php-apache-74_fitarena-dev:
+    external: true
+
+services:
+  http:
+    build:
+      context: ./
+    container_name: vue-fit-arena
+    ports:
+      - 8081:80
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/sites-enabled:/etc/nginx/sites-enabled/
+    networks:
+      php-apache-74_fitarena-dev:
+    extra_hosts:
+      host.docker.internal: host-gateway
