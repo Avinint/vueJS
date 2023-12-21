@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, defineEmits, defineProps } from 'vue'
 import InputLabel from './InputLabel.vue';
 
 type SelectOption = {
@@ -66,7 +66,6 @@ function selected(option: SelectOption) {
 .input-option > label {
   cursor: pointer;
 }
-
 
 .input-option label input[type="checkbox"] {
   opacity: 0;

@@ -11,6 +11,7 @@
       <option
         v-for="option in options"
         :value="option.id"
+        :key="`option-${option.id}`"
         :selected="props.selected === option.id"
       >
         {{ option.label }}
@@ -21,7 +22,7 @@
 
 <script setup lang="ts">
 import InputLabel from './InputLabel.vue'
-import { computed } from 'vue'
+import { computed, defineProps, defineEmits } from 'vue'
 
 const props = defineProps<{
   required: boolean

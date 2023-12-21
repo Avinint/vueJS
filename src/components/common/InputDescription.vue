@@ -12,64 +12,62 @@
 </template>
 
 <script setup lang="ts">
+import InputLabelDescription from './InputLabelDescription.vue'
+import { computed, ref, withDefaults, defineEmits, defineProps } from "vue"
 
-  import InputLabelDescription from './InputLabelDescription.vue'
-  import {computed, ref, withDefaults} from "vue"
+interface Props {
+  placeholder: string
+  test: string
+  readonly?: boolean
+  modelValue: string
+  defaultValue: string
+  label: string
+  id?: string
+  inline: boolean
+  type: string
+  validation?: ((val: any) => boolean | string)[]
+  valid: boolean
+  required: boolean,
+  pattern: string,
+  minlength: number,
+  maxlength: number,
+  description: string
+}
 
-  interface Props {
-    placeholder: string
-    test: string
-    readonly?: boolean
-    modelValue: string
-    defaultValue: string
-    label: string
-    id?: string
-    inline: boolean
-    type: string
-    validation?: ((val: any) => boolean | string)[]
-    valid: boolean
-    required: boolean,
-    pattern: string,
-    minlength: number,
-    maxlength: number,
-    description: string
-  }
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: "",
+  test: "",
+  label: "",
+  readonly: false,
+  inline: true,
+  type: 'text',
+  id: "",
+  validation: [],
+  valid: true,
+  required: false,
+  description: ""
+})
 
-  const props = withDefaults(defineProps<Props>(), {
-    placeholder: "",
-    test: "",
-    label: "",
-    readonly: false,
-    inline: true,
-    type: 'text',
-    id: "",
-    validation: [],
-    valid: true,
-    required: false,
-    description: ""
+const emits = defineEmits<{
+  (e: 'update:modelValue', text: string): void
+  (e: 'update:valid', valid: boolean): void
+}>()
+
+const inputValidation = ($event) => {
+  const val = $event.target.value
+  error.value = ""
+  emits('update:valid', true)
+  props.validation.forEach(func => {
+    try {
+      func(val)
+    } catch (e) {
+      error.value += e + "<br>"
+      emits('update:valid', false)
+    }
   })
+  emits('update:modelValue', val)
+}
 
-  const emits = defineEmits<{
-    (e: 'update:modelValue', text: string): void
-    (e: 'update:valid', valid: boolean): void
-  }>()
-
-  const inputValidation = ($event) => {
-    const val = $event.target.value
-    error.value = ""
-    emits('update:valid', true)
-    props.validation.forEach(func => {
-      try {
-        func(val)
-      } catch (e) {
-        error.value += e + "<br>"
-        emits('update:valid', false)
-      }
-    })
-    emits('update:modelValue', val)
-  }
-
-  const label = computed(() => props.label)
-  const error = ref("")
-
+const label = computed(() => props.label)
+const error = ref("")
 </script>

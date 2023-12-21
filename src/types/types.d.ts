@@ -142,7 +142,8 @@ type CreneauDemandeContract = {
 type DemandeCreneauEditContract = {
   creneau: CreneauDemandeContract
   commentaire: string
-  fitArenaId: number
+  fitArenaId: number,
+  nbPersonnesAttendu: number
 }
 
 type SeanceEditContract = {
@@ -161,11 +162,12 @@ type GroupeEditContract = {
 }
 
 type CreneauDemandePostResponse = {
-    creneau: {
-      creneaux: Creneau[]
-    },
-    commentaire: string,
-    fitarenaId: number
+  creneau: {
+    creneaux: Creneau[]
+  },
+  commentaire: string,
+  fitarenaId: number,
+  nbPersonnesAttendu: number
 }
 
 type CreneauEditResponse = {
@@ -175,7 +177,8 @@ type CreneauEditResponse = {
 type DemandeCreneauEditResponse = {
   creneaux: DemandeCreneauResult[]
   commentaire: string
-  fitArenaId: number
+  fitArenaId: number,
+  nbPersonnesAttendu: number
 }
 
 type CommentaireDemande = {
@@ -199,7 +202,8 @@ type DemandeCreneauResult = {
   statut: string
   recurrence: Recurrence,
   demandeId?: number
-  organismeId?: number
+  organismeId?: number,
+  nbPersonnesAttendu?: number
 }
 
 type SeanceEditResponse = {

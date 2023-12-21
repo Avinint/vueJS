@@ -74,7 +74,7 @@ export function makeCreneauOGEditContract(
   if (creneau.recurrence) {
     creneau.recurrence.dateDebut = creneau.date
   }
-
+  console.log(creneau)
   const zones = hydrateZones(creneau)
 
   return {
@@ -97,6 +97,7 @@ export function makeCreneauOGEditContract(
     },
     commentaire: '',
     fitArenaId: fitarena_id,
+    nbPersonnesAttendu: creneau.nbPersonnesAttendu
   }
 }
 
@@ -131,7 +132,8 @@ export function makeDemandeAdminOGEditContract(
     },
     commentaire: '',
     fitArenaId: fitarena_id,
-    creneauModifId: creneau.id ?? null
+    creneauModifId: creneau.id ?? null,
+    nbPersonnesAttendu: creneau.nbPersonnesAttendu
   }
 }
 
@@ -291,4 +293,5 @@ export const default_creneau = (): Creneau => ({
     recurrenceSemainesMois: [],
     separation: 0,
   },
+  nbPersonnesAttendu: 0
 })

@@ -146,7 +146,7 @@ export const useCreneauStore = defineStore('creneau', {
           seances: [],
           zoneId: 0,
           recurrence: creneau.recurrence,
-          mode: '',
+          mode: ''
         }
 
         return value;

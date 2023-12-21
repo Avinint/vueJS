@@ -24,13 +24,13 @@
           required
         />
       </div>
-      <div v-if="creneauType !== null" class="flex gap-3">
+      <div v-if="creneauType !== null" class="flex justify-between items-end">
         <FAInput
           v-model="creneauStore.titre"
           :inline="false"
           :required="false"
           label="Ajouter un titre à votre créneau"
-          class="grow"
+          class="w-6/12"
           placeholder="Ajouter un titre à votre créneau"
           type="text"
         />
@@ -39,12 +39,20 @@
           v-model="creneauStore.organisme"
           :required="true"
           :label="creneauType === 'organisme' ? 'Organisme' : 'Prestataire'"
-          class="grow"
+          class="w-2/12"
           :options="getOrganismesOptions"
+        />
+        <FAInput
+          v-if="creneauType === 'organisme'"
+          v-model="creneauStore.nbPersonnesAttendu"
+          :inline="false"
+          :required="true"
+          label="Nb pers. attendues"
+          class="w-2/12"
+          type="text"
         />
       </div>
       <div v-if="creneauType !== null" class="flex w-full">
-        <!-- TODO: update to https://www.vue-tailwind.com/docs/datepicker -->
         <div>
           <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
             Date du créneau
@@ -713,7 +721,6 @@ export default {
 
             this.updateActivites()
 
-
             if (!this.isOneActivityChecked) {
               this.errorMessage = true
               break
@@ -725,6 +732,7 @@ export default {
             break
           case 2:
           case 3:
+            this.creneauStore.nbPersonnesAttendu = parseInt(this.creneauStore.nbPersonnesAttendu)
             const contract = makeDemandeAdminOGEditContract(fitarena_id, this.creneauStore)
             this.verifCreneaux = await postCreneauVerifDemande(contract);
             this.verifModal = true

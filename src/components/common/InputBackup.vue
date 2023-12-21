@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import InputLabel from './InputLabel.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, defineProps, defineEmits } from 'vue'
 
 const props = defineProps<{
   modelValue?: string | number,
