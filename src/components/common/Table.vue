@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from 'vue'
+import { computed, ref, withDefaults, defineProps, defineEmits } from 'vue'
 import Button from './Button.vue'
 
 interface FaTableColumnCallback<T> {

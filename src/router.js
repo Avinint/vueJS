@@ -27,6 +27,7 @@ import Animateur from '@pages/animateur.vue'
 import Adherent from '@pages/Adherent.vue'
 import AdherentGroupe from "@pages/AdherentGroupe.vue";
 import FaReservations from "@pages/fitarena/FaReservations.vue";
+import FaDemandes from "@pages/fitarena/FaDemandes.vue";
 
 const routes = [
   {
@@ -294,6 +295,18 @@ const routes = [
           ],
         },
       },
+      {
+        path: 'demandes',
+        component: FaDemandes,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Fit Arena',
+              link: 'fitarena',
+            },
+          ],
+        },
+      }
     ] ,
   },
   {

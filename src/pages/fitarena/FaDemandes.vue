@@ -3,28 +3,26 @@
 
   <CrudList
     v-if="!spinner"
-    entity="réservation"
-    plural="liste des réservations"
-    :columns="colonnesReservations"
+    entity="demandes"
+    plural="liste des demandes"
+    :columns="colonnesDemandes"
     :data="getTableData()"
     :can-remove="true"
     :can-read="true"
     :can-filter="true"
-    @entity:remove="annulerResa"
-    @entity:read="consulterResa"
   >
-    <template #recherche>
-      <RechercheReservation @chargement-liste="fetchDonnees"/>
-    </template>
+    <!-- <template #recherche>
+      <RechercheDemande @chargement-liste="fetchDonnees" />
+    </template> -->
   </CrudList>
 
-  <Modal
+  <!-- <Modal
     v-if="calqueFormulaireVisible"
-    title="RÉSERVATION"
+    title="DEMANDE"
     @cancel="fermerCalqueFormulaire()"
-    @confirm="annulerResa(details)"
+    @confirm="annulerDemande(details)"
     cancel-button-text="Fermer"
-    confirm-button-text="Annuler la réservation"
+    confirm-button-text="Annuler la demande"
     size="5xl"
   >
     <div class="pl-4 pr-10">
@@ -101,15 +99,15 @@
         </CardModalSection>
       </div>
     </div>
-  </Modal>
-  <form @submit.prevent="annulerResaConfirmation()">
+  </Modal> -->
+  <!-- <form @submit.prevent="annulerResaConfirmation()">
     <ValidationModal
       v-if="calqueConfirmationVisible"
       type="delete"
       @cancel="calqueConfirmationVisible = false"
     >
-    </ValidationModal>
-  </form>
+    </ValidationModal> -->
+  <!-- </form> -->
 </template>
 
 <script setup lang="ts">
@@ -118,6 +116,7 @@ import CrudList from "@components/molecules/CrudList.vue";
 import { onMounted, ref, watch, defineProps } from "vue";
 import dayjs from 'dayjs'
 import { annulerReservation, getReservation, getReservations } from "@api/reservation";
+import { getPlanning } from "@api/planning";
 import { toast } from "vue3-toastify";
 
 import Modal from "@components/common/Modal.vue";
@@ -130,106 +129,125 @@ import RechercheReservation from "@components/molecules/RechercheReservation.vue
 
 const props = defineProps(['id'])
 
-const colonnesReservations = [
-  { data: (e): string => e.type, label: 'Type' },
-  { data: (e): string => e.titre, label: 'Titre' },
-  { data: (e): string => e.responsable, label: 'Responsable' },
-  { data: (e): string => dayjs(e.dateCreation).format('D MMMM YYYY'), label: 'Date de réservation' },
-  { data: (e): string => dayjs(e.dateDebut).format('D MMMM YYYY HH[h]mm'), label: 'Date - Début de séance' },
-  { data: (e): string => dayjs(e.dateFin).format('D MMMM YYYY HH[h]mm'), label: 'Date - Fin de séance' },
-  { data: (e): string => e.valorisation, label: 'Valorisation' },
+const colonnesDemandes = [
+  { data: (e): string => e.demandeur, label: 'Demandeur' },
+  { data: (e): string => e.dateDemande, label: 'Date de demande' },
+  { data: (e): string => e.zones.join(' - '), label: 'Zones' },
+  { data: (e): string => e.horaire, label: 'Horaire' },
+  { data: (e): string => e.type, label: 'Type de créneau' },
+  { data: (e): string => e.nbPersonnesAttendu, label: 'Nb pers. attendues' },
+  { data: (e): string => e.conflits, label: 'Conflits' },
   { data: (e): string => e.statut, label: 'Statut' }
 ]
 
-const getColonnesParticipants = () => {
-  return [
-    {data: (e): string => e.nom + ' ' + e.prenom, label: 'Nom Prénom'},
-    {data: (e): string => e.email, label: 'Adresse email'},
-    {data: (e): string => e.portable, label: 'Numéro de téléphone'}
-  ]
-}
+// const getColonnesParticipants = () => {
+//   return [
+//     {data: (e): string => e.nom + ' ' + e.prenom, label: 'Nom Prénom'},
+//     {data: (e): string => e.email, label: 'Adresse email'},
+//     {data: (e): string => e.portable, label: 'Numéro de téléphone'}
+//   ]
+// }
 
-const creerLigneParticipant = (data) => {
-  return data.map((ligne) => ({
-    id: ligne.id,
-    data: ligne,
-    editable: false,
-    removable: false
-  }))
-}
+// const creerLigneParticipant = (data) => {
+//   return data.map((ligne) => ({
+//     id: ligne.id,
+//     data: ligne,
+//     editable: false,
+//     removable: false
+//   }))
+// }
 
-const reservations = ref([])
-const details = ref({})
-const orga = ref('')
+const demandes = [
+  {
+    id: 1,
+    demandeur: 'La Fifa',
+    dateDemande: '21/12/2023',
+    zones: [113, 114],
+    horaire: '09H00 - 10H00',
+    type: 'Créneau unique',
+    nbPersonnesAttendu: 12,
+    conflits: 1,
+    statut: 'Demande acceptée'
+  },
+  {
+    id: 2,
+    demandeur: 'OM',
+    dateDemande: '09/11/2023',
+    zones: [113],
+    horaire: '16H00 - 18H00',
+    type: 'Récurrence',
+    nbPersonnesAttendu: 34,
+    conflits: 0,
+    statut: 'Demande refusée'
+  }
+]
+
 const spinner = ref(false)
 
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
-const fetchDonnees = async(params = {}) => { reservations.value = await getReservations({ idFA: props.id, page: 1, ...params }) }
+// const fetchDonnees = () => {}
 
 onMounted(async () => {
   spinner.value = true
-  await fetchDonnees()
+  // fetchDonnees()
   spinner.value = false
 })
 
-watch(() => props.id, () => fetchDonnees())
+// watch(() => props.id, () => fetchDonnees())
 
 function getTableData() {
-  return reservations.value.map((resa) => {
+  return demandes.map(dmd => {
     return {
-      id: resa.id,
-      data: resa,
-      editable: false,
-      removable: true,
-      readable: true,
+      id: dmd.id,
+      data: dmd
     }
   })
 }
 
-const consulterResa = async(reservation: any) => {
-  if (details.value.id !== reservation.id || details.value.participants === undefined) {
-    details.value = await getReservation(reservation.id)
-    details.value = {...details.value,
-      dateCreation: dayjs(details.value.dateCreation).format('D MMMM YYYY'),
-      dateDebut: dayjs(details.value.dateDebut).format('dddd D MMMM YYYY / HH[h]mm'),
-      dateFin: dayjs(details.value.dateFin).format('- HH[h]mm')
-    }
-  }
-  if (details.value.organisateurs) {
-    orga.value = details.value.organisateurs.map(orga => orga.nom.toUpperCase() + ' ' + orga.prenom).join(', ')
-  }
+// const consulterResa = async(reservation: any) => {
+//   if (details.value.id !== reservation.id || details.value.participants === undefined) {
+//     details.value = await getReservation(reservation.id)
+//     details.value = {...details.value,
+//       dateCreation: dayjs(details.value.dateCreation).format('D MMMM YYYY'),
+//       dateDebut: dayjs(details.value.dateDebut).format('dddd D MMMM YYYY / HH[h]mm'),
+//       dateFin: dayjs(details.value.dateFin).format('- HH[h]mm')
+//     }
+//   }
+//   if (details.value.organisateurs) {
+//     orga.value = details.value.organisateurs.map(orga => orga.nom.toUpperCase() + ' ' + orga.prenom).join(', ')
+//   }
 
-  calqueFormulaireVisible.value = true
-}
+//   calqueFormulaireVisible.value = true
+// }
 
-const annulerResa = (reservation) => {
-  calqueConfirmationVisible.value = true
-  if (details.value.id !== reservation.id) {
-    details.value = reservation
-  }
-}
-const annulerResaConfirmation = async () => {
-  spinner.value = true
-  try {
-    const index = reservations.value.findIndex(ligne => ligne.id === details.value.id)
-    await annulerReservation(details.value.id)
-    reservations.value[index].statut = 'Annulée'
-    fermerCalqueFormulaire()
-    toast.success("Réservation annulée avec succès")
-  } catch(e) {
-    toast.error("Erreur, veuillez contacter votre administrateur")
-  }
-  await fetchDonnees()
-  spinner.value = false
-}
+// const annulerResa = (reservation) => {
+//   calqueConfirmationVisible.value = true
+//   if (details.value.id !== reservation.id) {
+//     details.value = reservation
+//   }
+// }
+// const annulerResaConfirmation = async () => {
+//   spinner.value = true
+//   try {
+//     const index = reservations.value.findIndex(ligne => ligne.id === details.value.id)
+//     await annulerReservation(details.value.id)
+//     reservations.value[index].statut = 'Annulée'
+//     fermerCalqueFormulaire()
+//     toast.success("Réservation annulée avec succès")
+//   } catch(e) {
+//     toast.error("Erreur, veuillez contacter votre administrateur")
+//   }
+//   await fetchDonnees()
+//   spinner.value = false
+// }
 
-const fermerCalqueFormulaire = () => {
-  calqueFormulaireVisible.value = false
-  calqueConfirmationVisible.value = false
-  orga.value = ''
-}
+// const fermerCalqueFormulaire = () => {
+//   calqueFormulaireVisible.value = false
+//   calqueConfirmationVisible.value = false
+//   orga.value = ''
+// }
 
 </script>
 
