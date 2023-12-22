@@ -19,54 +19,61 @@
     </tr>
     </thead>
     <tbody>
-      <tr
-        v-if="data.length > 0"
-        v-for="(item, index) in data"
-        class="h-10 border border-gray-200 text-sm text-gray-700"
-        :class="{ 'text-center': textCenter }">
-        {{ item.data.length }}
-        <td class="flex h-10 items-center justify-center">
-          <input
-            v-if="selectable"
-            type="checkbox"
-            class="table-checkbox"
-            @click="updateSelected($event, item)"
-          />
-        </td>
-        <template v-for="(column, key) in columns">
-          <td v-if="column.data">{{ column.data(item.data) }}</td>
-          <td v-else>
-            <slot :name="`col-${key}`" :item="item.data" :index="index" />
+      <template v-if="data.length > 0">
+        <tr
+          v-for="(item, index) in data"
+          :key="item.data.id"
+          class="h-10 border border-gray-200 text-sm text-gray-700"
+          :class="{ 'text-center': textCenter }">
+          {{ item.data.length }}
+          <td class="flex h-10 items-center justify-center">
+            <input
+              v-if="selectable"
+              type="checkbox"
+              class="table-checkbox"
+              @click="updateSelected($event, item)"
+            />
           </td>
-        </template>
-        <td v-if="editable && item.editable">
-          <Button
-            test="TeditElement"
-            borderless
-            icon="edit"
-            couleur="secondary"
-            @click="emits('entity:edit', item.data)"
-          />
-        </td>
-        <td v-if="readable && item.readable">
-          <Button
-            test="TreadElement"
-            label="Détails"
-            class="border border-gray-300"
-            couleur="secondary"
-            @click="emits('entity:read', item.data)"
-          />
-        </td>
-        <td v-if="removable && item.removable">
-          <Button
-            test="TdeleteElement"
-            borderless
-            icon="delete"
-            couleur="secondary"
-            @click="emits('entity:remove', item.data)"
-          />
-        </td>
-      </tr>
+          <template v-for="(column, key) in columns" :key="`column-${key}`">
+            <td v-if="column.data">{{ column.data(item.data) }}</td>
+            <td v-else>
+              <slot :name="`col-${key}`" :item="item.data" :index="index" />
+            </td>
+          </template>
+          <td>
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <circle cx="5" cy="5" r="5" :fill="item.data.statut.includes('acceptée') ? '#36A300' : '#D00000' " />
+            </svg>
+          </td>
+          <td v-if="editable && item.editable">
+            <Button
+              test="TeditElement"
+              borderless
+              icon="edit"
+              couleur="secondary"
+              @click="emits('entity:edit', item.data)"
+            />
+          </td>
+          <td v-if="readable && item.readable">
+            <Button
+              test="TreadElement"
+              label="Détails"
+              class="border border-gray-300"
+              couleur="secondary"
+              @click="emits('entity:read', item.data)"
+            />
+          </td>
+          <td v-if="removable && item.removable">
+            <Button
+              test="TdeleteElement"
+              borderless
+              icon="delete"
+              couleur="secondary"
+              @click="emits('entity:remove', item.data)"
+            />
+          </td>
+        </tr>
+      </template>
       <tr class="nodata" v-else>
         <p class="text-sm">Aucune donnée.</p>
       </tr>
@@ -75,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, withDefaults, defineProps, defineEmits } from 'vue'
+import { ref, withDefaults, defineProps, defineEmits } from 'vue'
 import Button from './Button.vue'
 
 interface FaTableColumnCallback<T> {

@@ -7,7 +7,6 @@
     plural="liste des demandes"
     :columns="colonnesDemandes"
     :data="getTableData()"
-    :can-remove="true"
     :can-read="true"
     :can-filter="true"
   >
