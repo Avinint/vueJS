@@ -280,7 +280,6 @@ function edit(event: EventClickArg) {
   date.value = dayjs(e.extendedProps.dateDebut).format('DD-MM-YYYY');
   form.start_time = dayjs(e.extendedProps.dateDebut).format('HH:mm')
   form.end_time = dayjs(e.extendedProps.dateSortie).format('HH:mm')
-  console.log(form.recurrence)
 }
 
 const submitDemande = async() => {

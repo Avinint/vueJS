@@ -123,7 +123,6 @@ onMounted(async () => {
 })
 
 watch(() => props.id, async() => await fetchDonnees())
-watch(() => userSearch.value, () => console.log(userSearch.value))
 
 const fetchDonnees = async () => {
   users.value = await getClientUsers(1, props.id)
