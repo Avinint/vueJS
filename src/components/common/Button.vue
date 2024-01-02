@@ -2,13 +2,13 @@
   <button :class="[couleur, border, borderRadius]" :type="submit ? 'submit' : 'button'" data-modal-toggle="add-user-modal" class="inline-flex items-center space-x-1 justify-center px-3 py-2 text-sm font-medium text-center">
     <div v-if="icon" v-html="icon"></div>
     <div v-if="props.label">
-      {{props.label}}
+      {{ props.label }}
     </div>
   </button>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, withDefaults, defineProps } from 'vue'
 
 const ICON = {
   search: '<svg aria-hidden="true" class="h-5 w-5 currentColor0" fill="none" stroke="currentColor" viewBox="0 0 24 24"xmlns="http://www.w3.org/2000/svg">' +

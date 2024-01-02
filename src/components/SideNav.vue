@@ -28,7 +28,7 @@
           <div v-for="(link, i) in links_by_type" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900">
             <div class="flex items-center pl-8 pr-1 py-2 w-full"
                  :class="link.divider ? 'text-xl -ml-6 text-red-600' : '-ml-14 text-sm'">
-              <ChevronSVG :open="link.open" :visible="link.sub_links !== undefined" @openMenuItem="openSubLinks(link, type)"/>
+              <ChevronSVG :open="link.open" :visible="link.sub_links !== undefined" @openMenuItem="openSubLinks(link, type)" />
               <side-nav-item :icon="link.icon ?? ''" :label="link.label" :path="link.path" :tag="link.tag"
                              :id="'T' + link.path">
                 <CitySVG v-if="link.icon === 'city'" />
@@ -40,7 +40,7 @@
               <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.open && link.sub_links.length"
                    class="flex flex-col items-center text-base font-normal text-gray-900">
                 <div class="flex items-center pl-12 pr-1 py-2 w-full text-sm " :class="sub_link.label.includes('Activités de la Fit Arena') ? 'border-t border-black' : ''">
-                  <ChevronSVG :open="sub_link.sub_links_open" :visible="sub_link.sub_links !== undefined" @openMenuItem="openSubSubLinks(i, sub_i)"/>
+                  <ChevronSVG :open="sub_link.sub_links_open" :visible="sub_link.sub_links !== undefined" @openMenuItem="openSubSubLinks(i, sub_i)" />
                   <side-nav-item :icon="sub_link.icon" :label="sub_link.label" :path="sub_link.path" :tag="sub_link.tag">
                     <CitySVG v-if="sub_link.icon && sub_link.icon === 'city'" />
                     <HomeSVG v-if="sub_link.icon && sub_link.icon === 'home'" />
