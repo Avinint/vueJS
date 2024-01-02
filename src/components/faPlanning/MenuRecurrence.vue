@@ -28,7 +28,7 @@
         <div
           v-for="(day, key) in days"
           :key="`day-${key}`"
-          :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
+          :class="{ 'bg-blue-400 text-white': selected_days[key] == true || creneau_store.recurrence.recurrenceJoursSemaine.includes(key + 1) }"
           class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full border p-4 text-gray-700"
           @click="selectDay(key)"
         >
@@ -130,6 +130,14 @@ onMounted(async () => {
   else {
     type.value = types[creneau_store.recurrence.recurrenceType - 1];
     repetition_date.value = getDateForInput(creneau_store.recurrence.dateFin);
+  }
+
+  if (creneau_store.recurrence.recurrenceJoursSemaine.length) {
+    // INITIALISATION DE SELECTED_DAYS EN MODE ÉDITION
+    selected_days.value = Array(Math.max(...creneau_store.recurrence.recurrenceJoursSemaine)-1).fill(null)
+    creneau_store.recurrence.recurrenceJoursSemaine.forEach(x => {
+      selected_days.value[x-1] = true
+    })
   }
 })
 
