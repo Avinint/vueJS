@@ -50,7 +50,7 @@ const routes = [
     meta: {
       breadcrumbs: [
         {
-          link: 'users',
+          link: '',
           label: 'Utilisateurs',
         },
       ],
@@ -85,7 +85,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -101,7 +101,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -117,7 +117,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
           ],
         },
@@ -129,7 +129,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -146,7 +146,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -162,7 +162,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -178,7 +178,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -194,7 +194,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -210,7 +210,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -226,7 +226,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -242,7 +242,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -258,7 +258,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -274,7 +274,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
             /**{
               label: '',
@@ -290,7 +290,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
           ],
         },
@@ -302,7 +302,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
           ],
         },
@@ -316,7 +316,7 @@ const routes = [
     meta: {
       breadcrumbs: [
         {
-          link: 'clients',
+          link: '',
           label: 'Clients',
         },
       ],
@@ -330,11 +330,11 @@ const routes = [
       breadcrumbs: [
         {
           label: 'Animateur',
-          link: 'animateur',
+          link: '',
         },
         {
           label: 'Liste',
-          link: 'liste',
+          link: '',
         },
       ],
     },
@@ -346,7 +346,7 @@ const routes = [
     meta: {
       breadcrumbs: [
         {
-          link: 'organismes',
+          link: '',
           label: 'organisme',
         },
       ],
@@ -368,7 +368,7 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Fit Arena',
-              link: 'fitarena',
+              link: '',
             },
           ],
         },
@@ -384,7 +384,7 @@ const routes = [
       breadcrumbs: [
         {
           label: 'Utilisateurs',
-          link: 'utilisateurs',
+          link: '',
         },
         {
           label: 'Liste',
@@ -402,7 +402,7 @@ const routes = [
       breadcrumbs: [
         {
           label: 'Organismes',
-          link: 'organismes',
+          link: '',
         },
         {
           label: 'Liste',

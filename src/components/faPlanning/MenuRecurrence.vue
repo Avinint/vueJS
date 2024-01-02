@@ -2,7 +2,7 @@
   <div>
     <div class="mb-8">
       <label class="mb-2 block text-sm text-gray-700"
-        >Répétition du créneau</label
+        >Répétition du créneau *</label
       >
       <div class="flex items-center gap-2">
         <p>Tous les</p>
@@ -27,7 +27,8 @@
       <div class="flex gap-4">
         <div
           v-for="(day, key) in days"
-          :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
+          :key="`day-${key}`"
+          :class="{ 'bg-blue-400 text-white': selected_days[key] == true || creneau_store.recurrence.recurrenceJoursSemaine.includes(key + 1) }"
           class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full border p-4 text-gray-700"
           @click="selectDay(key)"
         >
@@ -41,7 +42,8 @@
       >
       <div class="flex gap-4">
         <div
-          v-for="week in '1234'"
+          v-for="week,i  in '1234'"
+          :key="`week-${i}`"
           class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full border p-4 text-gray-700"
           :class="{ 'bg-blue-400 text-white': selected_weeks.includes(parseInt(week)) }"
           @click="selectWeek(parseInt(week))"
@@ -127,7 +129,15 @@ onMounted(async () => {
     creneau_store.recurrence.recurrenceType = 2;
   else {
     type.value = types[creneau_store.recurrence.recurrenceType - 1];
-    repetition_date.value = getDateForInput(creneau_store.recurrence.dateDebut);
+    repetition_date.value = getDateForInput(creneau_store.recurrence.dateFin);
+  }
+
+  if (creneau_store.recurrence.recurrenceJoursSemaine.length) {
+    // INITIALISATION DE SELECTED_DAYS EN MODE ÉDITION
+    selected_days.value = Array(Math.max(...creneau_store.recurrence.recurrenceJoursSemaine)-1).fill(null)
+    creneau_store.recurrence.recurrenceJoursSemaine.forEach(x => {
+      selected_days.value[x-1] = true
+    })
   }
 })
 

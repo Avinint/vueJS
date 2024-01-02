@@ -7,10 +7,10 @@
     :title="state == 'create' ? 'Demande de création de créneaux' : 'Modification de demande de créneaux'"
   >
     <div class="pl-4">
-      <Input class="max-w-lg" label="Titre du créneau" v-model="form.title" />
+      <Input class="max-w-lg" label="Titre du créneau *" v-model="form.title" />
       <div class="flex gap-16 items-end mt-8">
         <div class="flex flex-col">
-          <p class="label-text mb-2">Date du créneau</p>
+          <p class="label-text mb-2">Date du créneau *</p>
           <vue-tailwind-datepicker
             input-classes="border border-gray-300 rounded-lg"
             v-model="date"
@@ -22,7 +22,7 @@
         <TimeRange label="Plage horaire du créneau" v-model:start_time="form.start_time" v-model:end_time="form.end_time" />
       </div>
       <div class="flex items-center gap-4 mt-8">
-        <p class="label-text">Nombre de personnes attendues</p>
+        <p class="label-text">Nombre de personnes attendues *</p>
         <Input class="input-count" v-model="form.people_count" />
       </div>
       <Button
@@ -265,6 +265,7 @@ function create(event: DateSelectArg) {
 function edit(event: EventClickArg) {
   const e = event.event._def
   if (e.extendedProps.recurrence) {
+    form.recurrence = e.extendedProps.recurrence
     isRecurrent.value = true
   }
   submenu.value = false
@@ -306,6 +307,10 @@ const submitDemande = async() => {
 
   if (submenu.value === true) {
     if (creneau_store.recurrence) {
+      if (creneau_store.recurrence.dateFin === 'Invalid Date') {
+        errorMessage.value = "Une date de fin doit être renseignée"
+        return
+      }
       form.recurrence = {
         dateDebut: creneau_store.recurrence.dateDebut,
         dateFin: creneau_store.recurrence.dateFin,
@@ -323,7 +328,6 @@ const submitDemande = async() => {
   verifCreneaux.value = await postCreneauVerifDemande(contract.value);
   state.value = 'create';
   verifModal.value = true
-  submenu.value = false
 }
 
 const submitDemandeValidation = async () => {

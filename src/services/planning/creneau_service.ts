@@ -74,7 +74,6 @@ export function makeCreneauOGEditContract(
   if (creneau.recurrence) {
     creneau.recurrence.dateDebut = creneau.date
   }
-  console.log(creneau)
   const zones = hydrateZones(creneau)
 
   return {
