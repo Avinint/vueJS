@@ -230,6 +230,18 @@ type Activite = {
   tarif: number
 }
 
+type Demande = {
+  demandeId: number
+  zones: array
+  demandeur: string
+  horaire: string
+  type: string
+  nbPersonnesAttendu: number
+  conflits: number
+  statut: string
+  dateDemande: string
+}
+
 type ActiviteReponse = {
   id: number
   zoneId?: number

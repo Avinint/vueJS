@@ -125,7 +125,7 @@ import ValidationModal from "@components/common/ValidationModal.vue";
 import Button from "@components/common/Button.vue";
 import Spinner from '@/components/common/Spinner.vue'
 import RechercheReservation from "@components/molecules/RechercheReservation.vue";
-
+import { getDemandes } from "@api/demande";
 const props = defineProps(['id'])
 
 const colonnesDemandes = [
@@ -156,51 +156,32 @@ const colonnesDemandes = [
 //   }))
 // }
 
-const demandes = [
-  {
-    id: 1,
-    demandeur: 'La Fifa',
-    dateDemande: '21/12/2023',
-    zones: [113, 114],
-    horaire: '09H00 - 10H00',
-    type: 'Créneau unique',
-    nbPersonnesAttendu: 12,
-    conflits: 1,
-    statut: 'Demande acceptée'
-  },
-  {
-    id: 2,
-    demandeur: 'OM',
-    dateDemande: '09/11/2023',
-    zones: [113],
-    horaire: '16H00 - 18H00',
-    type: 'Récurrence',
-    nbPersonnesAttendu: 34,
-    conflits: 0,
-    statut: 'Demande refusée'
-  }
-]
 
 const spinner = ref(false)
 
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
-
-// const fetchDonnees = () => {}
+const demandes = ref([])
+const fetchDonnees = async() => {
+  demandes.value = await getDemandes( props.id, 1)
+}
 
 onMounted(async () => {
   spinner.value = true
-  // fetchDonnees()
+  await fetchDonnees()
   spinner.value = false
 })
 
 // watch(() => props.id, () => fetchDonnees())
 
 function getTableData() {
-  return demandes.map(dmd => {
+  return demandes.value.map((dmd) => {
     return {
       id: dmd.id,
-      data: dmd
+      data: dmd,
+      editable: false,
+      removable: true,
+      readable: true,
     }
   })
 }
