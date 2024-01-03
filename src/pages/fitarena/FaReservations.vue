@@ -166,7 +166,9 @@ const spinner = ref(false)
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
-const fetchDonnees = async(params = {}) => { reservations.value = await getReservations({ idFA: props.id, page: 1, ...params }) }
+const fetchDonnees = async(params = {}) => {
+  reservations.value = await getReservations({ idFA: props.id, page: 1, ...params })
+}
 
 onMounted(async () => {
   spinner.value = true
