@@ -7,7 +7,6 @@
     plural="liste des demandes"
     :columns="colonnesDemandes"
     :data="getTableData()"
-    :can-read="true"
     :can-filter="true"
   >
     <!-- <template #recherche>
@@ -175,13 +174,13 @@ onMounted(async () => {
 // watch(() => props.id, () => fetchDonnees())
 
 function getTableData() {
-  return demandes.value.map((dmd) => {
+  return demandes.value.map((dmd: any) => {
     return {
       id: dmd.id,
       data: dmd,
       editable: false,
-      removable: true,
-      readable: true,
+      removable: false,
+      readable: false
     }
   })
 }
