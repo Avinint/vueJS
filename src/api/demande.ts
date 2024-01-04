@@ -17,8 +17,8 @@ export async function getDemandes(fitArenaId: number, page = 1, query = ''): Pro
       },
     }
   )
-  //if (response.status !== 200) throw response
-  let resultat = [
+  if (response.status !== 200) throw response
+  /**let resultat = [
     {
       demandeId: 1,
       demandeur: 'La Fifa',
@@ -42,7 +42,7 @@ export async function getDemandes(fitArenaId: number, page = 1, query = ''): Pro
       statut: 'Demande refusée'
     }
   ];
-  return resultat;
-  //return response.json()
+  return resultat;**/
+  return response.json()
 }
 
