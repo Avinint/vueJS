@@ -190,6 +190,11 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
             icon: 'booking'
           },
           {
+            label: 'Liste des demandes',
+            path: `/fitarena/${fa.id}/demandes`,
+            icon: 'booking'
+          },
+          {
             label: 'Supervision de la Fit Arena',
             path: `/fitarena/${fa.id}/supervision`,
             icon: 'monitoring'
@@ -205,6 +210,11 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
           {
             label: 'Réservations',
             path: `/fitarena/${fa.id}/reservations`,
+            icon: 'booking'
+          },
+          {
+            label: 'Demandes',
+            path: `/fitarena/${fa.id}/demandes`,
             icon: 'booking'
           },
           {
