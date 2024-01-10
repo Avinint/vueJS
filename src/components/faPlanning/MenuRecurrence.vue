@@ -61,7 +61,7 @@
             value="repetition_date"
             id="repetition_date"
             name="repetition"
-            checked
+            :checked="defaultCheckedDate"
             @click="setRepetitionDate"
           />
           <vue-tailwind-datepicker
@@ -82,14 +82,15 @@
             value="repetition_occurence"
             id="repetition_occurence"
             name="repetition"
+            :checked="defaultCheckedOccurence"
             @click="setRepetitionOccurence"
           />
           <p>Après</p>
           <FaInput
             class="w-16"
             default-value="0"
-            :disabled="repetition_mode != 'occurence'"
             v-model="repetition_occurence"
+            :disabled="repetition_mode != 'occurence'"
             @input="setRepetitionValue"
           />
           <p>occurence(s)</p>
@@ -121,6 +122,8 @@ const type = ref('Semaines')
 
 const repetition_date = ref('')
 const repetition_occurence = ref(0)
+const defaultCheckedDate = ref(false)
+const defaultCheckedOccurence = ref(true)
 const repetition_mode = ref<'date' | 'occurence'>('date')
 
 onMounted(async () => {
@@ -138,6 +141,16 @@ onMounted(async () => {
     creneau_store.recurrence.recurrenceJoursSemaine.forEach(x => {
       selected_days.value[x-1] = true
     })
+  }
+
+  if (creneau_store.recurrence.maxOccurrences === 0) {
+    defaultCheckedDate.value = true
+    defaultCheckedOccurence.value = false
+    setRepetitionDate()
+  } else {
+    defaultCheckedDate.value = false
+    defaultCheckedOccurence.value = true
+    setRepetitionOccurence()
   }
 })
 
@@ -181,7 +194,6 @@ function setDaysData() {
 
 function setRepetitionDate() {
   repetition_mode.value = 'date'
-  repetition_occurence.value = 0;
   setRepetitionValue()
 }
 
@@ -204,9 +216,8 @@ function setRepetitionValue() {
       break
 
     case 'occurence':
-      repetition_date.value = '';
       creneau_store.recurrence.dateFin = undefined;
-      creneau_store.recurrence.maxOccurrences = repetition_occurence.value
+      repetition_occurence.value = creneau_store.recurrence.maxOccurrences
       break
   }
 }

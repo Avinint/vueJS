@@ -405,7 +405,7 @@ export default {
     mode: String
   },
   emits: ['closeModalCreneau'],
-  data() {
+  data () {
     return {
       zones: [],
       // activites: [],
@@ -428,6 +428,8 @@ export default {
 
     if (this.typeAction === 'create') {
       this.creneauStore.activites = []
+    } else {
+      if (this.creneauStore.recurrence) this.submenu = 'recurence'
     }
   },
   computed: {
