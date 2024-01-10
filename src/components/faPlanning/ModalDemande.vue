@@ -324,6 +324,7 @@ const submitDemande = async() => {
       form.recurrence.separation -= 1
     }
   }
+
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
   verifCreneaux.value = await postCreneauVerifDemande(contract.value);
   state.value = 'create';

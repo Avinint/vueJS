@@ -150,6 +150,7 @@ onMounted(async () => {
   } else {
     defaultCheckedDate.value = false
     defaultCheckedOccurence.value = true
+    repetition_occurence.value = creneau_store.recurrence.maxOccurrences
     setRepetitionOccurence()
   }
 })
@@ -161,7 +162,7 @@ function selectDay(day_index: number) {
 
 function selectWeek(week: number) {
   const index = selected_weeks.value.findIndex((e) => e == week);
-  if(index == -1) {
+  if (index == -1) {
     selected_weeks.value.push(week);
   } else {
     selected_weeks.value.splice(index, 1);
@@ -170,6 +171,19 @@ function selectWeek(week: number) {
 }
 
 watch(repetition_date, () => {
+  for (let i = 0; i < days.length; i++) {
+    selected_days.value[i] = false
+  }
+  creneau_store.recurrence.recurrenceJoursSemaine = []
+  setRepetitionValue()
+  date_key.value++;
+})
+
+watch(repetition_occurence, () => {
+  for (let i = 0; i < days.length; i++) {
+    selected_days.value[i] = false
+  }
+  creneau_store.recurrence.recurrenceJoursSemaine = []
   setRepetitionValue()
   date_key.value++;
 })
@@ -217,7 +231,8 @@ function setRepetitionValue() {
 
     case 'occurence':
       creneau_store.recurrence.dateFin = undefined;
-      repetition_occurence.value = creneau_store.recurrence.maxOccurrences
+      // repetition_occurence.value = creneau_store.recurrence.maxOccurrences
+      creneau_store.recurrence.maxOccurrences = repetition_occurence.value
       break
   }
 }
