@@ -54,8 +54,7 @@ export function makeCreneauEditContract(
   }
 
   if (creneau.recurrence) {
-    contract.recurrence =
-      creneau.recurrence.separation > 0 ? creneau.recurrence : undefined
+    contract.recurrence = creneau.recurrence.separation > 0 ? creneau.recurrence : undefined
   }
 
   return contract
@@ -290,7 +289,7 @@ export const default_creneau = (): Creneau => ({
     recurrenceJoursSemaine: [],
     recurrenceOrdinaux: [],
     recurrenceSemainesMois: [],
-    separation: 0,
+    separation: 0
   },
   nbPersonnesAttendu: 0
 })
