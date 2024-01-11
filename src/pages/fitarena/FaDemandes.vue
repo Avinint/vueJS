@@ -130,7 +130,7 @@ const props = defineProps(['id'])
 const colonnesDemandes = [
   { data: (e): string => e.demandeur, label: 'Demandeur' },
   { data: (e): string => e.dateDemande, label: 'Date de demande' },
-  { data: (e): string => e.zones.join(' - '), label: 'Zones' },
+  { data: (e): string => e.zones.length ? e.zones.join(' - ') : '', label: 'Zones' },
   { data: (e): string => e.horaire, label: 'Horaire' },
   { data: (e): string => e.type, label: 'Type de créneau' },
   { data: (e): string => e.nbPersonnesAttendu, label: 'Nb pers. attendues' },
@@ -161,6 +161,7 @@ const spinner = ref(false)
 const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 const demandes = ref([])
+
 const fetchDonnees = async() => {
   demandes.value = await getDemandes( props.id, 1)
 }
