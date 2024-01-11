@@ -92,7 +92,7 @@ export function makeCreneauOGEditContract(
       heureFin: `${creneau.heureFin}:00`,
       organisme: creneau.organisme,
       zones: zones,
-      recurrence: creneau.recurrence,
+      recurrence: creneau.recurrence
     },
     commentaire: '',
     fitArenaId: fitarena_id,

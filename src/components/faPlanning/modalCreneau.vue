@@ -114,7 +114,7 @@
         @click="setSubmenu('advanced')"
       />
       <FAButton
-        v-if="creneauType && creneauStore.recurrence != undefined"
+        v-if="creneauType && (creneauStore.recurrence != undefined || typeAction === 'create')"
         label="Récurrence"
         :class="submenu === 'recurence' ? 'bg-recurence' : 'bg-none'"
         @click="setSubmenu('recurence')"
@@ -706,7 +706,7 @@ export default {
       const type_creneau = this.creneauStore.creneauType
 
       if (this.creneauStore.recurrence) {
-        if (this.creneauStore.recurrence.maxOccurrences == 0 && this.creneauStore.recurrence.dateFin == "") {
+        if (this.creneauStore.recurrence.maxOccurrences == 0 && (this.creneauStore.recurrence.dateFin === "Invalid Date" || this.creneauStore.recurrence.dateFin === "")) {
           this.creneauStore.recurrence = undefined;
         } else {
           this.creneauStore.recurrence.separation > 1 ? this.creneauStore.recurrence.separation -= 1 : this.creneauStore.recurrence.separation = 1
@@ -748,6 +748,16 @@ export default {
       return this.creneauStore.zones.includes(zoneId)
     },
     modifierDemande() {
+      this.creneauStore.recurrence = {
+        dateDebut: '',
+        dateFin: '',
+        maxOccurrences: 0,
+        recurrenceType: 1,
+        recurrenceJoursSemaine: [],
+        recurrenceOrdinaux: [],
+        recurrenceSemainesMois: [],
+        separation: 0
+      },
       this.verifModal = false
     }
   },
