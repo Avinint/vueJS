@@ -7,7 +7,6 @@
     plural="liste des demandes"
     :columns="colonnesDemandes"
     :data="getTableData()"
-    :can-filter="true"
   >
     <!-- <template #recherche>
       <RechercheDemande @chargement-liste="fetchDonnees" />
