@@ -162,6 +162,7 @@ export default {
       ]
     },
     async closeModal() {
+      await usePlanningStore().fetch()
       this.isModalCreneauOpen = false
     },
     async applyFilter() {

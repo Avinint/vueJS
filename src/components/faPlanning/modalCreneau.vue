@@ -10,8 +10,7 @@
       @delete="delete_creneau"
     >
       <template #topButtons>
-        <Button v-if="typeAction === 'edit'" test='TcloseModal' @click="delete_creneau" couleur="danger" borderless
-                class="mr-6" label="Supprimer le créneau"/>
+        <Button v-if="typeAction === 'edit'" test='TcloseModal' @click="delete_creneau" couleur="danger" borderless class="mr-6" label="Supprimer le créneau" />
       </template>
       <label class="mb-2 block w-1/2 text-sm font-medium text-gray-900">
         Veuillez sélectionner le type créneau.
