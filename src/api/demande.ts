@@ -25,7 +25,7 @@ import { get } from './api.js'
 
 export const getDemandes = async (query = {page: 1}) => {
 
-  if (!query.idFA) {
+  if (!query.idFitArena) {
     throw 'Requête invalide car la Fit Arena est inconnue.'
   }
 

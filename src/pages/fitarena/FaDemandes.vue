@@ -42,7 +42,7 @@ const spinner = ref(false)
 const demandes = ref([])
 
 const fetchDonnees = async(params = {}) => {
-  demandes.value = await getDemandes({ idFA: props.id, page: 1, ...params })
+  demandes.value = await getDemandes({ idFitArena: props.id, page: 1, ...params })
 }
 
 onMounted(async () => {
