@@ -5,7 +5,7 @@
         <h1 class="uppercase">{{ plural }}</h1>
         <div class="mt-4 w-full">
           <slot name="recherche" v-if="canFilter">
-            <Input placeholder="Recherche"/>
+            <Input placeholder="Recherche" />
             <Button label="Filtrer" couleur="secondary" />
           </slot>
         </div>

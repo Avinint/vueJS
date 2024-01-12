@@ -14,7 +14,7 @@
     @entity:read="consulterResa"
   >
     <template #recherche>
-      <RechercheReservation @chargement-liste="fetchDonnees"/>
+      <RechercheReservation @chargement-liste="fetchDonnees" />
     </template>
   </CrudList>
 

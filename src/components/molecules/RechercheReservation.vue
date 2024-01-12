@@ -237,7 +237,7 @@ const rechercheQuery = computed(() => ({
 }))
 
 const filtrer =  async() => {
-  await emit('chargementListe', rechercheQuery.value)
+  emit('chargementListe', rechercheQuery.value)
   afficherCalqueRecherche.value = false
 }
 
@@ -256,7 +256,7 @@ const resetRecherche = async() => {
   await nextTick()
   afficherDatePicker.value = true
 
-  await emit('chargementListe', {})
+  emit('chargementListe', {})
 }
 
 watch (() => ({...recherche}) , (v1, v0) => {
