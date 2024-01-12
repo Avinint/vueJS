@@ -10,7 +10,7 @@
     <thead class="h-10 w-full bg-gray-100 text-sm text-gray-700">
     <tr>
       <th></th>
-      <th :class="{ 'text-center': textCenter }" v-for="column in columns" :key="column.label">
+      <th v-for="column in columns" :key="column.label" :class="{ 'text-center': textCenter, [`${column.size}`]: column.size }">
         {{ column.label }}
       </th>
       <th v-if="editable"></th>
@@ -35,8 +35,8 @@
             />
           </td>
           <template v-for="(column, key) in columns" :key="`column-${key}`">
-            <td v-if="column.data">{{ column.data(item.data) }}</td>
-            <td v-else>
+            <td v-if="column.data" class="py-2">{{ column.data(item.data) }}</td>
+            <td v-else class="py-2">
               <slot :name="`col-${key}`" :item="item.data" :index="index" />
             </td>
           </template>
@@ -90,7 +90,8 @@ interface FaTableColumnCallback<T> {
 }
 
 export type FaTableColumnData<T> = {
-  label: string
+  label: string,
+  size?: string,
   data?: FaTableColumnCallback<T>
 }
 
