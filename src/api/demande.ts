@@ -29,5 +29,5 @@ export const getDemandes = async (query = {page: 1}) => {
     throw 'Requête invalide car la Fit Arena est inconnue.'
   }
 
-  return (await get('/api/fitarena/demande/liste', query)).demandesListe
+  return (await get('/api/fitarena/demande/liste', query))
 }

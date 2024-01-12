@@ -41,10 +41,6 @@ const colonnesDemandes = [
 const spinner = ref(false)
 const demandes = ref([])
 
-const fetchDonnees = async(params = {}) => {
-  demandes.value = await getDemandes({ idFitArena: props.id, page: 1, ...params })
-}
-
 onMounted(async () => {
   spinner.value = true
   await fetchDonnees()
@@ -52,6 +48,10 @@ onMounted(async () => {
 })
 
 watch(() => props.id, () => fetchDonnees())
+
+const fetchDonnees = async(params = {}) => {
+  demandes.value = await getDemandes({ idFitArena: props.id, page: 1, ...params })
+}
 
 function getTableData() {
   return demandes.value.map((dmd: any) => {
