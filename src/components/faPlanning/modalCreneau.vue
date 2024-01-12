@@ -253,7 +253,7 @@
             {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
           </td>
           <td class="px-6 py-4 border border-gray-200">
-            {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
+            {{ $dayjs.utc(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs.utc(creneau.dateSortie).format('HH:mm') }}
           </td>
           <td class="px-6 py-4 flex items-center" id="statut">
             Soumis à validation
@@ -291,7 +291,7 @@
             {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
           </td>
           <td class="px-6 py-4 border border-gray-200">
-            {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
+            {{ $dayjs.utc(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs.utc(creneau.dateSortie).format('HH:mm') }}
           </td>
           <td class="px-6 py-4 flex items-center" id="statut">
             Non validé
@@ -329,7 +329,7 @@
             {{ $dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
           </td>
           <td class="px-6 py-4 border border-gray-200">
-            {{ $dayjs(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs(creneau.dateSortie).format('HH:mm') }}
+            {{ $dayjs.utc(creneau.dateDebut).format('HH:mm') }} - {{ $dayjs.utc(creneau.dateSortie).format('HH:mm') }}
           </td>
           <td class="px-6 py-4 flex items-center" id="statut">
             En cours
