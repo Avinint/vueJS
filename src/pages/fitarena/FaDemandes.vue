@@ -31,6 +31,7 @@ const colonnesDemandes = [
   { data: (e): string => e.demandeur, label: 'Demandeur' },
   { data: (e): string => e.dateDemande, label: 'Date de demande' },
   { data: (e): string => e.zones.length ? e.zones.join(' - ') : '', label: 'Zones', size: 'w-1/3' },
+  { data: (e): string => e.dateCreneau, label: 'Date de créneau' },
   { data: (e): string => e.horaire, label: 'Horaire' },
   { data: (e): string => e.type, label: 'Type de créneau' },
   { data: (e): string => e.nbPersonnesAttendu, label: 'Nb pers. attendues' },
