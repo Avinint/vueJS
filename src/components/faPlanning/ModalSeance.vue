@@ -57,6 +57,7 @@ import { getDateStringHour } from '../../services/date_service'
 import { useCreneauStore } from '@stores/creneau'
 import { useSeanceStore } from '@stores/seance'
 import { fetchGroupes } from '@api/groupe'
+import dayjs from 'dayjs'
 
 defineExpose({ open_modal, close_modal })
 
@@ -87,9 +88,9 @@ function getTableData(): FaTableRow<Seance>[] {
       id: seance.id,
       data: seance,
       editable: seance.type === 'animateur',
-      removable: seance.type === 'animateur',
+      removable: seance.type === 'animateur'
     }
-  });
+  })
 }
 
 function show_qrcode(seance: Seance) {
@@ -118,7 +119,7 @@ function modify_seance(seance: Seance) {
 }
 
 function delete_seance(seance: Seance) {
-  if (confirm('Souhaitez vous supprimer la séance ?')) {
+  if (confirm('Souhaitez-vous supprimer la séance ?')) {
     seance_store.load(seance)
     seance_store.delete()
   }
@@ -136,9 +137,7 @@ function close_modal() {
 }
 
 function getSeanceHours(seance: Seance): string {
-  return `${getDateStringHour(seance.dateHeureDebut)} - ${getDateStringHour(
-    seance.dateHeureFin
-  )}`
+  return `${dayjs.utc(seance.dateHeureDebut).format('HH:mm')} - ${dayjs.utc(seance.dateHeureFin).format('HH:mm')}`
 }
 
 function getSeanceAnimateurs(seance: Seance): string {

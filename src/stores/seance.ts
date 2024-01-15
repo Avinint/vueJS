@@ -137,6 +137,6 @@ export const useSeanceStore = defineStore('seance', {
     },
     setDefault() {
       this.data = default_seance
-    },
-  },
+    }
+  }
 })

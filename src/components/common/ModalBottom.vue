@@ -1,11 +1,11 @@
 <template>
   <div class="modal-bottom bg-white border-b">
       <div class="flex justify-between items-center border-b h-16">
-        <slot name="title"/>
+        <slot name="title" />
         <Button class="mr-4" test='TcloseModal' @click="emit('close', $event)" couleur="secondary" icon="cross" borderless />
     </div>
     <div class="p-4">
-        <slot name="content"/>
+        <slot name="content" />
     </div>
   </div>
 </template>
