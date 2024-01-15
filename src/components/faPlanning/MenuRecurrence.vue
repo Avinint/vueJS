@@ -174,7 +174,7 @@ watch(repetition_date, () => {
   for (let i = 0; i < days.length; i++) {
     selected_days.value[i] = false
   }
-  creneau_store.recurrence.recurrenceJoursSemaine = []
+  // creneau_store.recurrence.recurrenceJoursSemaine = []
   setRepetitionValue()
   date_key.value++;
 })
@@ -183,7 +183,7 @@ watch(repetition_occurence, () => {
   for (let i = 0; i < days.length; i++) {
     selected_days.value[i] = false
   }
-  creneau_store.recurrence.recurrenceJoursSemaine = []
+  // creneau_store.recurrence.recurrenceJoursSemaine = []
   setRepetitionValue()
   date_key.value++;
 })

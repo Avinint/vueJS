@@ -394,11 +394,11 @@ export default {
   props: {
     isOpen: {
       type: Boolean,
-      default: false,
+      default: false
     },
     typeAction: {
       type: String,
-      default: '',
+      default: ''
     },
     readonly: Boolean,
     mode: String
@@ -708,10 +708,10 @@ export default {
         if (this.creneauStore.recurrence.maxOccurrences == 0 && (this.creneauStore.recurrence.dateFin === "Invalid Date" || this.creneauStore.recurrence.dateFin === "")) {
           this.creneauStore.recurrence = undefined;
         } else {
-          this.creneauStore.recurrence.separation === 1 || this.creneauStore.recurrence.separation === 0 ? this.creneauStore.recurrence.separation = 0 : this.creneauStore.recurrence.separation -= 1
+          this.creneauStore.recurrence.separation <= 1 ? this.creneauStore.recurrence.separation = 0 : this.creneauStore.recurrence.separation -= 1
         }
       }
-      const fitarena_id = parseInt(this.$route.params.id);
+      const fitarena_id = parseInt(this.$route.params.id)
 
       if (this.isOneZoneChecked) {
         switch (type_creneau) {
@@ -747,16 +747,21 @@ export default {
       return this.creneauStore.zones.includes(zoneId)
     },
     modifierDemande() {
-      this.creneauStore.recurrence = {
-        dateDebut: '',
-        dateFin: '',
-        maxOccurrences: 0,
-        recurrenceType: 1,
-        recurrenceJoursSemaine: [],
-        recurrenceOrdinaux: [],
-        recurrenceSemainesMois: [],
-        separation: 0
-      },
+      if (this.creneauStore.recurrence === undefined) {
+        this.creneauStore.recurrence = {
+          dateDebut: '',
+          dateFin: '',
+          maxOccurrences: 0,
+          recurrenceType: 1,
+          recurrenceJoursSemaine: [],
+          recurrenceOrdinaux: [],
+          recurrenceSemainesMois: [],
+          separation: 0
+        }
+      } else {
+        this.creneauStore.recurrence.separation += 1
+      }
+      
       this.verifModal = false
     }
   },

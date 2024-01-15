@@ -481,7 +481,7 @@ onMounted(async () => {
   try {
     clients.value = await getClients()
   } catch (e) {
-    console.error(e)
+
   }
 })
 
