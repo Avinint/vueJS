@@ -10,12 +10,12 @@
     <div class="flex grow justify-between px-3 pr-3 text-xs text-black">
       <div class="flex flex-col">
         <span v-if="Object.entries(event.extendedProps).length !== 0">
-          {{ dayjs.utc(event.extendedProps.dateDebut).format('H:mm') }} -
-          {{ dayjs.utc(event.extendedProps.dateFinCreneau).format('H:mm') }}
+           {{ dayjs(event.extendedProps.dateDebut).format('H:mm') }} -
+          {{ dayjs(event.extendedProps.dateFinCreneau).format('H:mm') }}
         </span>
         <span v-else>
-          {{ dayjs.utc(event.start).format('H:mm') }} -
-          {{ dayjs.utc(event.end).format('H:mm') }}
+          {{ dayjs(event.start).format('H:mm') }} -
+          {{ dayjs(event.end).format('H:mm') }}
         </span>
         <span>{{ event.extendedProps.organismeLabel }} : {{ event.title }}</span>
       </div>

@@ -137,7 +137,9 @@ function close_modal() {
 }
 
 function getSeanceHours(seance: Seance): string {
-  return `${dayjs.utc(seance.dateHeureDebut).format('HH:mm')} - ${dayjs.utc(seance.dateHeureFin).format('HH:mm')}`
+  return `${getDateStringHour(seance.dateHeureDebut)} - ${getDateStringHour(
+      seance.dateHeureFin
+  )}`
 }
 
 function getSeanceAnimateurs(seance: Seance): string {

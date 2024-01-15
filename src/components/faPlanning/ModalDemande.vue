@@ -41,8 +41,8 @@
             <div v-for="(com, i) in commentaires" :key="`com_`+ i" class="p-4 text-sm">
               <p class="text-black">
                 {{ com.userEmail }} - 
-                {{ dayjs(com.date_creation).format('DD MMMM YYYY') }} à 
-                {{ dayjs.utc(com.date_creation).format('HH:mm') }}
+                {{ dayjs(com.date_creation).format('DD MMMM YYYY') }} à
+                {{ dayjs(com.date_creation).format('HH:mm') }}
               </p>
               <p class="text-gray-500 mt-2">{{ com.texte }}</p>
             </div>
@@ -101,7 +101,7 @@
               {{ dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
             </td>
             <td class="px-6 py-4 border border-gray-200">
-              {{ dayjs.utc(creneau.dateDebut).format('HH:mm') }} - {{ dayjs.utc(creneau.dateSortie).format('HH:mm') }}
+              {{ dayjs(creneau.dateDebut).format('HH:mm') }} - {{ dayjs(creneau.dateSortie).format('HH:mm') }}
             </td>
             <td class="px-6 py-4 flex items-center" id="statut">
               Soumis à validation
@@ -139,7 +139,7 @@
               {{ dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
             </td>
             <td class="px-6 py-4 border border-gray-200">
-              {{ dayjs.utc(creneau.dateDebut).format('HH:mm') }} - {{ dayjs.utc(creneau.dateSortie).format('HH:mm') }}
+              {{ dayjs(creneau.dateDebut).format('HH:mm') }} - {{ dayjs(creneau.dateSortie).format('HH:mm') }}
             </td>
             <td class="px-6 py-4 flex items-center" id="statut">
               Non validé
@@ -279,8 +279,8 @@ function edit(event: EventClickArg) {
   form.commentaire = default_form_values.commentaire;
   commentaires.value = e.extendedProps.commentaires;
   date.value = dayjs(e.extendedProps.dateDebut).format('DD-MM-YYYY');
-  form.start_time = dayjs.utc(e.extendedProps.dateDebut).format('HH:mm')
-  form.end_time = dayjs.utc(e.extendedProps.dateSortie).format('HH:mm')
+  form.start_time = dayjs(e.extendedProps.dateDebut).format('HH:mm')
+  form.end_time = dayjs(e.extendedProps.dateSortie).format('HH:mm')
 }
 
 const submitDemande = async() => {

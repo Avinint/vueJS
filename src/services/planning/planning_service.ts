@@ -103,7 +103,7 @@ export const planning_configuration: CalendarOptions = {
   height: '80vh',
   scrollTime: '07:00',
   schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-  timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
+  //timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
   slotLabelFormat: {
     hour: 'numeric',
     minute: '2-digit'
