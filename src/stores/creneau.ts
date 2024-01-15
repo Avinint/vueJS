@@ -22,8 +22,8 @@ export const useCreneauStore = defineStore('creneau', {
     setCreneau(creneau: CalendarEvent) {
       this.id = parseInt(creneau.id as string)
       this.date = dayjs(creneau.start).format('YYYY-MM-DD') // 2023-01-23
-      this.heureDebut = dayjs(creneau.start).format('HH:mm') // "14:30:00"
-      this.heureFin = dayjs(creneau.end).format('HH:mm') // "14:30:00"
+      this.heureDebut = dayjs.utc(creneau.start).format('HH:mm') // "14:30:00"
+      this.heureFin = dayjs.utc(creneau.end).format('HH:mm') // "14:30:00"
 
       // Extended props contains the complete Creneau data.
       // Even if it is typed "any"
@@ -46,7 +46,7 @@ export const useCreneauStore = defineStore('creneau', {
         this.organisme = creneau.extendedProps.organismeId ?? creneau.extendedProps.organisme
         this.recurrence = creneau.extendedProps.recurrence
         // HEURE DE FIN = HEURE DE FIN + DURÉE INTER CRÉNEAU
-        let date = dayjs(creneau.end).add(creneau.extendedProps.dureeInterCreneau, 'm')
+        let date = dayjs.utc(creneau.end).add(creneau.extendedProps.dureeInterCreneau, 'm')
         this.heureFin = date.format('HH:mm')
       } else {
         this.zones = []

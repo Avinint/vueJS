@@ -101,7 +101,6 @@ export const usePlanningStore = defineStore('planning', {
         this.filters.organisme
       )
 
-      console.log(response.creneaux)
       this.pushCreneaux(response.creneaux)
       this.pushCreneauxAnonymes(response.creneauxAnonymes)
     },

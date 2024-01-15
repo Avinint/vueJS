@@ -8,12 +8,12 @@
     <div v-if="event.extendedProps.statut == 'valide'" class="flex grow justify-between px-3 pr-3 text-xs text-black">
       <div class="flex flex-col">
         <span v-if="Object.entries(event.extendedProps).length !== 0">
-          {{ dayjs(event.extendedProps.dateDebut).format('H:mm') }} -
-          {{ dayjs(event.extendedProps.dateSortie).format('H:mm') }}
+          {{ dayjs.utc(event.extendedProps.dateDebut).format('H:mm') }} -
+          {{ dayjs.utc(event.extendedProps.dateSortie).format('H:mm') }}
         </span>
         <span v-else>
-          {{ dayjs(event.start).format('H:mm') }} -
-          {{ dayjs(event.end).format('H:mm') }}
+          {{ dayjs.utc(event.start).format('H:mm') }} -
+          {{ dayjs.utc(event.end).format('H:mm') }}
         </span>
         <span class="">{{ event.title }}</span>
       </div>
@@ -28,12 +28,12 @@
     <div v-else-if="event.extendedProps.statut == 'demande'" class="flex grow justify-between px-3 pr-3 text-xs text-black">
       <div class="flex flex-col">
         <span v-if="Object.entries(event.extendedProps).length !== 0">
-          {{ dayjs(event.extendedProps.dateDebut).format('H:mm') }} -
-          {{ dayjs(event.extendedProps.dateSortie).format('H:mm') }}
+          {{ dayjs.utc(event.extendedProps.dateDebut).format('H:mm') }} -
+          {{ dayjs.utc(event.extendedProps.dateSortie).format('H:mm') }}
         </span>
         <span v-else>
-          {{ dayjs(event.start).format('H:mm') }} -
-          {{ dayjs(event.end).format('H:mm') }}
+          {{ dayjs.utc(event.start).format('H:mm') }} -
+          {{ dayjs.utc(event.end).format('H:mm') }}
         </span>
         <span class="">{{ event.title }}</span>
       </div>
