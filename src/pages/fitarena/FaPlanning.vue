@@ -101,7 +101,7 @@ export default {
         selectOverlap: true,
         height: '80vh',
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-        // timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
+        timeZone: 'UTC', // TODO dayjs UTC local: https://dayjs.gitee.io/docs/en/parse/unix-timestamp
         slotLabelFormat: {
           hour: 'numeric',
           minute: '2-digit',
