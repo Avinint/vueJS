@@ -157,6 +157,7 @@
         class="border border-red-600 text-red-600"
       />
       <Button
+        v-if="isPossibleToCreateDemande"
         @click="submitDemandeValidation"
         label="Valider ma demande"
         couleur="danger"
@@ -198,7 +199,7 @@ import {
 import { usePlanningStore } from '@stores/planning.ts'
 import { useCreneauStore } from '@stores/creneau'
 
-import { reactive, ref, defineProps, defineExpose } from 'vue'
+import { reactive, ref, defineProps, defineExpose, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
@@ -246,6 +247,11 @@ const form = reactive<{
 defineExpose({ create, edit })
 
 const state = ref<'create' | 'edit' | 'closed'>('closed')
+
+const isPossibleToCreateDemande = computed(() => {
+  // CACHER LE BOUTON "VALIDER MA DEMANDE" LORSQU'AUCUN CRÉNEAU NE PEUT ÊTRE CRÉÉ
+  return verifCreneaux.value.creneauxValide.length !== 0
+})
 
 function create(event: DateSelectArg) {
   commentaires.value = []

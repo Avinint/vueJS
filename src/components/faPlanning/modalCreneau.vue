@@ -347,6 +347,7 @@
         class="border border-red-600 text-red-600"
       />
       <Button
+        v-if="isPossibleToCreateDemande"
         @click="submitDemandeValidation"
         label="Valider ma demande"
         couleur="danger"
@@ -436,6 +437,10 @@ export default {
     ...mapStores(useCreneauStore),
     ...mapStores(useTypeCreneauStore),
     ...mapStores(useOrganismeStore),
+    isPossibleToCreateDemande () {
+      // CACHER LE BOUTON "VALIDER MA DEMANDE" LORSQU'AUCUN CRÉNEAU NE PEUT ÊTRE CRÉÉ
+      return !(this.verifCreneaux.creneauxValide.length === 0 && this.verifCreneaux.creneauxConflit.length && this.verifCreneaux.creneauxDemandeConflit.length === 0)
+    },
     modalTitle() {
       switch (this.typeAction) {
         case 'create':
