@@ -38,7 +38,7 @@
           <div class="font-extralight">{{ commentaire.texte }}</div>
         </div>
         <div class=" flex mt-3 mb-7">
-          <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-2/3" label="Commentaire:" placeholder="Votre commentaire" border-radius="rounded-l-lg"><Button class="w-10" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="tertiary" icon="next"/></Input>
+          <Input @model-value="commentaire" @change="(event) => {commentaire = event.target.value}" class="w-2/3" label="Commentaire:" placeholder="Votre commentaire" border-radius="rounded-l-lg"><Button class="w-10" @click="ajouterCommentaire()" border-radius="rounded-r-lg" couleur="tertiary" icon="next" /></Input>
         </div>
       </div>
       <HeaderModal text-size="text-base uppercase" text="Liste des conflits" class="content"></HeaderModal>
@@ -69,16 +69,13 @@ import Input from "@components/common/Input.vue";
 import ModalBottom from '@components/common/ModalBottom.vue'
 import { frenchTodayDate, getDateDM, getDateDMY, getDateStringHour, weekDays } from '../../services/date_service'
 import { ref, computed, defineExpose } from 'vue'
-import type {
-  FaTableColumnData,
-  FaTableRow,
-} from '@components/common/Table.vue'
+import type { FaTableColumnData, FaTableRow } from '@components/common/Table.vue'
 import Table from '@components/common/Table.vue'
-import {useMenuStore} from "@stores/menu";
-import {useUserStore} from "@stores/user";
+import { useMenuStore } from "@stores/menu";
+import { useUserStore } from "@stores/user";
 import { usePlanningStore } from '@stores/planning.ts'
-import {accepterDemande, getDetailsDemande, postCommentaire, rejeterDemande} from "@api/creneau";
-import {toast} from "vue3-toastify";
+import { accepterDemande, getDetailsDemande, postCommentaire, rejeterDemande } from "@api/creneau";
+import { toast } from "vue3-toastify";
 import ValidationModal from "@components/common/ValidationModal.vue";
 import HeaderModal from "@components/common/HeaderModal.vue";
 

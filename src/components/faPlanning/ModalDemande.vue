@@ -48,6 +48,7 @@
             </div>
           </div>
           <textarea v-model="form.commentaire" class="rounded-lg w-full text-black border border-gray-300 bg-gray-50" placeholder="Votre commentaire..." />
+          <Button v-if="state === 'edit'" @click="ajouterCommentaire()" label="Poster un commentaire" couleur="danger" />
         </template>
       </CardModalSection>
       <div class="flex justify-end gap-10">
@@ -194,10 +195,13 @@ import {
   postCreneauVerifDemande,
   postCreneauDemande,
   updateCreneauDemande,
-  deleteCreneauDemande
+  deleteCreneauDemande,
+  postCommentaire
 } from '@api/creneau'
-import { usePlanningStore } from '@stores/planning.ts'
+
+import { usePlanningStore } from '@stores/planning'
 import { useCreneauStore } from '@stores/creneau'
+import { useUserStore } from "@stores/user"
 
 import { reactive, ref, defineProps, defineExpose, computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -205,6 +209,7 @@ import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
 
 const creneau_store = useCreneauStore()
+const user = useUserStore()
 const route = useRoute()
 const verifModal = ref(false)
 const verifCreneaux = ref({})
@@ -259,11 +264,11 @@ function create(event: DateSelectArg) {
   state.value = 'create'
   isRecurrent.value = false
   form.recurrence = default_form_values.recurrence
-  form.title = default_form_values.title;
-  form.people_count = default_form_values.people_count;
-  form.zones = default_form_values.zones;
-  form.commentaire = default_form_values.commentaire;
-  date.value = parseDateToInput(event.start);
+  form.title = default_form_values.title
+  form.people_count = default_form_values.people_count
+  form.zones = default_form_values.zones
+  form.commentaire = default_form_values.commentaire
+  date.value = parseDateToInput(event.start)
   form.start_time = extractHour(event.start)
   form.end_time = extractHour(event.end)
 }
@@ -277,14 +282,14 @@ function edit(event: EventClickArg) {
     submenu.value = true
   }
   state.value = 'edit'
-  form.title = e.title;
-  form.people_count = e.extendedProps.nbPersonnesAttendu;
-  eventId.value = e.extendedProps.demandeId;
+  form.title = e.title
+  form.people_count = e.extendedProps.nbPersonnesAttendu
+  eventId.value = e.extendedProps.demandeId
   creneauId.value = e.extendedProps.id
-  form.zones = e.extendedProps.zones;
-  form.commentaire = default_form_values.commentaire;
-  commentaires.value = e.extendedProps.commentaires;
-  date.value = dayjs(e.extendedProps.dateDebut).format('DD-MM-YYYY');
+  form.zones = e.extendedProps.zones
+  form.commentaire = default_form_values.commentaire
+  commentaires.value = e.extendedProps.commentaires
+  date.value = dayjs(e.extendedProps.dateDebut).format('DD-MM-YYYY')
   form.start_time = dayjs(e.extendedProps.dateDebut).format('HH:mm')
   form.end_time = dayjs(e.extendedProps.dateSortie).format('HH:mm')
 }
@@ -336,6 +341,25 @@ const submitDemande = async() => {
   verifCreneaux.value = await postCreneauVerifDemande(contract.value);
   state.value = 'create';
   verifModal.value = true
+}
+
+const ajouterCommentaire = async () => {
+  if (form.commentaire === null || form.commentaire === '') {
+    toast.error('Erreur, veuillez remplir le champ commentaire')
+    return
+  }
+
+  await postCommentaire({commentaire: form.commentaire}, eventId.value).then(() => {
+    commentaires.value.push({
+      texte: form.commentaire,
+      userEmail: user.username,
+      date_creation: new Date()
+    })
+    form.commentaire = ''
+    toast.success('Commentaire ajouté')
+  }).catch(e => {
+    toast.error('Erreur, Veuillez contacter votre administrateur')
+  })
 }
 
 const submitDemandeValidation = async () => {
