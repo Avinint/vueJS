@@ -310,8 +310,8 @@ const submitDemande = async() => {
     return
   }
 
-  let organisme_id = route.params.org_id as string;
-  let fitarena_id = route.params.id as string;
+  let organisme_id = route.params.org_id as string
+  let fitarena_id = route.params.id as string
   const day = date.value.split('-')[0]
   const month = date.value.split('-')[1]
   const year = date.value.split('-')[2]
@@ -337,9 +337,8 @@ const submitDemande = async() => {
     }
   }
 
-  contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form);
-  verifCreneaux.value = await postCreneauVerifDemande(contract.value);
-  state.value = 'create';
+  contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form)
+  verifCreneaux.value = await postCreneauVerifDemande(contract.value)
   verifModal.value = true
 }
 
@@ -363,11 +362,12 @@ const ajouterCommentaire = async () => {
 }
 
 const submitDemandeValidation = async () => {
-  if (state.value == 'edit') {
+  if (state.value === 'edit') {
+    const mode = form.recurrence === undefined ? 'occurence' : 'recurrence'
     if (creneauId.value !== 0) {
-      verifCreneaux.value = await updateCreneauDemande(contract.value, creneauId.value);
+      verifCreneaux.value = await updateCreneauDemande(contract.value, creneauId.value, mode);
     } else {
-      verifCreneaux.value = await updateCreneauDemande(contract.value, eventId.value);
+      verifCreneaux.value = await updateCreneauDemande(contract.value, eventId.value, mode);
     }
   } else {
     await postCreneauDemande(contract.value)

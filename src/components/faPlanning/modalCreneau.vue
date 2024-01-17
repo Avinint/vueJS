@@ -363,7 +363,7 @@ import { useTypeCreneauStore } from '@stores/typeCreneau.js'
 import { useOrganismeStore } from '@stores/organisme.ts'
 import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { getZones } from '@api/zone'
-import { postCreneauVerifDemande, updateCreneauDemande } from '@api/creneau'
+import { postCreneauVerifDemande } from '@api/creneau'
 
 import Modal from '@components/common/Modal.vue'
 import ValidationModal from '@components/common/ValidationModal.vue'
@@ -732,7 +732,7 @@ export default {
               break
             } else {
               const contract = makeDemandeAdminEditContract(fitarena_id, this.creneauStore)
-              this.verifCreneaux = await postCreneauVerifDemande(contract);
+              this.verifCreneaux = await postCreneauVerifDemande(contract)
               this.verifModal = true
             }
             break
@@ -740,7 +740,7 @@ export default {
           case 3:
             this.creneauStore.nbPersonnesAttendu = parseInt(this.creneauStore.nbPersonnesAttendu)
             const contract = makeDemandeAdminOGEditContract(fitarena_id, this.creneauStore)
-            this.verifCreneaux = await postCreneauVerifDemande(contract);
+            this.verifCreneaux = await postCreneauVerifDemande(contract)
             this.verifModal = true
             break
         }

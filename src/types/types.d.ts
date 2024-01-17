@@ -75,7 +75,8 @@ type DemandeEditContract = {
     tarifHoraire: number
     nbParticipants: number
     recurrence?: Recurrence
-    mode: 'recurrence' | 'occurence'
+    mode: 'recurrence' | 'occurence',
+    nbPersonnesAttendu: number
   }
   commentaire: string
   fitArenaId: number

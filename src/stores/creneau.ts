@@ -56,22 +56,22 @@ export const useCreneauStore = defineStore('creneau', {
       const planningStore = usePlanningStore()
       const creneau = makeDemandeCreneauEditContract(fitarena_id, this.$state)
       const response = await postCreneau(creneau)
-      const creneaux = this.parseDemandeCreneauResponse(response);
-      planningStore.addCreneaux(creneaux);
+      const creneaux = this.parseDemandeCreneauResponse(response)
+      planningStore.addCreneaux(creneaux)
     },
     async addCreneauOrganisme(fitarena_id: number) {
       const planningStore = usePlanningStore()
       const creneau = makeCreneauOGEditContract(fitarena_id, this.$state)
       const response = await postCreneau(creneau)
-      const creneaux = this.parseDemandeCreneauResponse(response);
-      planningStore.addCreneaux(creneaux);
+      const creneaux = this.parseDemandeCreneauResponse(response)
+      planningStore.addCreneaux(creneaux)
     },
     async editCreneau(fitarena_id: number) {
       if (!this.id) return
       const planningStore = usePlanningStore()
       const contract = makeDemandeCreneauEditContract(fitarena_id, this.$state)
       const response = await updateCreneau(this.id, contract)
-      planningStore.addCreneaux(this.parseDemandeCreneauResponse(response));
+      planningStore.addCreneaux(this.parseDemandeCreneauResponse(response))
       planningStore.removeCreneau(this.id)
     },
     async editCreneauOrganisme(fitarena_id: number) {

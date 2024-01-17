@@ -127,6 +127,7 @@ export function makeDemandeAdminOGEditContract(
       organisme: creneau.organisme,
       zones: zones,
       recurrence: creneau.recurrence,
+      nbPersonnesAttendu: creneau.nbPersonnesAttendu
     },
     commentaire: '',
     fitArenaId: fitarena_id,
