@@ -34,6 +34,13 @@
       />
       <MenuRecurrence v-if="submenu" class="mt-4" />
       <HeaderModal text="ZONES" class="my-8" />
+      <!-- SÉLECTION DE TOUTES LES ZONES -->
+      <Button
+        label="Sélectionner toutes les zones"
+        :class="isAllZoneChecked ? 'bg-red-600 text-white mb-4' : 'bg-neutral-200 text-black mb-4'"
+        @click="selectAllZones()"
+      />
+      {{ form.zones }}
       <InputOptions :options="props.zones" v-model="form.zones" :value="props.libelle" />
       <CardModalSection title="COMMENTAIRE" class="my-8">
         <template #content>
@@ -222,6 +229,7 @@ const commentaires = ref([])
 const deleteDemande_modal = ref(false)
 const submenu = ref(false)
 const isRecurrent = ref(false)
+const isAllZoneChecked = ref(false)
 
 const props = defineProps({
   zones: Object
@@ -266,7 +274,7 @@ function create(event: DateSelectArg) {
   form.recurrence = default_form_values.recurrence
   form.title = default_form_values.title
   form.people_count = default_form_values.people_count
-  form.zones = default_form_values.zones
+  form.zones = [...default_form_values.zones]
   form.commentaire = default_form_values.commentaire
   date.value = parseDateToInput(event.start)
   form.start_time = extractHour(event.start)
@@ -292,6 +300,22 @@ function edit(event: EventClickArg) {
   date.value = dayjs(e.extendedProps.dateDebut).format('DD-MM-YYYY')
   form.start_time = dayjs(e.extendedProps.dateDebut).format('HH:mm')
   form.end_time = dayjs(e.extendedProps.dateSortie).format('HH:mm')
+}
+
+const selectAllZones = () => {
+  if (isAllZoneChecked.value) { // si toutes les zones sont déjà checkées
+    // désélectionner toutes les zones
+    form.zones = []
+  } else {
+    form.zones = []
+    props.zones.forEach(zone => {
+      form.zones.push(zone.id)
+      zone.zoneActivites.forEach(activity => {
+        activity.activite.checked = true
+      })
+    })
+  }
+  isAllZoneChecked.value = !isAllZoneChecked.value
 }
 
 const submitDemande = async() => {

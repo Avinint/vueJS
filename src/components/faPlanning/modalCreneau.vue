@@ -143,10 +143,27 @@
         v-if="creneauType !== null"
         class="relative rounded-lg border border-gray-300 p-4"
       >
-        <label class="block text-sm font-bold text-gray-900"> Zones </label>
+      <div class="flex items-center">
+        <label class="block text-sm font-bold text-gray-900 mr-10">Zones</label>
+        <!-- SÉLECTION DE TOUTES LES ZONES -->
+        <input
+          :id="zones"
+          v-model="isAllZoneChecked"
+          type="checkbox"
+          class="hidden"
+          @click="selectAllZones()"
+        />
+        <label
+          class="mb-3 mr-9 inline-block w-1/12 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
+          :class="{ 'bg-sky-600 text-white': isAllZoneChecked }"
+          :for="zones"
+        >
+          Sélectionner toutes les zones
+        </label>
+      </div>
         <label
           v-if="creneauType !== 'organisme' && creneauStore.zones.length > 0"
-          class="absolute top-32 mb-2 block text-sm font-bold text-gray-900"
+          class="absolute top-32 my-4 block text-sm font-bold text-gray-900"
         >
           Activités
         </label>
@@ -408,7 +425,7 @@ export default {
   data () {
     return {
       zones: [],
-      // activites: [],
+      isAllZoneChecked: false,
       datepicked: '',
       datepickerFormat: 'DD / MM / YYYY',
       timeSeparator: ':',
@@ -621,6 +638,42 @@ export default {
       }
 
       this.submenu = type;
+    },
+    selectAllZones () {
+      if (this.isAllZoneChecked) { // si toutes les zones sont déjà checkées
+        // si créneau GP ==> désélectionner toutes les zones et activités
+        if (this.creneauType === 'grand_public') {
+          this.creneauStore.zones = []
+          this.zones.forEach(zone => {
+            zone.zoneActivites.forEach(activity => {
+              activity.activite.checked = false
+            })
+          })
+        }
+        if (this.creneauType === 'organisme') {
+          // si créneau organisme ==> désélectionner toutes les zones
+          this.creneauStore.zones = []
+        }
+      } else {
+        // si créneau GP ==> sélectionner toutes les zones et activités
+        if (this.creneauType === 'grand_public') {
+          this.creneauStore.zones = []
+          this.zones.forEach(zone => {
+            this.creneauStore.zones.push(zone.id)
+            zone.zoneActivites.forEach(activity => {
+              activity.activite.checked = true
+            })
+          })
+        }
+        if (this.creneauType === 'organisme') {
+          // si créneau organisme ==> sélectionner toutes les zones
+          this.creneauStore.zones = []
+          this.zones.forEach(zone => {
+            this.creneauStore.zones.push(zone.id)
+          })
+        }
+      }
+      this.isAllZoneChecked = !this.isAllZoneChecked
     },
     selectActivities(zone) {
       const isChecked = this.isZoneChecked(zone.id)
