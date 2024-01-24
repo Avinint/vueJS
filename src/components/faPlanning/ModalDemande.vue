@@ -36,11 +36,10 @@
       <HeaderModal text="ZONES" class="my-8" />
       <!-- SÉLECTION DE TOUTES LES ZONES -->
       <Button
-        label="Sélectionner toutes les zones"
+        :label="`${labelCheckedAllZones} toutes les zones`"
         :class="isAllZoneChecked ? 'bg-red-600 text-white mb-4' : 'bg-neutral-200 text-black mb-4'"
         @click="selectAllZones()"
       />
-      {{ form.zones }}
       <InputOptions :options="props.zones" v-model="form.zones" :value="props.libelle" />
       <CardModalSection title="COMMENTAIRE" class="my-8">
         <template #content>
@@ -230,6 +229,7 @@ const deleteDemande_modal = ref(false)
 const submenu = ref(false)
 const isRecurrent = ref(false)
 const isAllZoneChecked = ref(false)
+const labelCheckedAllZones = ref('Sélectionner')
 
 const props = defineProps({
   zones: Object
@@ -304,9 +304,11 @@ function edit(event: EventClickArg) {
 
 const selectAllZones = () => {
   if (isAllZoneChecked.value) { // si toutes les zones sont déjà checkées
+    labelCheckedAllZones.value = 'Sélectionner'
     // désélectionner toutes les zones
     form.zones = []
   } else {
+    labelCheckedAllZones.value = 'Désélectionner'
     form.zones = []
     props.zones.forEach(zone => {
       form.zones.push(zone.id)

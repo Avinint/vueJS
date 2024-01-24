@@ -158,7 +158,7 @@
           :class="{ 'bg-sky-600 text-white': isAllZoneChecked }"
           :for="zones"
         >
-          Sélectionner toutes les zones
+          {{ labelCheckedAllZones }} toutes les zones
         </label>
       </div>
         <label
@@ -433,7 +433,8 @@ export default {
       submenu: 'none',
       errorMessage: false,
       verifModal: false,
-      verifCreneaux: []
+      verifCreneaux: [],
+      labelCheckedAllZones: 'Sélectionner'
     }
   },
   async mounted() {
@@ -641,6 +642,7 @@ export default {
     },
     selectAllZones () {
       if (this.isAllZoneChecked) { // si toutes les zones sont déjà checkées
+        this.labelCheckedAllZones = 'Sélectionner'
         // si créneau GP ==> désélectionner toutes les zones et activités
         if (this.creneauType === 'grand_public') {
           this.creneauStore.zones = []
@@ -655,6 +657,7 @@ export default {
           this.creneauStore.zones = []
         }
       } else {
+        this.labelCheckedAllZones = 'Désélectionner'
         // si créneau GP ==> sélectionner toutes les zones et activités
         if (this.creneauType === 'grand_public') {
           this.creneauStore.zones = []

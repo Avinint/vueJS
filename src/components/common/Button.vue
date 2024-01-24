@@ -42,7 +42,7 @@ const TYPE = {
   success: 'bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 text-white',
   secondary: 'focus:ring-blue-300 bg-white',
   tertiary: 'hover:bg-red-200 border-1 border-red-600 bg-white text-red-600',
-  '': 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 text-white'
+  '': 'bg-blue-700 focus:ring-4 focus:ring-blue-300 text-black'
 }
 
 interface Props {
