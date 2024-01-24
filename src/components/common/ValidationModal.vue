@@ -34,7 +34,7 @@
             submit
             test="TconfirmModal"
             label="Confirmer"
-            class="bg-red-600 hover:bg-red-800"
+            class="bg-red-600 hover:bg-red-800 text-white"
             @click="emit('confirm', $event)"
           />
           <Button
