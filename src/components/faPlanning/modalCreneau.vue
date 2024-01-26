@@ -534,7 +534,7 @@ export default {
       )
     },
     heureDebutMax() {
-      return this.formatterHoraire(this.getHeureBrut(this.planningStore.slotMaxTime) - this.dureeCreneau)
+      return this.formatterHoraire(this.getHeureBrut(this.planningStore.slotMaxTime))
     },
     heureFinMax() {
       return this.formatterHoraire(this.getHeureBrut(this.planningStore.slotMaxTime))
