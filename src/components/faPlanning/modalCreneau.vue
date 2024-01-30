@@ -681,12 +681,15 @@ export default {
     selectActivities(zone) {
       const isChecked = this.isZoneChecked(zone.id)
       if (!isChecked) {
+        this.creneauStore.zones.push(zone.id)
         for (const activity of zone.zoneActivites) {
-          activity.activite.checked = true;
+          activity.activite.checked = true
         }
       } else {
+        const i = this.creneauStore.zones.findIndex(el => el === zone.id)
+        this.creneauStore.zones.splice(i, 1)
         for (const activity of zone.zoneActivites) {
-          activity.activite.checked = false;
+          activity.activite.checked = false
         }
       }
     },

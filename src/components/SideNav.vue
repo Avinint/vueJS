@@ -67,16 +67,16 @@
 
 <script setup lang="ts">
 import SideNavItem from "./SideNavItem.vue"
-import HomeSVG from "@components/svg/HomeSVG.vue";
-import CitySVG from "@components/svg/CitySVG.vue";
-import UserSVG from "@components/svg/UserSVG.vue";
-import MonitoringSVG from "@components/svg/MonitoringSVG.vue";
-import PlanningSVG from "@components/svg/PlanningSVG.vue";
-import BookingSVG from "@components/svg/BookingSVG.vue";
-import ChevronSVG from "@components/svg/ChevronSVG.vue";
+import HomeSVG from "@components/svg/HomeSVG.vue"
+import CitySVG from "@components/svg/CitySVG.vue"
+import UserSVG from "@components/svg/UserSVG.vue"
+import MonitoringSVG from "@components/svg/MonitoringSVG.vue"
+import PlanningSVG from "@components/svg/PlanningSVG.vue"
+import BookingSVG from "@components/svg/BookingSVG.vue"
+import ChevronSVG from "@components/svg/ChevronSVG.vue"
 
-import { useUserStore } from "@/stores/user.js";
-import { useMenuStore } from "@/stores/menu.js";
+import { useUserStore } from "@/stores/user.js"
+import { useMenuStore } from "@/stores/menu.js"
 
 import { computed, onMounted } from "vue"
 

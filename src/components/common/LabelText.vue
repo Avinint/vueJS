@@ -1,10 +1,10 @@
 <template>
-    <label class="label-text">{{ text }}</label>
+  <label class="label-text">{{ text }}</label>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-    text: string
+  text: string
 }>()
 </script>
 

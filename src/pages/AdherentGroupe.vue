@@ -119,7 +119,6 @@ import ButtonRight from '@components/common/ButtonRight.vue'
 import InputOptions from '../components/common/InputOptions.vue'
 
 import {onMounted, reactive, ref, watch} from 'vue'
-import 'vue3-toastify/dist/index.css'
 import Table, { type FaTableColumnData, type FaTableRow } from '../components/common/Table.vue'
 import LabelText from '@components/common/LabelText.vue'
 import { useRoute } from 'vue-router'

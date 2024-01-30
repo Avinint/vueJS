@@ -68,29 +68,4 @@ function getTableData() {
 </script>
 
 <style scoped>
-.label-text {
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity));
-  font-weight: 500;
-  font-size: 1rem;
-  line-height: 1.25rem;
-  width: 50%;
-}
-
-.infos {
-  background-color: #F9FAFB;
-  width: 100%;
-  color: #000;
-  border: 1px solid #E9E9E9;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-}
-
-.infos-section {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
 </style>

@@ -25,23 +25,21 @@ import FaOrganisme from './pages/FaOrganisme.vue'
 import OgPlanning from './pages/organisme/OgPlanning.vue'
 import Animateur from '@pages/animateur.vue'
 import Adherent from '@pages/Adherent.vue'
-import AdherentGroupe from "@pages/AdherentGroupe.vue";
-import FaReservations from "@pages/fitarena/FaReservations.vue";
-import FaDemandes from "@pages/fitarena/FaDemandes.vue";
+import AdherentGroupe from "@pages/AdherentGroupe.vue"
+import FaReservations from "@pages/fitarena/FaReservations.vue"
+import FaDemandes from "@pages/fitarena/FaDemandes.vue"
+import FaTarifs from "@pages/fitarena/FaTarifs.vue"
 
 const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: Login,
+    component: Login
   },
   {
     path: '/',
     name: 'Admin',
-    component: Admin,
-    meta: {
-      breadcrumbs: [],
-    },
+    component: Admin
   },
   {
     path: '/users',
@@ -51,10 +49,10 @@ const routes = [
       breadcrumbs: [
         {
           link: '',
-          label: 'Utilisateurs',
-        },
-      ],
-    },
+          label: 'Utilisateurs'
+        }
+      ]
+    }
   },
   {
     path: '/fitarena',
@@ -64,19 +62,16 @@ const routes = [
       breadcrumbs: [
         {
           link: '',
-          label: 'Fit Arena',
-        },
-      ],
-    },
+          label: 'Fit Arena'
+        }
+      ]
+    }
   },
   {
     path: '/fitarena/:id',
     props: true,
     name: 'FitArena',
     component: FitArena,
-    meta: {
-      breadcrumbs: [],
-    },
     children: [
       {
         path: 'config',
@@ -84,15 +79,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Configuration',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'planning',
@@ -100,15 +91,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
+              label: 'Planning',
               link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+            }
+          ]
+        }
       },
       {
         path: 'reservations',
@@ -116,11 +103,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-          ],
-        },
+              label: 'Réservations',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'params',
@@ -128,32 +115,23 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Paramètres',
+              link: ''
+            }
+          ]
+        }
       },
-
       {
         path: 'espaces',
         component: FaSpaces,
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Espaces',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'actualities',
@@ -161,15 +139,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Actualités',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'web',
@@ -177,15 +151,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Web',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'zones',
@@ -193,15 +163,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Zones',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'sous-espaces',
@@ -209,15 +175,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Sous-espaces',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'activites-par-zone',
@@ -225,15 +187,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Activités par zones',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'activites',
@@ -241,15 +199,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Activités',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'equipements-numeriques',
@@ -257,15 +211,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+              label: 'Équipements numériques',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'equipements-motorises',
@@ -273,15 +223,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
+              label: 'Équipements motorisés',
               link: '',
-            },
-            /**{
-              label: '',
-              link: 'fitarena/',
-            },**/
-          ],
-        },
+            }
+          ]
+        }
       },
       {
         path: 'supervision',
@@ -289,11 +235,11 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-          ],
-        },
+              label: 'Supervision',
+              link: ''
+            }
+          ]
+        }
       },
       {
         path: 'demandes',
@@ -301,13 +247,25 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-          ],
-        },
+              label: 'Demandes',
+              link: ''
+            }
+          ]
+        }
+      },
+      {
+        path: 'tarifs',
+        component: FaTarifs,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Tarifs',
+              link: ''
+            }
+          ]
+        }
       }
-    ] ,
+    ]
   },
   {
     path: '/clients',
@@ -317,10 +275,10 @@ const routes = [
       breadcrumbs: [
         {
           link: '',
-          label: 'Clients',
-        },
-      ],
-    },
+          label: 'Clients'
+        }
+      ]
+    }
   },
   {
     path: '/animateurs',
@@ -330,14 +288,14 @@ const routes = [
       breadcrumbs: [
         {
           label: 'Animateur',
-          link: '',
+          link: ''
         },
         {
           label: 'Liste',
-          link: '',
-        },
-      ],
-    },
+          link: ''
+        }
+      ]
+    }
   },
   {
     path: '/organismes',
@@ -347,10 +305,10 @@ const routes = [
       breadcrumbs: [
         {
           link: '',
-          label: 'organisme',
-        },
-      ],
-    },
+          label: 'Organismes'
+        }
+      ]
+    }
   },
   {
     path: '/organismes/:org_id',
@@ -358,7 +316,7 @@ const routes = [
     name: 'Organismes',
     component: FitArena,
     meta: {
-      breadcrumbs: [],
+      breadcrumbs: []
     },
     children: [
       {
@@ -367,13 +325,13 @@ const routes = [
         meta: {
           breadcrumbs: [
             {
-              label: 'Fit Arena',
-              link: '',
-            },
-          ],
-        },
-      },
-    ],
+              label: 'Planning',
+              link: ''
+            }
+          ]
+        }
+      }
+    ]
   },
   {
     path: '/clients/:id/users',
@@ -384,13 +342,13 @@ const routes = [
       breadcrumbs: [
         {
           label: 'Utilisateurs',
-          link: '',
+          link: ''
         },
         {
           label: 'Liste',
-          link: '',
-        },
-      ],
+          link: ''
+        }
+      ]
     }
   },
   {
@@ -402,13 +360,13 @@ const routes = [
       breadcrumbs: [
         {
           label: 'Organismes',
-          link: '',
+          link: ''
         },
         {
           label: 'Liste',
-          link: '',
+          link: ''
         },
-      ],
+      ]
     }
   },
   {
@@ -419,14 +377,14 @@ const routes = [
       breadcrumbs: [
         // {
         //   label: 'Animateur',
-        //   link: 'animateur',
+        //   link: 'animateur'
         // },
         // {
         //   label: 'Liste',
-        //   link: 'liste',
+        //   link: 'liste'
         // }
-      ],
-    },
+      ]
+    }
   },
   {
     path: '/organismes/:id/groupes',
@@ -436,14 +394,14 @@ const routes = [
       breadcrumbs: [
         // {
         //   label: 'Animateur',
-        //   link: 'animateur',
+        //   link: 'animateur'
         // },
         // {
         //   label: 'Liste',
-        //   link: 'liste',
+        //   link: 'liste'
         // }
-      ],
-    },
+      ]
+    }
   },
 
   {
@@ -454,15 +412,15 @@ const routes = [
       breadcrumbs: [
         // {
         //   label: 'Animateur',
-        //   link: 'animateur',
+        //   link: 'animateur'
         // },
         // {
         //   label: 'Liste',
-        //   link: 'liste',
+        //   link: 'liste'
         // }
-      ],
-    },
-  },
+      ]
+    }
+  }
 ]
 
 const router = createRouter({

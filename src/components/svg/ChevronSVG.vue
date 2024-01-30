@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 
-  const props = defineProps({
-    open: Boolean,
-    visible: Boolean
-  })
+const props = defineProps({
+  open: Boolean,
+  visible: Boolean
+})
 
-  const emit = defineEmits(['openMenuItem'])
+const emit = defineEmits(['openMenuItem'])
 </script>
 
 <template>
