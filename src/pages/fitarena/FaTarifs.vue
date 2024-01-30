@@ -17,29 +17,26 @@
       </div>
       <div v-for="(tarifs, i) in activite.tarifs" :key="`tarifs-${i}`">
         <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : {{ tarifs.type }}</h3>
-        <table class="w-full text-left mb-10">
+        <table class="w-full text-left mb-10 rounded-lg">
           <thead class="bg-gray-200 text-sm">
             <tr>
-              <th style="width:1%;" />
               <th style="width:1%;">Prio</th>
               <th style="width:10%;">Statut</th>
               <th style="width:20%;">Nom du tarif</th>
               <th style="width:10%;">Tarif</th>
-              <th style="width:20%;">Plages horaires</th>
-              <th style="width:20%;">Jours</th>
-              <th style="width:14%;">Dates</th>
-              <th style="width:2%;" />
-              <th style="width:2%;" />
+              <th style="width:20%;" /> <!-- plage horaire -->
+              <th style="width:20%;" /> <!-- jours -->
+              <th style="width:16%;" /> <!-- date début - date fin -->
+              <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
+              <th style="width:1%;" /> <!-- modification (ouverture modal) -->
+              <th style="width:1%;" /> <!-- drag and drop -->
             </tr>
           </thead>
           <tbody>
             <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
               <tr>
-                <td class="text-center">
-                  <ChevronSVG :open="tarif.open" :visible="tarif.periodes.length > 1" @openMenuItem="openTarif(tarif)" />
-                </td>
                 <td class="text-center">{{ tarif.priorite }}</td>
-                <td class="flex gap-6">
+                <td class="flex gap-6 mt-2">
                   <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
                   <label class="relative inline-flex cursor-pointer items-center">
                     <input
@@ -59,9 +56,14 @@
                 </td>
                 <td>{{ tarif.nom }}</td>
                 <td>{{ tarif.tarif }}</td>
-                <td>{{ tarif.periodes[0].plage_horaire }}</td>
-                <td>{{ tarif.periodes[0].jours.join(' - ') }}</td>
-                <td>{{ tarif.periodes[0].date_debut }} - {{ tarif.periodes[0].date_fin }}</td>
+                <td />
+                <td />
+                <td />
+                <td class="text-center">
+                  <div class="px-3">
+                    <InfoSVG :open="tarif.open" @click="openTarif(tarif)" class="cursor-pointer" />
+                  </div>
+                </td>
                 <td>
                   <Button
                     icon="edit"
@@ -71,22 +73,17 @@
                   />
                 </td>
                 <td>
-                  <Button
-                    icon="delete"
-                    borderless
-                    couleur="secondary"
-                    @click="deleteTarif(i)"
-                  />
+                  <div class="border-t border-b border-black h-2 w-4 px-2" />
                 </td>
               </tr>
               <template v-if="tarif.open">
                 <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
-                  <tr v-if="i > 0">
-                    <td colspan="5" />
+                  <tr>
+                    <td colspan="4" />
                     <td>{{ periode.plage_horaire }}</td>
                     <td>{{ periode.jours.join(' - ') }}</td>
                     <td>{{ periode.date_debut }} - {{ periode.date_fin }}</td>
-                    <td colspan="2" />
+                    <td colspan="3" />
                   </tr>
                 </template>
               </template>
@@ -126,7 +123,7 @@ import Input from '@components/common/Input.vue'
 import ValidationModal from '@components/common/ValidationModal.vue'
 import ButtonRight from '@components/common/ButtonRight.vue'
 import LabelText from '@components/common/LabelText.vue'
-import ChevronSVG from "@components/svg/ChevronSVG.vue"
+import InfoSVG from "@components/svg/InfoSVG.vue"
 
 import { getTarifs } from '@api/tarifs'
 
@@ -156,10 +153,6 @@ const modifieTarif = async (i :number) => {
   console.log(`modifier actif / inactif du tarif ${i}`)
 }
 
-const deleteTarif = async (i :number) => {
-  console.log(`delete actif / inactif du tarif ${i}`)
-}
-
 const editTarif = (i :number) => {
   openModal.value = true
 }
@@ -182,6 +175,10 @@ th, td {
 
 th {
   font-weight: 700;
+}
+
+td {
+  border-right: 1px solid rgb(229 231 235);
 }
 
 tr {
