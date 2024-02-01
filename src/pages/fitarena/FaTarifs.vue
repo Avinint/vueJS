@@ -32,7 +32,17 @@
               <th style="width:1%;" /> <!-- drag and drop -->
             </tr>
           </thead>
-          <tbody>
+          <!-- <draggable v-model="list" ghost-class="ghost" tag="tbody" :disabled="!enabled" @start="dragging = true" @end="dragging = false">
+            <template #item="{ element }" :key="element.id">
+              <tr>
+                <td>{{ element.priorite }}</td>
+                <td>{{ element.actif }}</td>
+                <td>{{ element.nom }}</td>
+                <td>{{ element.tarif }}</td>
+              </tr>
+            </template>
+          </draggable> -->
+          <!-- <tbody>
             <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
               <tr>
                 <td class="text-center">{{ tarif.priorite }}</td>
@@ -88,11 +98,22 @@
                 </template>
               </template>
             </template>
-          </tbody>
+          </tbody> -->
         </table>
       </div>
     </Card>
   </Card>
+
+  <draggable v-model="list" ghost-class="ghost" :disabled="!enabled" @start="dragging = true" @end="dragging = false">
+    <template #item="{ element }" :key="element.id">
+      <tr>
+        <td>{{ element.priorite }}</td>
+        <td>{{ element.actif }}</td>
+        <td>{{ element.nom }}</td>
+        <td>{{ element.tarif }}</td>
+      </tr>
+    </template>
+  </draggable>
 
   <!-- <form @submit.prevent="saveTarif">
     <Modal
@@ -139,6 +160,21 @@ const tarifsByActivities = ref([])
 const openModal = ref(false)
 const dragging = ref(false)
 const enabled = true
+
+const list = [
+  {
+    priorite: 1,
+    actif: true,
+    nom: 'TEst',
+    tarif: 'TEST TEST VACANCES'
+  },
+  {
+    priorite: 1,
+    actif: true,
+    nom: 'fjekz ',
+    tarif: 'SEMAINE'
+  }
+]
 
 const fetchDonnees = async () => {
   tarifsByActivities.value = await getTarifs({ idFitArena: props.id, page: 1 })
