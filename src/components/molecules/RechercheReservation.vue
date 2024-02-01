@@ -51,6 +51,7 @@
               v-model="recherche.type"
               class="block w-48 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
+              <option></option>
               <option v-for="(type, i) in selectTypes" :key="i" :value="type.id">
                 {{ type.libelle }}
               </option>
@@ -64,6 +65,7 @@
               class="block w-48 rounded-lg w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
 
             >
+              <option></option>
               <option v-for="(organisme, i) in selectOrganismes" :key="i" :value="organisme.id">
                 {{ organisme.libelle }}
               </option>
@@ -76,6 +78,7 @@
               v-model="recherche.statut"
               class="block w-48 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
+              <option></option>
               <option v-for="(statut, i) in selectStatuts" :key="i" :value="statut.id">
                 {{ statut.libelle }}
               </option>
@@ -182,19 +185,19 @@
 </template>
 
 <script setup lang="ts">
-import Switch from "@components/common/Switch.vue";
-import Input from "@components/common/Input.vue";
-import ButtonRight from "@components/common/ButtonRight.vue";
-import Modal from "@components/common/Modal.vue";
+import Switch from "@components/common/Switch.vue"
+import Input from "@components/common/Input.vue"
+import ButtonRight from "@components/common/ButtonRight.vue"
+import Modal from "@components/common/Modal.vue"
 import CardModalSection from '@components/common/CardModalSection.vue'
-import Card from "@components/common/Card.vue";
-import LabelText from "@components/common/LabelText.vue";
+import Card from "@components/common/Card.vue"
+import LabelText from "@components/common/LabelText.vue"
 
-import { useMenuStore } from "@stores/menu";
-import { getStatuts, getTypes } from "@api/reservation";
+import { useMenuStore } from "@stores/menu"
+import { getStatuts, getTypes } from "@api/reservation"
 
-import { computed, nextTick, reactive, ref, watch, onMounted } from "vue";
-import dayjs from "dayjs";
+import { computed, nextTick, reactive, ref, watch, onMounted } from "vue"
+import dayjs from "dayjs"
 
 const { getOrganismes } = useMenuStore()
 const selectOrganismes = computed(() => getOrganismes().map(({id, libelle}) => ({id, libelle})))

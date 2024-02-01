@@ -167,13 +167,13 @@ const calqueFormulaireVisible = ref(false)
 const calqueConfirmationVisible = ref(false)
 
 const fetchDonnees = async(params = {}) => {
+  spinner.value = true
   reservations.value = await getReservations({ idFA: props.id, page: 1, ...params })
+  spinner.value = false
 }
 
 onMounted(async () => {
-  spinner.value = true
   await fetchDonnees()
-  spinner.value = false
 })
 
 watch(() => props.id, () => fetchDonnees())

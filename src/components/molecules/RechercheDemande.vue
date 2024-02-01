@@ -13,6 +13,7 @@
               id="TrechDmdSelectOrganisme"
               v-model="recherche.organisme"
               class="block w-48 rounded-lg w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500">
+              <option></option>
               <option v-for="(organisme, i) in selectOrganismes" :key="i" :value="organisme.id">
                 {{ organisme.libelle }}
               </option>
@@ -25,6 +26,7 @@
               v-model="recherche.statut"
               class="block w-48 w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
+              <option></option>
               <option v-for="(statut, i) in selectStatuts" :key="`statutDemande-${i}`" :value="statut.id">
                 {{ statut.libelle }}
               </option>
@@ -37,13 +39,13 @@
 </template>
 
 <script setup lang="ts">
-import ButtonRight from "@components/common/ButtonRight.vue";
-import Modal from "@components/common/Modal.vue";
+import ButtonRight from "@components/common/ButtonRight.vue"
+import Modal from "@components/common/Modal.vue"
 import CardModalSection from '@components/common/CardModalSection.vue'
 
-import { useMenuStore } from "@stores/menu";
+import { useMenuStore } from "@stores/menu"
 
-import { computed, reactive, ref, defineEmits, onMounted } from "vue";
+import { computed, reactive, ref, defineEmits } from "vue"
 
 const { getOrganismes } = useMenuStore()
 const selectOrganismes = computed(() => getOrganismes().map(({id, libelle}) => ({id, libelle})))
