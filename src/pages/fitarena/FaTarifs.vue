@@ -29,22 +29,12 @@
               <th style="width:16%;" /> <!-- date début - date fin -->
               <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
               <th style="width:1%;" /> <!-- modification (ouverture modal) -->
-              <th style="width:1%;" /> <!-- drag and drop -->
+              <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
             </tr>
           </thead>
-          <!-- <draggable v-model="list" ghost-class="ghost" tag="tbody" :disabled="!enabled" @start="dragging = true" @end="dragging = false">
-            <template #item="{ element }" :key="element.id">
-              <tr>
-                <td>{{ element.priorite }}</td>
-                <td>{{ element.actif }}</td>
-                <td>{{ element.nom }}</td>
-                <td>{{ element.tarif }}</td>
-              </tr>
-            </template>
-          </draggable> -->
-          <!-- <tbody>
+          <tbody class="sortable-list">
             <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
-              <tr>
+              <tr class="item" draggable="true" :id="tarif.id">
                 <td class="text-center">{{ tarif.priorite }}</td>
                 <td class="flex gap-6 mt-2">
                   <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
@@ -98,22 +88,35 @@
                 </template>
               </template>
             </template>
-          </tbody> -->
+          </tbody>
         </table>
       </div>
     </Card>
   </Card>
-
-  <draggable v-model="list" ghost-class="ghost" :disabled="!enabled" @start="dragging = true" @end="dragging = false">
-    <template #item="{ element }" :key="element.id">
-      <tr>
-        <td>{{ element.priorite }}</td>
-        <td>{{ element.actif }}</td>
-        <td>{{ element.nom }}</td>
-        <td>{{ element.tarif }}</td>
-      </tr>
-    </template>
-  </draggable>
+<!-- 
+  <ul class="sortable-list">
+    <li class="item" draggable="true">
+      <div class="details">
+        <img src="@/assets/agenda.svg" />
+        <span>AGENDA</span>
+      </div>
+      <div class="border-t border-b border-black h-2 w-4 px-2" />
+    </li>
+    <li class="item" draggable="true">
+      <div class="details">
+        <img src="@/assets/booking.svg" />
+        <span>BOOKING</span>
+      </div>
+      <div class="border-t border-b border-black h-2 w-4 px-2" />
+    </li>
+    <li class="item" draggable="true">
+      <div class="details">
+        <img src="@/assets/city.svg" />
+        <span>CITY</span>
+      </div>
+      <div class="border-t border-b border-black h-2 w-4 px-2" />
+    </li>
+  </ul> -->
 
   <!-- <form @submit.prevent="saveTarif">
     <Modal
@@ -146,42 +149,54 @@ import ButtonRight from '@components/common/ButtonRight.vue'
 import LabelText from '@components/common/LabelText.vue'
 import InfoSVG from "@components/svg/InfoSVG.vue"
 
-import { getTarifs } from '@api/tarifs'
+import { getTarifs, patchTarif } from '@api/tarifs'
 
 import 'vue3-toastify/dist/index.css'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
-import draggable from 'vuedraggable'
 
 const props = defineProps(['id'])
 const route = useRoute()
 const tarifsByActivities = ref([])
 const openModal = ref(false)
-const dragging = ref(false)
-const enabled = true
-
-const list = [
-  {
-    priorite: 1,
-    actif: true,
-    nom: 'TEst',
-    tarif: 'TEST TEST VACANCES'
-  },
-  {
-    priorite: 1,
-    actif: true,
-    nom: 'fjekz ',
-    tarif: 'SEMAINE'
-  }
-]
 
 const fetchDonnees = async () => {
   tarifsByActivities.value = await getTarifs({ idFitArena: props.id, page: 1 })
   tarifsByActivities.value = tarifsByActivities.value.map(tarif => ({ ...tarif, open: false }))
 }
 
-onMounted(async () => await fetchDonnees())
+onMounted(async () => {
+  await fetchDonnees()
+  const sortableList = document.querySelector('.sortable-list')
+  const items = document.querySelectorAll('.item')
+
+  items.forEach(item => {
+    item.addEventListener('dragstart', () => {
+      item.classList.add("dragging")
+    })
+    item.addEventListener('dragend', async () => {
+      item.classList.remove('dragging')
+      // await patchTarif(route.params.id, item.id, { priorite: 2 })
+      console.log(item.id)
+    })
+  })
+
+  const initSortableList = (e: any) => {
+    e.preventDefault()
+    const draggingItem = sortableList?.querySelector('.dragging')
+    const siblings = [...sortableList.querySelectorAll('.item:not(.dragging)')]
+
+    let nextSibling = siblings.find(sibling => {
+      return e.clientY <= sibling.offsetTop + sibling.offsetHeight / 2
+    })
+    
+    sortableList?.insertBefore(draggingItem, nextSibling)
+  }
+
+  sortableList?.addEventListener('dragover', initSortableList)
+  sortableList?.addEventListener('dragenter', e => e.preventDefault())
+})
 
 watch(() => route.params?.id, async() => await fetchDonnees())
 
@@ -201,6 +216,35 @@ const addTarif = () => {
 const openTarif = (tarif :object) => {
   tarif.open = !tarif.open
 }
+
+// onMounted(() => {
+//   const sortableList = document.querySelector('.sortable-list')
+//   const items = document.querySelectorAll('.item')
+
+//   items.forEach(item => {
+//     item.addEventListener('dragstart', () => {
+//       item.classList.add("dragging")
+//     })
+//     item.addEventListener('dragend', () => {
+//       item.classList.remove('dragging')
+//     })
+//   })
+
+//   const initSortableList = (e: any) => {
+//     e.preventDefault()
+//     const draggingItem = sortableList?.querySelector('.dragging')
+//     const siblings = [...sortableList.querySelectorAll('.item:not(.dragging)')]
+
+//     let nextSibling = siblings.find(sibling => {
+//       return e.clientY <= sibling.offsetTop + sibling.offsetHeight / 2
+//     })
+    
+//     sortableList?.insertBefore(draggingItem, nextSibling)
+//   }
+
+//   sortableList?.addEventListener('dragover', initSortableList)
+//   sortableList?.addEventListener('dragenter', e => e.preventDefault())
+// })
 </script>
 
 <style scoped>
@@ -229,10 +273,5 @@ tr {
 
 p.statut-tarif {
   min-width: 45px;
-}
-
-.ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
 }
 </style>
