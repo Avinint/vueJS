@@ -154,9 +154,9 @@
               </select>
             </div>
             <div class="flex items-center">
-          <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
-          >Actif :</span
-          >
+              <span class="mb-2 block w-4/12 text-sm font-medium text-gray-900"
+              >Actif :</span
+              >
               <label class="relative inline-flex cursor-pointer items-center">
                 <input
                   v-model="actif"
@@ -234,62 +234,62 @@
             </div>
             <div class="h-4"/>
             <CardModalSection title="Carte d'accès">
-                <div class="my-6 flex items-center">
-                  <p class="w-4/12 label-text"
-                  >Titulaire d'une carte d'accès :</p
-                  >
-                  <label class="relative inline-flex cursor-pointer items-center">
-                    <input
-                      v-model="gestionnaire.titulaireCarte"
-                      :disabled="readonly"
-                      type="checkbox"
-                      :value="false"
-                      class="peer sr-only"
-                    />
-                    <div
-                      class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-                    ></div>
-                  </label>
-                </div>
-                <div class="flex items-center"  v-if="gestionnaire.titulaireCarte">
-                  <Input
-                    id="TcodePin"
-                    v-model="gestionnaire.codePin"
-                    inline
-                    :readonly="readonly"
-                    pattern="\d{6}"
-                    label="Code PIN"
-                    class="w-full"
-                    max-length="6"
-                    min-length="6"
-                    :validation="[codePinValidation]"
-                    v-model:valid="validation.codePin"
-                    required
+              <div class="my-6 flex items-center">
+                <p class="w-4/12 label-text"
+                >Titulaire d'une carte d'accès :</p
+                >
+                <label class="relative inline-flex cursor-pointer items-center">
+                  <input
+                    v-model="gestionnaire.titulaireCarte"
+                    :disabled="readonly"
+                    type="checkbox"
+                    :value="false"
+                    class="peer sr-only"
                   />
-                </div>
+                  <div
+                    class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  ></div>
+                </label>
+              </div>
+              <div class="flex items-center" v-if="gestionnaire.titulaireCarte">
+                <Input
+                  id="TcodePin"
+                  v-model="gestionnaire.codePin"
+                  inline
+                  :readonly="readonly"
+                  pattern="\d{6}"
+                  label="Code PIN"
+                  class="w-full"
+                  max-length="6"
+                  min-length="6"
+                  :validation="[codePinValidation]"
+                  v-model:valid="validation.codePin"
+                  required
+                />
+              </div>
             </CardModalSection>
             <CardModalSection class="pt-6" v-if="gestionnaire.afficherCarte" title="Qr code">
-                <div>
-                  <p class="text-info">Le gestionnaire peut retrouver son QR code sur son profil Fit Arena en se connectant à fit-arena.fr via l’adresse mail renseignée ci-dessus.</p>
-                  <div class="flex items-center justify-between mt-10">
-                    <div v-if="gestionnaire.infoCarte?.qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
-                      <img
-                        alt="QR CODE Fit Arena"
-                        :src="gestionnaire.infoCarte?.qrCode"
-                      />
-                    </div>
-                    <div class="w-8/12">
-                      <ButtonRight
-                        id="TGestOrgQRCodeImprimer"
-                        icon="print"
-                        couleur="danger"
-                        class="w-full"
-                        label="Imprimer le QR Code"
-                        @click="imprimerPdf(gestionnaire)"
-                      />
-                    </div>
+              <div>
+                <p class="text-info">Le gestionnaire peut retrouver son QR code sur son profil Fit Arena en se connectant à fit-arena.fr via l’adresse mail renseignée ci-dessus.</p>
+                <div class="flex items-center justify-between mt-10">
+                  <div v-if="gestionnaire.infoCarte?.qrCode" class="w-3/12 p-4 ml-2 ring-2 ring-offset-4 rounded-lg ring-gray-200">
+                    <img
+                      alt="QR CODE Fit Arena"
+                      :src="gestionnaire.infoCarte?.qrCode"
+                    />
+                  </div>
+                  <div class="w-8/12">
+                    <ButtonRight
+                      id="TGestOrgQRCodeImprimer"
+                      icon="print"
+                      couleur="danger"
+                      class="w-full"
+                      label="Imprimer le QR Code"
+                      @click="imprimerPdf(gestionnaire)"
+                    />
                   </div>
                 </div>
+              </div>
             </CardModalSection>
           </Card>
 

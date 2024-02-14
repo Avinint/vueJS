@@ -42,13 +42,14 @@ const TYPE = {
   success: 'bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 text-white',
   secondary: 'focus:ring-blue-300 bg-white',
   tertiary: 'hover:bg-red-200 border-1 border-red-600 bg-white text-red-600',
-  '': 'bg-blue-700 focus:ring-4 focus:ring-blue-300 text-black'
+  '': 'bg-blue-700 focus:ring-4 focus:ring-blue-300 text-black',
+  none: ''
 }
 
 interface Props {
   label?: string,
   icon?: 'search' | 'print' | 'add' | 'reload' | 'edit' | 'delete' | 'export' | 'logout' | 'cross' | 'filter' | 'info' | '',
-  couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | 'tertiary' | 'important' | '',
+  couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | 'tertiary' | 'important' | 'none' | '',
   borderless: boolean,
   submit: boolean,
   borderRadius: string
