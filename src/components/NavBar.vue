@@ -7,7 +7,7 @@
           <breadcrumbs :items="route.meta.breadcrumbs" />
           <div class="flex items-center">
             <div class="relative">
-              <span @click="openMenu()" class="material-symbols-outlined cursor-pointer">more_horiz</span>
+              <span ref="nav" @click="openMenu()" class="material-symbols-outlined cursor-pointer">more_horiz</span>
               <div v-if="dropdownList" class="absolute right-0">
                 <div class="w-60 h-20 border border-slate-400 rounded-lg z-10 bg-white p-2 text-sm">
                   <router-link to="/preferences-et-confidentialite">
@@ -35,7 +35,7 @@
 import Breadcrumbs from './common/Breadcrumbs.vue'
 import Button from './common/Button.vue'
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@stores/user.js'
 
@@ -43,6 +43,14 @@ const user = useUserStore()
 const route = useRoute()
 const router = useRouter()
 const dropdownList = ref(false)
+const nav = ref(null)
+
+onMounted(() => {
+  document.addEventListener("click", (e) => {
+    if (e.target === nav.value || e.target.parentNode === nav.value) return
+    dropdownList.value = false
+  })
+})
 
 const logout = () => {
   user.logout()
