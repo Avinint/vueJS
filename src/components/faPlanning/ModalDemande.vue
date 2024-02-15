@@ -354,6 +354,8 @@ const submitDemande = async() => {
           errorMessage.value = "Veuillez renseigner au moins un jour dans la semaine pour la récurrence."
           return
         }
+      } else if (creneau_store.recurrence.recurrenceType === 1) {
+        creneau_store.recurrence.recurrenceJoursSemaine = []
       }
 
       form.recurrence = {
