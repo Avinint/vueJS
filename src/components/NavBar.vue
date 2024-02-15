@@ -7,7 +7,7 @@
           <breadcrumbs :items="route.meta.breadcrumbs" />
           <div class="flex items-center">
             <div class="relative">
-              <span ref="nav" @click="openMenu()" class="material-symbols-outlined cursor-pointer">more_horiz</span>
+              <span v-if="user.isGestCo || user.isAdmin" ref="nav" @click="openMenu()" class="material-symbols-outlined cursor-pointer">more_horiz</span>
               <div v-if="dropdownList" class="absolute right-0">
                 <div class="w-60 h-20 border border-slate-400 rounded-lg z-10 bg-white p-2 text-sm">
                   <router-link to="/preferences-et-confidentialite">
