@@ -16,7 +16,7 @@
         <ButtonRight label="Ajouter un tarif" icon="add" couleur="danger" @click="addTarif()" />
       </div>
       <div v-for="(tarifs, i) in activite.tarifs" :key="`tarifs-${i}`">
-        <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : {{ tarifs.type }}</h3>
+        <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
         <table class="w-full text-left mb-10 rounded-lg">
           <thead class="bg-gray-200 text-sm">
             <tr>
@@ -36,7 +36,7 @@
             <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
               <tr class="item" :id="tarif.id">
                 <td class="text-center">{{ tarif.priorite }}</td>
-                <td class="flex gap-6 mt-3">
+                <td class="flex gap-6 mt-1">
                   <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
                   <label class="relative inline-flex cursor-pointer items-center">
                     <input

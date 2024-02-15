@@ -236,8 +236,8 @@ export const getTarif = async (idTarif) => {
       }
     ]
   }
-  return data
-  // return await get(`${import.meta.env.VITE_API_URL}/tarif/${idTarif}`)
+  // return data
+  return await get(`${import.meta.env.VITE_API_URL}/tarif/${idTarif}`)
 }
 export const patchTarif = async (idFitArena, idTarif, tarif) => {
   return await patch(`${import.meta.env.VITE_API_URL}/fitarena/${idFitArena}/tarif/${idTarif}`, tarif)
