@@ -780,6 +780,8 @@ export default {
             this.recurrenceErrorMessage = "Veuillez renseigner au moins un jour dans la semaine pour la récurrence."
             return
           }
+        } else if (this.creneauStore.recurrence.recurrenceType === 1) {
+          this.creneauStore.recurrence.recurrenceJoursSemaine = []
         }
       }
       const fitarena_id = parseInt(this.$route.params.id)
