@@ -110,7 +110,7 @@ import Input from '../components/common/Input.vue'
 
 import { getUsers, patchUser } from '../api/user.js'
 import { onMounted, ref } from "vue"
-import { toast } from "vue3-toastify";
+import { toast } from "vue3-toastify"
 
 const users = ref([])
 const page = ref(1)

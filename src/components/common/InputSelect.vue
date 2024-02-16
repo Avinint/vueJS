@@ -13,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue'
 
 interface LabelCallback<T> {
-    (e: T): string
+  (e: T): string
 }
 
 const props = defineProps<{
@@ -25,7 +25,7 @@ const props = defineProps<{
   optionLabel: LabelCallback<any>
 }>()
 
-const select = ref(props.modelValue ?? '');
+const select = ref(props.modelValue ?? '')
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: string | null): void
@@ -33,6 +33,6 @@ const emits = defineEmits<{
 
 
 function updateValue() {
-    emits('update:modelValue', select.value);    
+  emits('update:modelValue', select.value)
 }
 </script>

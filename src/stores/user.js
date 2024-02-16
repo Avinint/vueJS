@@ -19,6 +19,9 @@ export const useUserStore = defineStore('user', () => {
   const username = computed(
     () => parseJwt(token_in_storage.value)?.username ?? ''
   )
+  const id = computed(
+    () => parseJwt(token_in_storage.value)?.id ?? ''
+  )
 
   const roles = computed(() => parseJwt(token_in_storage.value)?.roles ?? [])
   const isAdmin = computed(() => roles.value.includes('admin'))
@@ -47,5 +50,5 @@ export const useUserStore = defineStore('user', () => {
     refresh_token_in_storage.value = ''
   }
 
-  return { login, logout, iat, exp, username, isAdmin, isGestCo, isGestOrg, connected, setCredential }
+  return { login, logout, iat, exp, username, isAdmin, isGestCo, isGestOrg, connected, id, setCredential }
 })

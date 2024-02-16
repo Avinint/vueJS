@@ -139,6 +139,7 @@
         />
       </div>
       <MenuRecurrence v-if="submenu === 'recurence'" />
+      <p class="font-bold text-red-600">{{ recurrenceErrorMessage }}</p>
       <div
         v-if="creneauType !== null"
         class="relative rounded-lg border border-gray-300 p-4"
@@ -225,11 +226,7 @@
             </div>
           </template>
         </div>
-        <div v-if="errorMessage">
-          <p>
-            Vous devez sélectionner au moins une activité pour créer le créneau.
-          </p>
-        </div>
+        <p class="font-bold text-red-600">{{ activityErrorMessage }}</p>
       </div>
       <MentionChampsObligatoires/>
     </Modal>
@@ -431,7 +428,8 @@ export default {
       timeSeparator: ':',
       defaultTarif: '0',
       submenu: 'none',
-      errorMessage: false,
+      activityErrorMessage: '',
+      recurrenceErrorMessage: '',
       verifModal: false,
       verifCreneaux: [],
       labelCheckedAllZones: 'Sélectionner'
@@ -766,6 +764,8 @@ export default {
       this.verifModal = false
     },
     async submitCreneau() {
+      this.recurrenceErrorMessage = ''
+      this.activityErrorMessage = ''
       const type_creneau = this.creneauStore.creneauType
 
       if (this.creneauStore.recurrence) {
@@ -774,9 +774,18 @@ export default {
         } else {
           this.creneauStore.recurrence.separation <= 1 ? this.creneauStore.recurrence.separation = 0 : this.creneauStore.recurrence.separation -= 1
         }
+
+        if (this.creneauStore.recurrence.recurrenceType === 2) {
+          if (this.creneauStore.recurrence.recurrenceJoursSemaine.length === 0) {
+            this.recurrenceErrorMessage = "Veuillez renseigner au moins un jour dans la semaine pour la récurrence."
+            return
+          }
+        } else if (this.creneauStore.recurrence.recurrenceType === 1) {
+          this.creneauStore.recurrence.recurrenceJoursSemaine = []
+        }
       }
       const fitarena_id = parseInt(this.$route.params.id)
-
+      
       if (this.isOneZoneChecked) {
         switch (type_creneau) {
           case 1:
@@ -787,7 +796,7 @@ export default {
             this.updateActivites()
 
             if (!this.isOneActivityChecked) {
-              this.errorMessage = true
+              this.activityErrorMessage = "Vous devez sélectionner au moins une activité pour créer le créneau."
               break
             } else {
               const contract = makeDemandeAdminEditContract(fitarena_id, this.creneauStore)
@@ -804,7 +813,7 @@ export default {
             break
         }
       } else {
-        this.errorMessage = true
+        this.activityErrorMessage = "Vous devez sélectionner au moins une activité pour créer le créneau."
       }
     },
     isZoneChecked(zoneId) {

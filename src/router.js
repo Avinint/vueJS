@@ -29,6 +29,7 @@ import AdherentGroupe from "@pages/AdherentGroupe.vue"
 import FaReservations from "@pages/fitarena/FaReservations.vue"
 import FaDemandes from "@pages/fitarena/FaDemandes.vue"
 import FaTarifs from "@pages/fitarena/FaTarifs.vue"
+import Preferences from "@pages/fitarena/Preferences.vue"
 
 const routes = [
   {
@@ -403,7 +404,6 @@ const routes = [
       ]
     }
   },
-
   {
     path: '/organismes/:id/adherents',
     name: 'groupes',
@@ -420,12 +420,17 @@ const routes = [
         // }
       ]
     }
+  },
+  {
+    path: '/preferences-et-confidentialite',
+    name: 'preference',
+    component: Preferences
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 })
 
 router.beforeEach(async (to) => {

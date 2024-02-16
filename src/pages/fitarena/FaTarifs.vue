@@ -69,7 +69,7 @@
                     icon="edit"
                     borderless
                     couleur="secondary"
-                    @click="editTarif(i)"
+                    @click="editTarif(tarif.idTarif)"
                   />
                 </td>
                 <td>
@@ -80,9 +80,9 @@
                 <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
                   <tr>
                     <td colspan="4" />
-                    <td>{{ periode.plageHoraireDebut.split(':')[0] }}:{{ periode.plage_horaire_debut.split(':')[1] }} à {{ periode.plage_horaire_fin.split(':')[0] }}:{{ periode.plage_horaire_fin.split(':')[1] }}</td>
+                    <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
                     <td>{{ periode.jours.join(' - ') }}</td>
-                    <td>{{ periode.date_debut }} - {{ periode.date_fin }}</td>
+                    <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
                     <td colspan="3" />
                   </tr>
                 </template>
@@ -97,7 +97,7 @@
   <form @submit.prevent="saveTarif">
     <Modal
       v-if="openModal"
-      title="Édition de tarif"
+      :title="modalTitle"
       size="4xl"
       @cancel="openModal = false"
     >
@@ -109,9 +109,7 @@
               <input
                 v-model="tarif.actif"
                 type="checkbox"
-                value="true"
                 class="peer sr-only"
-                @change="modifieTarif(i)"
               />
               <div
                 class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
@@ -132,29 +130,40 @@
             placeholder="Titre tarif"
             type="text"
           />
-          <InputSelect
-            v-model="tarif.activite"
-            :required="true"
-            label="Choisir l'activité"
-            class="w-1/2"
-            :options="getActivities"
-          />
+          <div class="w-4/12">
+            <label class="mb-2 block text-sm font-medium text-gray-900">Choisir l'activité *</label>
+            <select
+              v-model="tarif.activite"
+              class="rounded-lg w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option
+                v-for="(act, i) in activites"
+                :key="i"
+                :value="act.libelle"
+              >
+                {{ act.libelle }}
+              </option>
+            </select>
+          </div>
         </div>
         <div class="flex gap-6 mt-10 items-center">
-          <p class="text-black">Tarif pour</p>
-          <select
-            :value="tarif.duree"
-            required
-            class="block h-10 w-40 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option
-              v-for="(duree, i) in listDuree"
-              :key="i"
-              :value="duree"
+          <div class="flex items-center">
+            <label class="mr-4 block text-sm font-medium text-gray-900">Tarif pour</label>
+            <select
+              :value="tarif.duree"
+              required
+              class="block h-11 w-20 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
-              {{ duree }}
-            </option>
-          </select>
+              <option
+                v-for="(duree, i) in listDuree"
+                :key="i"
+                :value="duree"
+              >
+                {{ duree }}
+              </option>
+            </select>
+            <p class="ml-2">min</p>
+          </div>
           <div class="relative flex">
             <Input
               id="montantTarif"
@@ -286,21 +295,24 @@ import 'vue3-toastify/dist/index.css'
 import { onMounted, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import dayjs from 'dayjs'
 
 const props = defineProps(['id'])
 const route = useRoute()
+
 const tarifsByActivities = ref([])
 const openModal = ref(false)
 const tarif = ref({})
 const days = 'LMMJVSD'
 const activites = ref({})
-const listDuree = ['60 min', '1h', '2h']
+const listDuree = ['60', '120']
 const levelChecked = ref([])
 const selected_days = ref([])
 const heureDebut = ref('')
 const minDebut = ref('')
 const heureFin = ref('')
 const minFin = ref('')
+const modalTitle = ref('')
 
 const levels = ref([
   {
@@ -323,14 +335,13 @@ const fetchDonnees = async () => {
   activites.value = await getActivites(props.id, 1, '&order=asc')
 }
 
-const getActivities = computed(() => {
-  return activites.value.map((act) => {
-    return {
-      id: act.id,
-      label: act.libelle,
-    }
-  })
-})
+// const getActivities = computed(() => {
+//   return activites.value.map((act) => {
+//     return {
+//       label: act.libelle,
+//     }
+//   })
+// })
 
 const selectDay = (day_index: number) => {
   selected_days.value[day_index] = !selected_days.value[day_index]
@@ -389,12 +400,14 @@ const modifieTarif = async (i :number) => {
 }
 
 const editTarif = async (i :number) => {
-  tarif.value = await getTarif(props.id, i)
+  modalTitle.value = 'Édition de tarif'
+  tarif.value = await getTarif(i)
   tarif.value.montant = Intl.NumberFormat('fr-FR').format(tarif.value.montant / 100)
   openModal.value = true
 }
 
 const addTarif = () => {
+  modalTitle.value = 'Création de tarif'
   openModal.value = true
 }
 

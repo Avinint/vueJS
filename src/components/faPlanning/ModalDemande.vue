@@ -349,6 +349,15 @@ const submitDemande = async() => {
         errorMessage.value = "Une date de fin doit être renseignée"
         return
       }
+      if (creneau_store.recurrence.recurrenceType === 2) {
+        if (creneau_store.recurrence.recurrenceJoursSemaine.length === 0) {
+          errorMessage.value = "Veuillez renseigner au moins un jour dans la semaine pour la récurrence."
+          return
+        }
+      } else if (creneau_store.recurrence.recurrenceType === 1) {
+        creneau_store.recurrence.recurrenceJoursSemaine = []
+      }
+
       form.recurrence = {
         dateDebut: creneau_store.recurrence.dateDebut,
         dateFin: creneau_store.recurrence.dateFin,

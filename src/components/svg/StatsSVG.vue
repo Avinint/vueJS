@@ -1,0 +1,11 @@
+<script setup lang="ts">
+</script>
+
+<template>
+<svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.42188 15.6278V7.03213H6.15549V15.6278H3.42188ZM8.30333 15.6278V3.125H11.0369V15.6278H8.30333ZM13.1848 15.6278V10.1578H15.9184V15.6278H13.1848Z" fill="#DE001A"/>
+</svg>
+</template>
+
+<style scoped lang="scss">
+</style>

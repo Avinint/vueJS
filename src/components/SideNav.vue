@@ -26,8 +26,7 @@
       <div class="h-full overflow-y-auto bg-white">
         <template v-for="(links_by_type, type) in links">
           <div v-for="(link, i) in links_by_type" :key="i" class="flex flex-col items-center text-base font-normal text-gray-900">
-            <div class="flex items-center pl-8 pr-1 py-2 w-full"
-                 :class="link.divider ? 'text-xl -ml-6 text-red-600' : '-ml-14 text-sm'">
+            <div class="flex items-center pl-8 pr-1 py-2 w-full" :class="link.divider ? 'text-xl -ml-6 text-red-600' : '-ml-14 text-sm'">
               <ChevronSVG :open="link.open" :visible="link.sub_links !== undefined" @openMenuItem="openSubLinks(link, type)" />
               <side-nav-item :icon="link.icon ?? ''" :label="link.label" :path="link.path" :tag="link.tag"
                              :id="'T' + link.path">
@@ -37,11 +36,10 @@
               </side-nav-item>
             </div>
             <div class="w-full bg-gray-100">
-              <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.open && link.sub_links.length"
-                   class="flex flex-col items-center text-base font-normal text-gray-900">
+              <div v-for="(sub_link, sub_i) in link.sub_links" v-if="link.open && link.sub_links.length" class="flex flex-col items-center text-base font-normal text-gray-900">
                 <div class="flex items-center pl-12 pr-1 py-2 w-full text-sm " :class="sub_link.label.includes('Activités de la Fit Arena') ? 'border-t border-black' : ''">
-                  <ChevronSVG :open="sub_link.sub_links_open" :visible="sub_link.sub_links !== undefined" @openMenuItem="openSubSubLinks(i, sub_i)" />
-                  <side-nav-item :icon="sub_link.icon" :label="sub_link.label" :path="sub_link.path" :tag="sub_link.tag">
+                  <ChevronSVG v-if="sub_link.label !== 'Statistiques'" :open="sub_link.sub_links_open" :visible="sub_link.sub_links !== undefined" @openMenuItem="openSubSubLinks(i, sub_i)" />
+                  <side-nav-item v-if="sub_link.label !== 'Statistiques'" :icon="sub_link.icon" :label="sub_link.label" :path="sub_link.path" :tag="sub_link.tag">
                     <CitySVG v-if="sub_link.icon && sub_link.icon === 'city'" />
                     <HomeSVG v-if="sub_link.icon && sub_link.icon === 'home'" />
                     <MonitoringSVG v-if="sub_link.icon && sub_link.icon === 'monitoring'" />
@@ -49,12 +47,15 @@
                     <BookingSVG v-if="sub_link.icon && sub_link.icon === 'booking'" />
                     <UserSVG v-if="sub_link.icon && sub_link.icon === 'user'" />
                   </side-nav-item>
+                  <a v-if="sub_link.label == 'Statistiques'" @click="goToStats()" href="#" target="_blank" class="flex">
+                    <StatsSVG />
+                    <p class="ml-3">Statistiques</p>
+                  </a>
                 </div>
                 <div v-for="sub_sub_link in sub_link.sub_links"
                      v-if=" sub_link.sub_links && sub_link.sub_links_open && sub_link.sub_links.length"
                      class="w-full flex text-left bg-gray-200 items-center pl-12 pr-3 py-2">
-                  <side-nav-item :icon="sub_sub_link.icon" :label="sub_sub_link.label" :path="sub_sub_link.path"
-                                 :tag="sub_sub_link.tag" class="text-sm truncate" />
+                  <side-nav-item :icon="sub_sub_link.icon" :label="sub_sub_link.label" :path="sub_sub_link.path" :tag="sub_sub_link.tag" class="text-sm truncate" />
                 </div>
               </div>
             </div>
@@ -74,6 +75,7 @@ import MonitoringSVG from "@components/svg/MonitoringSVG.vue"
 import PlanningSVG from "@components/svg/PlanningSVG.vue"
 import BookingSVG from "@components/svg/BookingSVG.vue"
 import ChevronSVG from "@components/svg/ChevronSVG.vue"
+import StatsSVG from "@components/svg/StatsSVG.vue"
 
 import { useUserStore } from "@/stores/user.js"
 import { useMenuStore } from "@/stores/menu.js"
@@ -81,11 +83,15 @@ import { useMenuStore } from "@/stores/menu.js"
 import { computed, onMounted } from "vue"
 
 const { toggleOrganisme, toggleFitArena, toggleClient, fetchMenu } = useMenuStore()
-const { isAdmin, isGestOrg } = useUserStore();
+const { isAdmin, isGestOrg } = useUserStore()
 
 onMounted(async () => {
   await fetchMenu()
 })
+
+const goToStats = () => {
+  window.location.assign('https://admin-stat.fit-arena.fr/')
+}
 
 const links = computed(() =>  {
   return { clients: clientLinks.value, fit_arenas: fitArenaLinks.value, organismes: organismeLinks.value }
@@ -216,6 +222,11 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
             label: 'Demandes',
             path: `/fitarena/${fa.id}/demandes`,
             icon: 'booking'
+          },
+          {
+            label: 'Statistiques',
+            path: ``,
+            icon: 'stats'
           },
           {
             label: 'Supervision de la Fit Arena',
