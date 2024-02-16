@@ -20,6 +20,6 @@ const props = defineProps({
   path: String,
   tag: String,
   icon: String,
-  label: String,
+  label: String
 })
 </script>
