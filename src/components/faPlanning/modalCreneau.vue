@@ -770,19 +770,19 @@ export default {
 
       if (this.creneauStore.recurrence) {
         if (this.creneauStore.recurrence.maxOccurrences == 0 && (this.creneauStore.recurrence.dateFin === "Invalid Date" || this.creneauStore.recurrence.dateFin === "")) {
-          this.creneauStore.recurrence = undefined;
+          this.creneauStore.recurrence = undefined
         } else {
           this.creneauStore.recurrence.separation <= 1 ? this.creneauStore.recurrence.separation = 0 : this.creneauStore.recurrence.separation -= 1
+          if (this.creneauStore.recurrence.recurrenceType === 2) {
+            if (this.creneauStore.recurrence.recurrenceJoursSemaine.length === 0) {
+              this.recurrenceErrorMessage = "Veuillez renseigner au moins un jour dans la semaine pour la récurrence."
+              return
+            }
+          } else if (this.creneauStore.recurrence.recurrenceType === 1) {
+            this.creneauStore.recurrence.recurrenceJoursSemaine = []
+          }
         }
 
-        if (this.creneauStore.recurrence.recurrenceType === 2) {
-          if (this.creneauStore.recurrence.recurrenceJoursSemaine.length === 0) {
-            this.recurrenceErrorMessage = "Veuillez renseigner au moins un jour dans la semaine pour la récurrence."
-            return
-          }
-        } else if (this.creneauStore.recurrence.recurrenceType === 1) {
-          this.creneauStore.recurrence.recurrenceJoursSemaine = []
-        }
       }
       const fitarena_id = parseInt(this.$route.params.id)
       
