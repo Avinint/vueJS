@@ -6,7 +6,8 @@
     type="none"
     :title="state == 'create' ? 'Demande de création de créneaux' : 'Modification de demande de créneaux'"
   >
-    <div class="pl-4">
+    <Spinner v-if="spinnerDemandeModal" />
+    <div v-if="!spinnerDemandeModal" class="pl-4">
       <Input class="max-w-lg" label="Titre du créneau *" v-model="form.title" />
       <div class="flex gap-16 items-end mt-8">
         <div class="flex flex-col">
@@ -80,95 +81,98 @@
     title="CONFIRMATION DE CRÉATION"
     type="none"
   >
-    <CardModalSection
-      v-if="verifCreneaux.creneauxValide"
-      title="CRÉNEAUX SOUMIS POUR VALIDATION PAR LA COLLECTIVITÉ"
-      class="pl-4"
-    >
-      <table
-        v-if="verifCreneaux.creneauxValide.length > 0"
-        class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
+    <Spinner v-if="spinnerConfirmDemandeModal" />
+    <div v-if="!spinnerConfirmDemandeModal">
+      <CardModalSection
+        v-if="verifCreneaux.creneauxValide"
+        title="CRÉNEAUX SOUMIS POUR VALIDATION PAR LA COLLECTIVITÉ"
+        class="pl-4"
       >
-        <thead>
-          <tr>
-            <th scope="col" class="px-6 py-3">Date du créneau</th>
-            <th scope="col" class="px-6 py-3">Horaire</th>
-            <th scope="col" class="px-6 py-3">Statut demande</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(
-              creneau, i
-            ) in verifCreneaux.creneauxValide"
-            :key="`creneauxValide-`+ i"
-            class="bg-white border border-gray-200"
-          >
-            <td class="px-6 py-4 flex">
-              {{ dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
-            </td>
-            <td class="px-6 py-4 border border-gray-200">
-              {{ dayjs(creneau.dateDebut).format('HH:mm') }} - {{ dayjs(creneau.dateSortie).format('HH:mm') }}
-            </td>
-            <td class="px-6 py-4 flex items-center" id="statut">
-              Soumis à validation
-              <div class="w-3 h-3 bg-green-600 rounded-xl ml-10" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </CardModalSection>
-
-    <CardModalSection
-      v-if="verifCreneaux.creneauxConflit?.length > 0"
-      title="CRÉNEAUX NON CRÉÉS, CAR ILS ENTRENT EN CONFLIT AVEC DES RÉSERVATIONS DÉJÀ VALIDÉES"
-      class="pl-4"
-    >
-      <table
-        class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
+        <table
+          v-if="verifCreneaux.creneauxValide.length > 0"
+          class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
+        >
+          <thead>
+            <tr>
+              <th scope="col" class="px-6 py-3">Date du créneau</th>
+              <th scope="col" class="px-6 py-3">Horaire</th>
+              <th scope="col" class="px-6 py-3">Statut demande</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(
+                creneau, i
+              ) in verifCreneaux.creneauxValide"
+              :key="`creneauxValide-`+ i"
+              class="bg-white border border-gray-200"
+            >
+              <td class="px-6 py-4 flex">
+                {{ dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
+              </td>
+              <td class="px-6 py-4 border border-gray-200">
+                {{ dayjs(creneau.dateDebut).format('HH:mm') }} - {{ dayjs(creneau.dateSortie).format('HH:mm') }}
+              </td>
+              <td class="px-6 py-4 flex items-center" id="statut">
+                Soumis à validation
+                <div class="w-3 h-3 bg-green-600 rounded-xl ml-10" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </CardModalSection>
+  
+      <CardModalSection
+        v-if="verifCreneaux.creneauxConflit?.length > 0"
+        title="CRÉNEAUX NON CRÉÉS, CAR ILS ENTRENT EN CONFLIT AVEC DES RÉSERVATIONS DÉJÀ VALIDÉES"
+        class="pl-4"
       >
-        <thead>
-          <tr>
-            <th scope="col" class="px-6 py-3">Date du créneau</th>
-            <th scope="col" class="px-6 py-3">Horaire</th>
-            <th scope="col" class="px-6 py-3">Statut demande</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(
-              creneau, i
-            ) in verifCreneaux.creneauxConflit"
-            :key="`creneauxConflit-`+ i"
-            class="bg-white border border-gray-200"
-          >
-            <td class="px-6 py-4 flex">
-              {{ dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
-            </td>
-            <td class="px-6 py-4 border border-gray-200">
-              {{ dayjs(creneau.dateDebut).format('HH:mm') }} - {{ dayjs(creneau.dateSortie).format('HH:mm') }}
-            </td>
-            <td class="px-6 py-4 flex items-center" id="statut">
-              Non validé
-              <div class="w-3 h-3 bg-red-600 rounded-xl ml-10" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </CardModalSection>
-    <div class="flex justify-end gap-4">
-      <Button
-        @click="modifierDemande"
-        label="Modifier ma demande"
-        couleur="secondary"
-        class="border border-red-600 text-red-600"
-      />
-      <Button
-        v-if="isPossibleToCreateDemande"
-        @click="submitDemandeValidation"
-        label="Valider ma demande"
-        couleur="danger"
-      />
+        <table
+          class="w-full text-left text-sm text-gray-500 bg-gray-200 border border-gray-200"
+        >
+          <thead>
+            <tr>
+              <th scope="col" class="px-6 py-3">Date du créneau</th>
+              <th scope="col" class="px-6 py-3">Horaire</th>
+              <th scope="col" class="px-6 py-3">Statut demande</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(
+                creneau, i
+              ) in verifCreneaux.creneauxConflit"
+              :key="`creneauxConflit-`+ i"
+              class="bg-white border border-gray-200"
+            >
+              <td class="px-6 py-4 flex">
+                {{ dayjs(creneau.dateDebut).format('DD/MM/YYYY') }}
+              </td>
+              <td class="px-6 py-4 border border-gray-200">
+                {{ dayjs(creneau.dateDebut).format('HH:mm') }} - {{ dayjs(creneau.dateSortie).format('HH:mm') }}
+              </td>
+              <td class="px-6 py-4 flex items-center" id="statut">
+                Non validé
+                <div class="w-3 h-3 bg-red-600 rounded-xl ml-10" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </CardModalSection>
+      <div class="flex justify-end gap-4">
+        <Button
+          @click="modifierDemande"
+          label="Modifier ma demande"
+          couleur="secondary"
+          class="border border-red-600 text-red-600"
+        />
+        <Button
+          v-if="isPossibleToCreateDemande"
+          @click="submitDemandeValidation"
+          label="Valider ma demande"
+          couleur="danger"
+        />
+      </div>
     </div>
   </Modal>
 
@@ -183,6 +187,7 @@
 </template>
 
 <script setup lang="ts">
+import Spinner from '@components/common/Spinner.vue'
 import Button from '@components/common/Button.vue'
 import Input from '@components/common/Input.vue'
 import InputOptions from '@components/common/InputOptions.vue'
@@ -230,6 +235,8 @@ const submenu = ref(false)
 const isRecurrent = ref(false)
 const isAllZoneChecked = ref(false)
 const labelCheckedAllZones = ref('Sélectionner')
+const spinnerDemandeModal = ref(false)
+const spinnerConfirmDemandeModal = ref(false)
 
 const props = defineProps({
   zones: Object
@@ -321,6 +328,7 @@ const selectAllZones = () => {
 }
 
 const submitDemande = async() => {
+  spinnerDemandeModal.value = true
   errorMessage.value = ''
   if (form.zones.length == 0) {
     errorMessage.value = "Une zone doit être sélectionnée"
@@ -374,6 +382,7 @@ const submitDemande = async() => {
 
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form)
   verifCreneaux.value = await postCreneauVerifDemande(contract.value)
+  spinnerDemandeModal.value = false
   verifModal.value = true
 }
 
@@ -397,6 +406,7 @@ const ajouterCommentaire = async () => {
 }
 
 const submitDemandeValidation = async () => {
+  spinnerConfirmDemandeModal.value = true
   if (state.value === 'edit') {
     const mode = form.recurrence === undefined ? 'occurence' : 'recurrence'
     if (creneauId.value !== 0) {
@@ -409,6 +419,7 @@ const submitDemandeValidation = async () => {
   }
 
   await refreshPlanning()
+  spinnerConfirmDemandeModal.value = false
   verifModal.value = false
   state.value = 'closed'
   submenu.value = false

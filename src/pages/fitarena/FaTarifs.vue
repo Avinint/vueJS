@@ -34,9 +34,9 @@
           </thead>
           <tbody class="sortable-list">
             <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
-              <tr class="item" :id="tarif.id">
+              <tr class="item" :id="tarif.idTarif">
                 <td class="text-center">{{ tarif.priorite }}</td>
-                <td class="flex gap-6 mt-1">
+                <td class="flex gap-6 mt-3">
                   <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
                   <label class="relative inline-flex cursor-pointer items-center">
                     <input
@@ -44,7 +44,7 @@
                       type="checkbox"
                       value="true"
                       class="peer sr-only"
-                      @change="modifieTarif(i)"
+                      @change="modifieTarif(tarif.idTarif, tarif.actif)"
                     />
                     <div
                       class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
@@ -66,11 +66,13 @@
                 </td>
                 <td>
                   <Button
+                    v-if="tarifs.niveau !== 4"
                     icon="edit"
                     borderless
                     couleur="secondary"
                     @click="editTarif(tarif.idTarif)"
                   />
+                  <div class="w-10" />
                 </td>
                 <td>
                   <div class="border-t border-b border-black h-2 w-4 px-2" />
@@ -99,7 +101,7 @@
       v-if="openModal"
       :title="modalTitle"
       size="4xl"
-      @cancel="openModal = false"
+      @cancel="resetInfos()"
     >
       <CardModalSection title="Activité et tarif" :params="true">
         <template #topParams>
@@ -150,8 +152,7 @@
           <div class="flex items-center">
             <label class="mr-4 block text-sm font-medium text-gray-900">Tarif pour</label>
             <select
-              :value="tarif.duree"
-              required
+              v-model="tarif.duree"
               class="block h-11 w-20 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             >
               <option
@@ -170,7 +171,7 @@
               v-model="tarif.montant"
               type="text"
               placeholder="Montant"
-              class="w-20"
+              class="w-28"
               required
             />
             <p class="absolute top-2.5 right-3">€</p>
@@ -197,22 +198,25 @@
         </div>
       </CardModalSection>
       <CardModalSection title="Périodes et horaires" class="pt-4">
-        <div class="border border-slate-300 p-6 rounded-lg">
-          <p>Dates</p>
+        <div v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`" class="border border-slate-300 p-6 rounded-lg mb-2">
+          <div class="flex items-center justify-between">
+            <p>Dates</p>
+            <Button @click="deletePeriode(i)" couleur="secondary" icon="cross" />
+          </div>
           <div class="flex items-center gap-20 my-4">
             <vue-tailwind-datepicker
               i18n="fr"
               as-single
-              v-model="dateDebut"
-              :formatter="{ date: 'DD / MM / YYYY', month: 'MMMM' }"
+              v-model="periode.dateDebut"
+              :formatter="{ date: 'DD/MM/YYYY', month: 'MMMM' }"
               class="w-full"
             />
             <p>à</p>
             <vue-tailwind-datepicker
               i18n="fr"
               as-single
-              v-model="dateFin"
-              :formatter="{ date: 'DD / MM / YYYY', month: 'MMMM' }"
+              v-model="periode.dateFin"
+              :formatter="{ date: 'DD/MM/YYYY', month: 'MMMM' }"
               class="w-full"
             />
           </div>
@@ -221,9 +225,9 @@
             <div
               v-for="(day, key) in days"
               :key="`day-${key}`"
-              :class="{ 'bg-blue-400 text-white': selected_days[key] == true }"
+              :class="{ 'bg-blue-400 text-white': periode.jours[key] === true }"
               class="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full border p-4 text-gray-700"
-              @click="selectDay(key)"
+              @click="selectDay(key, periode.jours)"
             >
               {{ day }}
             </div>
@@ -231,48 +235,38 @@
           <p class="mt-8 mb-4">Horaires</p>
           <div class="flex items-center">
             <FAInput
-              v-model="heureDebut"
+              v-model="periode.plageHoraireDebut"
               class="w-1/12"
-              placeholder="08"
-              type="text"
-            />
-            <p class="mx-2">:</p>
-            <FAInput
-              v-model="minDebut"
-              class="w-1/12"
-              placeholder="00"
+              placeholder="08:00"
               type="text"
             />
             <p class="mx-6">à</p>
             <FAInput
-              v-model="heureFin"
+              v-model="periode.plageHoraireFin"
               class="w-1/12"
-              placeholder="08"
-              type="text"
-            />
-            <p class="mx-2">:</p>
-            <FAInput
-              v-model="minFin"
-              class="w-1/12"
-              placeholder="00"
+              placeholder="10:30"
               type="text"
             />
           </div>
         </div>
       </CardModalSection>
-      <div class="pl-4">
-        <MentionChampsObligatoires />
-      </div>
+      <Button
+        @click="addPeriode()"
+        label="Ajouter une période"
+        couleur="danger"
+        icon="add"
+      />
+      <div v-if="errorMessage !== ''" class="text-red-600 mb-4">{{ errorMessage }}</div>
     </Modal>
   </form>
-  <!-- <form @submit.prevent="deleteMemberGroupValidation(deleteMemberGroupId)">
+  <form @submit.prevent="sendTarif()">
     <ValidationModal
-      v-if="delete_modal"
-      type="delete"
-      @cancel="delete_modal = false"
+      v-if="validationTarif"
+      :type="modalType"
+      @cancel="validationTarif = false"
     >
     </ValidationModal>
-  </form> -->
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -288,11 +282,11 @@ import FAInput from '@components/common/Input.vue'
 import InputSelect from '@components/common/Select.vue'
 import CardModalSection from '@components/common/CardModalSection.vue'
 
-import { getTarifs, getTarif, patchTarif } from '@api/tarifs'
-import { getActivites } from '../../api/activite.ts'
+import { getTarifs, getTarif, postTarif, putActifTarif, putTarif } from '@api/tarifs'
+import { getActivites } from '../../api/activite'
 
 import 'vue3-toastify/dist/index.css'
-import { onMounted, ref, watch, computed } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
@@ -305,14 +299,15 @@ const openModal = ref(false)
 const tarif = ref({})
 const days = 'LMMJVSD'
 const activites = ref({})
-const listDuree = ['60', '120']
+const listDuree = [60, 120]
 const levelChecked = ref([])
 const selected_days = ref([])
-const heureDebut = ref('')
-const minDebut = ref('')
-const heureFin = ref('')
-const minFin = ref('')
 const modalTitle = ref('')
+const validationTarif = ref(false)
+const state = ref('')
+const modalType = ref('')
+const idTarif = ref(0)
+const errorMessage = ref('')
 
 const levels = ref([
   {
@@ -329,28 +324,35 @@ const levels = ref([
   }
 ])
 
+const newPeriode = {
+  dateDebut: '',
+  dateFin: '',
+  jours: [false, false, false, false, false, false, false],
+  plageHoraireDebut: '',      
+  plageHoraireFin: ''      
+}
+
 const fetchDonnees = async () => {
   tarifsByActivities.value = await getTarifs(props.id)
   tarifsByActivities.value = tarifsByActivities.value.map(tarif => ({ ...tarif, open: false }))
   activites.value = await getActivites(props.id, 1, '&order=asc')
 }
 
-// const getActivities = computed(() => {
-//   return activites.value.map((act) => {
-//     return {
-//       label: act.libelle,
-//     }
-//   })
-// })
+const selectDay = (day_index: number, jours: any) => {
+  jours[day_index] = !jours[day_index]
+}
+const addPeriode = () => {
+  if (tarif.value.periodes === undefined) tarif.value.periodes = []
+  tarif.value.periodes.push(newPeriode)
+}
 
-const selectDay = (day_index: number) => {
-  selected_days.value[day_index] = !selected_days.value[day_index]
-  const data = []
-  for (let i = 0; i < days.length; i++) {
-    if (selected_days.value[i] === true) {
-      data.push(i + 1)
+const deletePeriode = (i: number) => {
+  tarif.value.periodes.forEach((periode, z) => {
+    if (i === z) {
+      tarif.value.periodes.splice(z, 1)
+      return
     }
-  }
+  })
 }
 
 const changeLevel = (idLevel: number) => {
@@ -361,6 +363,7 @@ const changeLevel = (idLevel: number) => {
 }
 
 onMounted(async () => {
+  state.value = 'view'
   await fetchDonnees()
   // let sortableList
   // const items = document.querySelectorAll('.item')
@@ -395,28 +398,146 @@ onMounted(async () => {
 
 watch(() => route.params.id, async() => await fetchDonnees())
 
-const modifieTarif = async (i :number) => {
-  console.log(`modifier actif / inactif du tarif ${i}`)
+const modifieTarif = async (id: number, actif: boolean) => {
+  const data = {
+    actif: actif
+  }
+  await putActifTarif(id, data)
 }
 
-const editTarif = async (i :number) => {
+const editTarif = async (id: number) => {
+  resetInfos()
+  idTarif.value = id
+  state.value = 'edit'
   modalTitle.value = 'Édition de tarif'
-  tarif.value = await getTarif(i)
-  tarif.value.montant = Intl.NumberFormat('fr-FR').format(tarif.value.montant / 100)
+  modalType.value = 'edit'
+  tarif.value = await getTarif(id)
+  setInfos(tarif.value)
   openModal.value = true
+}
+
+const resetInfos = () => {
+  openModal.value = false
+  state.value = 'view'
+  levelChecked.value = []
+  selected_days.value = []
+  tarif.value = {}
+  idTarif.value = 0
+}
+
+const setInfos = (tarif: object) => {
+  levelChecked.value.push(tarif.niveau)
+  tarif.montant = Intl.NumberFormat('fr-FR').format(tarif.montant / 100)
+  tarif.periodes.forEach(periode => {
+    selected_days.value = []
+    periode.dateDebut = dayjs(periode.dateDebut).format('DD/MM/YYYY')
+    periode.dateFin = dayjs(periode.dateFin).format('DD/MM/YYYY')
+    periode.plageHoraireDebut = dayjs(periode.plageHoraireDebut).format('HH:mm')
+    periode.plageHoraireFin = dayjs(periode.plageHoraireFin).format('HH:mm')
+    periode.jours.forEach(jour => {
+      switch(jour) {
+        case 'Lu':
+          selected_days.value[0] = true
+          break
+        case 'Ma':
+          selected_days.value[1] = true
+          break
+        case 'Me':
+          selected_days.value[2] = true
+          break
+        case 'Je':
+          selected_days.value[3] = true
+          break
+        case 'Ve':
+          selected_days.value[4] = true
+          break
+        case 'Sa':
+          selected_days.value[5] = true
+          break
+        case 'Di':
+          selected_days.value[6] = true
+          break
+      }
+    })
+    periode.jours = selected_days.value
+  })
 }
 
 const addTarif = () => {
+  state.value = 'create'
   modalTitle.value = 'Création de tarif'
+  modalType.value = 'add'
   openModal.value = true
 }
 
-const openTarif = (tarif :object) => {
+const openTarif = (tarif: object) => {
   tarif.open = !tarif.open
 }
 
 const saveTarif = async () => {
-  console.log('save tarif')
+  errorMessage.value = ''
+  if (tarif.value.activite === '' || tarif.value.activite === undefined) {
+    errorMessage.value = 'Veuillez renseigner une activité.'
+    return
+  }
+
+  if (tarif.value.duree === '' || tarif.value.duree === undefined) {
+    errorMessage.value = 'Veuillez renseigner une durée.'
+    return
+  }
+
+  if (levelChecked.value.length === 0) {
+    errorMessage.value = 'Veuillez renseigner un niveau de tarif.'
+    return
+  }
+
+  tarif.value.periodes.forEach(periode => {
+    periode.plageHoraireDebut = `${periode.plageHoraireDebut}:00`
+    periode.plageHoraireFin = `${periode.plageHoraireFin}:00`
+    const [dayD, monthD, yearD] = periode.dateDebut.split('/')
+    const [dayF, monthF, yearF] = periode.dateFin.split('/')
+    periode.dateDebut = `${yearD}-${monthD}-${dayD}`
+    periode.dateFin = `${yearF}-${monthF}-${dayF}`
+    const data = []
+    periode.jours.forEach((jour, i) => {
+      if (jour) data.push(i + 1)
+    })
+    periode.jours = data
+  })
+
+  await sendTarif()
+}
+
+const sendTarif = async () => {
+  const data = {
+    titre: tarif.value.titre,
+    activite: activites.value.find(act => act.libelle === tarif.value.activite).id,
+    fitArena: parseInt(props.id),
+    duree: tarif.value.duree,
+    actif: tarif.value.actif ?? false,
+    montant: parseFloat(tarif.value.montant) * 100,
+    niveau: levelChecked.value[0],
+    periodes: tarif.value.periodes
+  }
+
+  switch (state.value) {
+    case 'create':
+      await postTarif(data).then(() => {
+        validationTarif.value = false
+        resetInfos()
+        toast.success('Le tarif a été créé avec succès !')
+      })
+      break
+    case 'edit':
+      await putTarif(idTarif.value, data).then(() => {
+        validationTarif.value = false
+        resetInfos()
+        toast.success('Le tarif a été modifié avec succès !')
+      })
+      break
+  }
+  resetInfos()
+  await fetchDonnees()
 }
 </script>
 
