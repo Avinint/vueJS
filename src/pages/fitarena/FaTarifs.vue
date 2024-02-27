@@ -21,87 +21,6 @@
         <TableauTarifs :tarifs-par-niveau="activite.special" :id="id"></TableauTarifs>
         <TableauTarifs :tarifs-par-niveau="activite.general" :id="id"></TableauTarifs>
         <TableauTarifs :tarifs-par-niveau="activite.defaut" :id="id"></TableauTarifs>
-
-<!--        <template v-if="activite.defaut">-->
-<!--          <div v-for="(tarifs, i) in activite.defaut" :key="`tarifs-${i}`">-->
-<!--            <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>-->
-<!--            <table class="w-full text-left mb-10 rounded-lg">-->
-<!--              <thead class="bg-gray-200 text-sm">-->
-<!--                <tr>-->
-<!--                  <th style="width:1%;">Prio</th>-->
-<!--                  <th style="width:10%;">Statut</th>-->
-<!--                  <th style="width:20%;">Nom du tarif</th>-->
-<!--                  <th style="width:15%;">Tarif</th>-->
-<!--                  <th style="width:15%;" /> &lt;!&ndash; date début - date fin &ndash;&gt;-->
-<!--                  <th style="width:20%;" /> &lt;!&ndash; jours &ndash;&gt;-->
-<!--                  <th style="width:16%;">Périodes</th> &lt;!&ndash; plage horaire &ndash;&gt;-->
-<!--                  <th style="width:1%;" /> &lt;!&ndash; accordéon pour détails périodes &ndash;&gt;-->
-<!--                  <th style="width:1%;" /> &lt;!&ndash; modification (ouverture modal) &ndash;&gt;-->
-<!--                  <th style="width:1%;" /> &lt;!&ndash; bouton drag and drop (toute la row sera sélectionnable) &ndash;&gt;-->
-<!--                </tr>-->
-<!--              </thead>-->
-<!--              <tbody class="sortable-list">-->
-<!--                <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">-->
-<!--                  <tr class="item" :id="tarif.idTarif">-->
-<!--                    <td class="text-center">{{ tarif.priorite }}</td>-->
-<!--                    <td class="flex gap-6 mt-3">-->
-<!--                      <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>-->
-<!--                      <label class="relative inline-flex cursor-pointer items-center">-->
-<!--                        <input-->
-<!--                          v-model="tarif.actif"-->
-<!--                          type="checkbox"-->
-<!--                          value="true"-->
-<!--                          class="peer sr-only"-->
-<!--                          @change="modifieTarif(tarif.idTarif, tarif.actif)"-->
-<!--                        />-->
-<!--                        <div-->
-<!--                          class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"-->
-<!--                        ></div>-->
-<!--                        <span-->
-<!--                          class="ml-3 text-sm font-medium text-gray-900"-->
-<!--                        ></span>-->
-<!--                      </label>-->
-<!--                    </td>-->
-<!--                    <td>{{ tarif.nom }}</td>-->
-<!--                    <td>{{ Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(tarif.tarif / 100) }} / {{ tarif.duree }} min</td>-->
-<!--                    <td />-->
-<!--                    <td />-->
-<!--                    <td>{{ tarif.periodes.length }} période(s)</td>-->
-<!--                    <td class="text-center">-->
-<!--                      <div class="px-3">-->
-<!--                        <InfoSVG :open="tarif.open" @click="openTarif(tarif)" class="cursor-pointer" />-->
-<!--                      </div>-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                      <Button-->
-<!--                        v-if="tarifs.niveau !== 4"-->
-<!--                        icon="edit"-->
-<!--                        borderless-->
-<!--                        couleur="secondary"-->
-<!--                        @click="editTarif(tarif.idTarif)"-->
-<!--                      />-->
-<!--                      <div class="w-10" />-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                      <div class="border-t border-b border-black h-2 w-4 px-2" />-->
-<!--                    </td>-->
-<!--                  </tr>-->
-<!--                  <template v-if="tarif.open">-->
-<!--                    <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">-->
-<!--                      <tr>-->
-<!--                        <td colspan="4" />-->
-<!--                        <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>-->
-<!--                        <td>{{ periode.jours.join(' - ') }}</td>-->
-<!--                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>-->
-<!--                        <td colspan="3" />-->
-<!--                      </tr>-->
-<!--                    </template>-->
-<!--                  </template>-->
-<!--                </template>-->
-<!--              </tbody>-->
-<!--            </table>-->
-<!--          </div>-->
-<!--        </template>-->
       </Card>
     </template>
   </Card>
@@ -407,13 +326,6 @@ const resetInfos = () => {
   idTarif.value = 0
 }
 
-const setOrder = async (liste: {idTarif, priorite}[]) => {
-  await sortTarifs(props.id, liste)
-    .catch(() => {
-    toast.error("La liste des tarifs n'a pas pu être mise à jour.")
-  })
-};
-
 const setInfos = (tarif: object) => {
   levelChecked.value.push(tarif.niveau)
   tarif.montant = Intl.NumberFormat('fr-FR').format(tarif.montant / 100)
@@ -457,10 +369,6 @@ const addTarif = () => {
   modalTitle.value = 'Création de tarif'
   modalType.value = 'add'
   openModal.value = true
-}
-
-const openTarif = (tarif: object) => {
-  tarif.open = !tarif.open
 }
 
 const saveTarif = async () => {
