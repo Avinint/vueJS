@@ -10,6 +10,11 @@ export const getTarif = async (idTarif: number) => {
   return await get(`${import.meta.env.VITE_API_URL}/api/tarif/${idTarif}`)
 }
 
+// récupération des niveaux d'un tarif
+export const getTarifNiveaux = async () => {
+  return await get(`${import.meta.env.VITE_API_URL}/api/tarif/niveaux`)
+}
+
 // modification d'un tarif existant
 export const putTarif = async (idTarif: number, tarif: object) => {
   return await put(`${import.meta.env.VITE_API_URL}/api/tarif/${idTarif}`, tarif)

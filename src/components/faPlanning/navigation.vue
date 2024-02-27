@@ -9,7 +9,7 @@
       <NavigationSection>
         <template #title> Zones actives </template>
         <template #content>
-          <div class="flex flex-wrap gap-1">
+          <div v-if="zones.length" class="flex flex-wrap gap-1">
             <template v-for="zone in zones" :key="zone.id">
               <Button
                 :label="zone.libelle"
@@ -21,6 +21,7 @@
               />
             </template>
           </div>
+          <div v-else>Aucune zone ou activité par zone active</div>
         </template>
       </NavigationSection>
       <div class="flex navigation">
@@ -214,7 +215,7 @@ export default {
             this.zones.splice(i, 1);
           }
         })
-      });
+      })
     },
     async filterByZone(zoneId) {
       switch (this.calendarApi.currentData.currentViewType) {
@@ -247,7 +248,7 @@ export default {
       if (this.zones.length > 0 && this.planningStore.filters.zone.length > 1) {
         this.filtersZonesForDayView = this.planningStore.filters.zone
       }
-      this.planningStore.filters.zone = [this.zones[0].id] // select first zone
+      this.planningStore.filters.zone = this.zones.length !== 0 ? [this.zones[0].id] : [] // select first zone if zone
       this.calendarApi.changeView('timeGridWeek')
       this.planningStore.currentViewName = 'week'
     },
@@ -264,7 +265,7 @@ export default {
       await this.setZones()
       this.viewWeek()
       await this.planningStore.fetch()
-      this.$emit('afterFetch');
+      this.$emit('afterFetch')
     },
   },
 }
