@@ -24,3 +24,7 @@ export const postTarif = async (tarif: object) => {
 export const putActifTarif = async (idTarif: number, actif: object) => {
   return await put(`${import.meta.env.VITE_API_URL}/api/tarif/activer/${idTarif}`, actif)
 }
+
+export const sortTarifs = async (idFitArena: number, tarifs) => {
+  return await put(`${import.meta.env.VITE_API_URL}/api/fitarena/${idFitArena}/tarifs`, tarifs)
+}
