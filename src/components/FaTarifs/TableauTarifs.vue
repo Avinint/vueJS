@@ -9,6 +9,10 @@ import {sortTarifs} from "@api/tarifs";
 import {toast} from "vue3-toastify";
 
 const props = defineProps<{id: number, tarifsParNiveau: object[]}>()
+const emits = defineEmits<{
+  (e: "edit", id: int): void,
+  (e: "changeStatut", id: int, actif: boolean): void
+  ;}>()
 
 const setOrdre = async (liste: {idTarif, priorite}[]) => {
   await sortTarifs(props.id, liste)
@@ -59,7 +63,7 @@ const openTarif = (tarif: object) => {
                           type="checkbox"
                           value="true"
                           class="peer sr-only"
-                          @change="modifieTarif(tarif.idTarif, tarif.actif)"
+                          @change="$emit('changeStatut', tarif.idTarif, tarif.actif)"
                         />
                         <div
                           class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
@@ -88,7 +92,7 @@ const openTarif = (tarif: object) => {
                         icon="edit"
                         borderless
                         couleur="secondary"
-                        @click="editTarif(tarif.idTarif)"
+                        @click="$emit('edit', tarif.idTarif)"
                       />
                       <div class="w-10"/>
                     </td>

@@ -17,10 +17,14 @@
           <LabelText :text="activite.activite" class="label-text" />
           <ButtonRight label="Ajouter un tarif" icon="add" couleur="danger" @click="addTarif()" />
         </div>
-        <TableauTarifs :tarifs-par-niveau="activite.exceptionnel" :id="id"></TableauTarifs>
-        <TableauTarifs :tarifs-par-niveau="activite.special" :id="id"></TableauTarifs>
-        <TableauTarifs :tarifs-par-niveau="activite.general" :id="id"></TableauTarifs>
-        <TableauTarifs :tarifs-par-niveau="activite.defaut" :id="id"></TableauTarifs>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.exceptionnel" :id="id"></TableauTarifs>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.special" :id="id"></TableauTarifs>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.general" :id="id"></TableauTarifs>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.defaut" :id="id"></TableauTarifs>
       </Card>
     </template>
   </Card>
