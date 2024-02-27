@@ -10,6 +10,11 @@ export const getTarif = async (idTarif: number) => {
   return await get(`${import.meta.env.VITE_API_URL}/api/tarif/${idTarif}`)
 }
 
+// récupération des niveaux d'un tarif
+export const getTarifNiveaux = async () => {
+  return await get(`${import.meta.env.VITE_API_URL}/api/tarif/niveaux`)
+}
+
 // modification d'un tarif existant
 export const putTarif = async (idTarif: number, tarif: object) => {
   return await put(`${import.meta.env.VITE_API_URL}/api/tarif/${idTarif}`, tarif)
@@ -25,6 +30,7 @@ export const putActifTarif = async (idTarif: number, actif: object) => {
   return await put(`${import.meta.env.VITE_API_URL}/api/tarif/activer/${idTarif}`, actif)
 }
 
-export const sortTarifs = async (idFitArena: number, tarifs) => {
-  return await put(`${import.meta.env.VITE_API_URL}/api/fitarena/${idFitArena}/tarifs`, tarifs)
+export const sortTarifs = async (idFitArena: number, tarifs: {idTarif, priorite}[]) => {
+  const sortedTarifs = tarifs.map(({idTarif}, index) => ({idTarif, priorite: index + 1}))
+  return await put(`/api/fitarena/${idFitArena}/tarifs/priorite`, {ordre: sortedTarifs})
 }

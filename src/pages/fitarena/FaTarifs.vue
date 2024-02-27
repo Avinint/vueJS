@@ -27,9 +27,9 @@
                   <th style="width:10%;">Statut</th>
                   <th style="width:20%;">Nom du tarif</th>
                   <th style="width:15%;">Tarif</th>
-                  <th style="width:15%;" /> <!-- plage horaire -->
+                  <th style="width:15%;" /> <!-- date début - date fin -->
                   <th style="width:20%;" /> <!-- jours -->
-                  <th style="width:16%;">Périodes</th> <!-- date début - date fin -->
+                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
                   <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
                   <th style="width:1%;" /> <!-- modification (ouverture modal) -->
                   <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
@@ -85,9 +85,9 @@
                     <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
                       <tr>
                         <td colspan="4" />
-                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td>{{ periode.jours.join(' - ') }}</td>
                         <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
+                        <td>{{ periode.jours.join(' - ') }}</td>
+                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
                         <td colspan="3" />
                       </tr>
                     </template>
@@ -107,9 +107,9 @@
                   <th style="width:10%;">Statut</th>
                   <th style="width:20%;">Nom du tarif</th>
                   <th style="width:15%;">Tarif</th>
-                  <th style="width:15%;" /> <!-- plage horaire -->
+                  <th style="width:15%;" /> <!-- date début - date fin -->
                   <th style="width:20%;" /> <!-- jours -->
-                  <th style="width:16%;">Périodes</th> <!-- date début - date fin -->
+                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
                   <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
                   <th style="width:1%;" /> <!-- modification (ouverture modal) -->
                   <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
@@ -165,9 +165,9 @@
                     <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
                       <tr>
                         <td colspan="4" />
-                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td>{{ periode.jours.join(' - ') }}</td>
                         <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
+                        <td>{{ periode.jours.join(' - ') }}</td>
+                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
                         <td colspan="3" />
                       </tr>
                     </template>
@@ -187,20 +187,21 @@
                   <th style="width:10%;">Statut</th>
                   <th style="width:20%;">Nom du tarif</th>
                   <th style="width:15%;">Tarif</th>
-                  <th style="width:10%;">Périodes</th><!-- plage horaire -->
-                  <th style="width:25%;" /> <!-- jours -->
-                  <th style="width:16%;"/> <!-- date début - date fin -->
+                  <th style="width:15%;" /> <!-- date début - date fin -->
+                  <th style="width:20%;" /> <!-- jours -->
+                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
                   <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
                   <th style="width:1%;" /> <!-- modification (ouverture modal) -->
                   <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
                 </tr>
               </thead>
 
-              <draggable v-model="tarifs.tarifs" item-key="idTarif" tag="tbody" :component-data="{class:'sortable-list borderless'}" @end="setOrder(tarifs.tarifs)">
+              <draggable v-model="tarifs.tarifs" item-key="idTarif" tag="tbody" @end="setOrder(tarifs.tarifs)"
+                         :component-data="{class:'sortable-list borderless'}">
                 <template #item="{ element: tarif }">
                   <tr>
                     <td colspan="10">
-                      <table class="borderless">
+                      <table>
                         <tr class="item" :id="tarif.idTarif">
                           <td style="width:1%;" class="text-center">{{ tarif.priorite }}</td>
                           <td style="width:10%;" class="flex gap-6 mt-3">
@@ -251,17 +252,13 @@
                       <template v-if="tarif.open">
                         <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
                           <tr>
-                            <td class="border-l-0 border-r-0" colspan="4"/>
-                            <td class="border-l-0 border-r-0" style="width:15%;">{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{
-                                dayjs(periode.plageHoraireFin).format('HH:mm')
-                              }}
-                            </td>
-                            <td class="border-l-0 border-r-0" style="width:15%;">{{ periode.jours.join(' - ') }}</td>
-                            <td class="border-l-0 border-r-0">{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
-                            <td colspan="1"/>
+                            <td colspan="4" />
+                            <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
+                            <td>{{ periode.jours.join(' - ') }}</td>
+                            <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
+                            <td colspan="3" />
                           </tr>
                         </template>
-                        <!--                  </template>-->
                       </template>
                     </table>
                     </td>
@@ -281,9 +278,9 @@
                   <th style="width:10%;">Statut</th>
                   <th style="width:20%;">Nom du tarif</th>
                   <th style="width:15%;">Tarif</th>
-                  <th style="width:15%;" /> <!-- plage horaire -->
+                  <th style="width:15%;" /> <!-- date début - date fin -->
                   <th style="width:20%;" /> <!-- jours -->
-                  <th style="width:16%;">Périodes</th> <!-- date début - date fin -->
+                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
                   <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
                   <th style="width:1%;" /> <!-- modification (ouverture modal) -->
                   <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
@@ -339,9 +336,9 @@
                     <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
                       <tr>
                         <td colspan="4" />
-                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td>{{ periode.jours.join(' - ') }}</td>
                         <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
+                        <td>{{ periode.jours.join(' - ') }}</td>
+                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
                         <td colspan="3" />
                       </tr>
                     </template>
@@ -443,8 +440,9 @@
           <div class="flex gap-8">
             <div v-for="level in levels" :key="`niveauTarif-${level.id}`">
               <Button
+                v-if="level.libelle !== 'Défaut'"
                 @click="changeLevel(level.id)"
-                :label="level.label"
+                :label="level.libelle"
                 class="w-52"
                 couleur="none"
                 :class="{ 'bg-sky-600 text-white': levelChecked.includes(level.id) }"
@@ -546,7 +544,7 @@ import CardModalSection from '@components/common/CardModalSection.vue'
 import Spinner from '@components/common/Spinner.vue'
 import draggable from "vuedraggable";
 
-import {getTarifs, getTarif, postTarif, putActifTarif, putTarif, sortTarifs} from '@api/tarifs'
+import { getTarifs, getTarif, postTarif, putActifTarif, putTarif, getTarifNiveaux, sortTarifs } from '@api/tarifs'
 import { getActivites } from '../../api/activite'
 
 import 'vue3-toastify/dist/index.css'
@@ -574,21 +572,7 @@ const idTarif = ref(0)
 const errorMessage = ref('')
 const spinner = ref(false)
 const spinnerModal = ref(false)
-
-const levels = ref([
-  {
-    id: 1,
-    label: "Niv 1 : Tarif exceptionnel"
-  },
-  {
-    id: 2,
-    label: "Niv 2 : Tarif spécial"
-  },
-  {
-    id: 3,
-    label: "Niv 3 : Tarif général"
-  }
-])
+const levels = ref([])
 
 const newPeriode = {
   dateDebut: '',
@@ -602,6 +586,7 @@ const fetchDonnees = async () => {
   spinner.value = true
   tarifsByActivities.value = await getTarifs(props.id)
   tarifsByActivities.value = tarifsByActivities.value.map(tarif => ({ ...tarif, open: false }))
+  levels.value = await getTarifNiveaux()
   activites.value = await getActivites(props.id, 1, '&order=asc')
   spinner.value = false
 }
@@ -633,35 +618,6 @@ const changeLevel = (idLevel: number) => {
 onMounted(async () => {
   state.value = 'view'
   await fetchDonnees()
-  // let sortableList
-  // const items = document.querySelectorAll('.item')
-
-  // items.forEach(item => {
-  //   sortableList = document.querySelector('.item')?.closest('.sortable-list')
-  //   item.addEventListener('dragstart', () => {
-  //     item.classList.add("dragging")
-  //   })
-  //   item.addEventListener('dragend', async () => {
-  //     item.classList.remove('dragging')
-  //     // await patchTarif(route.params.id, item.id, { priorite: 2 })
-  //   })
-  // })
-
-  // const initSortableList = (e: any) => {
-  //   e.preventDefault()
-  //   const draggingItem = sortableList?.querySelector('.dragging')
-  //   const siblings = [...sortableList.querySelectorAll('.item:not(.dragging)')]
-
-  //   let nextSibling = siblings.find(sibling => {
-  //     return e.clientY <= sibling.offsetTop + sibling.offsetHeight / 2
-  //   })
-    
-  //   sortableList?.insertBefore(draggingItem, nextSibling)
-  //   console.log(sortableList)
-  // }
-
-  // sortableList?.addEventListener('dragover', initSortableList)
-  // sortableList?.addEventListener('dragenter', e => e.preventDefault())
 })
 
 watch(() => route.params.id, async() => await fetchDonnees())
@@ -670,7 +626,9 @@ const modifieTarif = async (id: number, actif: boolean) => {
   const data = {
     actif: actif
   }
-  await putActifTarif(id, data)
+  await putActifTarif(id, data).then(() => {
+    toast.success('Le tarif a été modifié avec succès !')
+  })
 }
 
 const editTarif = async (id: number) => {
@@ -694,9 +652,11 @@ const resetInfos = () => {
   idTarif.value = 0
 }
 
-const setOrder = (list) => {
-  console.log(list)
-  //await sortTarifs(1, list)
+const setOrder = async (liste: {idTarif, priorite}[]) => {
+  await sortTarifs(props.id, liste)
+    .catch(() => {
+    toast.error("La liste des tarifs n'a pas pu être mise à jour.")
+  })
 };
 
 const move = (evt) => { console.log(evt); return true}
@@ -800,7 +760,7 @@ const saveTarif = async () => {
     periode.dateDebut = `${yearD}-${monthD}-${dayD}`
     periode.dateFin = `${yearF}-${monthF}-${dayF}`
   })
-
+  
   if (errorMessage.value === '' ) await sendTarif()
 }
 

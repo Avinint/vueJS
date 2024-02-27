@@ -20,7 +20,7 @@
               <tbody>
                 <tr v-for="(act, i) in zoneFit.zoneActivites" :key="`zoneAct-`+ i" class="bg-white">
                   <td class="px-6 py-4 flex gap-4">
-                    <p class="w-16">{{ act.statut ? 'Actif' : 'Inactif' }}</p>
+                    <p class="w-16">{{ act.actif ? 'Actif' : 'Inactif' }}</p>
                     <label class="relative inline-flex cursor-pointer items-center">
                       <input
                         v-model="act.actif"
