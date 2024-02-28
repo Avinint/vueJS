@@ -213,8 +213,9 @@
                       :for="zone.id + '-' + zoneActivite.activite.id"
                     >{{ zoneActivite.activite.libelle }}
                     </label>
+                    {{ zoneActivite.activite }}
                     <div @click="zoneActivite.activite.checked ? openTarifModal(zone.libelle, zoneActivite) : null" class="rounded-lg cursor-pointer w-40 p-2 border border-gray-200 relative flex items-center">
-                      {{ zoneActivite.activite.tarif ? Intl.NumberFormat('fr-FR').format(zoneActivite.activite.tarif.montant / 100) : getTarif(zoneActivite.activite.id, creneauStore.date, creneauStore.heureDebut) }}
+                      {{ zoneActivite.activite.tarif ? Intl.NumberFormat('fr-FR').format(zoneActivite.activite.tarif / 100) : getTarif(zoneActivite.activite.id, creneauStore.date, creneauStore.heureDebut) }}
                       <span class="absolute top-2 right-2">€</span>
                     </div>
                   </div>
@@ -645,9 +646,9 @@ export default {
     async submitTarif () {
       this.spinnerZones = true
       let montant
-      if (this.creneauStore.activites.length !== 0) { // SI LE CRENEAU EST EN ÉDITION
-        const actTemp = this.creneauStore.activites.find(act => act.id === this.activiteId)
-        if (actTemp !== undefined) { // SI L'ACTIVITÉ EST DÉJÀ EXISTANTE SUR LE CRÉNEAU
+      // if (this.creneauStore.activites.length !== 0) { // SI LE CRENEAU EST EN ÉDITION
+        // const actTemp = this.creneauStore.activites.find(act => act.id === this.activiteId)
+        // if (actTemp !== undefined) { // SI L'ACTIVITÉ EST DÉJÀ EXISTANTE SUR LE CRÉNEAU
           // RÉCUPÉRER L'IDACTIVITÉ ET LE NOUVEAU TARIF POUR LE SETTER DANS L'INPUT CORRESPONDANT
           await getTarif(this.tarifId).then(response => {
             montant = response.montant
@@ -656,32 +657,28 @@ export default {
             if (zone.libelle === this.zoneActivite) {
               zone.zoneActivites.forEach(zoneAct => {
                 if (zoneAct.id === this.zoneId) {
-                  zoneAct.activite.tarif.montant = montant
+                  zoneAct.activite.tarif = montant
+                  zoneAct.activite.tarifId = this.tarifId
                 }
               })
             }
           })
-        } else {
+        // } else {
           // RÉCUPÉRER L'IDACTIVITÉ ET LE NOUVEAU TARIF POUR LE SETTER DANS L'INPUT CORRESPONDANT
-          await getTarif(this.tarifId).then(response => {
-            montant = response.montant
-          })
-          this.zones.forEach(zone => {
-            if (zone.libelle === this.zoneActivite) {
-              zone.zoneActivites.forEach(zoneAct => {
-                if (zoneAct.id === this.zoneId) {
-                  const tarif = {
-                    tarifId: this.tarifId,
-                    montant: montant
-                  }
-                  zoneAct.activite = { ...zoneAct.activite, tarif: tarif }
-                  zoneAct.activite.tarif.montant = montant
-                }
-              })
-            }
-          })
-        }
-      }
+          // await getTarif(this.tarifId).then(response => {
+          //   montant = response.montant
+          // })
+          // this.zones.forEach(zone => {
+          //   if (zone.libelle === this.zoneActivite) {
+          //     zone.zoneActivites.forEach(zoneAct => {
+          //       if (zoneAct.id === this.zoneId) {
+          //         zoneAct.activite.tarif = montant
+          //       }
+          //     })
+          //   }
+          // })
+        // }
+      // }
       this.tarifModal = false
       this.activiteLabel = ''
       this.activiteId = -1

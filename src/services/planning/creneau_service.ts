@@ -214,7 +214,7 @@ const hydrateZones = (creneau): ZoneContract[]  => {
       if (activite.zoneId === zone_id) {
         zone_activites.push({
           activiteId: activite.activiteId,
-          tarif: activite.tarif,
+          tarifId: activite.tarifId ?? null,
         })
       }
     }

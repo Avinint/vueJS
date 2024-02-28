@@ -181,6 +181,7 @@ export default {
     },
     async eventClick(eventClickInfo) {
       this.actionType = 'edit'
+      console.log(eventClickInfo.event)
       this.setSelectedCreneau(eventClickInfo.event)
 
       if (eventClickInfo.event.extendedProps.statut === "demande") {
@@ -226,6 +227,7 @@ export default {
       this.redraw_key++
     },
     setSelectedCreneau(fullCalendarCreneau) {
+      console.log(fullCalendarCreneau)
       this.creneauStore.setCreneau(fullCalendarCreneau)
     },
     getWeekNumber(date) {
