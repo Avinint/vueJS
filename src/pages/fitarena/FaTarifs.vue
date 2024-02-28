@@ -1,9 +1,13 @@
 <template>
   <Card class="space-y-4">
-    <div class="">
-      <h1 class="mb-4">TARIFS</h1>
-      <h2>Niv 1, Prio 1 = le plus prioritaire</h2>
+    <div class="mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="mb-4">TARIFS</h1>
+        <h2>Niv 1, Prio 1 = le plus prioritaire</h2>
+      </div>
+      <ButtonRight label="Ajouter un tarif" icon="add" couleur="danger" @click="addTarif()" />
     </div>
+
     <Spinner v-if="spinner" />
     <template v-if="!spinner">
       <Card
@@ -15,15 +19,15 @@
       >
         <div class="mb-4 flex items-center justify-between">
           <LabelText :text="activite.activite" class="label-text" />
-          <ButtonRight label="Ajouter un tarif" icon="add" couleur="danger" @click="addTarif()" />
+
         </div>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
                        :tarifs-par-niveau="activite.exceptionnel" :id="id"></TableauTarifs>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
                        :tarifs-par-niveau="activite.special" :id="id"></TableauTarifs>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
                        :tarifs-par-niveau="activite.general" :id="id"></TableauTarifs>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
                        :tarifs-par-niveau="activite.defaut" :id="id"></TableauTarifs>
       </Card>
     </template>

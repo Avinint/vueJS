@@ -1,35 +1,6 @@
-<script setup lang="ts">
-
-import dayjs from "dayjs";
-import InfoSVG from "@components/svg/InfoSVG.vue";
-import Input from "@components/common/Input.vue";
-import Button from "@components/common/Button.vue";
-import draggable from "vuedraggable";
-import {sortTarifs} from "@api/tarifs";
-import {toast} from "vue3-toastify";
-
-const props = defineProps<{id: number, tarifsParNiveau: object[]}>()
-const emits = defineEmits<{
-  (e: "edit", id: int): void,
-  (e: "changeStatut", id: int, actif: boolean): void
-  ;}>()
-
-const setOrdre = async (liste: {idTarif, priorite}[]) => {
-  await sortTarifs(props.id, liste)
-    .catch(() => {
-      toast.error("La liste des tarifs n'a pas pu être mise à jour.")
-    })
-};
-
-const openTarif = (tarif: object) => {
-  tarif.open = !tarif.open
-}
-</script>
-
 <template>
-<!--  activite.general-->
   <template v-if="tarifsParNiveau">
-    <div v-for="(tarifs, i) in tarifsParNiveau" :key="`tarifs-${i}`">
+    <div v-for="(tarifs, index) in tarifsParNiveau" :key="`tarifs-${index}`">
       <h3 class="font-bold text-sm mb-2">Niveau {{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
       <table class="w-full text-left mb-10 rounded-lg">
         <thead class="bg-gray-200 text-sm">
@@ -121,6 +92,37 @@ const openTarif = (tarif: object) => {
     </div>
   </template>
 </template>
+
+<script setup lang="ts">
+
+import dayjs from "dayjs";
+import InfoSVG from "@components/svg/InfoSVG.vue";
+import Input from "@components/common/Input.vue";
+import Button from "@components/common/Button.vue";
+import draggable from "vuedraggable";
+import {sortTarifs} from "@api/tarifs";
+import {toast} from "vue3-toastify";
+
+const props = defineProps<{id: number, tarifsParNiveau: object[]}>()
+const emit = defineEmits<{
+  (e: "changeOrdre")
+  (e: "edit", id: int): void,
+  (e: "changeStatut", id: int, actif: boolean): void
+  ;}>()
+
+const setOrdre = async (liste: {idTarif, priorite}[]) => {
+
+  await sortTarifs(props.id, liste)
+    .catch(() => {
+      toast.error("La liste des tarifs n'a pas pu être mise à jour.")
+    })
+  await emit("changeOrdre")
+};
+
+const openTarif = (tarif: object) => {
+  tarif.open = !tarif.open
+}
+</script>
 
 <style scoped lang="scss">
 th, td {
