@@ -24,13 +24,13 @@
           <template #item="{ element: tarif }">
             <tr>
               <td colspan="10" class="padding-none">
-                <table class="w-full ">
+                <table class="w-full">
                   <tr class="item" :id="tarif.idTarif">
                     <td style="width:2%;" class="text-center align-baseline">{{ tarif.priorite }}</td>
-                    <td style="width:9%" class="mt-3 align-baseline">
-                      <div class="flex gap-3">
+                    <td style="width:9%;" class="align-baseline">
+                      <div class="flex gap-4">
                         <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
-                        <label class=" inline-flex cursor-pointer items-center">
+                        <label class="relative inline-flex cursor-pointer items-center">
                           <input
                             v-model="tarif.actif"
                             type="checkbox"
@@ -82,8 +82,8 @@
                         <td colspan="4" />
                         <td colspan="1">{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
                         <td colspan="2">{{ periode.jours.join(' - ') }}</td>
-                        <td colspan="2">{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td colspan="2" />
+                        <td colspan="1">{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
+                        <td colspan="3" />
                       </tr>
                     </template>
                   </template>
