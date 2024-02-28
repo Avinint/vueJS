@@ -150,7 +150,7 @@ export default {
   },
   async mounted() {
     this.calendarApi = this.$refs.fullCalendar.getApi()
-    await this.initZones();
+    await this.initZones()
     await this.typeCreneauStore.fetchTypeCreneaux()
     this.calendarOptions.scrollTime = this.planningStore.scrollTime
   },
@@ -189,17 +189,17 @@ export default {
         await this.$refs.modalDemandeDetails.open()
       } else {
         if (eventClickInfo.event.extendedProps.recurrence)
-          this.$refs.edit_options.open();
+          this.$refs.edit_options.open()
         else {
-          this.creneauStore.recurrence = undefined;
-          this.isModalCreneauOpen = true;
+          this.creneauStore.recurrence = undefined
+          this.isModalCreneauOpen = true
         }
       }
     },
     editSingle() {
-      this.creneauStore.recurrence = undefined;
+      this.creneauStore.recurrence = undefined
       this.mode = 'occurence'
-      this.isModalCreneauOpen = true;
+      this.isModalCreneauOpen = true
     },
     editRecurence() {
       this.$refs.edit_options.close()
@@ -211,8 +211,8 @@ export default {
       }
 
       if (eventClickInfo.event.extendedProps.event_type == 1) {
-        this.$refs.modal_demande.setDemande(eventClickInfo.event.extendedProps);
-        this.$refs.modal_demande.open(); 
+        this.$refs.modal_demande.setDemande(eventClickInfo.event.extendedProps)
+        this.$refs.modal_demande.open()
       }
     },
     select(selectionInfo) {

@@ -59,7 +59,6 @@ export const usePlanningStore = defineStore('planning', {
       const demandes = state.demandes.map((demande) => 
         parseDemandeToEvent(demande)
       )
-
       return creneaux.concat(demandes)
     },
     getCreneauxOrganismesEvents(state): CalendarEvent[] {
@@ -83,7 +82,7 @@ export const usePlanningStore = defineStore('planning', {
     },
     getOrganismeEvents(state) {
       return state.idOrganisme
-    },
+    }
   },
   actions: {
     async fetch() {

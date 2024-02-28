@@ -34,3 +34,11 @@ export const sortTarifs = async (idFitArena: number, tarifs: {idTarif, priorite}
   const sortedTarifs = tarifs.map(({idTarif}, index) => ({idTarif, priorite: index + 1}))
   return await put(`/api/fitarena/${idFitArena}/tarifs/priorite`, {ordre: sortedTarifs})
 }
+
+export const getTarifsByActivity = async (idFitArena: number, idActivite: number) => {
+  return (await get(`/api/tarif/liste/fitarena/${idFitArena}/activite/${idActivite}`))
+}
+
+export const getTarifByActivity = async (idFitArena: number, idActivite: number, date: string, heure: string) => {
+  return (await get(`/api/tarif/fitarena/${idFitArena}/activite/${idActivite}/date/${date}/heure/${heure}`))
+}

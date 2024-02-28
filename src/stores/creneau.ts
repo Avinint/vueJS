@@ -24,20 +24,19 @@ export const useCreneauStore = defineStore('creneau', {
       this.date = dayjs(creneau.start).format('YYYY-MM-DD') // 2023-01-23
       this.heureDebut = dayjs(creneau.start).format('HH:mm') // "14:30:00"
       this.heureFin = dayjs(creneau.end).format('HH:mm') // "14:30:00"
-
       // Extended props contains the complete Creneau data.
       // Even if it is typed "any"
       if (creneau.extendedProps) {
         this.creneauType = creneau.extendedProps.type
         this.zones = creneau.extendedProps.zones
-
-        this.activites = creneau.extendedProps.activites.map(
-          (activite: any) => {
-            activite.activiteId = activite.id
-            activite.tarif = activite.prix
-            return activite
-          }
-        )
+        this.activites = creneau.extendedProps.activites
+        // this.activites = creneau.extendedProps.activites.map(
+        //   (activite: any) => {
+        //     activite.activiteId = activite.id
+        //     activite.tarif = activite.prix
+        //     return activite
+        //   }
+        // )
 
         this.titre = creneau.extendedProps.titre
         this.nbPersonnesAttendu = creneau.extendedProps.nbPersonnesAttendu
@@ -121,7 +120,6 @@ export const useCreneauStore = defineStore('creneau', {
     },
 
     parseDemandeCreneauResponse(response: DemandeCreneauEditResponse): Creneau[] {
-
       return response.creneaux.map(creneau => {
         const value: Creneau = {
           id: creneau.id,

@@ -61,7 +61,7 @@ type DemandeEditContract = {
   creneau: {
     id?: number
     creneauType: number
-    zones: { id: number; activites: { activiteId: number; tarif: number }[] }[]
+    zones: { id: number; activites: { activiteId: number; tarif: { tarifId: number, montant: number } }[] }[]
     titre: string
     date: string
     heureDebut: string
@@ -118,7 +118,7 @@ type CreneauEditContract = {
   recurrence?: Recurrence
 }
 
-type ZoneContract = { id: number; activites: { activiteId: number; tarif: number }[] }
+type ZoneContract = { id: number; activites: { activiteId: number; tarif: { tarifId: number, montant: number } }[] }
 
 type CreneauDemandeContract = {
   id?: number
@@ -228,7 +228,20 @@ type Activite = {
   zoneId?: number
   libelle: string
   maxTerrain: number
-  tarif: number
+  tarif: Tarif
+}
+
+type PlanningActivite = {
+  activiteId: number
+  zoneId?: number
+  libelle: string
+  maxTerrain: number
+  tarif: Tarif
+}
+
+type Tarif = {
+  tarifId: number | null
+  montant?: number
 }
 
 type Demande = {

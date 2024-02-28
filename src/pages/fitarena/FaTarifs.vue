@@ -117,10 +117,9 @@
           <div class="flex gap-8">
             <div v-for="level in levels" :key="`niveauTarif-${level.id}`">
               <Button
-                v-if="level.libelle !== 'Défaut'"
                 @click="changeLevel(level.id)"
-                :label="level.libelle"
-                class="w-52"
+                :label="`${level.rang}. ${level.libelle}`"
+                class="w-40"
                 couleur="none"
                 :class="{ 'bg-sky-600 text-white': levelChecked.includes(level.id) }"
               />

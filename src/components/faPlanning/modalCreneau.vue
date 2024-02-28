@@ -169,7 +169,7 @@
           Activités
         </label>
         <div class="flex overflow-x-scroll py-3">
-          <template v-for="zone in zones" :key="zone">
+          <template v-if="!spinnerZones" v-for="zone in zones" :key="zone">
             <!-- v-if="isZoneEditable(zone)" -->
             <div class="w-80 flex-col">
               <input
@@ -213,13 +213,10 @@
                       :for="zone.id + '-' + zoneActivite.activite.id"
                     >{{ zoneActivite.activite.libelle }}
                     </label>
-                    <FAInput
-                      v-model="zoneActivite.activite.tarif"
-                      :default-value="zoneActivite.tarifDefaut ?? defaultTarif"
-                      class="w-28 text-center after:ml-1 after:content-[attr(suffix)]"
-                      :inline="true"
-                      suffix="€"
-                    />
+                    <div @click="zoneActivite.activite.checked ? openTarifModal(zone.libelle, zoneActivite) : null" class="rounded-lg cursor-pointer w-40 p-2 border border-gray-200 relative flex items-center">
+                      {{ zoneActivite.activite.tarif ? Intl.NumberFormat('fr-FR').format(zoneActivite.activite.tarif.montant / 100) : getTarif(zoneActivite.activite.id, creneauStore.date, creneauStore.heureDebut) }}
+                      <span class="absolute top-2 right-2">€</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -368,6 +365,40 @@
       />
     </div>
   </Modal>
+  <Modal
+    v-if="tarifModal"
+    @cancel="closeTarifModal()"
+    size="2xl"
+    title="SÉLECTION DE TARIF"
+    type="none"
+  >
+    <CardModalSection
+      :title="activiteLabel"
+      class="pl-4"
+    >
+      <InputSelect
+        v-model="tarifId"
+        :required="true"
+        label="Sélectionner un tarif"
+        class="w-fit-content"
+        :options="getTarifsOptions"
+      />
+      <p class="text-black text-xs my-2">Le tarif sélectionné sera appliqué sur tous les créneaux de la plage horaire que vous êtes en train de créer.</p>
+    </CardModalSection>
+    <div class="flex justify-end gap-4">
+      <Button
+        @click="closeTarifModal()"
+        label="Annuler"
+        couleur="secondary"
+        class="border border-red-600 text-red-600"
+      />
+      <Button
+        @click="submitTarif()"
+        label="Valider mon tarif"
+        couleur="danger"
+      />
+    </div>
+  </Modal>
 </template>
 
 <script>
@@ -378,6 +409,7 @@ import { useOrganismeStore } from '@stores/organisme.ts'
 import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { getZones } from '@api/zone'
 import { postCreneauVerifDemande } from '@api/creneau'
+import { getTarifsByActivity, getTarifByActivity, getTarif } from '@api/tarifs'
 
 import Modal from '@components/common/Modal.vue'
 import ValidationModal from '@components/common/ValidationModal.vue'
@@ -387,8 +419,8 @@ import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
 import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
-import MentionChampsObligatoires from "@components/common/MentionChampsObligatoires.vue"
-import Button from "@components/common/Button.vue"
+import MentionChampsObligatoires from '@components/common/MentionChampsObligatoires.vue'
+import Button from '@components/common/Button.vue'
 
 import { mapStores } from 'pinia'
 import { toast } from 'vue3-toastify'
@@ -432,10 +464,19 @@ export default {
       recurrenceErrorMessage: '',
       verifModal: false,
       verifCreneaux: [],
-      labelCheckedAllZones: 'Sélectionner'
+      labelCheckedAllZones: 'Sélectionner',
+      tarifModal: false,
+      activiteLabel: '',
+      activiteId: -1,
+      tarifs: [],
+      tarifId: -1,
+      zoneActivite: '',
+      zoneId: -1,
+      spinnerZones: false
     }
   },
   async mounted() {
+    this.spinnerZones = true
     this.datepicked = this.$dayjs(this.creneauStore.date).format(
       this.datepickerFormat
     )
@@ -447,6 +488,7 @@ export default {
     } else {
       if (this.creneauStore.recurrence) this.submenu = 'recurence'
     }
+    this.spinnerZones = false
   },
   computed: {
     ...mapStores(usePlanningStore),
@@ -478,6 +520,14 @@ export default {
         return {
           id: organisme.id,
           label: organisme.libelle,
+        }
+      })
+    },
+    getTarifsOptions() {
+      return this.tarifs.map((tarif) => {
+        return {
+          id: tarif.tarifId,
+          label: `${tarif.niveau}.${tarif.priorite} - ${tarif.libelle}`,
         }
       })
     },
@@ -592,6 +642,69 @@ export default {
     }
   },
   methods: {
+    async submitTarif () {
+      this.spinnerZones = true
+      let montant
+      if (this.creneauStore.activites.length !== 0) { // SI LE CRENEAU EST EN ÉDITION
+        const actTemp = this.creneauStore.activites.find(act => act.id === this.activiteId)
+        if (actTemp !== undefined) { // SI L'ACTIVITÉ EST DÉJÀ EXISTANTE SUR LE CRÉNEAU
+          // RÉCUPÉRER L'IDACTIVITÉ ET LE NOUVEAU TARIF POUR LE SETTER DANS L'INPUT CORRESPONDANT
+          await getTarif(this.tarifId).then(response => {
+            montant = response.montant
+          })
+          this.zones.forEach(zone => {
+            if (zone.libelle === this.zoneActivite) {
+              zone.zoneActivites.forEach(zoneAct => {
+                if (zoneAct.id === this.zoneId) {
+                  zoneAct.activite.tarif.montant = montant
+                }
+              })
+            }
+          })
+        } else {
+          // RÉCUPÉRER L'IDACTIVITÉ ET LE NOUVEAU TARIF POUR LE SETTER DANS L'INPUT CORRESPONDANT
+          await getTarif(this.tarifId).then(response => {
+            montant = response.montant
+          })
+          this.zones.forEach(zone => {
+            if (zone.libelle === this.zoneActivite) {
+              zone.zoneActivites.forEach(zoneAct => {
+                if (zoneAct.id === this.zoneId) {
+                  const tarif = {
+                    tarifId: this.tarifId,
+                    montant: montant
+                  }
+                  zoneAct.activite = { ...zoneAct.activite, tarif: tarif }
+                  zoneAct.activite.tarif.montant = montant
+                }
+              })
+            }
+          })
+        }
+      }
+      this.tarifModal = false
+      this.activiteLabel = ''
+      this.activiteId = -1
+      this.tarifId = -1
+      this.spinnerZones = false
+    },
+    async getTarif (idActivite, date, heure) {
+      const data = await getTarifByActivity(this.$route.params.id, idActivite, date, `${heure}:00`)
+      return Intl.NumberFormat('fr-FR').format(data.tarif.montant / 100)
+    },
+    async openTarifModal (zoneLibelle, zone) {
+      this.tarifs = await getTarifsByActivity(this.$route.params.id, zone.activite.id)
+      this.tarifModal = true
+      this.activiteLabel = zone.activite.libelle
+      this.activiteId = zone.activite.id
+      this.zoneActivite = zoneLibelle
+      this.zoneId = zone.id
+    },
+    closeTarifModal () {
+      this.tarifModal = false
+      this.activiteLabel = ''
+      this.tarifId = -1
+    },
     setHeureDebut(event) {
       this.creneauStore.heureDebut = event.target.value
       this.changerHeureFinSelonDureeCreneau()

@@ -31,7 +31,6 @@ const emits = defineEmits<{
   (e: 'update:modelValue', value: string | null): void
 }>()
 
-
 function updateValue() {
   emits('update:modelValue', select.value)
 }
