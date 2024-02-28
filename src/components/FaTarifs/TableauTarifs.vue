@@ -59,7 +59,6 @@
                     </td>
                     <td style="width:1%;">
                       <Button
-                        v-if="tarifs.niveau !== 4"
                         icon="edit"
                         borderless
                         couleur="secondary"
