@@ -328,9 +328,9 @@ const selectAllZones = () => {
 }
 
 const submitDemande = async() => {
-  spinnerDemandeModal.value = true
   errorMessage.value = ''
-  if (form.zones.length == 0) {
+  
+  if (form.zones.length === 0) {
     errorMessage.value = "Une zone doit être sélectionnée"
     return
   } else if (date.value == '') {
@@ -380,6 +380,7 @@ const submitDemande = async() => {
     }
   }
 
+  spinnerDemandeModal.value = true
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form)
   verifCreneaux.value = await postCreneauVerifDemande(contract.value)
   spinnerDemandeModal.value = false
