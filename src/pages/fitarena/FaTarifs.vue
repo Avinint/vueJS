@@ -17,326 +17,14 @@
           <LabelText :text="activite.activite" class="label-text" />
           <ButtonRight label="Ajouter un tarif" icon="add" couleur="danger" @click="addTarif()" />
         </div>
-        <template v-if="activite.exceptionnel">
-          <div v-for="(tarifs, i) in activite.exceptionnel" :key="`tarifs-${i}`">
-            <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
-            <table class="w-full text-left mb-10 rounded-lg">
-              <thead class="bg-gray-200 text-sm">
-                <tr>
-                  <th style="width:1%;">Prio</th>
-                  <th style="width:10%;">Statut</th>
-                  <th style="width:20%;">Nom du tarif</th>
-                  <th style="width:15%;">Tarif</th>
-                  <th style="width:15%;" /> <!-- date début - date fin -->
-                  <th style="width:20%;" /> <!-- jours -->
-                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
-                  <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
-                  <th style="width:1%;" /> <!-- modification (ouverture modal) -->
-                  <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
-                </tr>
-              </thead>
-              <tbody class="sortable-list">
-                <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
-                  <tr class="item" :id="tarif.idTarif">
-                    <td class="text-center">{{ tarif.priorite }}</td>
-                    <td class="flex gap-6 mt-3">
-                      <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
-                      <label class="relative inline-flex cursor-pointer items-center">
-                        <input
-                          v-model="tarif.actif"
-                          type="checkbox"
-                          value="true"
-                          class="peer sr-only"
-                          @change="modifieTarif(tarif.idTarif, tarif.actif)"
-                        />
-                        <div
-                          class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
-                        ></div>
-                        <span
-                          class="ml-3 text-sm font-medium text-gray-900"
-                        ></span>
-                      </label>
-                    </td>
-                    <td>{{ tarif.nom }}</td>
-                    <td>{{ Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(tarif.tarif / 100) }} / {{ tarif.duree }} min</td>
-                    <td />
-                    <td />
-                    <td>{{ tarif.periodes.length }} période(s)</td>
-                    <td class="text-center">
-                      <div class="px-3">
-                        <InfoSVG :open="tarif.open" @click="openTarif(tarif)" class="cursor-pointer" />
-                      </div>
-                    </td>
-                    <td>
-                      <Button
-                        v-if="tarifs.niveau !== 4"
-                        icon="edit"
-                        borderless
-                        couleur="secondary"
-                        @click="editTarif(tarif.idTarif)"
-                      />
-                      <div class="w-10" />
-                    </td>
-                    <td>
-                      <div class="border-t border-b border-black h-2 w-4 px-2" />
-                    </td>
-                  </tr>
-                  <template v-if="tarif.open">
-                    <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
-                      <tr>
-                        <td colspan="4" />
-                        <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
-                        <td>{{ periode.jours.join(' - ') }}</td>
-                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td colspan="3" />
-                      </tr>
-                    </template>
-                  </template>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </template>
-        <template v-if="activite.special">
-          <div v-for="(tarifs, i) in activite.special" :key="`tarifs-${i}`">
-            <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
-            <table class="w-full text-left mb-10 rounded-lg">
-              <thead class="bg-gray-200 text-sm">
-                <tr>
-                  <th style="width:1%;">Prio</th>
-                  <th style="width:10%;">Statut</th>
-                  <th style="width:20%;">Nom du tarif</th>
-                  <th style="width:15%;">Tarif</th>
-                  <th style="width:15%;" /> <!-- date début - date fin -->
-                  <th style="width:20%;" /> <!-- jours -->
-                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
-                  <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
-                  <th style="width:1%;" /> <!-- modification (ouverture modal) -->
-                  <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
-                </tr>
-              </thead>
-              <tbody class="sortable-list">
-                <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
-                  <tr class="item" :id="tarif.idTarif">
-                    <td class="text-center">{{ tarif.priorite }}</td>
-                    <td class="flex gap-6 mt-3">
-                      <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
-                      <label class="relative inline-flex cursor-pointer items-center">
-                        <input
-                          v-model="tarif.actif"
-                          type="checkbox"
-                          value="true"
-                          class="peer sr-only"
-                          @change="modifieTarif(tarif.idTarif, tarif.actif)"
-                        />
-                        <div
-                          class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
-                        ></div>
-                        <span
-                          class="ml-3 text-sm font-medium text-gray-900"
-                        ></span>
-                      </label>
-                    </td>
-                    <td>{{ tarif.nom }}</td>
-                    <td>{{ Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(tarif.tarif / 100) }} / {{ tarif.duree }} min</td>
-                    <td />
-                    <td />
-                    <td>{{ tarif.periodes.length }} période(s)</td>
-                    <td class="text-center">
-                      <div class="px-3">
-                        <InfoSVG :open="tarif.open" @click="openTarif(tarif)" class="cursor-pointer" />
-                      </div>
-                    </td>
-                    <td>
-                      <Button
-                        v-if="tarifs.niveau !== 4"
-                        icon="edit"
-                        borderless
-                        couleur="secondary"
-                        @click="editTarif(tarif.idTarif)"
-                      />
-                      <div class="w-10" />
-                    </td>
-                    <td>
-                      <div class="border-t border-b border-black h-2 w-4 px-2" />
-                    </td>
-                  </tr>
-                  <template v-if="tarif.open">
-                    <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
-                      <tr>
-                        <td colspan="4" />
-                        <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
-                        <td>{{ periode.jours.join(' - ') }}</td>
-                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td colspan="3" />
-                      </tr>
-                    </template>
-                  </template>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </template>
-        <template v-if="activite.general">
-          <div v-for="(tarifs, i) in activite.general" :key="`tarifs-${i}`">
-            <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
-            <table class="w-full text-left mb-10 rounded-lg">
-              <thead class="bg-gray-200 text-sm">
-                <tr>
-                  <th style="width:1%;">Prio</th>
-                  <th style="width:10%;">Statut</th>
-                  <th style="width:20%;">Nom du tarif</th>
-                  <th style="width:15%;">Tarif</th>
-                  <th style="width:15%;" /> <!-- date début - date fin -->
-                  <th style="width:20%;" /> <!-- jours -->
-                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
-                  <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
-                  <th style="width:1%;" /> <!-- modification (ouverture modal) -->
-                  <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
-                </tr>
-              </thead>
-              <tbody class="sortable-list">
-                <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
-                  <tr class="item" :id="tarif.idTarif">
-                    <td class="text-center">{{ tarif.priorite }}</td>
-                    <td class="flex gap-6 mt-3">
-                      <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
-                      <label class="relative inline-flex cursor-pointer items-center">
-                        <input
-                          v-model="tarif.actif"
-                          type="checkbox"
-                          value="true"
-                          class="peer sr-only"
-                          @change="modifieTarif(tarif.idTarif, tarif.actif)"
-                        />
-                        <div
-                          class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
-                        ></div>
-                        <span
-                          class="ml-3 text-sm font-medium text-gray-900"
-                        ></span>
-                      </label>
-                    </td>
-                    <td>{{ tarif.nom }}</td>
-                    <td>{{ Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(tarif.tarif / 100) }} / {{ tarif.duree }} min</td>
-                    <td />
-                    <td />
-                    <td>{{ tarif.periodes.length }} période(s)</td>
-                    <td class="text-center">
-                      <div class="px-3">
-                        <InfoSVG :open="tarif.open" @click="openTarif(tarif)" class="cursor-pointer" />
-                      </div>
-                    </td>
-                    <td>
-                      <Button
-                        v-if="tarifs.niveau !== 4"
-                        icon="edit"
-                        borderless
-                        couleur="secondary"
-                        @click="editTarif(tarif.idTarif)"
-                      />
-                      <div class="w-10" />
-                    </td>
-                    <td>
-                      <div class="border-t border-b border-black h-2 w-4 px-2" />
-                    </td>
-                  </tr>
-                  <template v-if="tarif.open">
-                    <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
-                      <tr>
-                        <td colspan="4" />
-                        <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
-                        <td>{{ periode.jours.join(' - ') }}</td>
-                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td colspan="3" />
-                      </tr>
-                    </template>
-                  </template>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </template>
-        <template v-if="activite.defaut">
-          <div v-for="(tarifs, i) in activite.defaut" :key="`tarifs-${i}`">
-            <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
-            <table class="w-full text-left mb-10 rounded-lg">
-              <thead class="bg-gray-200 text-sm">
-                <tr>
-                  <th style="width:1%;">Prio</th>
-                  <th style="width:10%;">Statut</th>
-                  <th style="width:20%;">Nom du tarif</th>
-                  <th style="width:15%;">Tarif</th>
-                  <th style="width:15%;" /> <!-- date début - date fin -->
-                  <th style="width:20%;" /> <!-- jours -->
-                  <th style="width:16%;">Périodes</th> <!-- plage horaire -->
-                  <th style="width:1%;" /> <!-- accordéon pour détails périodes -->
-                  <th style="width:1%;" /> <!-- modification (ouverture modal) -->
-                  <th style="width:1%;" /> <!-- bouton drag and drop (toute la row sera sélectionnable) -->
-                </tr>
-              </thead>
-              <tbody class="sortable-list">
-                <template v-for="(tarif, i) in tarifs.tarifs" :key="`tarif-${i}`">
-                  <tr class="item" :id="tarif.idTarif">
-                    <td class="text-center">{{ tarif.priorite }}</td>
-                    <td class="flex gap-6 mt-3">
-                      <p class="statut-tarif">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
-                      <label class="relative inline-flex cursor-pointer items-center">
-                        <input
-                          v-model="tarif.actif"
-                          type="checkbox"
-                          value="true"
-                          class="peer sr-only"
-                          @change="modifieTarif(tarif.idTarif, tarif.actif)"
-                        />
-                        <div
-                          class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"
-                        ></div>
-                        <span
-                          class="ml-3 text-sm font-medium text-gray-900"
-                        ></span>
-                      </label>
-                    </td>
-                    <td>{{ tarif.nom }}</td>
-                    <td>{{ Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(tarif.tarif / 100) }} / {{ tarif.duree }} min</td>
-                    <td />
-                    <td />
-                    <td>{{ tarif.periodes.length }} période(s)</td>
-                    <td class="text-center">
-                      <div class="px-3">
-                        <InfoSVG :open="tarif.open" @click="openTarif(tarif)" class="cursor-pointer" />
-                      </div>
-                    </td>
-                    <td>
-                      <Button
-                        v-if="tarifs.niveau !== 4"
-                        icon="edit"
-                        borderless
-                        couleur="secondary"
-                        @click="editTarif(tarif.idTarif)"
-                      />
-                      <div class="w-10" />
-                    </td>
-                    <td>
-                      <div class="border-t border-b border-black h-2 w-4 px-2" />
-                    </td>
-                  </tr>
-                  <template v-if="tarif.open">
-                    <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
-                      <tr>
-                        <td colspan="4" />
-                        <td>{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
-                        <td>{{ periode.jours.join(' - ') }}</td>
-                        <td>{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td colspan="3" />
-                      </tr>
-                    </template>
-                  </template>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </template>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.exceptionnel" :id="id"></TableauTarifs>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.special" :id="id"></TableauTarifs>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.general" :id="id"></TableauTarifs>
+        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif"
+                       :tarifs-par-niveau="activite.defaut" :id="id"></TableauTarifs>
       </Card>
     </template>
   </Card>
@@ -531,6 +219,7 @@ import FAInput from '@components/common/Input.vue'
 import InputSelect from '@components/common/Select.vue'
 import CardModalSection from '@components/common/CardModalSection.vue'
 import Spinner from '@components/common/Spinner.vue'
+import draggable from "vuedraggable";
 
 import { getTarifs, getTarif, postTarif, putActifTarif, putTarif, getTarifNiveaux } from '@api/tarifs'
 import { getActivites } from '../../api/activite'
@@ -540,6 +229,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
+import TableauTarifs from "@components/FaTarifs/TableauTarifs.vue";
 
 const props = defineProps(['id'])
 const route = useRoute()
@@ -683,10 +373,6 @@ const addTarif = () => {
   modalTitle.value = 'Création de tarif'
   modalType.value = 'add'
   openModal.value = true
-}
-
-const openTarif = (tarif: object) => {
-  tarif.open = !tarif.open
 }
 
 const saveTarif = async () => {

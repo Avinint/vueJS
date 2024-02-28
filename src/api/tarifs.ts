@@ -29,3 +29,8 @@ export const postTarif = async (tarif: object) => {
 export const putActifTarif = async (idTarif: number, actif: object) => {
   return await put(`${import.meta.env.VITE_API_URL}/api/tarif/activer/${idTarif}`, actif)
 }
+
+export const sortTarifs = async (idFitArena: number, tarifs: {idTarif, priorite}[]) => {
+  const sortedTarifs = tarifs.map(({idTarif}, index) => ({idTarif, priorite: index + 1}))
+  return await put(`/api/fitarena/${idFitArena}/tarifs/priorite`, {ordre: sortedTarifs})
+}
