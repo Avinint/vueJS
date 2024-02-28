@@ -30,7 +30,7 @@ const openTarif = (tarif: object) => {
 <!--  activite.general-->
   <template v-if="tarifsParNiveau">
     <div v-for="(tarifs, i) in tarifsParNiveau" :key="`tarifs-${i}`">
-      <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
+      <h3 class="font-bold text-sm mb-2">Niveau {{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
       <table class="w-full text-left mb-10 rounded-lg">
         <thead class="bg-gray-200 text-sm">
         <tr>
