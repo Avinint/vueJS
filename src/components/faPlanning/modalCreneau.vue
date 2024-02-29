@@ -213,7 +213,6 @@
                       :for="zone.id + '-' + zoneActivite.activite.id"
                     >{{ zoneActivite.activite.libelle }}
                     </label>
-                    {{ zoneActivite.activite }}
                     <div @click="zoneActivite.activite.checked ? openTarifModal(zone.libelle, zoneActivite) : null" class="rounded-lg cursor-pointer w-40 p-2 border border-gray-200 relative flex items-center">
                       {{ zoneActivite.activite.tarif ? Intl.NumberFormat('fr-FR').format(zoneActivite.activite.tarif / 100) : getTarif(zoneActivite.activite.id, creneauStore.date, creneauStore.heureDebut) }}
                       <span class="absolute top-2 right-2">€</span>
