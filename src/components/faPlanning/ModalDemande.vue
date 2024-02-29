@@ -219,6 +219,7 @@ import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
 
+const planningStore = usePlanningStore()
 const creneau_store = useCreneauStore()
 const user = useUserStore()
 const route = useRoute()
@@ -281,7 +282,7 @@ function create(event: DateSelectArg) {
   form.recurrence = default_form_values.recurrence
   form.title = default_form_values.title
   form.people_count = default_form_values.people_count
-  form.zones = [...default_form_values.zones]
+  form.zones = [...planningStore.getActiveZones]
   form.commentaire = default_form_values.commentaire
   date.value = parseDateToInput(event.start)
   form.start_time = extractHour(event.start)
@@ -454,7 +455,7 @@ const removeDemandeValidation = async () => {
 }
 
 const refreshPlanning = async () => {
-  await usePlanningStore().fetch()
+  await planningStore.fetch()
 }
 </script>
 
