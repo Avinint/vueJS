@@ -178,7 +178,7 @@
                 type="checkbox"
                 :value="zone.id"
                 class="hidden"
-                @click="selectActivities(zone)"
+                @click="selectZoneEtActivite(zone)"
               />
               <label
                 class="mb-3 mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-6 py-3 text-center text-sm text-black drop-shadow-sm"
@@ -202,19 +202,20 @@
                     <input
                       :id="zone.id + '-' + zoneActivite.activite.id"
                       v-model="zoneActivite.activite.checked"
+                      @change="e => clicActivite(zone.id, zoneActivite.activite.id, e.target.checked)"
                       type="checkbox"
                       class="hidden"
                     />
                     <label
-                      class="mr-9 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-3 text-center text-sm text-black drop-shadow-sm"
+                      class="mr-4 inline-block w-3/4 min-w-max cursor-pointer rounded-lg border-none bg-neutral-200 px-4 py-3 text-center text-sm text-black drop-shadow-sm"
                       :class="{
                         'bg-sky-600 text-white': zoneActivite.activite.checked,
                       }"
                       :for="zone.id + '-' + zoneActivite.activite.id"
                     >{{ zoneActivite.activite.libelle }}
                     </label>
-                    <div @click="zoneActivite.activite.checked ? openTarifModal(zone.libelle, zoneActivite) : null" class="rounded-lg cursor-pointer w-40 p-2 border border-gray-200 relative flex items-center">
-                      {{ zoneActivite.activite.tarif ? Intl.NumberFormat('fr-FR').format(zoneActivite.activite.tarif / 100) : getTarif(zoneActivite.activite.id, creneauStore.date, creneauStore.heureDebut) }}
+                    <div @click="zoneActivite.activite.checked ? openTarifModal(zone, zoneActivite) : null" :class="{'tarif-force': zoneActivite.tarifForce}" class="justify-center rounded-lg cursor-pointer w-40 p-2 border border-gray-200 relative flex items-center">
+                      {{ zoneActivite.activite.tarif }}
                       <span class="absolute top-2 right-2">€</span>
                     </div>
                   </div>
@@ -409,7 +410,7 @@ import { useOrganismeStore } from '@stores/organisme.ts'
 import { makeDemandeAdminEditContract, makeDemandeAdminOGEditContract } from '../../services/planning/creneau_service'
 import { getZones } from '@api/zone'
 import { postCreneauVerifDemande } from '@api/creneau'
-import { getTarifsByActivity, getTarifByActivity, getTarif } from '@api/tarifs'
+import { getTarif, getTarifByActivity, getTarifsByActivity } from '@api/tarifs'
 
 import Modal from '@components/common/Modal.vue'
 import ValidationModal from '@components/common/ValidationModal.vue'
@@ -418,9 +419,9 @@ import InputRadio from '@components/common/InputRadio.vue'
 import InputSelect from '@components/common/Select.vue'
 import FAInput from '@components/common/Input.vue'
 import FAButton from '@components/common/Button.vue'
+import Button from '@components/common/Button.vue'
 import MenuRecurrence from '@components/faPlanning/MenuRecurrence.vue'
 import MentionChampsObligatoires from '@components/common/MentionChampsObligatoires.vue'
-import Button from '@components/common/Button.vue'
 
 import { mapStores } from 'pinia'
 import { toast } from 'vue3-toastify'
@@ -470,7 +471,7 @@ export default {
       activiteId: -1,
       tarifs: [],
       tarifId: -1,
-      zoneActivite: '',
+      zoneActivite: { activite: {tarifId: null}},
       zoneId: -1,
       spinnerZones: false
     }
@@ -524,12 +525,12 @@ export default {
       })
     },
     getTarifsOptions() {
-      return this.tarifs.map((tarif) => {
+      return [{ id: null, label: "Tarif auto" }, ...this.tarifs.map((tarif) => {
         return {
           id: tarif.tarifId,
           label: `${tarif.niveau}.${tarif.priorite} - ${tarif.libelle}`,
         }
-      })
+      })]
     },
     dureeActivite: {
       get() {
@@ -645,55 +646,46 @@ export default {
     async submitTarif () {
       this.spinnerZones = true
       let montant
-      // if (this.creneauStore.activites.length !== 0) { // SI LE CRENEAU EST EN ÉDITION
-        // const actTemp = this.creneauStore.activites.find(act => act.id === this.activiteId)
-        // if (actTemp !== undefined) { // SI L'ACTIVITÉ EST DÉJÀ EXISTANTE SUR LE CRÉNEAU
-          // RÉCUPÉRER L'IDACTIVITÉ ET LE NOUVEAU TARIF POUR LE SETTER DANS L'INPUT CORRESPONDANT
-          await getTarif(this.tarifId).then(response => {
-            montant = response.montant
-          })
+
+      try{
+        if (this.tarifId === null) {
+          montant = await this.getTarifByActivite(zoneActivite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
+        } else {
+
+          montant = (await getTarif(this.tarifId)).montant
           this.zones.forEach(zone => {
-            if (zone.libelle === this.zoneActivite) {
-              zone.zoneActivites.forEach(zoneAct => {
-                if (zoneAct.id === this.zoneId) {
-                  zoneAct.activite.tarif = montant
+            if (zone.id === this.zoneId) {
+              zone.zoneActivites.forEach(async zoneAct => {
+                if (zoneAct.id === this.zoneActivite.id) {
+                  zoneAct.activite.tarif = Intl.NumberFormat('fr-FR').format(montant / 100)
                   zoneAct.activite.tarifId = this.tarifId
+                  zoneAct.tarifForce = true
                 }
               })
             }
           })
-        // } else {
-          // RÉCUPÉRER L'IDACTIVITÉ ET LE NOUVEAU TARIF POUR LE SETTER DANS L'INPUT CORRESPONDANT
-          // await getTarif(this.tarifId).then(response => {
-          //   montant = response.montant
-          // })
-          // this.zones.forEach(zone => {
-          //   if (zone.libelle === this.zoneActivite) {
-          //     zone.zoneActivites.forEach(zoneAct => {
-          //       if (zoneAct.id === this.zoneId) {
-          //         zoneAct.activite.tarif = montant
-          //       }
-          //     })
-          //   }
-          // })
-        // }
-      // }
-      this.tarifModal = false
-      this.activiteLabel = ''
-      this.activiteId = -1
-      this.tarifId = -1
-      this.spinnerZones = false
+        }
+
+      } catch(e) {
+        toast.error("Aucun tarif trouvé pour cette activité")
+      } finally {
+        this.tarifModal = false
+        this.activiteLabel = ''
+        this.activiteId = -1
+        this.tarifId = -1
+        this.spinnerZones = false
+      }
     },
-    async getTarif (idActivite, date, heure) {
+    async getTarifByActivite (idActivite, date, heure) {
       const data = await getTarifByActivity(this.$route.params.id, idActivite, date, `${heure}:00`)
       return Intl.NumberFormat('fr-FR').format(data.tarif.montant / 100)
     },
-    async openTarifModal (zoneLibelle, zone) {
-      this.tarifs = await getTarifsByActivity(this.$route.params.id, zone.activite.id)
+    async openTarifModal (zone, zoneActivite) {
+      this.tarifs = await getTarifsByActivity(this.$route.params.id, zoneActivite.activite.id)
       this.tarifModal = true
-      this.activiteLabel = zone.activite.libelle
-      this.activiteId = zone.activite.id
-      this.zoneActivite = zoneLibelle
+      this.activiteLabel = zoneActivite.activite.libelle
+      this.activiteId = zoneActivite.activite.id
+      this.zoneActivite = zoneActivite
       this.zoneId = zone.id
     },
     closeTarifModal () {
@@ -759,7 +751,7 @@ export default {
             })
           })
         }
-        if (this.creneauType === 'organisme') {
+        else if (this.creneauType === 'organisme') {
           // si créneau organisme ==> désélectionner toutes les zones
           this.creneauStore.zones = []
         }
@@ -775,7 +767,7 @@ export default {
             })
           })
         }
-        if (this.creneauType === 'organisme') {
+        else if (this.creneauType === 'organisme') {
           // si créneau organisme ==> sélectionner toutes les zones
           this.creneauStore.zones = []
           this.zones.forEach(zone => {
@@ -785,9 +777,8 @@ export default {
       }
       this.isAllZoneChecked = !this.isAllZoneChecked
     },
-    selectActivities(zone) {
-      const isChecked = this.isZoneChecked(zone.id)
-      if (!isChecked) {
+    selectZoneEtActivite(zone) {
+      if (!this.isZoneChecked(zone.id)) {
         this.creneauStore.zones.push(zone.id)
         for (const activity of zone.zoneActivites) {
           activity.activite.checked = true
@@ -829,7 +820,8 @@ export default {
           }
         })
       });
-      this.checkActivites()
+
+      await this.dynamiseActivites()
     },
     updateActivites() {
       this.creneauStore.activites = []
@@ -839,29 +831,48 @@ export default {
             this.creneauStore.addActivite({
               libelle: zone_activite.activite.libelle,
               activiteId: zone_activite.activite.id,
-              tarif: parseInt(zone_activite.activite.tarif),
+              tarifId: parseInt(zone_activite.activite.tarifId),
               zoneId: zone.id,
             })
           }
         })
       })
     },
-    checkActivites() {
+    clicActivite(zoneId, activiteId, checked) {
+      const zone = this.zones.find(z => z.id === zoneId)
+      const zoneActivite = zone.zoneActivites.find(za => za.activite.id === activiteId)
+
+      zoneActivite.activite.checked = checked
+      if (checked) {
+        zoneActivite.activite.tarif = null
+      }
+
+    },
+    async dynamiseActivites() {
       if (this.typeAction === 'edit') {
-        this.zones.forEach((zone) => {
-          zone.zoneActivites.forEach((zoneActivite) => {
-            this.creneauStore.activites.forEach((activite) => {
+        this.zones.forEach(async (zone) => {
+          zone.zoneActivites.forEach(async (zoneActivite) => {
+            this.creneauStore.activites.forEach(async (activite) => {
               if (activite.id === zoneActivite.activite.id) {
                 zoneActivite.activite.checked = true
-              }
-              if (zoneActivite.activite.checked) {
-                zoneActivite.activite.tarif = activite.tarif
+                zoneActivite.tarifForce = !!activite.tarif.tarifId
+                if (zoneActivite.tarifForce) {
+                  zoneActivite.activite.tarifId = activite.tarif.tarifId
+                  zoneActivite.activite.tarif = Intl.NumberFormat('fr-FR').format(activite.tarif.montant / 100)
+                } else {
+                  zoneActivite.activite.tarif = await this.getTarifByActivite(zoneActivite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
+                }
               }
             })
           })
         })
       }
     },
+
+    /**
+     * Bouton valider ma demande de la modale "confirmation de création"
+     * @returns {Promise<void>}
+     */
     async submitDemandeValidation() {
       const fitarena_id = parseInt(this.$route.params.id);
       if (this.typeAction === 'create') {
@@ -872,6 +883,8 @@ export default {
       this.$emit('closeModalCreneau')
       this.verifModal = false
     },
+
+    /** bouton confirmer de la modale formulaire créneau **/
     async submitCreneau() {
       this.recurrenceErrorMessage = ''
       this.activityErrorMessage = ''
@@ -966,5 +979,9 @@ option {
 .bg-none {
   background-color: #fff;
   color: #000;
+}
+
+.tarif-force {
+  background-color: #FFD533;
 }
 </style>

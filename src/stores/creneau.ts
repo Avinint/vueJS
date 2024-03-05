@@ -32,8 +32,8 @@ export const useCreneauStore = defineStore('creneau', {
         this.activites = creneau.extendedProps.activites.map(
           (activite: any) => {
             activite.activiteId = activite.id
-            activite.tarif = activite.prix
-            activite.tarifId = activite.tarifId
+            // activite.tarif = activite.prix
+            activite.tarifId = activite.prix
             return activite
           }
         )
@@ -110,17 +110,24 @@ export const useCreneauStore = defineStore('creneau', {
       }
     },
 
-    parseReponseActivite({id: activiteId, libelle, maxTerrain = 0, prix: tarif}: ActiviteReponse): Activite {
+    parseReponseActivite ({id: activiteId, libelle, prix: tarifId, maxTerrain = 0}: {
+      id: number
+      zoneId?: number
+      libelle: string
+      maxTerrain: number
+      prix: number
+    }): Activite  {
       return {
         activiteId,
         libelle,
         maxTerrain,
-        tarif
+        tarifId
       }
     },
 
     parseDemandeCreneauResponse(response: DemandeCreneauEditResponse): Creneau[] {
       return response.creneaux.map(creneau => {
+
         const value: Creneau = {
           id: creneau.id,
           activites: creneau.activites.map((activite: ActiviteReponse): Activite => this.parseReponseActivite(activite)),
