@@ -121,10 +121,9 @@
           <div class="flex gap-8">
             <div v-for="level in levels" :key="`niveauTarif-${level.id}`">
               <Button
-                v-if="level.libelle !== 'Défaut'"
                 @click="changeLevel(level.id)"
-                :label="level.libelle"
-                class="w-52"
+                :label="`Niv ${level.rang} : ${level.libelle}`"
+                class="w-40"
                 couleur="none"
                 :class="{ 'bg-sky-600 text-white': levelChecked.includes(level.id) }"
               />
@@ -335,7 +334,7 @@ const resetInfos = () => {
 }
 
 const setInfos = (tarif: object) => {
-  levelChecked.value.push(tarif.niveau)
+  levelChecked.value.push(tarif.niveauId)
   tarif.montant = Intl.NumberFormat('fr-FR').format(tarif.montant / 100)
   tarif.periodes.forEach(periode => {
     selected_days.value = []
@@ -430,7 +429,7 @@ const saveTarif = async () => {
     periode.dateFin = `${yearF}-${monthF}-${dayF}`
   })
   
-  if (errorMessage.value === '' ) await sendTarif()
+  if (errorMessage.value === '') await sendTarif()
 }
 
 const sendTarif = async () => {

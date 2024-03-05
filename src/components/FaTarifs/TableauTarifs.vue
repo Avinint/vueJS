@@ -1,7 +1,7 @@
 <template>
   <template v-if="tarifsParNiveau">
     <div v-for="(tarifs, index) in tarifsParNiveau" :key="`tarifs-${index}`">
-      <h3 class="font-bold text-sm mb-2">{{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
+      <h3 class="font-bold text-sm mb-2">Niveau {{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
       <table class="w-full text-left mb-10 rounded-lg">
         <thead class="bg-gray-200 text-sm">
         <tr>
@@ -64,7 +64,6 @@
                     </td>
                     <td style="width:3%;" class="align-baseline">
                       <Button
-                        v-if="tarifs.niveau !== 4"
                         icon="edit"
                         borderless
                         couleur="secondary"
