@@ -345,7 +345,7 @@ const resetInfos = () => {
   openModal.value = false
   validationTarif.value = false
   state.value = 'view'
-  levelChecked.value = null
+  levelChecked.value = idNiveauDefaut
   selected_days.value = []
   tarif.value = tarifDefaut
   idTarif.value = 0
@@ -406,11 +406,6 @@ const saveTarif = async () => {
 
   if (tarif.value.duree === '' || tarif.value.duree === undefined) {
     errorMessage.value = 'Veuillez renseigner une durée.'
-    return
-  }
-
-  if (levelChecked.value === null) {
-    errorMessage.value = 'Veuillez renseigner un niveau de tarif.'
     return
   }
 
