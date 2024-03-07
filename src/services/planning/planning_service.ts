@@ -28,7 +28,7 @@ export const default_planning: Planning = {
     organisme: 0
   },
   activites: [],
-  currentViewName: 'week',
+  currentViewName: 'week' as planningView,
   currentDateStart: {},
   currentDateEnd: {},
   currentWeek: 0,
@@ -47,7 +47,7 @@ export function parseCreneauToEvent(creneau: Creneau): CalendarEvent {
     overlap: true,
     extendedProps: { ...creneau, event_type: EventType.CRENEAU }
   }
-  return test
+  return test as CalendarEvent
 }
 
 export function parseCreneauAnonymeToEvent(creneau: CreneauAnonyme): CalendarEvent {

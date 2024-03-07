@@ -21,14 +21,10 @@
           <LabelText :text="activite.activite" class="label-text" />
 
         </div>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
-                       :tarifs-par-niveau="activite.exceptionnel" :id="id"></TableauTarifs>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
-                       :tarifs-par-niveau="activite.special" :id="id"></TableauTarifs>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
-                       :tarifs-par-niveau="activite.general" :id="id"></TableauTarifs>
-        <TableauTarifs @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
-                       :tarifs-par-niveau="activite.defaut" :id="id"></TableauTarifs>
+
+<!--        @TODO : Demander une version slug des niveaux au backend pour utiliser levels à la place :-->
+        <TableauTarifs v-for="niveau in ['exceptionnel', 'general', 'special', 'defaut']" @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
+                       :tarifs-par-niveau="activite[niveau]"   :id="id"></TableauTarifs>
       </Card>
     </template>
   </Card>
@@ -107,7 +103,7 @@
             <div class="relative flex">
               <Input
                 id="montantTarif"
-                v-model="tarif.montant"
+                v-model.number="tarif.montant"
                 type="text"
                 placeholder="Montant"
                 class="w-28"
@@ -125,7 +121,7 @@
                 :label="`Niv ${level.rang} : ${level.libelle}`"
                 class="w-40"
                 couleur="none"
-                :class="{ 'bg-sky-600 text-white': levelChecked.includes(level.id) }"
+                :class="{ 'bg-sky-600 text-white': levelChecked === level.id }"
               />
             </div>
           </div>
@@ -222,10 +218,9 @@ import FAInput from '@components/common/Input.vue'
 import InputSelect from '@components/common/Select.vue'
 import CardModalSection from '@components/common/CardModalSection.vue'
 import Spinner from '@components/common/Spinner.vue'
-import draggable from "vuedraggable";
 
 import { getTarifs, getTarif, postTarif, putActifTarif, putTarif, getTarifNiveaux } from '@api/tarifs'
-import { getActivites } from '../../api/activite'
+import { getActivites } from '@api/activite'
 
 import 'vue3-toastify/dist/index.css'
 import { onMounted, ref, watch } from 'vue'
@@ -234,16 +229,18 @@ import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
 import TableauTarifs from "@components/FaTarifs/TableauTarifs.vue";
 
+
 const props = defineProps(['id'])
 const route = useRoute()
-
-const tarifsByActivities = ref([])
+const tarifDefaut: Tarif = { actif: false, duree: 60, periodes: [] }
+const tarifsByActivities: ref<GroupeTarifParActivite> = ref({})
 const openModal = ref(false)
-const tarif = ref({})
+const tarif = ref(tarifDefaut)
 const days = 'LMMJVSD'
 const activites = ref({})
 const listDuree = [60, 120]
-const levelChecked = ref([])
+const idNiveauDefaut = ref(3)
+const levelChecked: ref<number> = ref(idNiveauDefaut.value)
 const selected_days = ref([])
 const modalTitle = ref('')
 const validationTarif = ref(false)
@@ -265,22 +262,43 @@ const newPeriode = {
 
 const fetchDonnees = async () => {
   spinner.value = true
-  tarifsByActivities.value = await getTarifs(props.id)
-  tarifsByActivities.value = tarifsByActivities.value.map(tarif => ({ ...tarif, open: false }))
+  tarifsByActivities.value = (await getTarifs(props.id)).map(groupeTarif => ({ ...completeGroupeTarif(groupeTarif), open: false }))
   levels.value = await getTarifNiveaux()
+
   activites.value = await getActivites(props.id, 1, '&order=asc')
   spinner.value = false
 }
+
+/**
+ * Ajoute propriétés au groupe de tarifs : libellé niveau au pluriel
+ * @param tarif
+ */
+const completeGroupeTarif = (tarif) => {
+  const libelles = {
+    exceptionnel: "exceptionnels",
+    general: "généraux",
+    special: "spéciaux",
+    defaut:  "par défaut"
+  }
+
+  for (const niveau in libelles) {
+    if (tarif[niveau]) {
+      tarif[niveau].tarifs.libelle = libelles[niveau]
+    }
+  }
+
+  return tarif
+}
+
 
 const selectDay = (day_index: number, jours: any) => {
   jours[day_index] = !jours[day_index]
 }
 const addPeriode = () => {
-  if (tarif.value.periodes === undefined) tarif.value.periodes = []
   tarif.value.periodes.push(newPeriode)
 }
 
-const deletePeriode = (i: number) => {
+const deletePeriode = (i: index) => {
   tarif.value.periodes.forEach((periode, z) => {
     if (i === z) {
       tarif.value.periodes.splice(z, 1)
@@ -290,15 +308,15 @@ const deletePeriode = (i: number) => {
 }
 
 const changeLevel = (idLevel: number) => {
-  levelChecked.value = []
-  levels.value.forEach(level => {
-    if (level.id === idLevel) levelChecked.value.push(idLevel)
-  })
+  levelChecked.value = idLevel
 }
 
 onMounted(async () => {
   state.value = 'view'
   await fetchDonnees()
+  const niveauParDefaut = levels.value.find(n => n.libelle === 'Général')
+  tarif.value.niveauId = niveauParDefaut.id
+  levelChecked.value = niveauParDefaut.id
 })
 
 watch(() => route.params.id, async() => await fetchDonnees())
@@ -327,14 +345,15 @@ const resetInfos = () => {
   openModal.value = false
   validationTarif.value = false
   state.value = 'view'
-  levelChecked.value = []
+  levelChecked.value = idNiveauDefaut
   selected_days.value = []
-  tarif.value = {}
+  tarif.value = tarifDefaut
   idTarif.value = 0
 }
 
 const setInfos = (tarif: object) => {
-  levelChecked.value.push(tarif.niveauId)
+  levelChecked.value = tarif.niveauId
+
   tarif.montant = Intl.NumberFormat('fr-FR').format(tarif.montant / 100)
   tarif.periodes.forEach(periode => {
     selected_days.value = []
@@ -390,11 +409,6 @@ const saveTarif = async () => {
     return
   }
 
-  if (levelChecked.value.length === 0) {
-    errorMessage.value = 'Veuillez renseigner un niveau de tarif.'
-    return
-  }
-
   if (tarif.value.periodes === undefined) {
     errorMessage.value = 'Veuillez renseigner au moins une période pour le tarif.'
     return
@@ -440,20 +454,26 @@ const sendTarif = async () => {
     fitArena: parseInt(props.id),
     duree: tarif.value.duree,
     actif: tarif.value.actif ?? false,
-    montant: parseFloat(tarif.value.montant) * 100,
-    niveau: levelChecked.value[0],
+    montant: (tarif.value.montant ?? 0) * 100,
+    niveau: levelChecked.value,
     periodes: tarif.value.periodes
   }
 
   switch (state.value) {
     case 'create':
-      await postTarif(data).then(() => {
-        toast.success('Le tarif a été créé avec succès !')
-      })
+
+        await postTarif(data).then(() => {
+          toast.success('Le tarif a été créé avec succès !')
+        }).catch(() => {
+          toast.error('Le tarif n\'a pas été créé avec succès.')
+        })
+
       break
     case 'edit':
       await putTarif(idTarif.value, data).then(() => {
         toast.success('Le tarif a été modifié avec succès !')
+      }).catch(() => {
+        toast.error('Le tarif n\'a pas été modifié avec succès.')
       })
       break
   }

@@ -1,7 +1,7 @@
 <template>
   <template v-if="tarifsParNiveau">
     <div v-for="(tarifs, index) in tarifsParNiveau" :key="`tarifs-${index}`">
-      <h3 class="font-bold text-sm mb-2">Niveau {{ tarifs.niveau }} : Tarif {{ tarifs.type }}</h3>
+      <h3 class="font-bold text-sm mb-2">Niveau {{ tarifs.niveau }} : Tarifs {{ tarifs.libelle }}</h3>
       <table class="w-full text-left mb-10 rounded-lg">
         <thead class="bg-gray-200 text-sm">
         <tr>
@@ -24,7 +24,7 @@
           <template #item="{ element: tarif }">
             <tr>
               <td colspan="10" class="padding-none">
-                <table class="w-full">
+                <table class="w-full table-tarif">
                   <tr class="item" :id="tarif.idTarif">
                     <td style="width:2%;" class="text-center align-baseline">{{ tarif.priorite }}</td>
                     <td style="width:9%;" class="align-baseline">
@@ -77,12 +77,12 @@
                   </tr>
                   <template v-if="tarif.open">
                     <template v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`">
-                      <tr>
-                        <td colspan="4" />
-                        <td colspan="1">{{ dayjs(periode.dateDebut).format('DD/MM/YY') }} - {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
-                        <td colspan="2">{{ periode.jours.join(' - ') }}</td>
-                        <td colspan="1">{{ dayjs(periode.plageHoraireDebut).format('HH:mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH:mm') }}</td>
-                        <td colspan="3" />
+                      <tr class="periode">
+                        <td colspan="1" />
+                        <td colspan="1" >Période {{ i + 1}}</td>
+                        <td colspan="1">du {{ dayjs(periode.dateDebut).format('DD/MM/YY') }} au {{ dayjs(periode.dateFin).format('DD/MM/YY') }}</td>
+                        <td colspan="1">de {{ dayjs(periode.plageHoraireDebut).format('HH[h]mm') }} à {{ dayjs(periode.plageHoraireFin).format('HH[h]mm') }}</td>
+                        <td colspan="5">{{ affichageJours(periode.jours) }}</td>
                       </tr>
                     </template>
                   </template>
@@ -125,6 +125,10 @@ const setOrdre = async (liste: {idTarif, priorite}[]) => {
 const openTarif = (tarif: object) => {
   tarif.open = !tarif.open
 }
+
+const listeJours = {Lu: 'Lundi', Ma: 'Mardi', Me: 'Mercredi', Je: 'Jeudi', Ve: 'Vendredi', Sa: 'Samedi', Di: 'Dimanche'}
+
+const affichageJours = jours => jours.map(j => listeJours[j]).join(', ')
 </script>
 
 <style scoped lang="scss">
@@ -146,6 +150,16 @@ tr {
   border-right: 1px solid rgb(229 231 235);
   border-left: 1px solid rgb(229 231 235);
 }
+
+tr.periode td {
+  color: Gray;
+}
+
+table.table-tarif tr.periode:not(:last-child) {
+  border-bottom: none;
+}
+
+
 
 
 </style>
