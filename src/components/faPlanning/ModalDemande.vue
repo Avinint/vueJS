@@ -219,6 +219,7 @@ import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { toast } from 'vue3-toastify'
 
+const planningStore = usePlanningStore()
 const creneau_store = useCreneauStore()
 const user = useUserStore()
 const route = useRoute()
@@ -281,7 +282,7 @@ function create(event: DateSelectArg) {
   form.recurrence = default_form_values.recurrence
   form.title = default_form_values.title
   form.people_count = default_form_values.people_count
-  form.zones = [...default_form_values.zones]
+  form.zones = [...planningStore.getActiveZones]
   form.commentaire = default_form_values.commentaire
   date.value = parseDateToInput(event.start)
   form.start_time = extractHour(event.start)
@@ -327,20 +328,27 @@ const selectAllZones = () => {
   isAllZoneChecked.value = !isAllZoneChecked.value
 }
 
+const afficherErreur = (message) => {
+  errorMessage.value =  message
+  spinnerDemandeModal.value = false
+}
+
 const submitDemande = async() => {
   spinnerDemandeModal.value = true
   errorMessage.value = ''
+  console.log(form.zones)
+  console.log(form.zones.length)
   if (form.zones.length == 0) {
-    errorMessage.value = "Une zone doit être sélectionnée"
+    afficherErreur("Une zone doit être sélectionnée")
     return
   } else if (date.value == '') {
-    errorMessage.value = "Une date doit être sélectionnée"
+    afficherErreur("Une date doit être sélectionnée")
     return
   } else if (form.title == '') {
-    errorMessage.value = "Un titre de créneau doit être renseigné"
+    afficherErreur("Un titre de créneau doit être renseigné")
     return
   } else if (form.people_count === 0) {
-    errorMessage.value = "Le nombre de personnes attendues doit être renseigné"
+    afficherErreur("Le nombre de personnes attendues doit être renseigné")
     return
   }
 
@@ -354,12 +362,12 @@ const submitDemande = async() => {
   if (submenu.value === true) {
     if (creneau_store.recurrence) {
       if (creneau_store.recurrence.dateFin === 'Invalid Date') {
-        errorMessage.value = "Une date de fin doit être renseignée"
+        afficherErreur("Une date de fin doit être renseignée")
         return
       }
       if (creneau_store.recurrence.recurrenceType === 2) {
         if (creneau_store.recurrence.recurrenceJoursSemaine.length === 0) {
-          errorMessage.value = "Veuillez renseigner au moins un jour dans la semaine pour la récurrence."
+          afficherErreur("Veuillez renseigner au moins un jour dans la semaine pour la récurrence.")
           return
         }
       } else if (creneau_store.recurrence.recurrenceType === 1) {
@@ -447,7 +455,7 @@ const removeDemandeValidation = async () => {
 }
 
 const refreshPlanning = async () => {
-  await usePlanningStore().fetch()
+  await planningStore.fetch()
 }
 </script>
 

@@ -486,6 +486,11 @@ export default {
 
     if (this.typeAction === 'create') {
       this.creneauStore.activites = []
+      this.creneauStore.zones = this.planningStore.getActiveZones
+      const laZone = this.zones.find(z => z.id === this.creneauStore.zones[0])
+      for (const zad of laZone.zoneActivites) {
+        zad.activite.checked = true
+      }
     } else {
       if (this.creneauStore.recurrence) this.submenu = 'recurence'
     }
