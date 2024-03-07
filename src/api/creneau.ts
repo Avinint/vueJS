@@ -60,7 +60,6 @@ export async function deleteCreneauDemande(event: object, id: number) {
   return response.json()
 }
 
-
 export async function deleteGroup(groupe_id: number) {
   const response = await $fetch(
     `${import.meta.env.VITE_API_URL}/api/groupes/${groupe_id}`,

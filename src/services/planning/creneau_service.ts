@@ -206,7 +206,6 @@ export function makeDemandeEditContract(fitarena_id: number, organisme_id: numbe
 
 }
 
-
 const hydrateZones = (creneau): ZoneContract[]  => {
   const zones: ZoneContract[] = []
   for (const zone_id of creneau.zones) {
@@ -215,16 +214,14 @@ const hydrateZones = (creneau): ZoneContract[]  => {
       if (activite.zoneId === zone_id) {
         zone_activites.push({
           activiteId: activite.activiteId,
-          tarif: activite.tarif,
+          tarif: activite.tarifId ?? null,
         })
       }
     }
 
     zones.push({ id: zone_id, activites: zone_activites })
   }
-
   return zones
-
 }
 
 export function makeDemandeAdminEditContract(fitarena_id: number, creneau: CreneauDemandeContract): DemandeEditContract {
