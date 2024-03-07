@@ -6,7 +6,7 @@ export const getTarifs = async (idFitArena: number) => {
 }
 
 // récupération d'un tarif
-export const getTarif = async (idTarif: number) => {
+export const getTarif = async (idTarif: number) : Promise<Tarif> => {
   return await get(`${import.meta.env.VITE_API_URL}/api/tarif/${idTarif}`)
 }
 

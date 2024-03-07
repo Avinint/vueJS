@@ -233,7 +233,7 @@ type Activite = {
 
 type Demande = {
   demandeId: number
-  zones: array
+  zones: []
   demandeur: string
   horaire: string
   type: string
@@ -266,7 +266,7 @@ type Planning = {
   demandes: Creneau[]
   filters: PlanningFilters
   activites: Activite[]
-  currentViewName: 'day' | 'week'
+  currentViewName: planningView
   currentDateStart: any // TODO: Find a proper type
   currentDateEnd: any // TODO: Find a proper type
   currentWeek: number
@@ -274,6 +274,8 @@ type Planning = {
   slotMaxTime: string
   scrollTime: string
 }
+
+type planningView = 'day' | 'week'
 
 type Organisme = {
   id: number
@@ -291,7 +293,7 @@ type CalendarEvent = {
   editable?: boolean
   selectable?: boolean
   extendedProps?: any,
-  mode?: tring
+  mode?: string
   organismeLabel?: string
 }
 
@@ -356,3 +358,36 @@ type Groupe = {
   animateurs: Animateur[]
   adherents: Adherent[]
 }
+
+type Tarif = {
+  activite?: string
+  titre?: string
+  montant?: number
+  niveauId?: number
+  actif: boolean
+  duree: number
+  periodes: PeriodeTarif[]
+}
+
+type PeriodeTarif = {
+  plageHoraireDebut: string,
+  plageHoraireFin: string,
+  dateDebut: string,
+  dateFin: string,
+  jours: boolean[]
+}
+
+type GroupeTarifParActivite = {
+  activite: string,
+  general?: GroupeTarifParNiveau
+  exceptionnel?: GroupeTarifParNiveau
+  special?: GroupeTarifParNiveau
+  defaut?: GroupeTarifParNiveau
+}
+type GroupeTarifParNiveau = {
+  tarifs: { id: number, niveau: number, libelle: string, type: string, prioriteMin: number, tarifs: [] }
+  open: boolean
+}
+
+
+type index = number | string
