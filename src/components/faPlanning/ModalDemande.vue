@@ -336,9 +336,7 @@ const afficherErreur = (message) => {
 const submitDemande = async() => {
   spinnerDemandeModal.value = true
   errorMessage.value = ''
-  console.log(form.zones)
-  console.log(form.zones.length)
-  if (form.zones.length == 0) {
+  if (form.zones.length === 0) {
     afficherErreur("Une zone doit être sélectionnée")
     return
   } else if (date.value == '') {
