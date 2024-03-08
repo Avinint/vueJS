@@ -22,9 +22,8 @@
 
         </div>
 
-<!--        @TODO : Demander une version slug des niveaux au backend pour utiliser levels à la place :-->
-        <TableauTarifs v-for="niveau in ['exceptionnel', 'general', 'special', 'defaut']" @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
-                       :tarifs-par-niveau="activite[niveau]"   :id="id"></TableauTarifs>
+        <TableauTarifs v-for="niveau in levels" @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
+                       :tarifs-par-niveau="activite[niveau.code]"   :id="id"></TableauTarifs>
       </Card>
     </template>
   </Card>
@@ -89,18 +88,15 @@
           <div class="flex gap-6 mt-10 items-center">
             <div class="flex items-center">
               <label class="mr-4 block text-sm font-medium text-gray-900">Tarif pour</label>
-              <select
-                v-model="tarif.duree"
-                class="block h-11 w-20 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option
-                  v-for="(duree, i) in listDuree"
-                  :key="i"
-                  :value="duree"
-                >
-                  {{ duree }}
-                </option>
-              </select>
+              <Input
+                id="dureeTarif"
+                max-length="5"
+                v-model.number="tarif.duree"
+                type="text"
+                placeholder="Durée"
+                class="w-16"
+                required
+              />
               <p class="ml-2">min</p>
             </div>
             <div class="relative flex">
@@ -118,7 +114,7 @@
         </CardModalSection>
         <CardModalSection v-if="formulaireComplet(levelChecked)" title="Niveau" class="pt-4">
           <div class="flex gap-8">
-            <div v-for="level in levels" :key="`niveauTarif-${level.id}`">
+            <div v-for="level in niveauxSaufDefaut" :key="`niveauTarif-${level.id}`">
               <Button
                 @click="changeLevel(level.id)"
                 :label="`Niv ${level.rang} : ${level.libelle}`"
@@ -227,7 +223,7 @@ import { getTarifs, getTarif, postTarif, putActifTarif, putTarif, getTarifNiveau
 import { getActivites } from '@api/activite'
 
 import 'vue3-toastify/dist/index.css'
-import { onMounted, ref, watch } from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
@@ -235,19 +231,19 @@ import TableauTarifs from "@components/FaTarifs/TableauTarifs.vue";
 
 const props = defineProps(['id'])
 const route = useRoute()
-const tarifDefaut: Tarif = { actif: false, duree: 60, periodes: [] }
+
+const getTarifVide = (): Tarif => ({ actif: false, duree: 60, periodes: [] })
 const tarifsByActivities: ref<GroupeTarifParActivite> = ref({})
 const openModal = ref(false)
-const tarif = ref(tarifDefaut)
+const tarif: ref<Tarif> = ref(getTarifVide())
 const days = 'LMMJVSD'
 const activites = ref({})
-const listDuree = [60, 120]
 
 /* id du niveau "par défaut" */
-const ID_NIVEAU_PAR_DEFAUT = 1
+const niveauParDefaut = ref({})
 /* idNiveauDefaut valeur par défaut du champ "niveau" dans le formulaire "id du niveau général_*/
-const idNiveauDefaut = ref(3)
-const levelChecked: ref<number> = ref(idNiveauDefaut.value)
+const niveauSelectionneParDefaut = ref({})
+const levelChecked: ref<number | null> = ref(null)
 const selected_days = ref([])
 const modalTitle = ref('')
 const validationTarif = ref(false)
@@ -258,14 +254,24 @@ const errorMessage = ref('')
 const spinner = ref(false)
 const spinnerModal = ref(false)
 const levels = ref([])
+const niveauxSaufDefaut = computed(() => levels.value.filter(niveau => niveau.rang !== 4))
 
-const newPeriode = {
+onMounted(async () => {
+  state.value = 'view'
+  await fetchDonnees()
+  niveauParDefaut.value = levels.value.find(niv => niv.rang === 4)
+  niveauSelectionneParDefaut.value = levels.value.find(niv => niv.rang === 2)
+  tarif.value.niveauId = niveauSelectionneParDefaut.value.id
+  levelChecked.value = niveauSelectionneParDefaut.value.id
+})
+
+const newPeriode = () => ({
   dateDebut: '',
   dateFin: '',
-  jours: [false, false, false, false, false, false, false],
+  jours: Array(7).fill(false),
   plageHoraireDebut: '',      
   plageHoraireFin: ''      
-}
+})
 
 const fetchDonnees = async () => {
   spinner.value = true
@@ -276,7 +282,7 @@ const fetchDonnees = async () => {
   spinner.value = false
 }
 
-const formulaireComplet = (niveau) => niveau !== ID_NIVEAU_PAR_DEFAUT
+const formulaireComplet = (niveau) => niveau !== niveauParDefaut.value.id
 
 /**
  * Ajoute propriétés au groupe de tarifs : libellé niveau au pluriel
@@ -304,7 +310,7 @@ const selectDay = (day_index: number, jours: any) => {
   jours[day_index] = !jours[day_index]
 }
 const addPeriode = () => {
-  tarif.value.periodes.push(newPeriode)
+  tarif.value.periodes.push(newPeriode())
 }
 
 const deletePeriode = (i: index) => {
@@ -319,14 +325,6 @@ const deletePeriode = (i: index) => {
 const changeLevel = (idLevel: number) => {
   levelChecked.value = idLevel
 }
-
-onMounted(async () => {
-  state.value = 'view'
-  await fetchDonnees()
-  const niveauParDefaut = levels.value.find(n => n.libelle === 'Général')
-  tarif.value.niveauId = niveauParDefaut.id
-  levelChecked.value = niveauParDefaut.id
-})
 
 watch(() => route.params.id, async() => await fetchDonnees())
 
@@ -354,9 +352,9 @@ const resetInfos = () => {
   openModal.value = false
   validationTarif.value = false
   state.value = 'view'
-  levelChecked.value = idNiveauDefaut
+  levelChecked.value = niveauSelectionneParDefaut.value.id
   selected_days.value = []
-  tarif.value = tarifDefaut
+  tarif.value = getTarifVide()
   idTarif.value = 0
 }
 
@@ -444,8 +442,8 @@ const saveTarif = async () => {
       return
     }
 
-    periode.plageHoraireDebut = `${periode.plageHoraireDebut}:00`
-    periode.plageHoraireFin = `${periode.plageHoraireFin}:00`
+    periode.plageHoraireDebut = formatHeures(periode.plageHoraireDebut)
+    periode.plageHoraireFin = formatHeures(periode.plageHoraireFin)
     const [dayD, monthD, yearD] = periode.dateDebut.split('/')
     const [dayF, monthF, yearF] = periode.dateFin.split('/')
     periode.dateDebut = `${yearD}-${monthD}-${dayD}`
@@ -453,6 +451,11 @@ const saveTarif = async () => {
   })
   
   if (errorMessage.value === '') await sendTarif()
+}
+
+const formatHeures = (horaire) => {
+  const [heures, minutes = '00' ] = horaire.split(':')
+  return heures.padStart(2, '0') + ':' + minutes.padEnd(2, '0') + ':00';
 }
 
 const sendTarif = async () => {
@@ -475,7 +478,13 @@ const sendTarif = async () => {
           toast.success('Le tarif a été créé avec succès !')
         }).catch(() => {
           toast.error('Le tarif n\'a pas été créé avec succès.')
-        })
+        }).finally(async () => {
+          resetInfos()
+          spinnerModal.value = false
+          await fetchDonnees()
+          }
+
+        )
 
       break
     case 'edit':
@@ -483,12 +492,16 @@ const sendTarif = async () => {
         toast.success('Le tarif a été modifié avec succès !')
       }).catch(() => {
         toast.error('Le tarif n\'a pas été modifié avec succès.')
-      })
+      }).finally(async () => {
+          resetInfos()
+          spinnerModal.value = false
+          await fetchDonnees()
+      }
+
+      )
       break
   }
-  resetInfos()
-  spinnerModal.value = false
-  await fetchDonnees()
+
 }
 </script>
 
