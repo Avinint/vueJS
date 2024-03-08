@@ -22,9 +22,8 @@
 
         </div>
 
-<!--        @TODO : Demander une version slug des niveaux au backend pour utiliser levels à la place :-->
-        <TableauTarifs v-for="niveau in ['exceptionnel', 'general', 'special', 'defaut']" @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
-                       :tarifs-par-niveau="activite[niveau]"   :id="id"></TableauTarifs>
+        <TableauTarifs v-for="niveau in levels" @change-statut="modifieTarif" @edit="editTarif" @change-ordre="fetchDonnees"
+                       :tarifs-par-niveau="activite[niveau.code]"   :id="id"></TableauTarifs>
       </Card>
     </template>
   </Card>
@@ -118,7 +117,7 @@
         </CardModalSection>
         <CardModalSection v-if="formulaireComplet(levelChecked)" title="Niveau" class="pt-4">
           <div class="flex gap-8">
-            <div v-for="level in levels" :key="`niveauTarif-${level.id}`">
+            <div v-for="level in niveauxSaufDefaut" :key="`niveauTarif-${level.id}`">
               <Button
                 @click="changeLevel(level.id)"
                 :label="`Niv ${level.rang} : ${level.libelle}`"
@@ -227,7 +226,7 @@ import { getTarifs, getTarif, postTarif, putActifTarif, putTarif, getTarifNiveau
 import { getActivites } from '@api/activite'
 
 import 'vue3-toastify/dist/index.css'
-import { onMounted, ref, watch } from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import { useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
@@ -244,10 +243,10 @@ const activites = ref({})
 const listDuree = [60, 120]
 
 /* id du niveau "par défaut" */
-const ID_NIVEAU_PAR_DEFAUT = 1
+const niveauParDefaut = ref({})
 /* idNiveauDefaut valeur par défaut du champ "niveau" dans le formulaire "id du niveau général_*/
-const idNiveauDefaut = ref(3)
-const levelChecked: ref<number> = ref(idNiveauDefaut.value)
+const niveauSelectionneParDefaut = ref({})
+const levelChecked: ref<number | null> = ref(null)
 const selected_days = ref([])
 const modalTitle = ref('')
 const validationTarif = ref(false)
@@ -259,6 +258,8 @@ const spinner = ref(false)
 const spinnerModal = ref(false)
 const levels = ref([])
 
+const niveauxSaufDefaut = computed(() => levels.value.filter(niveau => niveau.rang !== 4))
+
 const newPeriode = {
   dateDebut: '',
   dateFin: '',
@@ -267,16 +268,26 @@ const newPeriode = {
   plageHoraireFin: ''      
 }
 
+onMounted(async () => {
+  state.value = 'view'
+  await fetchDonnees()
+  niveauParDefaut.value = levels.value.find(niv => niv.rang === 4)
+  niveauSelectionneParDefaut.value = levels.value.find(niv => niv.rang === 2)
+  tarif.value.niveauId = niveauSelectionneParDefaut.value.id
+  levelChecked.value = niveauSelectionneParDefaut.value.id
+})
+
 const fetchDonnees = async () => {
   spinner.value = true
   tarifsByActivities.value = (await getTarifs(props.id)).map(groupeTarif => ({ ...completeGroupeTarif(groupeTarif), open: false }))
   levels.value = await getTarifNiveaux()
 
+
   activites.value = await getActivites(props.id, 1, '&order=asc')
   spinner.value = false
 }
 
-const formulaireComplet = (niveau) => niveau !== ID_NIVEAU_PAR_DEFAUT
+const formulaireComplet = (niveau) => niveau !== niveauParDefaut.value.id
 
 /**
  * Ajoute propriétés au groupe de tarifs : libellé niveau au pluriel
@@ -320,14 +331,6 @@ const changeLevel = (idLevel: number) => {
   levelChecked.value = idLevel
 }
 
-onMounted(async () => {
-  state.value = 'view'
-  await fetchDonnees()
-  const niveauParDefaut = levels.value.find(n => n.libelle === 'Général')
-  tarif.value.niveauId = niveauParDefaut.id
-  levelChecked.value = niveauParDefaut.id
-})
-
 watch(() => route.params.id, async() => await fetchDonnees())
 
 const modifieTarif = async (id: number, actif: boolean) => {
@@ -354,7 +357,7 @@ const resetInfos = () => {
   openModal.value = false
   validationTarif.value = false
   state.value = 'view'
-  levelChecked.value = idNiveauDefaut
+  levelChecked.value = niveauSelectionneParDefaut.value.id
   selected_days.value = []
   tarif.value = tarifDefaut
   idTarif.value = 0
