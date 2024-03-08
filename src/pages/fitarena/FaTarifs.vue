@@ -88,18 +88,15 @@
           <div class="flex gap-6 mt-10 items-center">
             <div class="flex items-center">
               <label class="mr-4 block text-sm font-medium text-gray-900">Tarif pour</label>
-              <select
-                v-model="tarif.duree"
-                class="block h-11 w-20 rounded-lg border border-gray-300 bg-gray-50 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option
-                  v-for="(duree, i) in listDuree"
-                  :key="i"
-                  :value="duree"
-                >
-                  {{ duree }}
-                </option>
-              </select>
+              <Input
+                id="dureeTarif"
+                max-length="5"
+                v-model.number="tarif.duree"
+                type="text"
+                placeholder="Durée"
+                class="w-16"
+                required
+              />
               <p class="ml-2">min</p>
             </div>
             <div class="relative flex">
@@ -234,13 +231,13 @@ import TableauTarifs from "@components/FaTarifs/TableauTarifs.vue";
 
 const props = defineProps(['id'])
 const route = useRoute()
-const tarifDefaut: Tarif = { actif: false, duree: 60, periodes: [] }
+
+const getTarifVide = (): Tarif => ({ actif: false, duree: 60, periodes: [] })
 const tarifsByActivities: ref<GroupeTarifParActivite> = ref({})
 const openModal = ref(false)
-const tarif = ref(tarifDefaut)
+const tarif: ref<Tarif> = ref(getTarifVide())
 const days = 'LMMJVSD'
 const activites = ref({})
-const listDuree = [60, 120]
 
 /* id du niveau "par défaut" */
 const niveauParDefaut = ref({})
@@ -257,16 +254,7 @@ const errorMessage = ref('')
 const spinner = ref(false)
 const spinnerModal = ref(false)
 const levels = ref([])
-
 const niveauxSaufDefaut = computed(() => levels.value.filter(niveau => niveau.rang !== 4))
-
-const newPeriode = {
-  dateDebut: '',
-  dateFin: '',
-  jours: [false, false, false, false, false, false, false],
-  plageHoraireDebut: '',      
-  plageHoraireFin: ''      
-}
 
 onMounted(async () => {
   state.value = 'view'
@@ -277,11 +265,18 @@ onMounted(async () => {
   levelChecked.value = niveauSelectionneParDefaut.value.id
 })
 
+const newPeriode = () => ({
+  dateDebut: '',
+  dateFin: '',
+  jours: Array(7).fill(false),
+  plageHoraireDebut: '',      
+  plageHoraireFin: ''      
+})
+
 const fetchDonnees = async () => {
   spinner.value = true
   tarifsByActivities.value = (await getTarifs(props.id)).map(groupeTarif => ({ ...completeGroupeTarif(groupeTarif), open: false }))
   levels.value = await getTarifNiveaux()
-
 
   activites.value = await getActivites(props.id, 1, '&order=asc')
   spinner.value = false
@@ -315,7 +310,7 @@ const selectDay = (day_index: number, jours: any) => {
   jours[day_index] = !jours[day_index]
 }
 const addPeriode = () => {
-  tarif.value.periodes.push(newPeriode)
+  tarif.value.periodes.push(newPeriode())
 }
 
 const deletePeriode = (i: index) => {
@@ -359,7 +354,7 @@ const resetInfos = () => {
   state.value = 'view'
   levelChecked.value = niveauSelectionneParDefaut.value.id
   selected_days.value = []
-  tarif.value = tarifDefaut
+  tarif.value = getTarifVide()
   idTarif.value = 0
 }
 
@@ -447,8 +442,8 @@ const saveTarif = async () => {
       return
     }
 
-    periode.plageHoraireDebut = `${periode.plageHoraireDebut}:00`
-    periode.plageHoraireFin = `${periode.plageHoraireFin}:00`
+    periode.plageHoraireDebut = formatHeures(periode.plageHoraireDebut)
+    periode.plageHoraireFin = formatHeures(periode.plageHoraireFin)
     const [dayD, monthD, yearD] = periode.dateDebut.split('/')
     const [dayF, monthF, yearF] = periode.dateFin.split('/')
     periode.dateDebut = `${yearD}-${monthD}-${dayD}`
@@ -456,6 +451,11 @@ const saveTarif = async () => {
   })
   
   if (errorMessage.value === '') await sendTarif()
+}
+
+const formatHeures = (horaire) => {
+  const [heures, minutes = '00' ] = horaire.split(':')
+  return heures.padStart(2, '0') + ':' + minutes.padEnd(2, '0') + ':00';
 }
 
 const sendTarif = async () => {
@@ -478,7 +478,13 @@ const sendTarif = async () => {
           toast.success('Le tarif a été créé avec succès !')
         }).catch(() => {
           toast.error('Le tarif n\'a pas été créé avec succès.')
-        })
+        }).finally(async () => {
+          resetInfos()
+          spinnerModal.value = false
+          await fetchDonnees()
+          }
+
+        )
 
       break
     case 'edit':
@@ -486,12 +492,16 @@ const sendTarif = async () => {
         toast.success('Le tarif a été modifié avec succès !')
       }).catch(() => {
         toast.error('Le tarif n\'a pas été modifié avec succès.')
-      })
+      }).finally(async () => {
+          resetInfos()
+          spinnerModal.value = false
+          await fetchDonnees()
+      }
+
+      )
       break
   }
-  resetInfos()
-  spinnerModal.value = false
-  await fetchDonnees()
+
 }
 </script>
 
