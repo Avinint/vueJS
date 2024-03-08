@@ -29,6 +29,7 @@ import AdherentGroupe from "@pages/AdherentGroupe.vue"
 import FaReservations from "@pages/fitarena/FaReservations.vue"
 import FaDemandes from "@pages/fitarena/FaDemandes.vue"
 import FaTarifs from "@pages/fitarena/FaTarifs.vue"
+import FaReductions from "@pages/fitarena/FaReductions.vue"
 import Preferences from "@pages/fitarena/Preferences.vue"
 
 const routes = [
@@ -261,6 +262,18 @@ const routes = [
           breadcrumbs: [
             {
               label: 'Tarifs',
+              link: ''
+            }
+          ]
+        }
+      },
+      {
+        path: 'reductions',
+        component: FaReductions,
+        meta: {
+          breadcrumbs: [
+            {
+              label: 'Réductions',
               link: ''
             }
           ]

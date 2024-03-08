@@ -14,6 +14,7 @@ const ICON = {
   search: '<svg aria-hidden="true" class="h-5 w-5 currentColor0" fill="none" stroke="currentColor" viewBox="0 0 24 24"xmlns="http://www.w3.org/2000/svg">' +
   '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" ></path>' +
   '</svg>',
+  user: '<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.7112 9.69794C9.72931 9.69794 8.92596 9.38537 8.30114 8.76022C7.67631 8.13508 7.3639 7.33133 7.3639 6.34897C7.3639 5.3666 7.67631 4.56285 8.30114 3.93771C8.92596 3.31257 9.72931 3 10.7112 3C11.693 3 12.4964 3.31257 13.1212 3.93771C13.746 4.56285 14.0585 5.3666 14.0585 6.34897C14.0585 7.33133 13.746 8.13508 13.1212 8.76022C12.4964 9.38537 11.693 9.69794 10.7112 9.69794ZM3.57031 16.8647V14.766C3.57031 14.2004 3.71164 13.7167 3.9943 13.3148C4.27696 12.9129 4.64144 12.6078 5.08775 12.3994C6.08449 11.9529 7.04033 11.618 7.95525 11.3947C8.87017 11.1715 9.78882 11.0598 10.7112 11.0598C11.6335 11.0598 12.5485 11.1752 13.4559 11.4059C14.3634 11.6366 15.3155 11.9678 16.3123 12.3994C16.7735 12.6078 17.1454 12.9129 17.4281 13.3148C17.7107 13.7167 17.852 14.2004 17.852 14.766V16.8647H3.57031ZM4.90922 15.5251H16.5131V14.766C16.5131 14.5279 16.4425 14.3009 16.3011 14.0851C16.1598 13.8693 15.985 13.7093 15.7767 13.6051C14.8246 13.1437 13.9543 12.8274 13.1658 12.6562C12.3774 12.485 11.5592 12.3994 10.7112 12.3994C9.8632 12.3994 9.03754 12.485 8.23419 12.6562C7.43084 12.8274 6.56055 13.1437 5.62331 13.6051C5.41504 13.7093 5.24395 13.8693 5.11006 14.0851C4.97617 14.3009 4.90922 14.5279 4.90922 14.766V15.5251ZM10.7112 8.35835C11.2914 8.35835 11.7711 8.16857 12.1505 7.78902C12.5299 7.40947 12.7195 6.92946 12.7195 6.34897C12.7195 5.76848 12.5299 5.28846 12.1505 4.90891C11.7711 4.52936 11.2914 4.33959 10.7112 4.33959C10.131 4.33959 9.65121 4.52936 9.27185 4.90891C8.89249 5.28846 8.70281 5.76848 8.70281 6.34897C8.70281 6.92946 8.89249 7.40947 9.27185 7.78902C9.65121 8.16857 10.131 8.35835 10.7112 8.35835Z" fill="black"/></svg>',
   print: '<svg class="w-6 h-6 text-gray-800 dark:text-white" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 20 20">\n' +
       '    <path d="M5 20h10a1 1 0 0 0 1-1v-5H4v5a1 1 0 0 0 1 1Z"/>\n' +
       '    <path d="M18 7H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2v-3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-1-2V2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3h14Z"/>\n' +
@@ -30,6 +31,13 @@ const ICON = {
   next: '<svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
     '  <path d="M1.52573 5.65855H8.88168L5.66798 8.87224C5.41115 9.12908 5.41115 9.55054 5.66798 9.80738C5.92481 10.0642 6.33969 10.0642 6.59653 9.80738L10.9363 5.46757C11.1932 5.21073 11.1932 4.79585 10.9363 4.53902L6.60311 0.192624C6.34628 -0.0642081 5.9314 -0.0642081 5.67456 0.192624C5.41773 0.449457 5.41773 0.86434 5.67456 1.12117L8.88168 4.34146H1.52573C1.16353 4.34146 0.867188 4.6378 0.867188 5C0.867188 5.3622 1.16353 5.65855 1.52573 5.65855Z" fill="currentColor"/>\n' +
     '</svg>',
+  bad: '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M13.6962 13.6964L5.68522 5.68543L5.93147 2.97363L8.64298 3.22016L14.2949 13.0369" stroke="#161616" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M8.64245 3.21874L9.28319 1L11.6442 2.26274L14.9902 12.4377L12.4114 15.0162" stroke="#161616" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M5.67752 5.69922L2.966 5.94574L3.21253 8.65726L13.0293 14.3092" stroke="#161616" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M3.21942 8.65137L1.00039 9.29239L2.26398 11.6526L12.4383 14.9983L13.5801 16.14" stroke="#161616" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M16.0289 13.6887L16.3541 14.0136C16.6954 14.328 16.8987 14.7644 16.92 15.228C16.9413 15.6915 16.7787 16.1447 16.4677 16.4891L16.3745 16.5825C16.0302 16.8935 15.577 17.056 15.1135 17.0347C14.6501 17.0135 14.2137 16.8101 13.8993 16.4689L13.5738 16.144L16.0289 13.6887ZM16.0289 13.6887L15.0302 12.627" stroke="#161616" stroke-miterlimit="10"/>' +
+    '<path d="M13.6094 8.36133L8.34057 13.6304" stroke="#161616" stroke-miterlimit="10"/></svg>',
   '': ''
 }
 
@@ -42,14 +50,14 @@ const TYPE = {
   success: 'bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 text-white',
   secondary: 'focus:ring-blue-300 bg-white',
   tertiary: 'hover:bg-red-200 border-1 border-red-600 bg-white text-red-600',
-  '': 'bg-blue-700 focus:ring-4 focus:ring-blue-300 text-black',
-  none: ''
+  none: '',
+  '': 'bg-blue-700 focus:ring-4 focus:ring-blue-300 text-black'
 }
 
 interface Props {
   label?: string,
-  icon?: 'search' | 'print' | 'add' | 'reload' | 'edit' | 'delete' | 'export' | 'logout' | 'cross' | 'filter' | 'info' | '',
-  couleur?: 'info' | 'danger' | 'warning' | 'success' | 'secondary' | 'submit' | 'tertiary' | 'important' | 'none' | '',
+  icon?: 'search' | 'user' | 'print' | 'add' | 'reload' | 'edit' | 'delete' | 'export' | 'logout' | 'cross' | 'filter' | 'info' | 'next' | 'bad' | '',
+  couleur?: 'info' | 'submit' | 'danger' | 'important' | 'warning' | 'success' | 'secondary' | 'tertiary' | 'none' | '',
   borderless: boolean,
   submit: boolean,
   borderRadius: string
