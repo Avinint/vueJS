@@ -334,11 +334,8 @@ const afficherErreur = (message) => {
 }
 
 const submitDemande = async() => {
-  spinnerDemandeModal.value = true
   errorMessage.value = ''
-  console.log(form.zones)
-  console.log(form.zones.length)
-  if (form.zones.length == 0) {
+  if (form.zones.length === 0) {
     afficherErreur("Une zone doit être sélectionnée")
     return
   } else if (date.value == '') {
@@ -388,6 +385,7 @@ const submitDemande = async() => {
     }
   }
 
+  spinnerDemandeModal.value = true
   contract.value = makeDemandeEditContract(parseInt(fitarena_id), parseInt(organisme_id), form)
   verifCreneaux.value = await postCreneauVerifDemande(contract.value)
   spinnerDemandeModal.value = false
