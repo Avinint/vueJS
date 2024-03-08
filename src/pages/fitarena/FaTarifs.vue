@@ -40,7 +40,7 @@
       <template v-if="!spinnerModal">
         <CardModalSection title="Activité et tarif" :params="true">
           <template #topParams>
-            <div class="flex gap-6 ml-96">
+            <div v-if="formulaireComplet(levelChecked)" class="flex gap-6 ml-96">
               <p class="w-10">{{ tarif.actif ? 'Actif' : 'Inactif' }}</p>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input
@@ -68,18 +68,21 @@
               type="text"
             />
             <div class="w-4/12">
-              <label class="mb-2 block text-sm font-medium text-gray-900">Choisir l'activité *</label>
+              <label :class="{invisible: !formulaireComplet(levelChecked)}" class="mb-2 block text-sm font-medium text-gray-900">Choisir l'activité *</label>
               <select
                 v-model="tarif.activite"
                 class="rounded-lg w-full border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                :disabled="!formulaireComplet(levelChecked)"
               >
                 <option
+                  v-if="formulaireComplet(levelChecked)"
                   v-for="(act, i) in activites"
                   :key="i"
                   :value="act.libelle"
                 >
                   {{ act.libelle }}
                 </option>
+                <option v-else key="0" :value="tarif.activite">{{ tarif.activite }}</option>
               </select>
             </div>
           </div>
@@ -113,7 +116,7 @@
             </div>
           </div>
         </CardModalSection>
-        <CardModalSection title="Niveau" class="pt-4">
+        <CardModalSection v-if="formulaireComplet(levelChecked)" title="Niveau" class="pt-4">
           <div class="flex gap-8">
             <div v-for="level in levels" :key="`niveauTarif-${level.id}`">
               <Button
@@ -132,7 +135,7 @@
             <p>Niv 3 : Annuel, semestriel</p>
           </div>
         </CardModalSection>
-        <CardModalSection title="Périodes et horaires" class="pt-4">
+        <CardModalSection v-if="formulaireComplet(levelChecked)" title="Périodes et horaires" class="pt-4">
           <div v-for="(periode, i) in tarif.periodes" :key="`periode-${i}`" class="border border-slate-300 p-6 rounded-lg mb-2">
             <div class="flex items-center justify-between">
               <p>Dates</p>
@@ -186,6 +189,7 @@
           </div>
         </CardModalSection>
         <Button
+          v-if="formulaireComplet(levelChecked)"
           @click="addPeriode()"
           label="Ajouter une période"
           couleur="danger"
@@ -229,7 +233,6 @@ import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
 import TableauTarifs from "@components/FaTarifs/TableauTarifs.vue";
 
-
 const props = defineProps(['id'])
 const route = useRoute()
 const tarifDefaut: Tarif = { actif: false, duree: 60, periodes: [] }
@@ -239,6 +242,10 @@ const tarif = ref(tarifDefaut)
 const days = 'LMMJVSD'
 const activites = ref({})
 const listDuree = [60, 120]
+
+/* id du niveau "par défaut" */
+const ID_NIVEAU_PAR_DEFAUT = 1
+/* idNiveauDefaut valeur par défaut du champ "niveau" dans le formulaire "id du niveau général_*/
 const idNiveauDefaut = ref(3)
 const levelChecked: ref<number> = ref(idNiveauDefaut.value)
 const selected_days = ref([])
@@ -268,6 +275,8 @@ const fetchDonnees = async () => {
   activites.value = await getActivites(props.id, 1, '&order=asc')
   spinner.value = false
 }
+
+const formulaireComplet = (niveau) => niveau !== ID_NIVEAU_PAR_DEFAUT
 
 /**
  * Ajoute propriétés au groupe de tarifs : libellé niveau au pluriel
