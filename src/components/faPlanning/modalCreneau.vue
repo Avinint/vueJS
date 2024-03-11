@@ -498,6 +498,9 @@ export default {
       const laZone = this.zones.find(z => z.id === this.creneauStore.zones[0])
       for (const zad of laZone.zoneActivites) {
         zad.activite.checked = true
+        try {
+          zad.activite.tarif = await this.getTarifByActivite(zad.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
+        } catch(e) {}
       }
     } else {
       if (this.creneauStore.recurrence) this.submenu = 'recurence'
@@ -538,7 +541,7 @@ export default {
       })
     },
     getTarifsOptions() {
-      return [{ id: null, label: "Tarif auto" }, ...this.tarifs.map((tarif) => {
+      return [{ id: 0, label: "Tarif auto" }, ...this.tarifs.map((tarif) => {
         return {
           id: tarif.tarifId,
           label: `${tarif.niveau}.${tarif.priorite} - ${tarif.libelle}`,
@@ -661,23 +664,23 @@ export default {
       let montant
 
       try{
-        if (this.tarifId === null) {
-          montant = await this.getTarifByActivite(zoneActivite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
+        if (this.tarifId === 0) {
+          montant = await this.getTarifByActivite(this.zoneActivite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
+          this.tarifId = null
         } else {
-
-          montant = (await getTarif(this.tarifId)).montant
-          this.zones.forEach(zone => {
-            if (zone.id === this.zoneId) {
-              zone.zoneActivites.forEach(async zoneAct => {
-                if (zoneAct.id === this.zoneActivite.id) {
-                  zoneAct.activite.tarif = Intl.NumberFormat('fr-FR').format(montant / 100)
-                  zoneAct.activite.tarifId = this.tarifId
-                  zoneAct.tarifForce = true
-                }
-              })
-            }
-          })
+          montant = (await getTarif(this.tarifId)).montant / 100
         }
+        this.zones.forEach(zone => {
+          if (zone.id === this.zoneId) {
+            zone.zoneActivites.forEach(async zoneAct => {
+              if (zoneAct.id === this.zoneActivite.id) {
+                zoneAct.activite.tarif = Intl.NumberFormat('fr-FR').format(montant)
+                zoneAct.activite.tarifId = this.tarifId
+                zoneAct.tarifForce = this.tarifId > 0
+              }
+            })
+          }
+        })
 
       } catch(e) {
         toast.error("Aucun tarif trouvé pour cette activité")
@@ -694,12 +697,18 @@ export default {
       return Intl.NumberFormat('fr-FR').format(data.tarif.montant / 100)
     },
     async openTarifModal (zone, zoneActivite) {
-      this.tarifs = await getTarifsByActivity(this.$route.params.id, zoneActivite.activite.id)
-      this.tarifModal = true
-      this.activiteLabel = zoneActivite.activite.libelle
-      this.activiteId = zoneActivite.activite.id
-      this.zoneActivite = zoneActivite
-      this.zoneId = zone.id
+      try {
+        this.tarifs = await getTarifsByActivity(this.$route.params.id, zoneActivite.activite.id)
+        this.tarifModal = true
+        this.activiteLabel = zoneActivite.activite.libelle
+        this.activiteId = zoneActivite.activite.id
+        this.zoneActivite = zoneActivite
+        this.zoneId = zone.id
+      } catch (e) {
+        toast.error("Aucun tarif existant pour cette activité")
+        console.error(e)
+      }
+
     },
     closeTarifModal () {
       this.tarifModal = false
