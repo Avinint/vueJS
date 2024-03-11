@@ -835,7 +835,6 @@ export default {
         'typeZone.code': 'zone',
         fitArena: this.$route.params.id
       })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
-
       this.zones.forEach((zone, i) => {
         zone.zoneActivites.forEach(za => {
           if (!za.actif) {
@@ -856,29 +855,12 @@ export default {
 
         zone.zoneActivites.forEach( async (zone_activite) => {
           if (zone_activite.activite.checked === true) {
-            console.log( zone_activite)
-            console.log(this.creneauStore.activites)
-
-                // console.log(zone_activite)
-                // console.log("forced", zone_activite.tarifForce)
-
-            console.log("tarifId", activite.tarif.tarifId)
-            if (zone_activite.tarifForce) {
-              zone_activite.activite.tarifId = activite.tarif.tarifId
-              zone_activite.activite.tarif = Intl.NumberFormat('fr-FR').format(activite.tarif.montant / 100)
-            } else {
-              zone_activite.activite.tarif = await this.getTarifByActivite(zone_activite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
-              console.log("tarif pas forcé", zone_activite.activite.tarif)
-            }
-
             this.creneauStore.addActivite({
               libelle: zone_activite.activite.libelle,
               activiteId: zone_activite.activite.id,
               tarifId: parseInt(zone_activite.activite.tarifId),
               zoneId: zone.id,
             })
-
-
           }
         })
       })
@@ -917,7 +899,6 @@ export default {
                   zoneActivite.activite.tarif = Intl.NumberFormat('fr-FR').format(activite.tarif.montant / 100)
                 } else {
                   zoneActivite.activite.tarif = await this.getTarifByActivite(zoneActivite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
-
                 }
               }
             })
