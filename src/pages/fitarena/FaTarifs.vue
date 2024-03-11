@@ -260,7 +260,7 @@ onMounted(async () => {
   state.value = 'view'
   await fetchDonnees()
   niveauParDefaut.value = levels.value.find(niv => niv.rang === 4)
-  niveauSelectionneParDefaut.value = levels.value.find(niv => niv.rang === 2)
+  niveauSelectionneParDefaut.value = levels.value.find(niv => niv.code === 'general')
   tarif.value.niveauId = niveauSelectionneParDefaut.value.id
   levelChecked.value = niveauSelectionneParDefaut.value.id
 })
@@ -422,32 +422,38 @@ const saveTarif = async () => {
   }
 
   tarif.value.periodes.forEach(periode => {
-    if (periode.plageHoraireDebut === '' || periode.plageHoraireFin === '') {
-      errorMessage.value = 'Veuillez renseigner des horaires pour les périodes.'
-      return
-    }
+    // if (periode.plageHoraireDebut === '' || periode.plageHoraireFin === '') {
+    //   errorMessage.value = 'Veuillez renseigner des horaires pour les périodes.'
+    //   return
+    // }
 
-    if (periode.dateDebut === '' || periode.dateFin === '') {
-      errorMessage.value = 'Veuillez renseigner des dates pour les périodes.'
-      return
-    }
+    // if (periode.dateDebut === '' || periode.dateFin === '') {
+    //   errorMessage.value = 'Veuillez renseigner des dates pour les périodes.'
+    //   return
+    // }
 
     const data = []
     periode.jours.forEach((jour, i) => {
       if (jour) data.push(i + 1)
     })
     periode.jours = data
-    if (periode.jours.length === 0) {
-      errorMessage.value = 'Veuillez renseigner des jours pour les périodes.'
-      return
+    // if (periode.jours.length === 0) {
+    //   errorMessage.value = 'Veuillez renseigner des jours pour les périodes.'
+    //   return
+    // }
+
+    if (periode.plageHoraireDebut) periode.plageHoraireDebut = formatHeures(periode.plageHoraireDebut)
+    if ( periode.plageHoraireFin) periode.plageHoraireFin = formatHeures(periode.plageHoraireFin)
+
+    if (periode.dateDebut) {
+      const [dayD, monthD, yearD] = periode.dateDebut.split('/')
+      periode.dateDebut = `${yearD}-${monthD}-${dayD}`
     }
 
-    periode.plageHoraireDebut = formatHeures(periode.plageHoraireDebut)
-    periode.plageHoraireFin = formatHeures(periode.plageHoraireFin)
-    const [dayD, monthD, yearD] = periode.dateDebut.split('/')
-    const [dayF, monthF, yearF] = periode.dateFin.split('/')
-    periode.dateDebut = `${yearD}-${monthD}-${dayD}`
-    periode.dateFin = `${yearF}-${monthF}-${dayF}`
+    if (periode.dateFin) {
+      const [dayF, monthF, yearF] = periode.dateFin.split('/')
+      periode.dateFin = `${yearF}-${monthF}-${dayF}`
+    }
   })
   
   if (errorMessage.value === '') await sendTarif()
