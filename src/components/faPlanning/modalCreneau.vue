@@ -426,6 +426,14 @@ import MentionChampsObligatoires from '@components/common/MentionChampsObligatoi
 import { mapStores } from 'pinia'
 import { toast } from 'vue3-toastify'
 
+const CRENEAU_TYPE = {
+  'GRAND_PUBLIC': 1,
+  'ORGANISME': 2,
+  'MAINTENANCE': 3,
+  'ANIMATEUR': 4,
+  'SEANCE': 5
+}
+
 export default {
   components: {
     Modal,
@@ -818,6 +826,7 @@ export default {
         'typeZone.code': 'zone',
         fitArena: this.$route.params.id
       })).filter(zone => zone.actif && zone.zoneActivites.length > 0)
+
       this.zones.forEach((zone, i) => {
         zone.zoneActivites.forEach(za => {
           if (!za.actif) {
@@ -828,21 +837,49 @@ export default {
 
       await this.dynamiseActivites()
     },
-    updateActivites() {
+    /**
+     * Changements des activités sur le submit
+     * @returns {Promise<void>}
+     */
+    async updateActivites() {
       this.creneauStore.activites = []
       this.zones.forEach((zone) => {
-        zone.zoneActivites.forEach((zone_activite) => {
+
+        zone.zoneActivites.forEach( async (zone_activite) => {
           if (zone_activite.activite.checked === true) {
+            console.log( zone_activite)
+            console.log(this.creneauStore.activites)
+
+                // console.log(zone_activite)
+                // console.log("forced", zone_activite.tarifForce)
+
+            console.log("tarifId", activite.tarif.tarifId)
+            if (zone_activite.tarifForce) {
+              zone_activite.activite.tarifId = activite.tarif.tarifId
+              zone_activite.activite.tarif = Intl.NumberFormat('fr-FR').format(activite.tarif.montant / 100)
+            } else {
+              zone_activite.activite.tarif = await this.getTarifByActivite(zone_activite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
+              console.log("tarif pas forcé", zone_activite.activite.tarif)
+            }
+
             this.creneauStore.addActivite({
               libelle: zone_activite.activite.libelle,
               activiteId: zone_activite.activite.id,
               tarifId: parseInt(zone_activite.activite.tarifId),
               zoneId: zone.id,
             })
+
+
           }
         })
       })
     },
+    /**
+     *  Modifications sur clic sur div activité
+     * @param zoneId
+     * @param activiteId
+     * @param checked
+     */
     clicActivite(zoneId, activiteId, checked) {
       const zone = this.zones.find(z => z.id === zoneId)
       const zoneActivite = zone.zoneActivites.find(za => za.activite.id === activiteId)
@@ -853,6 +890,11 @@ export default {
       }
 
     },
+
+    /**
+     * Dynamise activités au chargement du formulaire  (récup données distantes)
+     * @returns {Promise<void>}
+     */
     async dynamiseActivites() {
       if (this.typeAction === 'edit') {
         this.zones.forEach(async (zone) => {
@@ -866,6 +908,7 @@ export default {
                   zoneActivite.activite.tarif = Intl.NumberFormat('fr-FR').format(activite.tarif.montant / 100)
                 } else {
                   zoneActivite.activite.tarif = await this.getTarifByActivite(zoneActivite.activite.id, this.creneauStore.date, this.creneauStore.heureDebut)
+
                 }
               }
             })
@@ -915,7 +958,7 @@ export default {
       
       if (this.isOneZoneChecked) {
         switch (type_creneau) {
-          case 1:
+          case CRENEAU_TYPE.GRAND_PUBLIC:
             // Retrieve activity data from the local references
             // Before sending it to the API. This has to be done
             // This way because of the unsynchronized data.
@@ -931,8 +974,8 @@ export default {
               this.verifModal = true
             }
             break
-          case 2:
-          case 3:
+          case CRENEAU_TYPE.ORGANISME:
+          case CRENEAU_TYPE.MAINTENANCE:
             this.creneauStore.nbPersonnesAttendu = parseInt(this.creneauStore.nbPersonnesAttendu)
             const contract = makeDemandeAdminOGEditContract(fitarena_id, this.creneauStore)
             this.verifCreneaux = await postCreneauVerifDemande(contract)
