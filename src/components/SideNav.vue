@@ -45,6 +45,7 @@
                     <MonitoringSVG v-if="sub_link.icon && sub_link.icon === 'monitoring'" />
                     <PlanningSVG v-if="sub_link.icon && sub_link.icon === 'planning'" class="ml-0.5" />
                     <BookingSVG v-if="sub_link.icon && sub_link.icon === 'booking'" />
+                    <ReductionsSVG v-if="sub_link.icon && sub_link.icon === 'reduction'" />
                     <TarifSVG v-if="sub_link.icon && sub_link.icon === 'tarif'" />
                     <UserSVG v-if="sub_link.icon && sub_link.icon === 'user'" />
                   </side-nav-item>
@@ -77,7 +78,8 @@ import PlanningSVG from "@components/svg/PlanningSVG.vue"
 import BookingSVG from "@components/svg/BookingSVG.vue"
 import ChevronSVG from "@components/svg/ChevronSVG.vue"
 import StatsSVG from "@components/svg/StatsSVG.vue"
-import TarifSVG from "@components/svg/TarifSVG.vue";
+import TarifSVG from "@components/svg/TarifSVG.vue"
+import ReductionsSVG from "@components/svg/ReductionsSVG.vue"
 
 import { useUserStore } from "@/stores/user.js"
 import { useMenuStore } from "@/stores/menu.js"
@@ -203,6 +205,11 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
             icon: 'booking'
           },
           {
+            label: 'Réductions',
+            path: `/fitarena/${fa.id}/reductions`,
+            icon: 'reduction'
+          },
+          {
             label: 'Tarification',
             path: `/fitarena/${fa.id}/tarifs`,
             icon: 'booking'
@@ -229,6 +236,11 @@ const fitArenaLinks = computed(() => useMenuStore().fitArenas.length ? [
             label: 'Demandes',
             path: `/fitarena/${fa.id}/demandes`,
             icon: 'booking'
+          },
+          {
+            label: 'Réductions',
+            path: `/fitarena/${fa.id}/reductions`,
+            icon: 'reduction'
           },
           {
             label: 'Tarification',
