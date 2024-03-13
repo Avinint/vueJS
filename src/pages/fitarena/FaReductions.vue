@@ -33,7 +33,7 @@
                 icon="edit"
                 borderless
                 couleur="secondary"
-                @click="editInfosReduc(reduc.reductionId)"
+                @click="editInfosReduc(reduc)"
               />
             </td>
             <td class="w-1/12 text-center">
@@ -63,7 +63,7 @@
   <form @submit.prevent="saveReduc">
     <Modal
       v-if="infosReducModal"
-      title="Groupe de réduction"
+      :title="modalTitle"
       size="4xl"
       @cancel="resetInfos()"
     >
@@ -192,6 +192,7 @@ const days = 'LMMJVSD'
 const infosReducModal = ref(false)
 const reducId = ref(0)
 const state = ref('')
+const modalTitle = ref('Groupe de réduction')
 
 const newPeriode = () => ({
   dateDebut: '',
@@ -249,6 +250,7 @@ const resetInfos = () => {
   infosReducModal.value = false
   reducId.value = 0
   state.value = 'create'
+  modalTitle.value = 'Groupe de réduction'
   reduc.value = {
     libelle: '',
     description: '',
@@ -266,10 +268,11 @@ const selectDay = (day_index: number, jours: any) => {
   jours[day_index] = !jours[day_index]
 }
 
-const editInfosReduc = async (id: number) => {
+const editInfosReduc = async (reduction: object) => {
   state.value = 'edit'
-  reducId.value = id
-  reduc.value = await getReduc(id)
+  modalTitle.value = `Groupe de réduction - ${reduction.libelle}`
+  reducId.value = reduction.reductionId
+  reduc.value = await getReduc(reduction.reductionId)
   mapInfos(reduc.value)
   infosReducModal.value = true
 }
