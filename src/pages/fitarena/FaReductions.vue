@@ -101,7 +101,7 @@
         type="text"
       />
       <CardModalSection title="Périodes et horaires" class="pt-4">
-        <div v-for="(periode, i) in reduc.plages" :key="`periode-${i}`" class="border border-slate-300 p-6 rounded-lg mb-2">
+        <div v-for="(periode, i) in reduc.periodes" :key="`periode-${i}`" class="border border-slate-300 p-6 rounded-lg mb-2">
           <div class="flex items-center justify-between">
             <p>Dates</p>
             <Button @click="deletePeriode(i)" couleur="secondary" icon="cross" />
@@ -159,7 +159,6 @@
         couleur="danger"
         icon="add"
       />
-      <!-- <div v-if="errorMessage !== ''" class="text-red-600 mb-4">{{ errorMessage }}</div> -->
     </Modal>
   </form>
 </template>
@@ -178,6 +177,7 @@ import { getReducs, getReduc, postReduc, putReduc } from '@api/reduc'
 import 'vue3-toastify/dist/index.css'
 import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
+import dayjs from 'dayjs'
 
 const props = defineProps(['id'])
 const spinner = ref(false)
@@ -186,7 +186,7 @@ const reduc = ref({
   libelle: '',
   description: '',
   actif: false,
-  plages: []
+  periodes: []
 })
 const days = 'LMMJVSD'
 const infosReducModal = ref(false)
@@ -196,9 +196,11 @@ const state = ref('')
 const newPeriode = () => ({
   dateDebut: '',
   dateFin: '',
-  jours: Array(7).fill(false),
-  plageHoraireDebut: '',
-  plageHoraireFin: ''
+  jours: Array(7).fill(false)
+})
+
+onMounted(async () => {
+  await fetchDonnees()
 })
 
 const fetchDonnees = async () => {
@@ -207,14 +209,53 @@ const fetchDonnees = async () => {
   spinner.value = false
 }
 
-const resetInfos = () => {
-  infosReducModal.value = false
-  state.value = 'create'
+const mapInfos = (reduction) => {
+  reduction.periodes.map(periode => {
+    periode.plageHoraireDebut = dayjs(periode.plageHoraireDebut).format('HH:mm')
+    periode.plageHoraireFin = dayjs(periode.plageHoraireFin).format('HH:mm')
+    periode.dateDebut = periode.hasOwnProperty('dateDebut') ? dayjs(periode.dateDebut).format('DD/MM/YYYY') : ''
+    periode.dateFin = periode.hasOwnProperty('dateFin') ? dayjs(periode.dateFin).format('DD/MM/YYYY') : ''
+    let selected_days = []
+    periode.jours.forEach((jour: string) => {
+      switch(jour) {
+        case 'Lu':
+          selected_days[0] = true
+          break
+        case 'Ma':
+          selected_days[1] = true
+          break
+        case 'Me':
+          selected_days[2] = true
+          break
+        case 'Je':
+          selected_days[3] = true
+          break
+        case 'Ve':
+          selected_days[4] = true
+          break
+        case 'Sa':
+          selected_days[5] = true
+          break
+        case 'Di':
+          selected_days[6] = true
+          break
+      }
+    })
+    periode.jours = selected_days
+  })
 }
 
-onMounted(async () => {
-  await fetchDonnees()
-})
+const resetInfos = () => {
+  infosReducModal.value = false
+  reducId.value = 0
+  state.value = 'create'
+  reduc.value = {
+    libelle: '',
+    description: '',
+    actif: false,
+    periodes: []
+  }
+}
 
 const addReduc = () => {
   state.value = 'create'
@@ -229,52 +270,67 @@ const editInfosReduc = async (id: number) => {
   state.value = 'edit'
   reducId.value = id
   reduc.value = await getReduc(id)
+  mapInfos(reduc.value)
   infosReducModal.value = true
 }
 
 const setInfos = (periodes) => {
-  periodes.forEach(periode => {
+  periodes.map(periode => {
     if (periode.dateDebut !== '') {
-      const [dayD, monthD, yearD] = periode.dateDebut.split('-')
+      const [dayD, monthD, yearD] = periode.dateDebut.split('/')
       periode.dateDebut = `${yearD}-${monthD}-${dayD}`
     }
-    if (periode.dateDebut !== '') {
-      const [dayF, monthF, yearF] = periode.dateFin.split('-')
+    if (periode.dateFin !== '') {
+      const [dayF, monthF, yearF] = periode.dateFin.split('/')
       periode.dateFin = `${yearF}-${monthF}-${dayF}`
     }
-    if (periode.plageHoraireDebut !== '') {
+    if (periode.plageHoraireDebut !== undefined) {
       periode.plageHoraireDebut = `${periode.plageHoraireDebut}:00`
     }
-    if (periode.plageHoraireFin !== '') {
+    if (periode.plageHoraireFin !== undefined) {
       periode.plageHoraireFin = `${periode.plageHoraireFin}:00`
     }
-    periode.jours.forEach((jour: boolean, i: number) => {
-      let selected_days = []
-      switch(i) {
-        case 0:
-          selected_days.push(1)
-          break
-        case 1:
-          selected_days.push(2)
-          break
-        case 2:
-          selected_days.push(3)
-          break
-        case 3:
-          selected_days.push(4)
-          break
-        case 4:
-          selected_days.push(5)
-          break
-        case 5:
-          selected_days.push(6)
-          break
-        case 6:
-          selected_days.push(7)
-          break
+
+    let selected_days = []
+    for (let i = 0; i <= periode.jours.length; i++) {
+      if (periode.jours[i]) {
+        selected_days.push(i + 1)
       }
-      periode.jours = selected_days
-    })
+    }
+    periode.jours = selected_days
+
+    if (periode.dateDebut !== '' || periode.dateDebut !== undefined) {
+      periode = Object.defineProperties(periode, {
+        dateDebut: {
+          value: periode.dateDebut,
+          writable: true
+        }
+      })
+    }
+    if (periode.dateFin !== '' || periode.dateFin !== undefined) {
+      periode = Object.defineProperties(periode, {
+        dateFin: {
+          value: periode.dateFin,
+          writable: true
+        }
+      })
+    }
+    if (periode.plageHoraireDebut !== '' || periode.plageHoraireDebut !== undefined) {
+      periode = Object.defineProperties(periode, {
+        plageHoraireDebut: {
+          value: periode.plageHoraireDebut,
+          writable: true
+        }
+      })
+    }
+    if (periode.plageHoraireFin !== '' || periode.plageHoraireFin !== undefined) {
+      periode = Object.defineProperties(periode, {
+        plageHoraireFin: {
+          value: periode.plageHoraireFin,
+          writable: true
+        }
+      })
+    }
   })
 }
 
@@ -286,37 +342,44 @@ const editActiviteReduc = (reduc: object) => {
 }
 
 const addPeriode = () => {
-  reduc.value.plages.push(newPeriode())
+  reduc.value.periodes.push(newPeriode())
 }
 
 const deletePeriode = (i: index) => {
-  reduc.value.plages.forEach((plage, z) => {
+  reduc.value.periodes.forEach((periode, z) => {
     if (i === z) {
-      reduc.value.plages.splice(z, 1)
+      reduc.value.periodes.splice(z, 1)
       return
     }
   })
 }
 
 const saveReduc = async () => {
-  setInfos(reduc.value.plages)
+  setInfos(reduc.value.periodes)
 
   const data = {
     libelle: reduc.value.libelle,
     description: reduc.value.description,
     actif: reduc.value.actif,
-    plages: reduc.value.plages
+    periodes: reduc.value.periodes
   }
 
-  await postReduc(props.id, data).then(() => {
-    toast.success('La réduction a été créée avec succès !')
-  }).catch(() => {
-    toast.error('La réduction n\'a pas pu être créée.')
-  })
+  if (state.value === 'create') {
+    await postReduc(props.id, data).then(() => {
+      toast.success('La réduction a été créée avec succès !')
+    }).catch(() => {
+      toast.error('La réduction n\'a pas pu être créée.')
+    })
+  } else {
+    await putReduc(reducId.value, data).then(() => {
+      toast.success('La réduction a été modifiée avec succès !')
+    }).catch(() => {
+      toast.error('La réduction n\'a pas pu être modifiée.')
+    })
+  }
 
-  infosReducModal.value = false
-  state.value = 'create'
   await fetchDonnees()
+  resetInfos()
 }
 </script>
 
