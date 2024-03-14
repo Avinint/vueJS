@@ -3,7 +3,7 @@
     class="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full backdrop-blur bg-black/50 flex items-center justify-center">
     <div :class="'relative max-h-full w-9/12 max-w-' + props.size">
       <div class="relative bg-white rounded-lg shadow">
-        <div class="flex items-start justify-between pl-10 py-6 pr-4 border-b rounded-t">
+        <div class="flex items-start justify-between pl-6 py-6 pr-4 border-b rounded-t">
           <h3 class="text-xl text-red-600 uppercase">
             {{ props.title }}
           </h3>
