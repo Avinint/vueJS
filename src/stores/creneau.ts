@@ -13,7 +13,7 @@ import { getDateStringHour } from "../services/date_service"
 export const useCreneauStore = defineStore('creneau', {
   state: default_creneau,
   getters: {
-    getId: (state) => parseInt(state.id?.toString() || '0'),
+    getId: (state) => parseInt(this.id?.toString() || '0'),
   },
   actions: {
     setDefault() {
@@ -110,19 +110,13 @@ export const useCreneauStore = defineStore('creneau', {
       }
     },
 
-    parseReponseActivite ({id: activiteId, libelle, prix: tarifId, maxTerrain = 0}: {
-      id: number
-      zoneId?: number
-      libelle: string
-      maxTerrain: number
-      prix: number
-    }): Activite  {
+    parseReponseActivite ({id: activiteId, tarif, libelle, maxTerrain = 0}: ActiviteReponse): Activite  {
       return {
         activiteId,
         libelle,
         maxTerrain,
-        tarifId
-      }
+        tarif
+      } as Activite
     },
 
     parseDemandeCreneauResponse(response: DemandeCreneauEditResponse): Creneau[] {

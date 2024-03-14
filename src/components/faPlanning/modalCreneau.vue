@@ -875,22 +875,23 @@ export default {
     },
 
     /**
-     * Bouton valider ma demande de la modale "confirmation de création"
+     * Bouton valider ma demande de la modale "confirmation de création" Sauvegarde
      * @returns {Promise<void>}
      */
     async submitDemandeValidation() {
       const fitarena_id = parseInt(this.$route.params.id);
       if (this.typeAction === 'create') {
-        this.creneauStore.creneauType === 1 ? this.creneauStore.addCreneau(fitarena_id) : this.creneauStore.addCreneauOrganisme(fitarena_id)
+        this.creneauStore.creneauType === 1 ? await this.creneauStore.addCreneau(fitarena_id) : await this.creneauStore.addCreneauOrganisme(fitarena_id)
       } else {
-        this.creneauStore.creneauType === 1 ? this.creneauStore.editCreneau(fitarena_id) : this.creneauStore.editCreneauOrganisme(fitarena_id)
+        this.creneauStore.creneauType === 1 ? await this.creneauStore.editCreneau(fitarena_id) : await this.creneauStore.editCreneauOrganisme(fitarena_id)
       }
-      this.$emit('closeModalCreneau')
-      this.verifModal = false
-    },
 
-    /** bouton confirmer de la modale formulaire créneau **/
+      this.verifModal = false
+      this.$emit('closeModalCreneau')
+    },
+    /** bouton confirmer de la modale formulaire créneau  verif créneau  **/
     async submitCreneau() {
+
       this.recurrenceErrorMessage = ''
       this.activityErrorMessage = ''
       const type_creneau = this.creneauStore.creneauType
