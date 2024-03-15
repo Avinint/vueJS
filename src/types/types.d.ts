@@ -229,6 +229,16 @@ type Activite = {
   libelle: string
   maxTerrain: number
   tarifId?: number
+  tarif?: TarifReponse
+}
+
+type ActiviteReponse = {
+  id: number
+  zoneId?: number
+  libelle: string
+  maxTerrain: number
+  prix: number
+  tarif?: TarifReponse
 }
 
 type Demande = {
@@ -241,14 +251,6 @@ type Demande = {
   conflits: number
   statut: string
   dateDemande: string
-}
-
-type ActiviteReponse = {
-  id: number
-  zoneId?: number
-  libelle: string
-  maxTerrain: number
-  prix: number
 }
 
 type PlanningFilters = {
@@ -366,6 +368,10 @@ type Tarif = {
   actif: boolean
   duree: number
   periodes: PeriodeTarif[]
+}
+type TarifReponse = {
+  tarifId: number
+  montant: number
 }
 
 type PeriodeTarif = {
