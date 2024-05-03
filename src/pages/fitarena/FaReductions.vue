@@ -62,7 +62,7 @@
 
   <form @submit.prevent="saveReduc">
     <Modal
-      v-if="infosReducModal"
+      v-if="modale === 'infos"
       :title="modalTitle"
       size="4xl"
       @cancel="resetInfos()"
@@ -160,6 +160,14 @@
         icon="add"
       />
     </Modal>
+    <Modal
+      v-if="modale === 'activites"
+      :title="'Activités de la réduction - ' + modalTitle"
+      size="4xl"
+      @cancel="resetInfos()"
+    >
+
+    </Modal>
   </form>
 </template>
 
@@ -189,6 +197,7 @@ const reduc = ref({
   periodes: []
 })
 const days = 'LMMJVSD'
+const modale: ref<"infos" | "activites" | false> = ref(false)
 const infosReducModal = ref(false)
 const reducId = ref(0)
 const state = ref('')
@@ -247,7 +256,7 @@ const mapInfos = (reduction) => {
 }
 
 const resetInfos = () => {
-  infosReducModal.value = false
+  modale.value = false
   reducId.value = 0
   state.value = 'create'
   modalTitle.value = 'Groupe de réduction'
@@ -262,6 +271,7 @@ const resetInfos = () => {
 const addReduc = () => {
   state.value = 'create'
   infosReducModal.value = true
+  modale.value = "infos"
 }
 
 const selectDay = (day_index: number, jours: any) => {
@@ -274,7 +284,7 @@ const editInfosReduc = async (reduction: object) => {
   reducId.value = reduction.reductionId
   reduc.value = await getReduc(reduction.reductionId)
   mapInfos(reduc.value)
-  infosReducModal.value = true
+  modale.value = "infos"
 }
 
 const setInfos = (periodes) => {
